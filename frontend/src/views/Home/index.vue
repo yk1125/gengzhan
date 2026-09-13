@@ -1,7 +1,155 @@
-<template><main class="home" :class="{'is-scrolled':scrolled}"><section class="hero"><video autoplay muted loop playsinline preload="metadata"><source src="/yunzhan-hero.mp4" type="video/mp4"></video><div class="shade"/><div class="wrap hero-copy"><small>YUNZHAN TECHNOLOGY / BEIJING</small><h1>{{ t.hero }}</h1><p>{{ t.desc }}</p><router-link to="/ai-development">{{ t.explore }} ↗</router-link></div></section><section class="intro wrap"><small>01 / INTRODUCTION</small><div><h2>{{ t.intro }}</h2><p>{{ t.introDesc }}</p><router-link to="/about">{{ t.about }} ↗</router-link></div></section><section class="wall"><div class="wrap"><small>02 / TRUSTED BY</small><h2>{{ t.wall }}</h2><div class="logos"><span v-for="slot in logoSlots" :key="slot" class="logo-slot" :data-slot="slot" /></div></div></section><section class="work wrap"><small>03 / SELECTED WORK</small><h2>{{ t.work }}</h2><div class="cards"><router-link v-for="(item,index) in items" :key="item" to="/cases" class="work-card"><video autoplay muted loop playsinline preload="metadata"><source src="/yunzhan-hero.mp4" type="video/mp4" /></video><span class="card-shade"/><div><small>0{{ index + 1 }} / PROJECT</small><h3>{{ item }}</h3><p>{{ t.demo }}</p></div></router-link></div></section><section class="contact"><div class="wrap"><small>04 / START A PROJECT</small><h2>{{ t.cta }}</h2><router-link to="/ai-consultation">{{ t.contact }} ↗</router-link></div></section></main></template>
+<template>
+  <main class="home" :class="{ 'is-scrolled': scrolled }">
+    <section class="hero">
+      <video autoplay muted loop playsinline preload="metadata">
+        <source src="/yunzhan-hero.mp4" type="video/mp4">
+      </video>
+      <div class="shade" />
+      <div class="wrap hero-copy">
+        <small>YUNZHAN TECHNOLOGY / BEIJING</small>
+        <h1>{{ t.hero }}</h1>
+        <p>{{ t.desc }}</p>
+        <router-link to="/ai-development">{{ t.explore }} ↗</router-link>
+      </div>
+    </section>
+
+    <section class="intro wrap">
+      <small>01 / INTRODUCTION</small>
+      <div>
+        <h2>{{ t.intro }}</h2>
+        <p>{{ t.introDesc }}</p>
+        <router-link to="/about">{{ t.about }} ↗</router-link>
+      </div>
+    </section>
+
+    <section class="wall">
+      <div class="wrap">
+        <small>02 / TRUSTED BY</small>
+        <h2>{{ t.wall }}</h2>
+        <div class="logos">
+          <span v-for="slot in logoSlots" :key="slot" class="logo-slot" :data-slot="slot" />
+        </div>
+      </div>
+    </section>
+
+    <section class="work wrap">
+      <small>03 / SELECTED WORK</small>
+      <h2>{{ t.work }}</h2>
+      <div class="cards">
+        <router-link v-for="(item,index) in items" :key="item" to="/cases" class="work-card">
+          <video autoplay muted loop playsinline preload="metadata">
+            <source src="/yunzhan-hero.mp4" type="video/mp4" />
+          </video>
+          <span class="card-shade" />
+          <div>
+            <small>0{{ index + 1 }} / PROJECT</small>
+            <h3>{{ item }}</h3>
+            <p>{{ t.demo }}</p>
+          </div>
+        </router-link>
+      </div>
+    </section>
+
+    <section class="contact">
+      <div class="wrap">
+        <small>04 / START A PROJECT</small>
+        <h2>{{ t.cta }}</h2>
+        <router-link to="/ai-consultation">{{ t.contact }} ↗</router-link>
+      </div>
+    </section>
+  </main>
+</template>
+
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue'; import { useRoute } from 'vue-router'; import { demoCases } from '@/mocks/content'; const route=useRoute(); const en=computed(()=>String(route.path).startsWith('/en')); const scrolled=ref(false); const onScroll=()=>{scrolled.value=window.scrollY>40}; onMounted(()=>window.addEventListener('scroll',onScroll,{passive:true})); onUnmounted(()=>window.removeEventListener('scroll',onScroll)); const t=computed(()=>en.value?{hero:'Digital products built for what matters.',desc:'AI applications, enterprise software and brand experiences shaped around real business.',explore:'Explore services',intro:'Make digital products with weight.',introDesc:'Yunzhan Technology combines strategy, design and engineering to turn complex ideas into products people use.',about:'About Yunzhan',wall:'Long-term partners, real outcomes.',work:'Every delivery answers a real need.',cta:'Bring your next idea into the world.',contact:'Start a conversation',demo:'Demo project for preview.'}:{hero:'专注高端数字化产品建设',desc:'AI 应用、企业软件、移动产品与品牌网站，围绕真实业务构建长期价值。',explore:'探索服务',intro:'做有分量的数字化产品。',introDesc:'耘栈科技专注 AI 应用、企业软件、移动产品与品牌网站建设，用策略、设计和工程让想法长期落地。',about:'认识耘栈',wall:'与值得信赖的伙伴长期共创。',work:'以真实成果回应每一次托付。',cta:'把你的想法，变成真正被使用的产品。',contact:'开始沟通',demo:'演示项目，仅用于预览。'}); /* 客户墙 24 槽位：素材未入库，等 T00A 下载 + 本地副本 + hash 登记后再替换。禁止写公司名、禁止运行时引用参考站 URL。 */ const logoSlots=['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24']; const items=computed(()=>[demoCases[0].title[en.value?'en':'zh-CN'],en.value?'Business collaboration platform':'业务数字化协同平台',en.value?'Mobile services for people':'面向用户的移动服务'])
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { demoCases } from '@/mocks/content'
+
+const route = useRoute()
+const en = computed(() => String(route.path).startsWith('/en'))
+const scrolled = ref(false)
+const onScroll = () => { scrolled.value = window.scrollY > 40 }
+onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
+onUnmounted(() => window.removeEventListener('scroll', onScroll))
+
+const t = computed(() => en.value
+  ? {
+      hero: 'Digital products built for what matters.',
+      desc: 'AI applications, enterprise software and brand experiences shaped around real business.',
+      explore: 'Explore services',
+      intro: 'Make digital products with weight.',
+      introDesc: 'Yunzhan Technology combines strategy, design and engineering to turn complex ideas into products people use.',
+      about: 'About Yunzhan',
+      wall: 'Long-term partners, real outcomes.',
+      work: 'Every delivery answers a real need.',
+      cta: 'Bring your next idea into the world.',
+      contact: 'Start a conversation',
+      demo: 'Demo project for preview.'
+    }
+  : {
+      hero: '专注高端数字化产品建设',
+      desc: 'AI 应用、企业软件、移动产品与品牌网站，围绕真实业务构建长期价值。',
+      explore: '探索服务',
+      intro: '做有分量的数字化产品。',
+      introDesc: '耘栈科技专注 AI 应用、企业软件、移动产品与品牌网站建设，用策略、设计和工程让想法长期落地。',
+      about: '认识耘栈',
+      wall: '与值得信赖的伙伴长期共创。',
+      work: '以真实成果回应每一次托付。',
+      cta: '把你的想法，变成真正被使用的产品。',
+      contact: '开始沟通',
+      demo: '演示项目，仅用于预览。'
+    })
+
+/* 客户墙 24 槽位：素材未入库，等 T00A 下载 + 本地副本 + hash 登记后再替换。禁止写公司名、禁止运行时引用参考站 URL。 */
+const logoSlots = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24']
+
+const items = computed(() => [
+  demoCases[0].title[en.value ? 'en' : 'zh-CN'],
+  en.value ? 'Business collaboration platform' : '业务数字化协同平台',
+  en.value ? 'Mobile services for people' : '面向用户的移动服务'
+])
 </script>
-<style scoped>.home a{transition:transform .25s ease}.home a:hover{transform:translateY(-3px)}.logo-slot{display:block;width:100%;min-height:42px}.home.is-scrolled .hero-copy{animation:reveal .8s both}@keyframes reveal{from{clip-path:inset(0 0 100% 0);opacity:0}to{clip-path:inset(0);opacity:1}}.home{background:var(--color-bg,#fff);color:var(--color-text,#111)}.wrap{width:min(calc(100% - 48px),1280px);margin:auto}.hero{height:min(860px,100svh);min-height:620px;position:relative;display:flex;align-items:flex-end;overflow:hidden;background:#111;color:#fff}.hero video,.shade{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.shade{background:linear-gradient(90deg,#000b,transparent 75%),linear-gradient(0deg,#000b,transparent 60%)}.hero-copy{position:relative;padding-bottom:15vh}.hero small,.wrap>small{letter-spacing:.2em;color:#f26b24;font-size:10px;font-weight:700}.hero h1{max-width:900px;font-size:clamp(52px,7vw,100px);line-height:.98;letter-spacing:-.06em;margin:28px 0}.hero p{max-width:460px;color:#ddd;line-height:1.8}.hero a,.intro a,.contact a{display:inline-block;margin-top:28px;color:inherit;border-bottom:1px solid currentColor;padding-bottom:8px;text-decoration:none;font-weight:700}.intro{display:grid;grid-template-columns:.7fr 2fr;gap:8vw;padding:130px 0}.intro h2,.wall h2,.work h2,.contact h2{font-size:clamp(44px,6vw,82px);line-height:1.05;letter-spacing:-.06em;margin:0 0 30px}.intro p{max-width:560px;line-height:2;color:#777}.wall{background:#f3f3f0;padding:120px 0}.logos{display:grid;grid-template-columns:repeat(8,1fr);margin-top:60px;border-top:1px solid #ccc}.logos span{padding:28px 10px;border-bottom:1px solid #ccc;text-align:center;font-weight:700;color:#555}.work{padding:130px 0}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.cards a{min-height:330px;padding:28px;background:#171717;color:#fff;text-decoration:none}.cards h3{margin-top:120px;font-size:25px}.cards p{color:#aaa}.contact{background:#f26b24;padding:130px 0}.contact small{color:#111}.contact h2{max-width:900px}.contact a{color:#fff}@media(max-width:700px){.wrap{width:calc(100% - 40px)}.intro{grid-template-columns:1fr;padding:84px 0}.wall,.work,.contact{padding:84px 0}.logos{grid-template-columns:repeat(4,1fr);margin-top:35px}.logos span{font-size:12px;padding:20px 4px}.cards{grid-template-columns:1fr}.cards a{min-height:260px}.cards h3{margin-top:80px}.hero h1{font-size:50px}}</style>
 
-
+<style scoped>
+.home a { transition: transform .25s ease }
+.home a:hover { transform: translateY(-3px) }
+.logo-slot { display: block; width: 100%; min-height: 42px }
+.home.is-scrolled .hero-copy { animation: reveal .8s both }
+@keyframes reveal { from { clip-path: inset(0 0 100% 0); opacity: 0 } to { clip-path: inset(0); opacity: 1 } }
+.home { background: var(--color-bg, #fff); color: var(--color-text, #111) }
+.wrap { width: min(calc(100% - 48px), 1280px); margin: auto }
+.hero { height: min(860px, 100svh); min-height: 620px; position: relative; display: flex; align-items: flex-end; overflow: hidden; background: #111; color: #fff }
+.hero video, .shade { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover }
+.shade { background: linear-gradient(90deg, #000b, transparent 75%), linear-gradient(0deg, #000b, transparent 60%) }
+.hero-copy { position: relative; padding-bottom: 15vh }
+.hero small, .wrap > small { letter-spacing: .2em; color: #f26b24; font-size: 10px; font-weight: 700 }
+.hero h1 { max-width: 900px; font-size: clamp(52px, 7vw, 100px); line-height: .98; letter-spacing: -.06em; margin: 28px 0 }
+.hero p { max-width: 460px; color: #ddd; line-height: 1.8 }
+.hero a, .intro a, .contact a { display: inline-block; margin-top: 28px; color: inherit; border-bottom: 1px solid currentColor; padding-bottom: 8px; text-decoration: none; font-weight: 700 }
+.intro { display: grid; grid-template-columns: .7fr 2fr; gap: 8vw; padding: 130px 0 }
+.intro h2, .wall h2, .work h2, .contact h2 { font-size: clamp(44px, 6vw, 82px); line-height: 1.05; letter-spacing: -.06em; margin: 0 0 30px }
+.intro p { max-width: 560px; line-height: 2; color: #777 }
+.wall { background: #f3f3f0; padding: 120px 0 }
+.logos { display: grid; grid-template-columns: repeat(8, 1fr); margin-top: 60px; border-top: 1px solid #ccc }
+.logos span { padding: 28px 10px; border-bottom: 1px solid #ccc; text-align: center; font-weight: 700; color: #555 }
+.work { padding: 130px 0 }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px }
+.cards a { min-height: 330px; padding: 28px; background: #171717; color: #fff; text-decoration: none }
+.cards h3 { margin-top: 120px; font-size: 25px }
+.cards p { color: #aaa }
+.contact { background: #f26b24; padding: 130px 0 }
+.contact small { color: #111 }
+.contact h2 { max-width: 900px }
+.contact a { color: #fff }
+@media (max-width: 700px) {
+  .wrap { width: calc(100% - 40px) }
+  .intro { grid-template-columns: 1fr; padding: 84px 0 }
+  .wall, .work, .contact { padding: 84px 0 }
+  .logos { grid-template-columns: repeat(4, 1fr); margin-top: 35px }
+  .logos span { font-size: 12px; padding: 20px 4px }
+  .cards { grid-template-columns: 1fr }
+  .cards a { min-height: 260px }
+  .cards h3 { margin-top: 80px }
+  .hero h1 { font-size: 50px }
+}
+</style>
