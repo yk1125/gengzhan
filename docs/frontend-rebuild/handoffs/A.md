@@ -373,6 +373,8 @@ eslint（只读，不带 --fix）→ ESLINT_EXIT=1，✖ 850 problems (7 errors,
 | `4f5cd76` | style(notfound): 让新建的 NotFound 页满足仓库 lint 规则（消除 12 条新文件告警） |
 | `f918efa` | chore(deps): 锁定 gsap 3.15.0 + lenis 1.3.26、新增 motion token 骨架、删除死代码 MouseFollower.vue |
 | `118432d` | docs: AC07b 占位、D1/D2 决定、SESSIONS 工作树位置、Step 4—6 记录、INTEGRATION 合并记录 |
+| `f1cd935` | docs: 补齐本 handoff 的实际提交 hash |
+| `35fc135` | docs: Step 3.11 按用户裁定结案（保持现状）、session-c 搬移记录、Step 6 复核证据 |
 
 工作树：本任务开始到结束，主仓 `git status --short` 在每次提交后都为空；没有执行 `git reset --hard`、强推、改写他人分支历史或删除未提交内容。
 
