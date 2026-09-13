@@ -7,7 +7,7 @@
 - 保留 Vue 3 Composition API、Vue Router、Pinia、Vite 和 JavaScript；复杂数据类型用 JSDoc，不做全量 TS 迁移。
 - 保留现有 npm 锁文件；新增 `vue-i18n`、HTML 清洗库（建议 DOMPurify）、Vitest、Playwright 各有明确用途，T01 检查与当前 Vue/Vite/Node 兼容的版本后锁定。禁止顺带升级整个工具链。
 - 样式以 CSS custom properties＋组件 scoped CSS 为主；Tailwind/Element Plus 可保留用于现有能力，但页面视觉必须由统一 token 与组件控制。
-- 优先 CSS/现有 Swiper 完成可验证的交互；源站若有必要的复杂时间轴，T00 证据先明确，再在 T01 记录是否增加动画依赖。
+- 动画依赖已决（2026-09-14 更新，取代原先「优先 CSS/现有 Swiper」的表述）：确定引入 `gsap@3.15.0` 与 `lenis@1.3.26`，在 `package.json` 用精确版本锁定并写入 lock。原因：参考站核心效果是滚动驱动的时间轴（首屏视频切换、模块显影、遮罩与位移联动、整屏转场），纯 CSS 加现有 Swiper 无法在合理成本内还原，也难以统一处理清理与降级。影响范围：动效 token 与滚动/显影基础能力放在 `src/styles/motion.js` 与 A 所属的 composables，页面只按语义名引用，不得散写裸数值、各自 new 滚动监听或复制一套动画状态；数值待 T00R 的动效 SPEC.md 定稿后填入，当前 token 值一律为 `MOTION_TODO`。
 - 不新增一套与 `src/style.css` 相互覆盖的长期样式层。逐段迁出旧覆盖，最终只有明确的全局基础入口。
 
 ## 2. 拟建目录与归属

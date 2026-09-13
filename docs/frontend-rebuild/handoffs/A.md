@@ -1,5 +1,5 @@
 # Session A · 路由可达性修复 + Git 收敛 + 动效依赖骨架（2026-09-14）
-状态：进行中
+状态：完成（唯一未决项：Step 3.11 需要用户决定是否改写 main 历史）
 基准commit：`45ef250`（main，工作区 clean）
 本任务commit：逐步记录在下方各 Step
 
@@ -285,6 +285,101 @@ git log --oneline main..codex/t00a-assets        # 无输出
 
 - `frontend/src/views/ServiceLanding.vue` 第 59 行（来自 `codex/rebuild-services` 的 `12054b5`）行首有一个字面量 `\n`：`\n.reveal{opacity:0;...}`。CSS 解析时 `\n` 会变成一个标识符 `n`，使 `.reveal{...}` 规则失效（后续 `.reveal.is-visible{...}`、`.text-reveal{...}` 等规则仍单独生效），即 C 的显影动画初始隐藏态实际没生效。这是 C 所属文件的存量缺陷，A 没有代改；请 C 在下次动这个文件时删掉该字符并重新验收。
 - `codex/rebuild-services` 的 `handoffs/C.md` 里仍写着「A 集成 router 兼容 `/services/mini-program` 别名」和对应下一步；按用户 2026-09-14 的确认（D2）该别名作废，A 未代改 C.md，C 需自行更新。
+
+## Step 4 工作树整理
+
+```powershell
+git worktree move "D:/桌面/gengzhan-worktrees/gengzhan-worktrees/session-b" "D:/桌面/gengzhan-worktrees/session-b"   # exit 0
+git worktree move "D:/桌面/gengzhan-worktrees/gengzhan-worktrees/session-c" "D:/桌面/gengzhan-worktrees/session-c"   # exit 128
+```
+
+`session-b` 搬移成功；`session-c` 失败：
+
+```text
+fatal: failed to move 'D:/桌面/gengzhan-worktrees/gengzhan-worktrees/session-c' to 'D:/桌面/gengzhan-worktrees/session-c': Permission denied
+```
+
+重试一次仍然 `Permission denied`。判断是 Windows 不允许重命名作为某个进程当前目录（或被句柄占用）的目录——该 worktree 很可能正被另一个终端/编辑器占用。**没有强改、没有删目录**，`session-c` 目前仍在旧路径；待占用解除后按 `SESSIONS.md` 里记的命令补搬。搬移后的实际布局见 `SESSIONS.md`「实际工作树位置」。
+
+安装与验证：
+
+```powershell
+cd "D:\桌面\gengzhan-worktrees\session-a\frontend"; npm.cmd ci        # added 274 packages in 30s，CI_A_EXIT=0
+cd "D:\桌面\gengzhan-worktrees\session-a\frontend"; npm.cmd run build # ✓ built in 25.10s，BUILD_A_EXIT=0
+cd "D:\桌面\gengzhan-worktrees\gengzhan-worktrees\session-c\frontend"; npm.cmd ci        # added 274 packages in 32s，CI_C_EXIT=0
+cd "D:\桌面\gengzhan-worktrees\gengzhan-worktrees\session-c\frontend"; npm.cmd run build # 第一次崩溃，重跑通过：✓ built in 20.90s，BUILD_C_EXIT=0
+```
+
+如实记录：`session-c` 的首次 build 以 `BUILD_C_EXIT=-1073740791`（0xC0000409）崩溃且没有输出，第二次同样命令通过（20.90s，产物正常）。判断是本机资源/瞬时问题，不是代码问题；主仓随后多次 build 也通过。三个工作树在安装/构建后 `git status --short` 仍为空（`dist`、`node_modules` 均被忽略）。
+
+`session-b` 也有 `frontend/node_modules`（存在，未由本任务安装）；`session-t00a`、`session-t00r` 仍未安装依赖。
+
+## Step 5 动效依赖与 token 骨架
+
+```powershell
+npm.cmd view gsap version   # 3.15.0
+npm.cmd view lenis version  # 1.3.26
+cd frontend; npm.cmd install --save-exact gsap@3.15.0 lenis@1.3.26   # added 2 packages in 7s，exit 0
+```
+
+`package.json` 里是精确版本：`"gsap": "3.15.0"`、`"lenis": "1.3.26"`；`package-lock.json` 有对应 `node_modules/gsap`、`node_modules/lenis` 与 integrity。注意：`npm install` 顺便把 `dependencies`/`devDependencies` 按字母序重排了（diff 显示 18 行变动，**没有任何版本被改动**），这是 npm 的默认行为。
+
+新增 `frontend/src/styles/motion.js`：`duration`（instant/fast/base/slow/scroll）、`ease`（standard/enter/exit/inOut/scroll）、`distance`（reveal/hero/micro/scaleIn/maskOverflow）三组字段全部建好，值一律为 `MOTION_TODO`，并导出 `isMotionTokenReady()` 供后续检查；文件头写明数值等 T00R 的 SPEC.md，禁止页面散写裸数值。**没有编造任何数值。**
+
+删除死代码：`git rm frontend/src/components/MouseFollower.vue`（`rg -n "MouseFollower|mouse-follower" -g "!node_modules" .` 除本 handoff 的引用外无匹配）。
+
+`specs/FRONTEND.md` 第 10 行改成已决状态：确定引入 `gsap@3.15.0` + `lenis@1.3.26`，写明原因（参考站核心是滚动驱动时间轴，纯 CSS/Swiper 无法在合理成本内还原，且难以统一清理与降级）、影响范围（动效 token 与滚动/显影基础能力在 `src/styles/motion.js` 与 A 的 composables，页面只按语义名引用）与版本锁定方式；原「优先 CSS/现有 Swiper」表述作废。
+
+## Step 6 验收标准与决定登记
+
+- `ACCEPTANCE.md`：新增 `AC07b`（动效还原，占位）行 + 「AC07b 字段」表，字段已建好（规格来源 / 覆盖项 / 数值口径 / 证据要求 / 降级要求 / 责任与状态），判定值等 T00R，并明确「T00R 未产出前不得声称还原通过」。
+- `INTEGRATION.md` 用户确认记录：新增 D1（素材授权由用户自行处理，但本地化与 hash 登记不能省）、D2（`/services/:slug` 笔误作废，英文统一 `/en/<slug>`）。
+
+## 最终验证（全部真实执行）
+
+```text
+npm.cmd run build        → BUILD_EXIT=0，✓ built in 24.73s（仅存量 chunk 体积 >500kB 等警告）
+npm.cmd run check:routes → GATE_EXIT=0，结果：PASS 34 / FAIL 0 / PENDING 2（PENDING = contact / B·T05）
+eslint（只读，不带 --fix）→ ESLINT_EXIT=1，✖ 850 problems (7 errors, 843 warnings)
+```
+
+7 个 error 与 ACCEPTANCE 记录的基线完全一致（`CompetitiveAdvantage.vue` 111:31 / 111:42 / 114:7；`Cases/detail.vue` 280:7 / 285:7 / 302:35 / 332:18），**没有新增 error**。warning 总数 843，低于基线 846（删掉 `MouseFollower.vue` 的告警，同时并入分支代码带来一些新告警）；本任务新增/重写的 `NotFound.vue`、`motion.js`、`scripts/check-routes.mjs`、`router/index.js` 单独跑 eslint 为 0 问题（`ESLINT_TARGETED_EXIT=0`）。
+
+只读 lint 的外层命令 exitCode 为 1 是基线状态，不等于本任务引入失败。
+
+## T00A / T00R 现场（只读观察，未改动他们的工作树）
+
+工作树整理时发现这两个分支虽然没有提交，但**工作树里已经有大量未提交成果**：
+
+- `session-t00a`（`git status --short`）：`?? .scratch-home.html`、`?? .scratch-t00a/`、`?? docs/frontend-rebuild/evidence/`、`?? frontend/public/assets/`。
+  - `frontend/public/assets/customers/` 已有 `jun_1.svg`—`jun_24.svg`（24 个客户 Logo），另有 `banner/banner.mp4`（37,447,782B）、`banner/video.webp`、`transitions/*.mp4` 与 `transitions/black/*.mp4` 共 12 个视频。
+  - `docs/frontend-rebuild/evidence/reference-assets/assets-manifest.json`（37,694B）：38 个条目，字段含 `sourceId / 用途 / 源 URL / 本地路径 / 字节数 / SHA256 / 尺寸或时长 / 对应选择器 / 抓取时间`，并记录 robots、抓取方式、`base href=//cdn.seniorweb.cn` 等事实。素材是**本地副本 + hash 登记**，符合本任务新增的素材规则。
+- `session-t00r`：`?? docs/frontend-rebuild/evidence/`，内含 `reference-effects/sources/`（home.html、style.css、model.js、cdn-index、function…）、`frames/`、`reference-implementation/`。**尚未产出动效 SPEC.md**（`git log --all -- "**/SPEC.md"` 无输出，全仓无 SPEC.md 文件）。
+
+因此「B/C 前置是否就绪」的准确答案是**没有就绪**：素材只在 T00A 的未提交工作树里，动效 SPEC.md 还不存在。但 T00A 已接近可交付（素材已下载登记），T00R 仍在取证阶段。
+
+## 本任务提交清单
+
+| 提交 | 内容 |
+| --- | --- |
+| `1e4f564` | fix(routes): 注册 `/en` 首页、补英文路由与 NotFound catch-all、修正 INTEGRATION 验收入口、新增 `check:routes` 门禁 |
+| `822e14e` | docs: 合并前 git 现场（零改动记录）写入 INTEGRATION |
+| `1d9d632` | Merge branch 'codex/rebuild-brand' |
+| `cefb3ad` | Merge branch 'codex/rebuild-services' |
+| `1a47c40` | fix(home): 客户墙去掉假公司名与参考站热链，改 24 槽位占位 |
+| `50160d1` | docs: 补素材本地化/禁热链规则；记录 Step 2—3 |
+| （最后一个提交） | chore: gsap+lenis 精确版本、motion token 骨架、删除 MouseFollower、AC07b 占位、SESSIONS 工作树位置、D1/D2、Step 4—6 记录 |
+
+工作树：本任务开始到结束，主仓 `git status --short` 在每次提交后都为空；没有执行 `git reset --hard`、强推、改写他人分支历史或删除未提交内容。
+
+## 未完成事项与下次第一步
+
+1. **待用户决定**：Step 3.11 的 4 个重复提交是否需要清理（要清理就必须改写 main 历史，A 未自行执行）。
+2. **待 T00A/T00R 提交**：他们提交后 A 需要再 merge 一次，并把 `SPEC.md`/素材接进 token 与客户墙；届时重跑 `check:routes` + `build`。
+3. **待 C 修**：`ServiceLanding.vue` 第 59 行字面量 `\n`；`handoffs/C.md` 里作废的 `/services/mini-program` 说法。
+4. **待 B/C 开工前置**：main 上仍无 SPEC.md 与素材；客户墙是 24 空槽，服务素材为占位登记。
+5. **T01 存量债**：`routeManifest` 仍只覆盖 `home/contact/ai` 三个键，`check:routes` 会把其余 15 个 routeKey 列为 WARN（已在脚本里标注，不属于本任务修复范围）。
+6. **待补**：`session-c` 工作树搬移；`session-b`/`t00a`/`t00r` 的前置同步与依赖安装策略。
 
 ---
 
