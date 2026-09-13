@@ -13,7 +13,7 @@
  * 生命周期：所有监听在 onBeforeUnmount 里注销；`prefers-reduced-motion: reduce` 时不做滚动驱动，
  * 只把内容显影到可见态（降级要求见 ACCEPTANCE AC07b）。
  */
-import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { DESKTOP_MIN_WIDTH, banner, columns, publicText, reveal, statement } from './motion'
 
 /** 布局位置（不含 transform，offsetParent 链求和）。 */
@@ -72,7 +72,8 @@ export function useHomeScroll (rootRef) {
   const isDesktop = ref(typeof window === 'undefined' ? true : window.innerWidth >= DESKTOP_MIN_WIDTH)
   const reducedMotion = ref(false)
 
-  const handles = reactive({ observer: null })
+  /** M-24：尚未显影的 `[data-aos]` 节点，触发后移出，避免逐帧重复测量。 */
+  let pendingReveal = []
   const state = {
     anchors: null,
     frame: 0,
@@ -143,6 +144,9 @@ export function useHomeScroll (rootRef) {
     const root = rootRef.value
     if (!a || !root) return
     const clientHeight = a.clientHeight
+
+    // M-24 通用入场：与参考站一致，跟着每一帧的滚动位置推进。
+    revealCheck(clientHeight)
 
     // M-08 首屏视差：translate3d(0, scrollTop*0.9, 0)，滚过一屏后整块隐藏。
     const bannerParallax = root.querySelector('.banner .parallax')
@@ -240,33 +244,35 @@ export function useHomeScroll (rootRef) {
     const root = rootRef.value
     if (!root) return
     root.querySelectorAll('[data-aos]').forEach((el) => el.classList.add('aos-animate'))
+    pendingReveal = []
+  }
+
+  /**
+   * M-24：参考站的触发判定是纯位置比较 `rect.top - clientHeight + all_num < 0`
+   * （桌面 all_num = 150、手机 0；`function.js:9-33`），不是 IntersectionObserver 的相交判定。
+   * 这里照抄该判定：逐帧只检查尚未显影的节点，命中就加 `.aos-animate` 并移出待办表（once: true）。
+   * 用位置比较而不是 IO，滚动条直接跨段拖动时，被跳过的节点也会因为已位于视口上方而正确显影
+   * （对照：参考站 y=0 → 16/54、y=5210 → 39/54 的推进同样是位置驱动）。
+   */
+  function revealCheck (clientHeight) {
+    if (!pendingReveal.length) return
+    const limit = clientHeight - (isDesktop.value ? reveal.offsetPx.desktop : reveal.offsetPx.mobile)
+    pendingReveal = pendingReveal.filter((el) => {
+      if (el.getBoundingClientRect().top >= limit) return true
+      el.classList.add('aos-animate')
+      return false
+    })
   }
 
   function setupReveal () {
     const root = rootRef.value
     if (!root) return
-    const nodes = Array.from(root.querySelectorAll('[data-aos]'))
-    if (reducedMotion.value || typeof IntersectionObserver === 'undefined') {
-      nodes.forEach((el) => el.classList.add('aos-animate'))
+    pendingReveal = Array.from(root.querySelectorAll('[data-aos]'))
+    if (reducedMotion.value) {
+      revealAll()
       return
     }
-    const offset = isDesktop.value ? reveal.offsetPx.desktop : reveal.offsetPx.mobile
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return
-        entry.target.classList.add('aos-animate')
-        observer.unobserve(entry.target)
-      })
-    }, { rootMargin: `0px 0px -${offset}px 0px`, threshold: 0 })
-    nodes.forEach((el) => observer.observe(el))
-    handles.observer = observer
-  }
-
-  function destroyObserver () {
-    if (handles.observer) {
-      handles.observer.disconnect()
-      handles.observer = null
-    }
+    revealCheck(window.innerHeight)
   }
 
   function onResize () {
@@ -302,7 +308,6 @@ export function useHomeScroll (rootRef) {
     if (state.delayed) clearTimeout(state.delayed)
     state.frame = 0
     state.delayed = 0
-    destroyObserver()
   })
 
   return { isDesktop, reducedMotion, measure, revealAll }
