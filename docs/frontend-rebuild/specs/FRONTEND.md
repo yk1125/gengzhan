@@ -158,6 +158,7 @@ sessionStorage['yz.theme.override'] = { value, expiresAt: 下一当地07:00/19:0
 - 客户 Logo 墙使用保存的一次性重排清单；每次刷新/切语言不重新随机，避免对照漂移与版面跳动。用统一占位比例、contain 与尺寸元数据；不拉伸、不强制滤镜破坏标识。
 - 动画在 route unload 清理；视频/滚动观察者只在可见时运行；`prefers-reduced-motion`、节省流量及触控设备不依赖重动画完成主要任务。
 - 不整包加载源站第三方跟踪、客服或企业提交接口；取证与产品资产分开存放。
+- 素材必须有本地副本与来源登记：入库时记录 source URL、获取日期、文件 hash、尺寸或 viewBox、本地路径（登记口径见 REFERENCE §3）；禁止运行时引用参考站 URL，禁止热链 `seniorweb.cn` / `cdn.seniorweb.cn`。素材未到位时使用显式占位，不得用公司名或参考站图片填充。
 
 ## 8. 页面实现约束
 

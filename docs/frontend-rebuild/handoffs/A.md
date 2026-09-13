@@ -162,6 +162,130 @@ BUILD_EXIT=0
 
 已知未做：新增英文路由指向的 Cases/News/About/Privacy/Legal 页面内容仍是中文（i18n 由 B/D 负责）；英文页 title 仍拼中文后缀「 - 北京耘栈科技」（沿用现有 beforeEach，未在本任务扩大改动）。
 
+## Step 2 客户墙造假内容清除 + 规则补洞
+
+说明：这一步在 brand 合并之后执行（顺序理由见上文）。合并前后 `Home/index.vue` 的客户墙事实：
+
+| 阶段 | 客户墙内容 | 问题 |
+| --- | --- | --- |
+| 合并前 main | `const logos=['字节跳动','中信集团',...]` 24 个真实公司名 | 未经确认的客户名单，属造假内容 |
+| `codex/rebuild-brand`（合并带入） | `01`—`24` 数字槽位，但 `<img :src="`https://cdn.seniorweb.cn/static/images/jun_*.svg`">` | 运行时热链参考站 CDN，违反不变量 |
+| 本任务处理后（main） | 24 个空槽位 `<span class="logo-slot" :data-slot="slot" />` ＋ 注释 | 不写公司名、不引用参考站，等 T00A 素材 |
+
+实际改动（只动客户墙相关三处，没有重写页面）：
+
+- 模板：`<img :src="https://cdn.seniorweb.cn/...">` 换成 `<span v-for="slot in logoSlots" :key="slot" class="logo-slot" :data-slot="slot" />`。
+- 脚本：`const logos=[...]` 换成 `const logoSlots=['01'...'24']`，前面加注释「素材未入库，等 T00A 下载 + 本地副本 + hash 登记后再替换。禁止写公司名、禁止运行时引用参考站 URL」。
+- 样式：`.logos img{width:100%;height:42px;object-fit:contain}` 换成 `.logo-slot{display:block;width:100%;min-height:42px}`，保持栅格高度不发散。
+
+规则补洞：
+
+- `AGENTS.md` 第 21 行新增不变量：「外部素材（客户Logo、图标、图片、字体、视频）必须下载到仓库并登记来源与hash；禁止运行时热链参考站域名（seniorweb.cn / cdn.seniorweb.cn），页面、样式、配置里都不得出现参考站URL。」
+- `specs/FRONTEND.md` 第 161 行（§7）新增：「素材必须有本地副本与来源登记：入库时记录 source URL、获取日期、文件 hash、尺寸或 viewBox、本地路径（登记口径见 REFERENCE §3）；禁止运行时引用参考站 URL，禁止热链 seniorweb.cn / cdn.seniorweb.cn。素材未到位时使用显式占位，不得用公司名或参考站图片填充。」
+
+验证命令与真实输出：
+
+```powershell
+Select-String -Path frontend/src/views/Home/index.vue -Pattern 'seniorweb'
+# 无匹配
+$c = [IO.File]::ReadAllText('frontend/src/views/Home/index.vue')
+([regex]::Matches($c,'seniorweb')).Count        # 0
+([regex]::Matches($c,'字节跳动|中信集团|北京大学|网易')).Count   # 0
+([regex]::Matches($c,'logoSlots')).Count        # 2（模板 + 脚本各一次）
+```
+
+```text
+seniorweb 出现次数=0
+公司名残留=0
+logoSlots 出现次数=2
+```
+
+## Step 3 Git 收敛
+
+### Step 3.9 零改动记录
+
+完成。内容写在 `handoffs/INTEGRATION.md`「Git 收敛记录 → Step 3.9 零改动记录」，提交为 `822e14e`，提交前后没有改任何分支 ref。
+
+### Step 3.10 正式合并（merge，非 cherry-pick、非重放）
+
+```powershell
+git merge --no-edit codex/rebuild-brand        # 冲突 3 个文件，见下
+git merge --no-edit codex/rebuild-services     # 冲突 3 个文件，见下
+git merge --no-edit codex/rebuild-foundation   # Already up to date.
+```
+
+实际结果：
+
+| 分支 | 合并提交 | 合并后 merge-base | 是否等于分支 HEAD |
+| --- | --- | --- | --- |
+| `codex/rebuild-brand` | `1d9d632` | `67890dae96be...` | 是 |
+| `codex/rebuild-services` | `cefb3ad` | `12054b50ec5f...` | 是 |
+| `codex/rebuild-foundation` | 无新提交（`Already up to date.`，`af63173` 已随 brand 的祖先链进入 main） | `af631735ddb3...` | 是 |
+| `codex/t00r-motion-spec` | 无新提交（`Already up to date.`） | `45ef25052932...` | 是 |
+| `codex/t00a-assets` | 无新提交（`Already up to date.`） | `45ef25052932...` | 是 |
+
+冲突与解决方式（每个都是人工判断，没有用 `-X ours/theirs` 一把梭，也没有 hard reset）：
+
+| 文件 | 冲突类型 | 解决 |
+| --- | --- | --- |
+| `docs/frontend-rebuild/handoffs/A.md` | add/add | 取 main 版本。brand 侧就是本文件被重写前的原文，而 main 版本已把它整段保留在「附录 · 上一任务记录」里；逐行核对 brand 侧 10 行中只有 1 行不同（`# ` 改成 `### ` 的标题层级），无内容丢失。 |
+| `docs/frontend-rebuild/handoffs/INTEGRATION.md` | content | 取 main 版本（brand 侧没有 T02 段落）。顺带把「基准」表从文档中段提到头部并更新过时状态，把 `Step 3.9` 记录插在基准表之后。 |
+| `frontend/src/views/Home/index.vue` | content | 取 brand 版本（B 的更新版：`is-scrolled`、reveal、工作卡视频）。随后按 Step 2 处理客户墙。 |
+| `docs/frontend-rebuild/handoffs/C.md` | add/add | 取 services 版本（C 自己更新的「T02-S 验收修复」，比 main 上 cherry-pick 的旧版新）。 |
+| `frontend/src/router/index.js` | content | 取 main 版本（本任务 Step 1 新增的英文路由块；services 侧的 router 改动与 main 上 `5021d76` 是同一 patch-id，已包含在内）。 |
+| `frontend/src/views/ServiceLanding.vue` | content | 取 services 版本（`12054b5` 的显影交互是在 main 版本之上的增量）。 |
+
+`frontend/src/content/services.js` 由 services 分支新增，无冲突直接带入。
+
+合并后验证：
+
+```text
+npm.cmd run check:routes  → 结果：PASS 34 / FAIL 0 / PENDING 2   GATE_EXIT=0
+npm.cmd run build         → ✓ built in 15.79s   BUILD_EXIT=0（仅存量 chunk 体积等警告）
+```
+
+### Step 3.10b 两个并行任务分支
+
+`git branch --list "codex/t00*"` 命中 `codex/t00a-assets`、`codex/t00r-motion-spec`，两者都存在，于是按指令一并 merge；
+
+```text
+merge codex/t00r-motion-spec → Already up to date.
+merge codex/t00a-assets      → Already up to date.
+git log --oneline main..codex/t00r-motion-spec   # 无输出
+git log --oneline main..codex/t00a-assets        # 无输出
+```
+
+两个分支的 HEAD 都还是 `45ef250`（即没有产生任何新提交），所以合并是空操作。**待办：等 T00R 产出 `SPEC.md`、T00A 产出素材并提交后，A 需要再 merge 一次；届时 `check:routes`/`npm run build` 要重跑。**
+
+### B/C 前置是否就绪
+
+**未就绪。** 事实依据：
+
+- `Get-ChildItem -Recurse -Filter SPEC.md`（docs、frontend/src、frontend/public）→ 无输出，`git log --all -- "**/SPEC.md"` → 无输出：**任何分支都没有动效 SPEC.md**，T00R 尚未产出。
+- `Test-Path frontend/public/assets` → `False`，`Test-Path docs/frontend-rebuild/evidence` → `False`：**素材目录与证据目录都不存在**，T00A 尚未产出。
+- 客户墙现在是 24 个空槽位，`frontend/src/content/services.js` 里服务素材仍是 `sha256: 'UNAVAILABLE'` 的占位登记。
+
+结论：B 的 T05（Home 定稿、About/Contact/Privacy/Legal）在素材与动效规格到位前只能做结构/交互，视觉无法定稿；C 的 T03（其余六服务）同样缺 SPEC.md 的动效数值。A 侧的接口（`/en` 首页、catch-all、`check:routes` 门禁）已可用。
+
+### Step 3.11 main 上 4 个重复提交
+
+**未执行，按指令停下来问用户。** 判断依据：
+
+- 4 个重复提交（`4a343d6`、`5021d76`、`512565e`、`0997a1e`）已经是 main 的线性历史的一部分，并且 `1d9d632`/`cefb3ad` 两个合并提交的祖先里也有它们。
+- 要真正「清掉」这些重复提交，只能改写 main 已发布的历史（interactive rebase / filter-repo / 重建分支指向），属于任务红线里明确禁止的动作，也可能影响已经从这个 main 建出去的工作树与下游分支。
+- 现状不影响功能：`git merge-base` 已经指向各分支 HEAD，重复提交只是历史冗余，`check:routes` 与 build 都通过。
+
+需要用户明确授权才能做的选项（A 不自行决定）：
+
+1. 保持现状，只在文档里记为「已收敛、历史含 4 个重复提交」；
+2. 授权改写 main 历史（例如 `git rebase --onto` 去掉 4 个 cherry-pick 提交，或重建 main 指向一个干净历史），并接受所有 main 派生工作树/分支需要重新同步；
+3. 其他指定做法。
+
+### 合并过程中发现的存量缺陷（记录，未代改）
+
+- `frontend/src/views/ServiceLanding.vue` 第 59 行（来自 `codex/rebuild-services` 的 `12054b5`）行首有一个字面量 `\n`：`\n.reveal{opacity:0;...}`。CSS 解析时 `\n` 会变成一个标识符 `n`，使 `.reveal{...}` 规则失效（后续 `.reveal.is-visible{...}`、`.text-reveal{...}` 等规则仍单独生效），即 C 的显影动画初始隐藏态实际没生效。这是 C 所属文件的存量缺陷，A 没有代改；请 C 在下次动这个文件时删掉该字符并重新验收。
+- `codex/rebuild-services` 的 `handoffs/C.md` 里仍写着「A 集成 router 兼容 `/services/mini-program` 别名」和对应下一步；按用户 2026-09-14 的确认（D2）该别名作废，A 未代改 C.md，C 需自行更新。
+
 ---
 
 ## 附录 · 上一任务记录
