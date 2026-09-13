@@ -1,0 +1,401 @@
+{
+ "mode": "customers",
+ "meta": {
+  "logs": [
+   "warning: WARNING: Multiple instances of Three.js being imported.",
+   "error: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+   "warning: Requires GSAP 3.11.0 or later",
+   "error: Access to script at 'https://cdn.skypack.dev/-/simplex-noise@v3.0.0-QZKKNQBJ0SAYmmGTd1Dg/dist=es2019,mode=imports/optimized/simplex-noise.js' from origin 'https://www.seniorweb.cn' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+   "error: Failed to load resource: net::ERR_FAILED"
+  ]
+ },
+ "config": [
+  {
+   "i": 0,
+   "slides": 5,
+   "real": 2,
+   "params": {
+    "speed": 800,
+    "delay": 3500,
+    "dir": "vertical",
+    "loop": true,
+    "touch": false
+   },
+   "dupes": 2,
+   "slots": 3
+  },
+  {
+   "i": 1,
+   "slides": 5,
+   "real": 2,
+   "params": {
+    "speed": 800,
+    "delay": 3500,
+    "dir": "vertical",
+    "loop": true,
+    "touch": false
+   },
+   "dupes": 2,
+   "slots": 3
+  },
+  {
+   "i": 2,
+   "slides": 5,
+   "real": 2,
+   "params": {
+    "speed": 800,
+    "delay": 3500,
+    "dir": "vertical",
+    "loop": true,
+    "touch": false
+   },
+   "dupes": 2,
+   "slots": 3
+  },
+  {
+   "i": 3,
+   "slides": 5,
+   "real": 2,
+   "params": {
+    "speed": 800,
+    "delay": 3500,
+    "dir": "vertical",
+    "loop": true,
+    "touch": false
+   },
+   "dupes": 2,
+   "slots": 3
+  },
+  {
+   "i": 4,
+   "slides": 5,
+   "real": 2,
+   "params": {
+    "speed": 800,
+    "delay": 3500,
+    "dir": "vertical",
+    "loop": true,
+    "touch": false
+   },
+   "dupes": 2,
+   "slots": 3
+  },
+  {
+   "i": 5,
+   "slides": 5,
+   "real": 2,
+   "params": {
+    "speed": 800,
+    "delay": 3500,
+    "dir": "vertical",
+    "loop": true,
+    "touch": false
+   },
+   "dupes": 2,
+   "slots": 3
+  },
+  {
+   "i": 6,
+   "slides": 5,
+   "real": 2,
+   "params": {
+    "speed": 800,
+    "delay": 3500,
+    "dir": "vertical",
+    "loop": true,
+    "touch": false
+   },
+   "dupes": 2,
+   "slots": 3
+  },
+  {
+   "i": 7,
+   "slides": 5,
+   "real": 2,
+   "params": {
+    "speed": 800,
+    "delay": 3500,
+    "dir": "vertical",
+    "loop": true,
+    "touch": false
+   },
+   "dupes": 2,
+   "slots": 3
+  },
+  {
+   "i": 8,
+   "slides": 0,
+   "real": 6,
+   "params": {
+    "speed": 800,
+    "delay": 3500,
+    "dir": "vertical",
+    "loop": true,
+    "touch": false
+   },
+   "dupes": 2,
+   "slots": 6
+  },
+  {
+   "i": 9,
+   "slides": 0,
+   "real": 6,
+   "params": {
+    "speed": 800,
+    "delay": 3500,
+    "dir": "vertical",
+    "loop": true,
+    "touch": false
+   },
+   "dupes": 2,
+   "slots": 6
+  },
+  {
+   "i": 10,
+   "slides": 0,
+   "real": 6,
+   "params": {
+    "speed": 800,
+    "delay": 3500,
+    "dir": "vertical",
+    "loop": true,
+    "touch": false
+   },
+   "dupes": 2,
+   "slots": 6
+  },
+  {
+   "i": 11,
+   "slides": 0,
+   "real": 6,
+   "params": {
+    "speed": 800,
+    "delay": 3500,
+    "dir": "vertical",
+    "loop": true,
+    "touch": false
+   },
+   "dupes": 2,
+   "slots": 6
+  }
+ ],
+ "ticks": [
+  {
+   "ms": 0,
+   "real": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    6,
+    6,
+    6,
+    6
+   ],
+   "tf": [
+    "matrix(1, 0, 0, 1, 0, -120)",
+    "matrix(1, 0, 0, 1, 0, -120)",
+    "matrix(1, 0, 0, 1, 0, -120)",
+    "matrix(1, 0, 0, 1, 0, -120)",
+    "matrix(1, 0, 0, 1, 0, -120)",
+    "matrix(1, 0, 0, 1, 0, -120)",
+    "matrix(1, 0, 0, 1, 0, -120)",
+    "matrix(1, 0, 0, 1, 0, -120)",
+    "none",
+    "none",
+    "none",
+    "none"
+   ]
+  },
+  {
+   "ms": 1505,
+   "real": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    6,
+    6,
+    6,
+    6
+   ],
+   "tf": [
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "none",
+    "none",
+    "none",
+    "none"
+   ]
+  },
+  {
+   "ms": 3012,
+   "real": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    6,
+    6,
+    6,
+    6
+   ],
+   "tf": [
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "matrix(1, 0, 0, 1, 0, -160)",
+    "none",
+    "none",
+    "none",
+    "none"
+   ]
+  },
+  {
+   "ms": 4512,
+   "real": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    6,
+    6,
+    6,
+    6
+   ],
+   "tf": [
+    "matrix(1, 0, 0, 1, 0, -48.1914)",
+    "matrix(1, 0, 0, 1, 0, -47.5581)",
+    "matrix(1, 0, 0, 1, 0, -47.5581)",
+    "matrix(1, 0, 0, 1, 0, -47.5581)",
+    "matrix(1, 0, 0, 1, 0, -47.5581)",
+    "matrix(1, 0, 0, 1, 0, -47.5581)",
+    "matrix(1, 0, 0, 1, 0, -47.5581)",
+    "matrix(1, 0, 0, 1, 0, -47.5581)",
+    "none",
+    "none",
+    "none",
+    "none"
+   ]
+  },
+  {
+   "ms": 6014,
+   "real": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    6,
+    6,
+    6,
+    6
+   ],
+   "tf": [
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "none",
+    "none",
+    "none",
+    "none"
+   ]
+  },
+  {
+   "ms": 7515,
+   "real": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    6,
+    6,
+    6,
+    6
+   ],
+   "tf": [
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "matrix(1, 0, 0, 1, 0, -80)",
+    "none",
+    "none",
+    "none",
+    "none"
+   ]
+  },
+  {
+   "ms": 9001,
+   "real": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    6,
+    6,
+    6,
+    6
+   ],
+   "tf": [
+    "matrix(1, 0, 0, 1, 0, -105.123)",
+    "matrix(1, 0, 0, 1, 0, -105.123)",
+    "matrix(1, 0, 0, 1, 0, -105.123)",
+    "matrix(1, 0, 0, 1, 0, -105.123)",
+    "matrix(1, 0, 0, 1, 0, -105.123)",
+    "matrix(1, 0, 0, 1, 0, -105.123)",
+    "matrix(1, 0, 0, 1, 0, -105.123)",
+    "matrix(1, 0, 0, 1, 0, -105.123)",
+    "none",
+    "none",
+    "none",
+    "none"
+   ]
+  }
+ ]
+}

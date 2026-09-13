@@ -1,0 +1,984 @@
+{
+ "url": "https://www.seniorweb.cn/",
+ "rows": [
+  {
+   "y": 200,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": 818,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": 818,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": 872,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 1964,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 1964,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 2031,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 300,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": 718,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": 718,
+       "inline": "clip-path: inset(0px 84% 0px 0px);",
+       "clip": "inset(0px 84% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": 772,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 1864,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 1864,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 1931,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 400,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": 618,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": 618,
+       "inline": "clip-path: inset(0px 34% 0px 0px);",
+       "clip": "inset(0px 34% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": 672,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 1764,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 1764,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 1831,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 500,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": 518,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": 518,
+       "inline": "clip-path: inset(0px -16% 0px 0px);",
+       "clip": "inset(0px -16% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": 572,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 1664,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 1664,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 1731,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 600,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": 418,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": 418,
+       "inline": "clip-path: inset(0px -66% 0px 0px);",
+       "clip": "inset(0px -66% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": 472,
+       "inline": "clip-path: inset(0px 61% 0px 0px);",
+       "clip": "inset(0px 61% 0px 0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 1564,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 1564,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 1631,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 700,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": 318,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": 318,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": 372,
+       "inline": "clip-path: inset(0px 11% 0px 0px);",
+       "clip": "inset(0px 11% 0px 0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 1464,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 1464,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 1531,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 800,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": 218,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": 218,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": 272,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 1364,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 1364,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 1431,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 900,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": 118,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": 118,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": 172,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 1264,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 1264,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 1331,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 1000,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": 18,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": 18,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": 72,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 1164,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 1164,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 1231,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 1100,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": -82,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": -82,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": -28,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 1064,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 1064,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 1131,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 1200,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": -182,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": -182,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": -128,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 964,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 964,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 1031,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 1300,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": -282,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": -282,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": -228,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 864,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 864,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 931,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 1400,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": -382,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": -382,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": -328,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init",
+     "aosState": "init",
+     "containerOffsetTop": 2164,
+     "containerRectTop": 764,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2164,
+       "rectTop": 764,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2231,
+       "rectTop": 831,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 1500,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": -482,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": -482,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": -428,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 2114.65,
+     "containerRectTop": 615,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2114.65,
+       "rectTop": 615,
+       "inline": "clip-path: inset(0px 57% 0px 0px);",
+       "clip": "inset(0px 57% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2181.65,
+       "rectTop": 682,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 1600,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": -582,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": -582,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": -528,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 2110.74,
+     "containerRectTop": 511,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2110.74,
+       "rectTop": 511,
+       "inline": "clip-path: inset(0px -17.7664% 0px 0px);",
+       "clip": "inset(0px -17.7664% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2177.74,
+       "rectTop": 578,
+       "inline": "clip-path: inset(0px 100% 0px 0px);",
+       "clip": "inset(0px 100% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 1700,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": -682,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": -682,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": -628,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 2113.7,
+     "containerRectTop": 414,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2113.7,
+       "rectTop": 414,
+       "inline": "clip-path: inset(0px -69.6058% 0px 0px);",
+       "clip": "inset(0px -69.6058% 0px 0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2180.7,
+       "rectTop": 481,
+       "inline": "clip-path: inset(0px 63.8942% 0px 0px);",
+       "clip": "inset(0px 63.8942% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 1800,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": -782,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": -782,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": -728,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 2111.7,
+     "containerRectTop": 312,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2111.7,
+       "rectTop": 312,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2178.7,
+       "rectTop": 379,
+       "inline": "clip-path: inset(0px 15.35% 0px 0px);",
+       "clip": "inset(0px 15.35% 0px 0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 1900,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": -882,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": -882,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": -828,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 2109.7,
+     "containerRectTop": 210,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2109.7,
+       "rectTop": 210,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2176.7,
+       "rectTop": 277,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "y": 2000,
+   "res": [
+    {
+     "cls": "title public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 1018,
+     "containerRectTop": -982,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 1018,
+       "rectTop": -982,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 1072,
+       "rectTop": -928,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    },
+    {
+     "cls": "blue public_text aos-init aos-animate",
+     "aosState": "animate",
+     "containerOffsetTop": 2107.7,
+     "containerRectTop": 108,
+     "containerInline": null,
+     "paras": [
+      {
+       "i": 0,
+       "offsetTop": 2107.7,
+       "rectTop": 108,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      },
+      {
+       "i": 1,
+       "offsetTop": 2174.7,
+       "rectTop": 175,
+       "inline": "clip-path: inset(0px);",
+       "clip": "inset(0px)"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "initial": [
+  {
+   "cls": "title public_text aos-init aos-animate",
+   "containerOffsetTop": 1018.0000000000001
+  },
+  {
+   "cls": "blue public_text aos-init",
+   "containerOffsetTop": 2164
+  }
+ ]
+}
