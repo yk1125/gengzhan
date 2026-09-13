@@ -8,3 +8,5 @@
 - 动态素材：`/yunzhan-hero.mp4`，用途首页首屏背景；失败退路为 video 元素底色与文本 CTA；版权/来源为项目现有素材，未做媒体 hash 登记。
 - 验证：未能运行 build/lint（worktree 缺 node_modules，vite 不可用）；需集成环境执行桌面/手机、中英、亮暗主题检查。
 - 公共缺口给 A：导航随滚动显隐、GSAP 光标/磁吸按钮应在公共 Header/交互能力统一实现；Home 仅提供 hover 与显影降级。
+
+- 追加修复：参考站 CDN 客户图标使用 jun_1—jun_24，三张精选卡片补充动态视频背景与 hover 缩放；Vite build 通过（仅陈旧 browserslist/postcss 提示）。
