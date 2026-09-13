@@ -1,0 +1,447 @@
+{
+ "mode": "ptdetail",
+ "meta": {
+  "viewport": {
+   "w": 1440,
+   "h": 900
+  },
+  "dpr": 1,
+  "logs": [
+   "error: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+   "warning: WARNING: Multiple instances of Three.js being imported.",
+   "warning: Requires GSAP 3.11.0 or later",
+   "error: Access to script at 'https://cdn.skypack.dev/-/simplex-noise@v3.0.0-QZKKNQBJ0SAYmmGTd1Dg/dist=es2019,mode=imports/optimized/simplex-noise.js' from origin 'https://www.seniorweb.cn' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+   "error: Failed to load resource: net::ERR_FAILED"
+  ]
+ },
+ "items": [
+  {
+   "cls": "title public_text aos-init aos-animate",
+   "section": "index1",
+   "dataSpeed": null,
+   "containerOffsetTop": 1018.0000000000001,
+   "paras": [
+    {
+     "i": 0,
+     "text": "18年来",
+     "jqOffsetTop": 1018.0000000000001,
+     "offsetTop": 0,
+     "position": "static",
+     "cssTop": "auto",
+     "clip": "inset(0px 100% 0px 0px)"
+    },
+    {
+     "i": 1,
+     "text": "山久只专注数字化品牌",
+     "jqOffsetTop": 1072,
+     "offsetTop": 54,
+     "position": "static",
+     "cssTop": "auto",
+     "clip": "inset(0px 100% 0px 0px)"
+    }
+   ],
+   "pCountAll": 4,
+   "len": 2
+  },
+  {
+   "cls": "title public_text sj_text",
+   "section": "index1",
+   "dataSpeed": null,
+   "containerOffsetTop": 0,
+   "paras": [],
+   "pCountAll": 0,
+   "len": 0
+  },
+  {
+   "cls": "blue public_text aos-init",
+   "section": "index2",
+   "dataSpeed": null,
+   "containerOffsetTop": 2164,
+   "paras": [
+    {
+     "i": 0,
+     "text": "致力于将每一个作品",
+     "jqOffsetTop": 2164,
+     "offsetTop": 0,
+     "position": "static",
+     "cssTop": "auto",
+     "clip": "inset(0px 100% 0px 0px)"
+    },
+    {
+     "i": 1,
+     "text": "塑造成行业典范",
+     "jqOffsetTop": 2231,
+     "offsetTop": 67,
+     "position": "static",
+     "cssTop": "auto",
+     "clip": "inset(0px 100% 0px 0px)"
+    }
+   ],
+   "pCountAll": 4,
+   "len": 2
+  },
+  {
+   "cls": "blue public_text sj_text",
+   "section": "index2",
+   "dataSpeed": null,
+   "containerOffsetTop": 0,
+   "paras": [],
+   "pCountAll": 2,
+   "len": 0
+  },
+  {
+   "cls": "title public_text aos-init aos-animate",
+   "section": "index3",
+   "dataSpeed": null,
+   "containerOffsetTop": 0,
+   "paras": [
+    {
+     "i": 0,
+     "text": "三大核心定制化服务",
+     "jqOffsetTop": 0,
+     "offsetTop": 0,
+     "position": "static",
+     "cssTop": "auto",
+     "clip": "inset(0px)"
+    },
+    {
+     "i": 1,
+     "text": "致力于高效解决企业数",
+     "jqOffsetTop": 0,
+     "offsetTop": 0,
+     "position": "static",
+     "cssTop": "auto",
+     "clip": "inset(0px)"
+    }
+   ],
+   "pCountAll": 4,
+   "len": 2
+  },
+  {
+   "cls": "title public_text sj_text",
+   "section": "index3",
+   "dataSpeed": null,
+   "containerOffsetTop": 0,
+   "paras": [],
+   "pCountAll": 0,
+   "len": 0
+  }
+ ],
+ "sweep": [
+  {
+   "y": 268,
+   "dy": 0,
+   "clips": [
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 318,
+   "dy": 50,
+   "clips": [
+    [
+     "inset(0px 75% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 368,
+   "dy": 100,
+   "clips": [
+    [
+     "inset(0px 50% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 418,
+   "dy": 150,
+   "clips": [
+    [
+     "inset(0px 25% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 468,
+   "dy": 200,
+   "clips": [
+    [
+     "inset(0px 0% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 518,
+   "dy": 250,
+   "clips": [
+    [
+     "inset(0px -25% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 568,
+   "dy": 300,
+   "clips": [
+    [
+     "inset(0px -50% 0px 0px)",
+     "inset(0px 77% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 618,
+   "dy": 350,
+   "clips": [
+    [
+     "inset(0px -75% 0px 0px)",
+     "inset(0px 52% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 668,
+   "dy": 400,
+   "clips": [
+    [
+     "inset(0px)",
+     "inset(0px 27% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 718,
+   "dy": 450,
+   "clips": [
+    [
+     "inset(0px)",
+     "inset(0px 2% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 768,
+   "dy": 500,
+   "clips": [
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 818,
+   "dy": 550,
+   "clips": [
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 868,
+   "dy": 600,
+   "clips": [
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 968,
+   "dy": 700,
+   "clips": [
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  },
+  {
+   "y": 1068,
+   "dy": 800,
+   "clips": [
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    [],
+    [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    [],
+    [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    []
+   ]
+  }
+ ]
+}

@@ -1,0 +1,340 @@
+/* T00R 动效复现 demo —— 占位内容，与产品代码完全解耦。
+   数值来源见 ../SPEC.md，每条规则注明对应编号。 */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font: 400 16px/1.6 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  color: #111; background: #F2F1E4;
+}
+
+/* ---------- M-01 惯性滚动容器 ---------- */
+#scroller { position: fixed; inset: 0; overflow: hidden; }
+#content { will-change: transform; }
+/* 手机（≤1024px）：destroyAll → 恢复原生滚动 */
+body.native-scroll #scroller { position: static; overflow: visible; height: auto; }
+body.native-scroll #content { transform: none !important; }
+
+/* ---------- M-03 / M-04 / M-05 / M-06 页头 ---------- */
+.header {
+  position: fixed; top: 0; left: 0; width: 100%; height: 65px; z-index: 9999;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; background: transparent;
+  transition: .6s;                                   /* M-04 时长 */
+}
+.header .l { display: flex; align-items: center; gap: 32px; }
+.header .logo { font-weight: 700; letter-spacing: 1px; }
+.header .nav { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
+.header .nav a { color: inherit; text-decoration: none; }
+.header.on { background: #F2F1E4; }                  /* M-04 */
+.header.on .l .nav li a, .header.on .r .sun { color: #000; }
+.header.hide { transform: translateY(-100%); }       /* M-05 */
+.header.undertone { border-bottom: 1px solid #DDDCCE; background: #F2F1E4; } /* M-06 */
+
+.animated { animation-duration: 1s; animation-fill-mode: both; }             /* M-03 */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translate3d(0, -100%, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.fadeInDown { animation-name: fadeInDown; }
+
+/* ---------- M-08 首屏 ---------- */
+.banner { height: 100vh; position: relative; overflow: hidden; background: #DEDEDE; }
+.banner .parallax { position: absolute; inset: 0; }
+.banner .parallax-inner {
+  height: 100%; display: flex; align-items: center; justify-content: center;
+  background: repeating-linear-gradient(90deg, #cfcfcf 0 40px, #dedede 40px 80px);
+  font-size: 18px; color: #555; text-align: center; padding: 0 20px;
+}
+
+/* ---------- 通用 section ---------- */
+section { position: relative; }
+.index1 { padding: 120px 24px; min-height: 100vh; }
+.index1 h1 { font-size: 44px; margin: 0 0 8px; }
+.index1 > p { font-size: 20px; color: #555; margin: 0 0 60px; }
+
+/* M-10 逐字 */
+.each_animate div { transition: 1s; }                 /* 时长 1s（未写属性名 → all 1s ease） */
+.each_animate.on div { opacity: 1 !important; transform: translateX(0) !important; }
+
+/* M-26 headline */
+.headline { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+.index1 .wrap .content .headline .line,
+.headline .line {
+  flex: 1; height: 1px; background: #ADADAD;
+  transform: scaleX(0); transition: 2s; transform-origin: left;
+}
+.headline.aos-animate .line { transform: scaleX(1); }
+
+/* M-13 public_text */
+.public_text { position: relative; }
+.public_text .p p { width: fit-content; margin: 0 0 4px; font-size: 40px; }
+.public_text .p:first-child { position: relative; z-index: 55; }
+.public_text .p:not(:first-child) {
+  position: absolute; top: 0; left: 0; color: rgba(0, 0, 0, 0.2); z-index: 5;
+}
+.public_text.sj_text { display: none; }
+.index2 .blue.public_text .p p { color: #184DC4; }
+.index2 .blue.public_text .p:not(:first-child) { color: rgba(24, 77, 196, 0.2); }
+
+/* ---------- M-12 index2 双列 ---------- */
+.index2 { padding: 120px 24px; }
+.index2 .wrap { display: flex; gap: 40px; }
+.index2 .fist { flex: 1; }
+.index2 .flex { margin-bottom: 40px; }
+.index2 .item { background: #E7E5D6; border: 1px solid #DDDCCE; border-radius: 6px; padding: 24px; }
+.index2 .blue.public_text { margin-top: 80px; }
+
+/* ---------- M-14 / M-15 index3 服务切换 ---------- */
+.index3 { padding: 120px 24px; background: #EDEBDF; }
+.index3 .content { display: flex; gap: 60px; }
+.index3 .l { position: relative; width: 420px; flex: none; }
+.index3 .l .move {
+  width: 100%; height: 152px;                        /* 参考站 800×189，此处按演示宽度等比缩为 152 */
+  border: 1px solid rgba(193, 192, 180, 0.97);
+  position: absolute; top: 0; left: 0; border-radius: 5px;
+  pointer-events: none; transition: all 0.4s; z-index: 2;
+}
+.index3 .l .move:after {
+  content: ''; position: absolute; width: 5px; height: 61px; left: -5px; top: 50%;
+  transform: translateY(-50%); background: #184DC4;
+  box-shadow: 10px 0 17px 0 rgba(24, 77, 196, 0.8); transition: all 0.6s;
+}
+.index3 .item { width: 100%; border-radius: 5px; padding: 22px 30px; transition: .6s; cursor: pointer; height: 152px; }
+.index3 .item .attr { position: relative; overflow: hidden; height: 30px; }
+.index3 .item .attr p { margin: 0; transition: .6s; }
+.index3 .item .attr:after {
+  content: attr(data-text); position: absolute; left: 0; top: 0;
+  transform: translateY(100%); transition: .6s;
+}
+.index3 .item.on .attr p { transform: translateY(-100%); }
+.index3 .item.on .attr:after { transform: translateY(0); }
+.index3 .item .blue { color: #888; transition: .6s; }
+.index3 .item .h1 { font-size: 22px; font-weight: 600; }
+.index3 .item .text { opacity: 0; transition: .6s; font-size: 14px; }
+.index3 .item.on .text { opacity: 1; }
+.index3 .item.on .blue { color: #184DC4; }
+.index3 .r { flex: 1; }
+.index3 .slot {
+  height: 300px; display: none; align-items: center; justify-content: center;
+  background: #184DC4; color: #fff; border-radius: 6px; font-size: 20px;
+  transition: opacity .6s;
+}
+.index3 .slot.on { display: flex; }
+
+/* ---------- M-18 ~ M-22 index4 ---------- */
+.index4 { position: relative; height: 100vh; overflow: hidden; }
+.index4 .fix { height: 100vh; position: relative; }
+/* index.css:641-650 亮色主题 opacity: 0（不可见）；
+   只有暗色 body#Pattern 才在 pattern.css:2409-2411 提到 opacity: 1。 */
+.index4 .fix:after {
+  content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.3); opacity: 0; z-index: 3;
+}
+.index4 .bg {
+  position: absolute; width: 100%; top: 0; left: 0; z-index: -1; height: 1500px;
+  background: linear-gradient(160deg, #2b3038 0%, #4d545e 40%, #8d949c 100%);
+}
+.index4 .mask {
+  position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1;
+  transform: scale(1.05);
+  animation: 10s mask_ cubic-bezier(0.79, 0.06, 0.33, 0.94) forwards;
+  animation-play-state: paused;
+}
+@keyframes mask_ { 0% { transform: scale(1.05); } 100% { transform: scale(300); } }
+.index4 .text {
+  font-weight: 400; font-size: 44px; color: #fff; text-align: center;
+  position: absolute; left: 50%; top: 57%; transform: translate(-50%, -50%);
+  pointer-events: none; white-space: nowrap; z-index: 5;
+}
+.index4 .text > div:nth-child(2) { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+.index4 .text p { margin: 0; }
+
+/* ---------- M-24 AOS ---------- */
+body [data-aos] { transition-duration: 1.5s; transition-timing-function: cubic-bezier(.175, .885, .32, 1.275); }
+[data-aos^="fade"] { opacity: 0; transition-property: all; }
+[data-aos^="fade"].aos-animate { opacity: 1; }
+[data-aos="fade-top"] { transform: translate(0, 50px); }
+[data-aos="fade-top"].aos-animate { transform: translate(0, 0); }
+[data-aos-delay="100"].aos-animate { transition-delay: .1s; }
+[data-aos-delay="200"].aos-animate { transition-delay: .2s; }
+
+/* ---------- M-32 fixed_side ---------- */
+.fixed_side {
+  position: fixed; right: 10px; bottom: 150px; z-index: 9999; width: 57px;
+  background: #fff; border-radius: 29px; border: 1px solid #D7D7D7;
+  padding: 5px 0 10px; opacity: 0; pointer-events: none; transition: .6s;
+  text-align: center;
+}
+.fixed_side.on { opacity: 1; pointer-events: auto; }
+.fixed_side .item { cursor: pointer; font-size: 12px; padding: 8px 0; }
+
+/* ---------- M-27 / M-28 自定义光标 ---------- */
+.fixed_cursor {
+  position: fixed; top: 0; left: 0; z-index: 99999; pointer-events: none;
+  transition: .6s; transition-delay: .6s; mix-blend-mode: exclusion;
+}
+.fixed_cursor .cursor { opacity: 0; pointer-events: none; transition: opacity .3s; }
+body:hover .fixed_cursor .cursor { opacity: 1; }
+.fixed_cursor .cursor .whole {
+  position: relative; width: 20px; height: 20px; display: flex;
+  align-items: center; justify-content: center; transition: .3s;
+}
+.fixed_cursor .cursor .whole:after {
+  content: ''; position: absolute; width: 100%; height: 100%;
+  border-radius: 50%; background-color: #fff; transition: all .25s ease-out;
+}
+.fixed_cursor .cursor .whole:before {
+  content: ''; position: absolute; width: 120%; height: 120%; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0); border-radius: 50%;
+  border: 1px solid #ece9e8; opacity: 0; transition: all .3s;
+}
+.fixed_cursor .cursor .whole .bor {
+  width: 200%; height: 200%; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.2); border-radius: 50%;
+  border: 1px solid #ece9e8; opacity: .3; transition: ease .5s;
+}
+.fixed_cursor .cursor .whole .bor.on { transform: translate(-50%, -50%) scale(1); }
+.fixed_cursor .cursor .whole .bor.hide { opacity: 0; }
+.fixed_cursor .cursor .whole.on:after { transform: scale(0.5); }
+.fixed_cursor .cursor .whole.on:before { opacity: .3; transform: translate(-50%, -50%) scale(1); }
+
+/* ---------- M-30 磁吸 / footer ---------- */
+.index5 { padding: 120px 24px 200px; text-align: center; }
+.index5 .spacer { height: 60px; }
+.footer-circle {
+  width: 134px; height: 134px; margin: 24px auto; border-radius: 50%;
+  background: #fff; border: 1px solid #D7D7D7; display: flex;
+  align-items: center; justify-content: center; cursor: pointer;
+  position: relative;
+}
+.footer-circle:before {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: #184DC4; opacity: 0; transition: all .4s; z-index: -1;
+}
+.footer-circle:hover:before { filter: blur(10px); transform: scale(1.1); opacity: 1; }
+
+/* ---------- 移动端 ≤1024px 降级（对照 SPEC 各条） ---------- */
+@media screen and (max-width: 1024px) {
+  .header { height: 60px; }
+  .header .nav { display: none; }                    /* nav 隐藏（手机菜单取代） */
+  .fixed_cursor { display: none; }                   /* M-27 */
+  .fixed_side { display: none !important; }          /* M-32 */
+  .public_text { display: none !important; }         /* M-13 */
+  .public_text.sj_text { display: block !important; font-size: 20px; line-height: 1.8; color: #184DC4; }
+  .index3 { display: none; }                         /* 参考站首页 ≤1024 整体隐藏（D-03） */
+  .index4 { height: auto !important; }
+  .index4 .fix { height: auto; transform: none !important; }
+  .index4 .mask { display: none; }                   /* M-19 */
+  .index4 .bg { position: static; transform: none !important; min-height: 357px; height: 357px; }
+  .index4 .text { position: static; transform: none !important; font-size: 17px; white-space: normal; }
+  .index4 .text > div { opacity: 1 !important; }
+  .index4 .text > div:nth-child(2) { position: static; transform: none; }
+  .index4 .text p { opacity: 1 !important; }
+}
+
+
+/* ---------- M-29 光标 .cut 变形态（sources/style.css:1129-1240） ---------- */
+.fixed_cursor .cursor .content_pro {
+  width: 100%; height: 100%; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0; transition: ease .3s; z-index: 1;
+}
+.fixed_cursor .cursor .content_pro:after {
+  content: ''; position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+  border-radius: 50%; background: #184DC4; z-index: -1;
+  filter: blur(10px); transform: scale(1.1);
+}
+.fixed_cursor .cursor .content_pro .cir {
+  position: absolute; width: 114px; height: 114px; inset: 0; margin: auto;
+  pointer-events: none; animation: ants 10s linear infinite;
+  border: 1px dashed rgba(255, 255, 255, .55); border-radius: 50%;
+}
+.fixed_cursor .cursor .content_pro .text .end { transform: translateY(-3px); text-align: right; }
+.fixed_cursor .cursor .content_pro .text .end p { font-weight: bold; font-size: 13px; color: #FF8000; margin: 0; }
+.fixed_cursor .cursor .content_pro .text .end .overflow {
+  width: 22px; height: 22px; display: flex; justify-content: center; align-items: center;
+  overflow: hidden; margin: 14px 0 0 31px;
+}
+.fixed_cursor .cursor .content_pro .text .end .iconfont {
+  color: #fff; font-size: 16px !important; font-weight: bold !important;
+  text-align: right; position: relative; left: 5px; animation: arrowRun 5s infinite;
+}
+.fixed_cursor.cut .whole { opacity: 0; transform: scale(0); }
+.fixed_cursor.cut .content_pro { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+.fixed_cursor.fixed_cursor2 { mix-blend-mode: unset; }
+.fixed_cursor.fixed_cursor2 .cursor { width: 134px; height: 134px; }
+
+/* ---------- M-31 footer 圆形按钮 + 持续动画（sources/style.css:819-903） ---------- */
+footer .position_circle { width: 134px; height: 134px; margin: 35px auto 0; }
+footer .position_circle .circle {
+  width: 100%; height: 100%; margin: 18px auto 0; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; cursor: pointer;
+}
+footer .position_circle .circle:before {
+  content: ''; background: #184DC4; position: absolute; width: 100%; height: 100%;
+  top: 0; left: 0; z-index: -1; border-radius: 50%; transition: all .4s;
+}
+footer .position_circle .circle .cir {
+  position: absolute; width: 114px; height: 114px; inset: 0; margin: auto;
+  pointer-events: none; transition: all .4s;
+}
+/* 参考站是 .cir img 承载 ants；本 demo 不下载任何素材，用纯 CSS 圆环代替，
+   因此把同一条 animation 直接挂在 .cir 上（数值不变：10s linear infinite）。 */
+footer .position_circle .circle .cir { animation: ants 10s linear infinite; }
+footer .position_circle .circle .cir img { width: 100%; height: 100%; animation: ants 10s linear infinite; }
+footer .position_circle .circle .text { display: flex; align-items: center; position: relative; left: 3px; }
+footer .position_circle .circle .text p {
+  font-size: 15px; color: #FF8000; line-height: 25px; margin: 0 7px 0 0; font-weight: 600;
+}
+footer .position_circle .circle .text .overflow {
+  width: 16px; height: 16px; display: flex; justify-content: center; align-items: center; overflow: hidden;
+}
+footer .position_circle .circle .text .iconfont {
+  color: #FF770F; font-size: 13px !important; font-weight: bold !important; animation: arrowRun 5s infinite;
+}
+footer .position_circle .circle:hover::before { filter: blur(10px); transform: scale(1.1); }
+
+/* ---------- M-17 .canvas_alert（sources/home.html:2059-2123） ---------- */
+.canvas_alert {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 99999;
+  display: none; align-items: center; justify-content: center;
+  pointer-events: none; opacity: 0; transition-delay: .7s;
+}
+.canvas_alert.on { opacity: 1; pointer-events: auto; }
+.canvas_alert .mask {
+  position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+  background: rgba(24, 77, 196, 0.3); z-index: 1; opacity: 0; transition: .3s;
+}
+.canvas_alert.on .mask { opacity: 1; transition-delay: 1.2s; }
+.canvas_alert .content { position: relative; z-index: 6; }
+.canvas_alert .content .matter:not(:first-child) { position: absolute; top: 0; left: 0; }
+.canvas_alert .content .matter {
+  width: 640px; height: 360px; background: #FFFFFF; border-radius: 20px;
+  position: relative; display: flex; align-items: center; justify-content: center;
+  text-align: center; padding: 0 68px; border-top: 5px solid #184DC4;
+  pointer-events: none; opacity: 0; transition: 1s; transform: translateY(20px);
+}
+.canvas_alert .content .matter.on { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.canvas_alert .content .matter h1 { font-size: 26px; margin: 0 0 12px; }
+.canvas_alert .content .matter .close {
+  position: absolute; right: 24px; top: 20px; cursor: pointer; font-size: 20px; line-height: 1;
+}
+
+/* ---------- M-29 hover 触发区 ---------- */
+.public_hover .item { margin-bottom: 12px; }
+.public_hover .item .img {
+  height: 120px; display: flex; align-items: center; justify-content: center;
+  background: #E7E5D6; border: 1px solid #DDDCCE; border-radius: 6px; cursor: pointer;
+}
+
+@keyframes ants { to { transform: rotate(360deg); } }
+@keyframes arrowRun {
+  0%    { transform: translate3d(0%, 0%, 0px); }
+  7%    { transform: translate3d(150%, -150%, 0px); }
+  7.1%  { transform: translate3d(-150%, 150%, 0px); }
+  14%   { transform: translate3d(0%, 0%, 0px); }
+  100%  { transform: translate3d(0%, 0%, 0px); }
+}

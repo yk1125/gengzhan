@@ -1,0 +1,84 @@
+{
+  "counts": {
+    "public_hover": 4,
+    "item_hover": 0,
+    "public_hover_img": 14,
+    "magnetic": 0,
+    "hover_button": 1,
+    "headline": 1,
+    "aos_in_index5": 12,
+    "aos_attr_values": [
+      "fade-top",
+      ""
+    ],
+    "aos_delay_values": [
+      null,
+      "200",
+      "100"
+    ]
+  },
+  "headline": {
+    "cls": "headline aos-init aos-animate",
+    "lineTf": "matrix(1, 0, 0, 1, 0, 0)",
+    "lineDur": "2s",
+    "lineOrigin": "0px 0.5px",
+    "lineBg": "rgb(173, 173, 173)",
+    "lineH": "1px"
+  },
+  "parallaxBanner": "none",
+  "fixAfter": {
+    "opacity": "1",
+    "bg": "rgba(0, 0, 0, 0.3)"
+  },
+  "magnetic": [
+    {
+      "tag": "magnetic-rest",
+      "s": {
+        "style": null,
+        "tf": "none"
+      }
+    },
+    {
+      "tag": "magnetic-br-150ms",
+      "s": {
+        "style": "transform: translate3d(11.4066px, 11.383px, 0px);",
+        "tf": "matrix(1, 0, 0, 1, 11.4066, 11.383)"
+      }
+    },
+    {
+      "tag": "magnetic-br-500ms",
+      "s": {
+        "style": "transform: translate3d(19.2865px, 19.2571px, 0px);",
+        "tf": "matrix(1, 0, 0, 1, 19.2865, 19.2571)"
+      }
+    },
+    {
+      "tag": "magnetic-br-1200ms",
+      "s": {
+        "style": "transform: translate3d(19.9612px, 19.9314px, 0px);",
+        "tf": "matrix(1, 0, 0, 1, 19.9612, 19.9314)"
+      }
+    },
+    {
+      "tag": "magnetic-tl-1200ms",
+      "s": {
+        "style": "transform: translate(-20.1351px, -20.1648px);",
+        "tf": "matrix(1, 0, 0, 1, -20.1351, -20.1648)"
+      }
+    },
+    {
+      "tag": "magnetic-out-200ms",
+      "s": {
+        "style": "transform: translate3d(-6.3541px, -6.3635px, 0px);",
+        "tf": "matrix(1, 0, 0, 1, -6.3541, -6.3635)"
+      }
+    },
+    {
+      "tag": "magnetic-out-1500ms",
+      "s": {
+        "style": "transform: translate(0px, 0px);",
+        "tf": "matrix(1, 0, 0, 1, 0, 0)"
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="none">
+  <!-- 占位遮罩图：黑色面板 + 三条竖向透明开槽。
+       几何来自参考站截图测量（frames/index4/index4-030.png 实测中槽 x 569-870 @ scale 35.5621
+       → 反推 base 宽度 ≈8.5px、中心 719.5），左右槽中心对称于 719.5 ±96px。
+       详见 ../SPEC.md M-19 与 ../GAPS.md G-06。 -->
+  <path fill="#000" fill-rule="evenodd" d="M0,0 H1440 V900 H0 Z
+    M619.5,0 h8 v900 h-8 Z
+    M715.5,0 h8 v900 h-8 Z
+    M811.5,0 h8 v900 h-8 Z"/>
+</svg>

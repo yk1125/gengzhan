@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T00R 动效复现 demo（参考站首页）| 占位内容，与产品代码完全解耦</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- M-01 自定义惯性滚动容器（对应参考站 #my-scrollbar > .scroll-content） -->
+<div id="scroller">
+  <div id="content">
+
+    <!-- M-03 / M-04 / M-05 / M-06 页头 -->
+    <header class="header" id="header">
+      <div class="l">
+        <div class="logo">PLACEHOLDER</div>
+        <ul class="nav">
+          <li><a href="#">导航一</a></li>
+          <li><a href="#">导航二</a></li>
+          <li><a href="#">导航三</a></li>
+          <li><a href="#">导航四</a></li>
+        </ul>
+      </div>
+      <div class="r"><span class="sun">☀</span></div>
+    </header>
+
+    <!-- M-08 首屏 -->
+    <section class="banner">
+      <div class="parallax">
+        <div class="parallax-inner">BANNER PLACEHOLDER（M-08：位移 = scrollTop × 0.9，满一屏后 display:none）</div>
+      </div>
+    </section>
+
+    <!-- M-10 / M-13 / M-26 -->
+    <section class="index1">
+      <h1 class="each_animate">坚持长期主义</h1>
+      <p class="each_animate">专注于高端数字化网站建设</p>
+
+      <!-- M-26：参考站 home.html:2338 <div class="headline" aos> / :2340 <div class="line" aos>，
+           父级拿到 .aos-animate 后 index.css:259 把 .line 从 scaleX(0) 拉到 scaleX(1) -->
+      <div class="headline" data-aos><span>HEADLINE</span><div class="line" data-aos></div></div>
+
+      <div class="title public_text" data-aos="fade-top">
+        <div class="p">
+          <p><b>18</b>年来</p>
+          <p>只专注数字化品牌解决方案与视觉输出表现。</p>
+        </div>
+        <div class="p">
+          <p><b>18</b>年来</p>
+          <p>只专注数字化品牌解决方案与视觉输出表现。</p>
+        </div>
+      </div>
+      <div class="title public_text sj_text">18年来，只专注数字化品牌解决方案与视觉输出表现。</div>
+    </section>
+
+    <!-- M-12 双列视差 -->
+    <section class="index2">
+      <div class="wrap">
+        <div class="fist">
+          <div class="flex"><div class="item" style="height:1200px">左列 A（f1，系数 −0.02）</div></div>
+          <div class="flex"><div class="item" style="height:1200px">左列 B（f2，系数 +0.1）</div></div>
+        </div>
+        <div class="fist last">
+          <div class="flex"><div class="item" style="height:900px">右列 A（f3，系数 −0.02）</div></div>
+          <div class="flex"><div class="item" style="height:900px">右列 B（f4，系数 +0.1）</div></div>
+        </div>
+      </div>
+      <div class="blue public_text" data-aos="fade-top">
+        <div class="p"><p>致力于将每一个作品</p><p>塑造成行业典范</p></div>
+        <div class="p"><p>致力于将每一个作品</p><p>塑造成行业典范</p></div>
+      </div>
+      <div class="blue public_text sj_text">致力于将每一个作品，塑造成行业典范</div>
+    </section>
+
+    <!-- M-14 / M-15 服务切换 -->
+    <section class="index3">
+      <div class="wrap">
+        <div class="content">
+          <div class="l">
+            <div class="move"></div>
+            <div class="item on"><div class="blue">服务 01</div><div class="h1">品牌视觉设计</div><div class="text">占位描述文本，用于演示 .text 的 opacity 过渡。</div></div>
+            <div class="item"><div class="blue">服务 02</div><div class="h1">数字化网站建设</div><div class="text">占位描述文本，用于演示 .text 的 opacity 过渡。</div></div>
+            <div class="item"><div class="blue">服务 03</div><div class="h1">数字交互设计</div><div class="text">占位描述文本，用于演示 .text 的 opacity 过渡。</div></div>
+          </div>
+          <div class="r picture">
+            <div class="animate_video"><div class="slot _1_1 on">video 1_1</div><div class="slot _1_2">video 1_2</div><div class="slot _1_3">video 1_3</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- M-18 ~ M-22 品牌宣言 -->
+    <section class="index4">
+      <div class="fix" data-view="auto">
+        <div class="bg"></div>
+        <img class="mask" src="assets/mask.svg" alt="">
+        <div class="text">
+          <div data-view data-distance="4000" data-animate="1000" data-opacity="1,0">
+            <p data-view data-distance="3000" data-animate="1000" data-scale="0.9,1" data-opacity="0,1">历经多年，始终坚持以高品质、高水准设计交付项目</p>
+          </div>
+          <div data-view data-distance="6000" data-animate="1000" data-opacity="1,0">
+            <p data-view data-distance="5000" data-animate="1000" data-scale="0.9,1" data-opacity="0,1">这是创业至今及未来始终不变的宗旨</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- M-24 AOS 尾部 -->
+    <section class="index5">
+      <h1 data-aos="fade-top" data-aos-delay="100">品牌价值 CTA 占位</h1>
+      <p data-aos="fade-top" data-aos-delay="200">AOS 通用入场演示：1.5s + cubic-bezier(.175,.885,.32,1.275)</p>
+      <div class="spacer"></div>
+      <div class="footer-circle hover_button"><span>磁吸</span></div>
+      <p data-aos="fade-top">（M-30 磁吸按钮，鼠标移入会跟随偏移）</p>
+
+      <!-- M-29 `.cut` 触发区：参考站首页 .public_hover 4 个、.public_hover .item .img 14 个 -->
+      <div class="public_hover" data-aos="fade-top">
+        <div class="item"><div class="img">悬停此处 → 光标变 .cut</div></div>
+        <div class="item"><div class="img">悬停此处 → 光标变 .cut</div></div>
+      </div>
+    </section>
+
+    <!-- M-31 footer 圆形按钮（hover 发光） -->
+    <footer>
+      <div class="position_circle">
+        <div class="circle" id="circleBtn">
+          <div class="cir"></div>
+          <div class="text">
+            <p>探索更多</p>
+            <div class="overflow"><span class="iconfont">→</span></div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /#content -->
+</div><!-- /#scroller -->
+
+<!-- M-32 侧边浮动工具（参考站视觉上是视口固定） -->
+<div class="fixed_side" id="fixedSide">
+  <div class="item ClickTop" id="clickTop">TOP</div>
+</div>
+
+<!-- M-27 / M-28 自定义光标 -->
+<div class="fixed_cursor" id="fixedCursor">
+  <div class="cursor" data-speed="8">
+    <div class="whole"></div>
+    <!-- M-29：.cut 时 .whole 缩到 0，.content_pro 展开成 #184DC4 模糊圆盘 -->
+    <div class="content_pro">
+      <div class="cir"></div>
+      <div class="text"><div class="end"><p>探索更多</p><div class="overflow"><span class="iconfont">→</span></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- M-17 .canvas_alert 弹层链：.on（t+0）→ .matter.on（t+1200ms） -->
+<div class="canvas_alert" id="canvasAlert" style="display: none;">
+  <div class="mask"></div>
+  <div class="content">
+    <div class="matter" data-i="0"><h1>服务 01 · 品牌视觉设计</h1><p>占位内容</p><div class="close">×</div></div>
+    <div class="matter" data-i="1"><h1>服务 02 · 数字化网站建设</h1><p>占位内容</p><div class="close">×</div></div>
+    <div class="matter" data-i="2"><h1>服务 03 · 数字交互设计</h1><p>占位内容</p><div class="close">×</div></div>
+  </div>
+</div>
+
+<script src="js/motion.js"></script>
+</body>
+</html>

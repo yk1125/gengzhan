@@ -1,0 +1,194 @@
+{
+ "mode": "entry",
+ "meta": {
+  "logs": [
+   "error: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+   "warning: WARNING: Multiple instances of Three.js being imported.",
+   "warning: Requires GSAP 3.11.0 or later",
+   "error: Access to script at 'https://cdn.skypack.dev/-/simplex-noise@v3.0.0-QZKKNQBJ0SAYmmGTd1Dg/dist=es2019,mode=imports/optimized/simplex-noise.js' from origin 'https://www.seniorweb.cn' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+   "error: Failed to load resource: net::ERR_FAILED"
+  ]
+ },
+ "t": [
+  {
+   "want": 0,
+   "actual": 0,
+   "state": {
+    "bodyOpacity": "1",
+    "startMask": {
+     "display": "none",
+     "opacity": "1",
+     "z": "2147483647",
+     "transition": "all"
+    },
+    "bodyCanvasMask": null,
+    "scrollContent": {
+     "display": "block",
+     "opacity": "1",
+     "z": "auto",
+     "transition": "all"
+    },
+    "header": {
+     "display": "flex",
+     "opacity": "1",
+     "z": "9999",
+     "transition": "0.6s"
+    },
+    "eachAnimateOn": [
+     "each_animate on",
+     "each_animate on"
+    ]
+   }
+  },
+  {
+   "want": 100,
+   "actual": 109,
+   "state": {
+    "bodyOpacity": "1",
+    "startMask": {
+     "display": "none",
+     "opacity": "1",
+     "z": "2147483647",
+     "transition": "all"
+    },
+    "bodyCanvasMask": null,
+    "scrollContent": {
+     "display": "block",
+     "opacity": "1",
+     "z": "auto",
+     "transition": "all"
+    },
+    "header": {
+     "display": "flex",
+     "opacity": "1",
+     "z": "9999",
+     "transition": "0.6s"
+    },
+    "eachAnimateOn": [
+     "each_animate on",
+     "each_animate on"
+    ]
+   }
+  },
+  {
+   "want": 200,
+   "actual": 204,
+   "state": {
+    "bodyOpacity": "1",
+    "startMask": {
+     "display": "none",
+     "opacity": "1",
+     "z": "2147483647",
+     "transition": "all"
+    },
+    "bodyCanvasMask": null,
+    "scrollContent": {
+     "display": "block",
+     "opacity": "1",
+     "z": "auto",
+     "transition": "all"
+    },
+    "header": {
+     "display": "flex",
+     "opacity": "1",
+     "z": "9999",
+     "transition": "0.6s"
+    },
+    "eachAnimateOn": [
+     "each_animate on",
+     "each_animate on"
+    ]
+   }
+  },
+  {
+   "want": 400,
+   "actual": 415,
+   "state": {
+    "bodyOpacity": "1",
+    "startMask": {
+     "display": "none",
+     "opacity": "1",
+     "z": "2147483647",
+     "transition": "all"
+    },
+    "bodyCanvasMask": null,
+    "scrollContent": {
+     "display": "block",
+     "opacity": "1",
+     "z": "auto",
+     "transition": "all"
+    },
+    "header": {
+     "display": "flex",
+     "opacity": "1",
+     "z": "9999",
+     "transition": "0.6s"
+    },
+    "eachAnimateOn": [
+     "each_animate on",
+     "each_animate on"
+    ]
+   }
+  },
+  {
+   "want": 800,
+   "actual": 806,
+   "state": {
+    "bodyOpacity": "1",
+    "startMask": {
+     "display": "none",
+     "opacity": "1",
+     "z": "2147483647",
+     "transition": "all"
+    },
+    "bodyCanvasMask": null,
+    "scrollContent": {
+     "display": "block",
+     "opacity": "1",
+     "z": "auto",
+     "transition": "all"
+    },
+    "header": {
+     "display": "flex",
+     "opacity": "1",
+     "z": "9999",
+     "transition": "0.6s"
+    },
+    "eachAnimateOn": [
+     "each_animate on",
+     "each_animate on"
+    ]
+   }
+  },
+  {
+   "want": 1600,
+   "actual": 1604,
+   "state": {
+    "bodyOpacity": "1",
+    "startMask": {
+     "display": "none",
+     "opacity": "1",
+     "z": "2147483647",
+     "transition": "all"
+    },
+    "bodyCanvasMask": null,
+    "scrollContent": {
+     "display": "block",
+     "opacity": "1",
+     "z": "auto",
+     "transition": "all"
+    },
+    "header": {
+     "display": "flex",
+     "opacity": "1",
+     "z": "9999",
+     "transition": "0.6s"
+    },
+    "eachAnimateOn": [
+     "each_animate on",
+     "each_animate on"
+    ]
+   }
+  }
+ ]
+}

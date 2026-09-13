@@ -1,0 +1,377 @@
+{
+  "meta": {
+    "url": "https://www.seniorweb.cn/",
+    "viewport": {
+      "w": 1440,
+      "h": 900
+    },
+    "dpr": 1,
+    "mode": "index1swiper",
+    "forceLight": true,
+    "theme": "(light)",
+    "limit": 17365,
+    "logs": [
+      "error: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+      "warning: WARNING: Multiple instances of Three.js being imported.",
+      "warning: Requires GSAP 3.11.0 or later",
+      "error: Access to script at 'https://cdn.skypack.dev/-/simplex-noise@v3.0.0-QZKKNQBJ0SAYmmGTd1Dg/dist=es2019,mode=imports/optimized/simplex-noise.js' from origin 'https://www.seniorweb.cn' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+      "error: Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "ranges": {
+    "global": {
+      "start": 0,
+      "end": 17365
+    },
+    "clientHeight": 900,
+    "index1": {
+      "start": 900,
+      "end": 1985
+    },
+    "index2": {
+      "start": 1985,
+      "end": 7614,
+      "anchor1": 1685,
+      "anchor2": 4386
+    },
+    "index3": {
+      "start": 7614,
+      "end": 8514
+    },
+    "index4": {
+      "start": 8514,
+      "end": 15514,
+      "sectionTop": 8514,
+      "sectionH": 7900,
+      "nextTop": 16414
+    },
+    "index5": {
+      "start": 16414,
+      "end": 17656
+    },
+    "headerOnThreshold": 867.375,
+    "headerHeight": 65.25,
+    "publicText": [
+      {
+        "cls": "title public_text aos-init aos-animate",
+        "section": "index1",
+        "len": 2,
+        "dis": 200,
+        "all": 400,
+        "jqOffsetTop": 1018,
+        "start": 268,
+        "end": 668,
+        "ban": 200
+      },
+      {
+        "cls": "blue public_text aos-init",
+        "section": "index2",
+        "len": 2,
+        "dis": 200,
+        "all": 400,
+        "jqOffsetTop": 2164,
+        "start": 1414,
+        "end": 1814,
+        "ban": 200
+      }
+    ]
+  },
+  "samples": [
+    {
+      "label": "t0ms",
+      "actualMs": 87,
+      "state": {
+        "inline": [
+          {
+            "cls": "swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "数字化高端网站建设"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "品牌全案设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "UI/UX设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide swiper-slide-duplicate",
+            "t": "数字化高端网站建设"
+          }
+        ],
+        "wallWrapper0": {
+          "transform": "matrix(1, 0, 0, 1, 0, -160)",
+          "transitionDuration": ""
+        },
+        "wallCount": 72
+      }
+    },
+    {
+      "label": "t1200ms",
+      "actualMs": 1291,
+      "state": {
+        "inline": [
+          {
+            "cls": "swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "数字化高端网站建设"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "品牌全案设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "UI/UX设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide swiper-slide-duplicate",
+            "t": "数字化高端网站建设"
+          }
+        ],
+        "wallWrapper0": {
+          "transform": "matrix(1, 0, 0, 1, 0, -160)",
+          "transitionDuration": ""
+        },
+        "wallCount": 72
+      }
+    },
+    {
+      "label": "t2400ms",
+      "actualMs": 2507,
+      "state": {
+        "inline": [
+          {
+            "cls": "swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "数字化高端网站建设"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "品牌全案设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "UI/UX设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide swiper-slide-duplicate",
+            "t": "数字化高端网站建设"
+          }
+        ],
+        "wallWrapper0": {
+          "transform": "matrix(1, 0, 0, 1, 0, -160)",
+          "transitionDuration": ""
+        },
+        "wallCount": 72
+      }
+    },
+    {
+      "label": "t3600ms",
+      "actualMs": 3694,
+      "state": {
+        "inline": [
+          {
+            "cls": "swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "数字化高端网站建设"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "品牌全案设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "UI/UX设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide swiper-slide-duplicate",
+            "t": "数字化高端网站建设"
+          }
+        ],
+        "wallWrapper0": {
+          "transform": "matrix(1, 0, 0, 1, 0, -80)",
+          "transitionDuration": ""
+        },
+        "wallCount": 72
+      }
+    },
+    {
+      "label": "t4800ms",
+      "actualMs": 4920,
+      "state": {
+        "inline": [
+          {
+            "cls": "swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "数字化高端网站建设"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "品牌全案设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "UI/UX设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide swiper-slide-duplicate",
+            "t": "数字化高端网站建设"
+          }
+        ],
+        "wallWrapper0": {
+          "transform": "matrix(1, 0, 0, 1, 0, -80)",
+          "transitionDuration": ""
+        },
+        "wallCount": 72
+      }
+    },
+    {
+      "label": "t6000ms",
+      "actualMs": 6091,
+      "state": {
+        "inline": [
+          {
+            "cls": "swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "数字化高端网站建设"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "品牌全案设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "UI/UX设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide swiper-slide-duplicate",
+            "t": "数字化高端网站建设"
+          }
+        ],
+        "wallWrapper0": {
+          "transform": "matrix(1, 0, 0, 1, 0, -80)",
+          "transitionDuration": ""
+        },
+        "wallCount": 72
+      }
+    },
+    {
+      "label": "t7200ms",
+      "actualMs": 7283,
+      "state": {
+        "inline": [
+          {
+            "cls": "swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "数字化高端网站建设"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "品牌全案设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "UI/UX设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide swiper-slide-duplicate",
+            "t": "数字化高端网站建设"
+          }
+        ],
+        "wallWrapper0": {
+          "transform": "matrix(1, 0, 0, 1, 0, -112.987)",
+          "transitionDuration": ""
+        },
+        "wallCount": 72
+      }
+    },
+    {
+      "label": "t8400ms",
+      "actualMs": 8503,
+      "state": {
+        "inline": [
+          {
+            "cls": "swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "数字化高端网站建设"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "品牌全案设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "UI/UX设计"
+          },
+          {
+            "cls": "swiper-slide",
+            "t": "APP/小程序开发"
+          },
+          {
+            "cls": "swiper-slide swiper-slide-duplicate",
+            "t": "数字化高端网站建设"
+          }
+        ],
+        "wallWrapper0": {
+          "transform": "matrix(1, 0, 0, 1, 0, -120)",
+          "transitionDuration": ""
+        },
+        "wallCount": 72
+      }
+    }
+  ]
+}

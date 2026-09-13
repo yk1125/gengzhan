@@ -1,0 +1,527 @@
+{
+ "file": "file:///D:/桌面/gengzhan-worktrees/session-t00r/docs/frontend-rebuild/evidence/reference-effects/reference-implementation/index.html",
+ "errors": [],
+ "wheel": {
+  "before": {
+   "w": 0,
+   "y": 0
+  },
+  "justAfter": {
+   "w": 1,
+   "y": 756.2609695769479,
+   "m": 143.73903042305204
+  },
+  "settled": {
+   "y": 899.9064802111823,
+   "m": 0
+  },
+  "incremented": true,
+  "moved": true
+ },
+ "shots": [
+  {
+   "label": "demo-000",
+   "frac": 0,
+   "state": {
+    "y": 0,
+    "contentTf": "matrix(1, 0, 0, 1, 0, 0)",
+    "headerCls": "header hide",
+    "headerBg": "rgba(0, 0, 0, 0)",
+    "fixedSideCls": "fixed_side",
+    "bannerDisplay": "block",
+    "bannerTf": "matrix(1, 0, 0, 1, 0, 0)",
+    "publicTextClips": [
+     "inset(0px 100% 0px 0px)",
+     "inset(0px 100% 0px 0px)"
+    ],
+    "maskDelay": "0s",
+    "maskTf": "matrix(1.05, 0, 0, 1.05, 0, 0)",
+    "bgTf": "matrix(1, 0, 0, 1, 0, 0)",
+    "index2": [
+     "none",
+     "none",
+     "none",
+     "none"
+    ],
+    "dataViews": [
+     {
+      "v": "auto",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "o": "0"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "o": "0"
+     }
+    ],
+    "aos": "3/8",
+    "eachAnimate": [
+     {
+      "cls": "each_animate on",
+      "chars": 6,
+      "char0": "1 / matrix(1, 0, 0, 1, 0, 0)",
+      "delay1": "0.38s"
+     },
+     {
+      "cls": "each_animate on",
+      "chars": 12,
+      "char0": "1 / matrix(1, 0, 0, 1, 0, 0)",
+      "delay1": "0.38s"
+     }
+    ],
+    "lineTf": "matrix(1, 0, 0, 1, 0, 0)",
+    "lineDur": "2s",
+    "headlineCls": "headline aos-animate"
+   }
+  },
+  {
+   "label": "demo-030",
+   "frac": 0.3,
+   "state": {
+    "y": 4081.2,
+    "contentTf": "matrix(1, 0, 0, 1, 0, -4081.2)",
+    "headerCls": "header hide on",
+    "headerBg": "rgb(242, 241, 228)",
+    "fixedSideCls": "fixed_side on",
+    "bannerDisplay": "none",
+    "bannerTf": "none",
+    "publicTextClips": [
+     "inset(0px)",
+     "inset(0px -50.6% 0px 0px)"
+    ],
+    "maskDelay": "0s",
+    "maskTf": "matrix(1.05, 0, 0, 1.05, 0, 0)",
+    "bgTf": "matrix(1, 0, 0, 1, 0, 0)",
+    "index2": [
+     "matrix(1, 0, 0, 1, 0, -51.624)",
+     "matrix(1, 0, 0, 1, 0, 258.12)",
+     "none",
+     "none"
+    ],
+    "dataViews": [
+     {
+      "v": "auto",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "o": "0"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "o": "0"
+     }
+    ],
+    "aos": "4/8",
+    "eachAnimate": [
+     {
+      "cls": "each_animate on",
+      "chars": 6,
+      "char0": "1 / matrix(1, 0, 0, 1, 0, 0)",
+      "delay1": "0.38s"
+     },
+     {
+      "cls": "each_animate on",
+      "chars": 12,
+      "char0": "1 / matrix(1, 0, 0, 1, 0, 0)",
+      "delay1": "0.38s"
+     }
+    ],
+    "lineTf": "matrix(1, 0, 0, 1, 0, 0)",
+    "lineDur": "2s",
+    "headlineCls": "headline aos-animate"
+   }
+  },
+  {
+   "label": "demo-050",
+   "frac": 0.5,
+   "state": {
+    "y": 6802,
+    "contentTf": "matrix(1, 0, 0, 1, 0, -6802)",
+    "headerCls": "header hide on",
+    "headerBg": "rgb(242, 241, 228)",
+    "fixedSideCls": "fixed_side on",
+    "bannerDisplay": "none",
+    "bannerTf": "none",
+    "publicTextClips": [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    "maskDelay": "-2.192s",
+    "maskTf": "matrix(15.3011, 0, 0, 15.3011, 0, 0)",
+    "bgTf": "matrix(1, 0, 0, 1, 0, -117.429)",
+    "index2": [
+     "matrix(1, 0, 0, 1, 0, -106.04)",
+     "matrix(1, 0, 0, 1, 0, 530.2)",
+     "matrix(1, 0, 0, 1, 0, -50.44)",
+     "matrix(1, 0, 0, 1, 0, 252.2)"
+    ],
+    "dataViews": [
+     {
+      "v": "auto",
+      "tf": "matrix(1, 0, 0, 1, 0, 1370)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "o": "0"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "o": "0"
+     }
+    ],
+    "aos": "4/8",
+    "eachAnimate": [
+     {
+      "cls": "each_animate on",
+      "chars": 6,
+      "char0": "1 / matrix(1, 0, 0, 1, 0, 0)",
+      "delay1": "0.38s"
+     },
+     {
+      "cls": "each_animate on",
+      "chars": 12,
+      "char0": "1 / matrix(1, 0, 0, 1, 0, 0)",
+      "delay1": "0.38s"
+     }
+    ],
+    "lineTf": "matrix(1, 0, 0, 1, 0, 0)",
+    "lineDur": "2s",
+    "headlineCls": "headline aos-animate"
+   }
+  },
+  {
+   "label": "demo-070",
+   "frac": 0.7,
+   "state": {
+    "y": 9522.8,
+    "contentTf": "matrix(1, 0, 0, 1, 0, -9522.8)",
+    "headerCls": "header hide on",
+    "headerBg": "rgb(242, 241, 228)",
+    "fixedSideCls": "fixed_side on",
+    "bannerDisplay": "none",
+    "bannerTf": "none",
+    "publicTextClips": [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    "maskDelay": "-6.54528s",
+    "maskTf": "matrix(239.987, 0, 0, 239.987, 0, 0)",
+    "bgTf": "matrix(1, 0, 0, 1, 0, -350.64)",
+    "index2": [
+     "matrix(1, 0, 0, 1, 0, -160.456)",
+     "matrix(1, 0, 0, 1, 0, 802.28)",
+     "matrix(1, 0, 0, 1, 0, -104.856)",
+     "matrix(1, 0, 0, 1, 0, 524.28)"
+    ],
+    "dataViews": [
+     {
+      "v": "auto",
+      "tf": "matrix(1, 0, 0, 1, 0, 4090.8)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "0.9092"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+      "o": "0"
+     }
+    ],
+    "aos": "4/8",
+    "eachAnimate": [
+     {
+      "cls": "each_animate on",
+      "chars": 6,
+      "char0": "1 / matrix(1, 0, 0, 1, 0, 0)",
+      "delay1": "0.38s"
+     },
+     {
+      "cls": "each_animate on",
+      "chars": 12,
+      "char0": "1 / matrix(1, 0, 0, 1, 0, 0)",
+      "delay1": "0.38s"
+     }
+    ],
+    "lineTf": "matrix(1, 0, 0, 1, 0, 0)",
+    "lineDur": "2s",
+    "headlineCls": "headline aos-animate"
+   }
+  },
+  {
+   "label": "demo-100",
+   "frac": 1,
+   "state": {
+    "y": 13604,
+    "contentTf": "matrix(1, 0, 0, 1, 0, -13604)",
+    "headerCls": "header hide on",
+    "headerBg": "rgb(242, 241, 228)",
+    "fixedSideCls": "fixed_side on",
+    "bannerDisplay": "none",
+    "bannerTf": "none",
+    "publicTextClips": [
+     "inset(0px)",
+     "inset(0px)"
+    ],
+    "maskDelay": "-8s",
+    "maskTf": "matrix(283.229, 0, 0, 283.229, 0, 0)",
+    "bgTf": "matrix(1, 0, 0, 1, 0, -600)",
+    "index2": [
+     "matrix(1, 0, 0, 1, 0, -242.08)",
+     "matrix(1, 0, 0, 1, 0, 1210.4)",
+     "matrix(1, 0, 0, 1, 0, -186.48)",
+     "matrix(1, 0, 0, 1, 0, 932.4)"
+    ],
+    "dataViews": [
+     {
+      "v": "auto",
+      "tf": "matrix(1, 0, 0, 1, 0, 7000)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "0"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "1"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "0"
+     },
+     {
+      "v": "",
+      "tf": "matrix(1, 0, 0, 1, 0, 0)",
+      "o": "1"
+     }
+    ],
+    "aos": "8/8",
+    "eachAnimate": [
+     {
+      "cls": "each_animate on",
+      "chars": 6,
+      "char0": "1 / matrix(1, 0, 0, 1, 0, 0)",
+      "delay1": "0.38s"
+     },
+     {
+      "cls": "each_animate on",
+      "chars": 12,
+      "char0": "1 / matrix(1, 0, 0, 1, 0, 0)",
+      "delay1": "0.38s"
+     }
+    ],
+    "lineTf": "matrix(1, 0, 0, 1, 0, 0)",
+    "lineDur": "2s",
+    "headlineCls": "headline aos-animate"
+   }
+  }
+ ],
+ "magnetic": {
+  "btnRect": {
+   "w": 134,
+   "h": 134
+  },
+  "strengthExpected": 50,
+  "coordUsed": "0.9,0.9 → 理论值 20,20",
+  "rest": "none",
+  "at150": "matrix(1, 0, 0, 1, 11.2211, 11.2938)",
+  "at500": "matrix(1, 0, 0, 1, 19.1955, 19.32)",
+  "at1200": "matrix(1, 0, 0, 1, 19.7761, 19.9044)",
+  "afterOut": "matrix(1, 0, 0, 1, 0, 0)"
+ },
+ "index3": {
+  "itemClientHeight": 152,
+  "clickedIndex": 2,
+  "expectedTranslateY": 304,
+  "moveTf": "matrix(1, 0, 0, 1, 0, 304)",
+  "itemCls": "item on",
+  "itemTextOp": "1",
+  "slots": [
+   "slot _1_1",
+   "slot _1_2",
+   "slot _1_3 on"
+  ]
+ },
+ "cut": {
+  "rest": {
+   "fixedCls": "fixed_cursor",
+   "pro": "matrix(0, 0, 0, 0, -10, -10) / 0",
+   "whole": "1"
+  },
+  "on": {
+   "fixedCls": "fixed_cursor cut",
+   "pro": "matrix(1, 0, 0, 1, -10, -10) / 1",
+   "whole": "0",
+   "cirAnim": "10s linear infinite ants",
+   "arrowAnim": "5s infinite arrowRun"
+  },
+  "afterLeave": "fixed_cursor"
+ },
+ "circle": {
+  "off": {
+   "filter": "none",
+   "transform": "none",
+   "bg": "rgb(24, 77, 196)",
+   "transition": "0.4s",
+   "ants": "10s linear infinite ants",
+   "arrowRun": "5s infinite arrowRun"
+  },
+  "at300ms": {
+   "filter": "blur(9.68266px)",
+   "transform": "matrix(1.09683, 0, 0, 1.09683, 0, 0)"
+  },
+  "settled": {
+   "filter": "blur(10px)",
+   "transform": "matrix(1.1, 0, 0, 1.1, 0, 0)"
+  }
+ },
+ "alert": {
+  "open": {
+   "t120": {
+    "t": 123,
+    "display": "flex",
+    "alertOp": "0",
+    "cls": "canvas_alert on",
+    "maskOp": "0",
+    "maskDelay": "1.2s",
+    "matterIdx": "0",
+    "matterOp": "0",
+    "matterTf": "matrix(1, 0, 0, 1, 0, 20)"
+   },
+   "t700": {
+    "t": 717,
+    "display": "flex",
+    "alertOp": "1",
+    "cls": "canvas_alert on",
+    "maskOp": "0",
+    "maskDelay": "1.2s",
+    "matterIdx": "0",
+    "matterOp": "0",
+    "matterTf": "matrix(1, 0, 0, 1, 0, 20)"
+   },
+   "t1300": {
+    "t": 1325,
+    "display": "flex",
+    "alertOp": "1",
+    "cls": "canvas_alert on",
+    "maskOp": "0.668736",
+    "maskDelay": "1.2s",
+    "matterIdx": "2",
+    "matterOp": "0.119755",
+    "matterTf": "matrix(1, 0, 0, 1, 0, 17.6049)"
+   },
+   "t2150": {
+    "t": 2183,
+    "display": "flex",
+    "alertOp": "1",
+    "cls": "canvas_alert on",
+    "maskOp": "1",
+    "maskDelay": "1.2s",
+    "matterIdx": "2",
+    "matterOp": "0.999547",
+    "matterTf": "matrix(1, 0, 0, 1, 0, 0.00905703)"
+   }
+  },
+  "closed150": {
+   "t": 163,
+   "cls": "canvas_alert",
+   "alertOp": "1",
+   "anyMatterOn": 0
+  },
+  "closed1350": {
+   "t": 1379,
+   "cls": "canvas_alert",
+   "alertOp": "0",
+   "anyMatterOn": 0
+  }
+ },
+ "env": {
+  "hook": "object",
+  "limit": 13604,
+  "contentH": 14504,
+  "clientH": 900,
+  "scrollH_doc": 900,
+  "nativeScroll": false,
+  "mediaMobile": false
+ },
+ "hide": {
+  "before": "header hide on",
+  "afterWheelDown": "header hide on",
+  "afterWheelUp": "header on"
+ },
+ "headerAt0": "header",
+ "banner450": {
+  "y": 450,
+  "transform": "matrix(1, 0, 0, 1, 0, 405)",
+  "display": "block",
+  "expected": 405
+ },
+ "cursor": {
+  "path": "300,300 → 1100,700",
+  "curA": "matrix(1, 0, 0, 1, 290.002, 290.001)",
+  "curMid": "matrix(1, 0, 0, 1, 956.614, 623.307)",
+  "curB": "matrix(1, 0, 0, 1, 1090, 690)",
+  "blend": "exclusion",
+  "speed": "8"
+ },
+ "headerHeight": 65
+}

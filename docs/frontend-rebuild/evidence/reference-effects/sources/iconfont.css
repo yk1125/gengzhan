@@ -1,0 +1,67 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4448146 */
+  src: url('iconfont.woff2?t=1712823583586') format('woff2'),
+       url('iconfont.woff?t=1712823583586') format('woff'),
+       url('iconfont.ttf?t=1712823583586') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-top02:before {
+  content: "\e6f5";
+}
+
+.icon-xiaoxi:before {
+  content: "\e7d2";
+}
+
+.icon-taiyang1:before {
+  content: "\e635";
+}
+
+.icon-duanlashuoming:before {
+  content: "\e667";
+}
+
+.icon-App_yueliang:before {
+  content: "\ea13";
+}
+
+.icon-shangsheng:before {
+  content: "\e623";
+}
+
+.icon-gou:before {
+  content: "\e660";
+}
+
+.icon-jiantou:before {
+  content: "\e61d";
+}
+
+.icon-yueliang:before {
+  content: "\e6b8";
+}
+
+.icon-youjiantou_huaban:before {
+  content: "\e63f";
+}
+
+.icon-xiashuangjiantou:before {
+  content: "\e646";
+}
+
+.icon-taiyang:before {
+  content: "\e60f";
+}
+
+.icon-arrow-right-topjiantou-youshang:before {
+  content: "\e848";
+}
+
