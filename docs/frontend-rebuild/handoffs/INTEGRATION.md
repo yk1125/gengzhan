@@ -2,6 +2,13 @@
 
 维护人：Session A。当前只完成规划，未开始产品实现。
 
+| 基准 | 实际提交 | 状态 |
+| --- | --- | --- |
+| 原源码 | `0ed5dcf` | 已核实 |
+| docsCommit | `b484790` | 已提交 |
+| foundationCommit | `4c18b6a`（分支）/ `512565e`（main 上的 cherry-pick，收敛时由 merge 取代） | 已冻结 |
+| pilotCommit | 未生成 | 样板未验收 |
+
 ## Git 收敛记录（2026-09-14 · Session A）
 
 ### Step 3.9 零改动记录（记录时未改任何 git 状态）
@@ -42,13 +49,6 @@ D:/桌面/gengzhan-worktrees/session-t00r                    45ef250 [codex/t00r
 
 `frontend/node_modules` 只在主仓存在；session-a、session-c 尚无（见工作树整理记录）。
 
-| 基准 | 实际提交 | 状态 |
-| --- | --- | --- |
-| 原源码 | `0ed5dcf` | 已核实 |
-| docsCommit | `b484790` | 本次文档尚未提交 |
-| foundationCommit | `4c18b6a` | T01未开始 |
-| pilotCommit | 未生成 | 样板未实现/未验收 |
-
 ## 用户确认记录
 
 - Q1—Q27需求访谈已完成，详见REQUIREMENTS。
@@ -62,7 +62,6 @@ D:/桌面/gengzhan-worktrees/session-t00r                    45ef250 [codex/t00r
 ## 集成记录
 
 尚无合并。后续逐项记录：任务、基准、合入提交、验证结果、证据位置、剩余外部项。
-
 
 ## T02 样板集成（2026-09-14）
 - foundationCommit: `0997a1e`（合入 `4c18b6a`、`af63173`）
