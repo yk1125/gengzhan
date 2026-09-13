@@ -377,6 +377,7 @@ eslint（只读，不带 --fix）→ ESLINT_EXIT=1，✖ 850 problems (7 errors,
 | `35fc135` | docs: Step 3.11 按用户裁定结案（保持现状）、session-c 搬移记录、Step 6 复核证据 |
 
 工作树：本任务开始到结束，主仓 `git status --short` 在每次提交后都为空；没有执行 `git reset --hard`、强推、改写他人分支历史或删除未提交内容。
+唯一一次 `git reset` 是拆分提交前用的**无目标 mixed reset**（`git reset`，仅取消暂存，reflog 记为 `50160d1 HEAD@{6}: reset: moving to HEAD`），没有 `--hard`，没有改动工作区内容——随后所有文件都重新暂存并按主题拆成三次提交，最终 `git status --short` 为空，可对照 `git log` 验证内容都在提交里。
 
 「最终验证」里的 build / check:routes / eslint 三次运行都发生在 `4f5cd76` 之后，即针对 `118432d` 的内容；此后没有改动任何被验证的文件。
 
