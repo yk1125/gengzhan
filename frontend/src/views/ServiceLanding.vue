@@ -1,10 +1,17 @@
 <template>
-  <main class="service-page" :class="`service-page--${page.kind}`">
-    <section class="service-hero reveal">
+  <main ref="rootEl" class="service-page" :class="`service-page--${page.kind}`">
+    <section class="service-hero">
       <div class="service-shell service-hero__inner">
         <p class="service-kicker">YUNZHAN / {{ page.en }}</p>
         <div class="service-hero__copy">
-          <h1 class="text-reveal">{{ page.title }}</h1>
+          <h1 class="each_animate" :class="{ on: titleIn }">
+            <span
+              v-for="(char, index) in titleChars"
+              :key="index"
+              :style="titleCharStyle(index, char)"
+              >{{ char }}</span
+            >
+          </h1>
           <p>{{ page.subtitle }}</p>
         </div>
         <p class="service-hero__index">0{{ page.order }} / 07</p>
@@ -12,16 +19,16 @@
     </section>
 
     <section v-if="page.kind === 'ai'" class="ai-architecture service-section">
-      <div class="service-shell ai-architecture__head">
+      <div class="service-shell ai-architecture__head" data-aos="fade-top">
         <p class="service-kicker">01 / FROM DATA TO ACTION</p>
         <div>
-          <h2>把企业已有资料，<br />变成随时可用的智能助手。</h2>
+          <h2 data-aos="fade-clip">把企业已有资料，<br />变成随时可用的智能助手。</h2>
           <p>
             不必从零开始。制度、产品资料、历史案例和业务流程，经过整理后就能成为 AI 的可靠依据。
           </p>
         </div>
       </div>
-      <div class="service-shell ai-flow">
+      <div class="service-shell ai-flow" data-aos="fade-top" data-aos-delay="100">
         <article>
           <span>第一步</span>
           <h3>整理企业资料</h3>
@@ -48,25 +55,25 @@
       </div>
     </section>
     <section v-else-if="page.kind === 'mini'" class="mini-journey service-section">
-      <div class="service-shell mini-journey__grid">
+      <div class="service-shell mini-journey__grid" data-aos="fade-top">
         <div>
           <p class="service-kicker">01 / USER JOURNEY</p>
-          <h2>把服务放进用户<br />最顺手的入口。</h2>
+          <h2 data-aos="fade-clip">把服务放进用户<br />最顺手的入口。</h2>
         </div>
-        <div class="mini-phone">
+        <div class="mini-phone" data-aos="fade-top" data-aos-delay="100">
           <span>品牌服务</span><b>预约<br />支付<br />会员</b><i></i>
         </div>
-        <ol>
+        <ol data-aos="fade-top" data-aos-delay="200">
           <li v-for="item in page.modules" :key="item">{{ item }}</li>
         </ol>
       </div>
     </section>
     <section v-else-if="page.kind === 'app'" class="app-product service-section">
-      <div class="service-shell">
+      <div class="service-shell" data-aos="fade-top">
         <p class="service-kicker">01 / MOBILE PRODUCT</p>
-        <h2>让每一次触达，<br />都有完整的产品体验。</h2>
+        <h2 data-aos="fade-clip">让每一次触达，<br />都有完整的产品体验。</h2>
       </div>
-      <div class="service-shell app-devices">
+      <div class="service-shell app-devices" data-aos="fade-top" data-aos-delay="100">
         <div class="app-device app-device--back"><span>数据总览</span></div>
         <div class="app-device">
           <span>YUNZHAN</span><b>{{ page.modules[0] }}</b
@@ -76,15 +83,15 @@
       </div>
     </section>
     <section v-else-if="page.kind === 'web'" class="web-brand service-section">
-      <div class="service-shell web-brand__grid">
+      <div class="service-shell web-brand__grid" data-aos="fade-top">
         <div>
           <p class="service-kicker">01 / DIGITAL PRESENCE</p>
-          <h2>让品牌第一眼，<br />就值得被相信。</h2>
+          <h2 data-aos="fade-clip">让品牌第一眼，<br />就值得被相信。</h2>
           <p class="service-lead">
             从内容逻辑到视觉系统，再到稳定、易维护的技术实现，品牌网站应是一项长期资产。
           </p>
         </div>
-        <div class="web-browser">
+        <div class="web-browser" data-aos="fade-top" data-aos-delay="100">
           <div class="web-browser__bar"><i></i><i></i><i></i></div>
           <strong>{{ page.modules[0] }}</strong
           ><span>{{ page.modules[1] }}</span
@@ -93,11 +100,11 @@
       </div>
     </section>
     <section v-else-if="page.kind === 'iot'" class="iot-network service-section">
-      <div class="service-shell">
+      <div class="service-shell" data-aos="fade-top">
         <p class="service-kicker">01 / CONNECTED SYSTEM</p>
-        <h2>设备有了语言，<br />现场才真正可见。</h2>
+        <h2 data-aos="fade-clip">设备有了语言，<br />现场才真正可见。</h2>
       </div>
-      <div class="service-shell iot-dashboard">
+      <div class="service-shell iot-dashboard" data-aos="fade-top" data-aos-delay="100">
         <div class="iot-dashboard__main">
           <span>设备运行总览</span><b>98.6<small>%</small></b>
           <p>今日设备在线率</p>
@@ -120,11 +127,11 @@
       </div>
     </section>
     <section v-else-if="page.kind === 'custom'" class="custom-system service-section">
-      <div class="service-shell custom-system__head">
+      <div class="service-shell custom-system__head" data-aos="fade-top">
         <p class="service-kicker">01 / BUILT FOR YOUR BUSINESS</p>
-        <h2>不迁就软件，<br />让软件适配组织。</h2>
+        <h2 data-aos="fade-clip">不迁就软件，<br />让软件适配组织。</h2>
       </div>
-      <div class="service-shell custom-system__steps">
+      <div class="service-shell custom-system__steps" data-aos="fade-top" data-aos-delay="100">
         <article v-for="(item, index) in page.modules" :key="item">
           <span>0{{ index + 1 }}</span>
           <h3>{{ item }}</h3>
@@ -133,11 +140,11 @@
       </div>
     </section>
     <section v-else class="creative-space service-section">
-      <div class="service-shell creative-space__top">
+      <div class="service-shell creative-space__top" data-aos="fade-top">
         <p class="service-kicker">01 / CREATIVE TECHNOLOGY</p>
-        <h2>让内容、空间和技术<br />成为一次完整体验。</h2>
+        <h2 data-aos="fade-clip">让内容、空间和技术<br />成为一次完整体验。</h2>
       </div>
-      <div class="service-shell creative-panels">
+      <div class="service-shell creative-panels" data-aos="fade-top" data-aos-delay="100">
         <article>
           <span>01 / BRAND</span>
           <h3>互动品牌体验</h3>
@@ -157,12 +164,17 @@
     </section>
 
     <section class="service-capabilities service-section">
-      <div class="service-shell service-capabilities__head">
+      <div ref="parallaxHeadEl" class="service-shell service-capabilities__head">
         <p class="service-kicker">02 / WHAT WE DELIVER</p>
-        <h2>{{ page.capabilityTitle }}</h2>
+        <h2 data-aos="fade-clip">{{ page.capabilityTitle }}</h2>
       </div>
       <div class="service-shell capability-list">
-        <article v-for="(item, index) in page.capabilities" :key="item.title">
+        <article
+          v-for="(item, index) in page.capabilities"
+          :key="item.title"
+          data-aos="fade-top"
+          :data-aos-delay="index % 2 === 0 ? 100 : 200"
+        >
           <span>0{{ index + 1 }}</span>
           <h3>{{ item.title }}</h3>
           <p>{{ item.text }}</p>
@@ -170,17 +182,82 @@
         </article>
       </div>
     </section>
-    <section class="service-approach reveal">
+    <section class="service-approach">
       <div class="service-shell service-approach__grid">
-        <p class="service-kicker">03 / HOW WE WORK</p>
-        <h2 class="mask-reveal">{{ page.statement }}</h2>
-        <p>{{ page.description }}</p>
+        <div class="headline" data-aos="fade-top">
+          <p class="service-kicker">03 / HOW WE WORK</p>
+          <span class="headline__line"></span>
+        </div>
+        <h2 ref="statementEl" class="service-approach__statement public_text" data-speed="200">
+          <span class="p"
+            ><span class="line">{{ page.statement }}</span></span
+          >
+          <span class="p" aria-hidden="true">
+            <span class="line">{{ page.statement }}</span>
+          </span>
+        </h2>
+        <p class="service-approach__statement-sj public_text sj_text">{{ page.statement }}</p>
+        <p data-aos="fade-top">{{ page.description }}</p>
+      </div>
+    </section>
+    <section class="service-switch service-section">
+      <div class="service-shell service-switch__head">
+        <div class="headline" data-aos="fade-top">
+          <p class="service-kicker">04 / EXPLORE SERVICES</p>
+          <span class="headline__line"></span>
+        </div>
+        <h2 data-aos="fade-clip">{{ switchCopy.title }}</h2>
+      </div>
+      <div class="service-shell service-switch__body">
+        <div ref="switchListEl" class="service-switch__list" data-aos="fade-top">
+          <button
+            v-for="(item, index) in services"
+            :key="item.id"
+            type="button"
+            class="service-switch__item"
+            :class="{ on: item.path === page.path || index === pendingIndex }"
+            :aria-current="item.path === page.path ? 'true' : undefined"
+            :disabled="switching"
+            @click="switchService(item, index)"
+          >
+            <span class="attr" :data-text="item.title">
+              <span class="attr__line">{{ item.title }}</span>
+            </span>
+            <span class="service-switch__en">{{ item.en }}</span>
+          </button>
+          <span
+            class="service-switch__move"
+            :style="{ transform: `translateY(${moveOffset}px)` }"
+          ></span>
+        </div>
+        <div
+          ref="pictureEl"
+          class="service-switch__picture"
+          data-aos="fade-top"
+          data-aos-delay="100"
+        >
+          <video
+            v-for="clip in transitionClips"
+            :key="clip.key"
+            :class="clip.key"
+            :src="clip.src"
+            preload="none"
+            muted
+            playsinline
+          ></video>
+          <p class="service-switch__caption">{{ page.title }} / {{ page.en }}</p>
+        </div>
+        <ul class="service-switch__mobile">
+          <li v-for="item in services" :key="item.id">
+            <RouterLink :to="item.href">{{ item.title }}</RouterLink>
+          </li>
+        </ul>
       </div>
     </section>
     <section class="service-cta">
-      <div class="service-shell">
+      <div class="service-shell" data-aos="fade-top">
         <p class="service-kicker">START A PROJECT</p>
-        <h2>
+        <h2 data-aos="fade-clip">
           {{
             locale === 'en'
               ? 'Turn an idea into a\nreal product.'
@@ -199,7 +276,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onBeforeUnmount } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
@@ -352,13 +429,15 @@ const translations = {
       'We build sustainable mini program touchpoints around WeChat, business workflows and operations.',
   },
 }
-const page = computed(() => {
-  const path = route.path.replace(/^\/en/, '') || '/web-development'
-  const source = pages[path] || pages['/web-development']
-  if (locale.value === 'zh-CN') return source
+const servicePath = computed(() => route.path.replace(/^\/en/, '') || '/web-development')
+
+/** 服务数据按稳定 serviceId（kind）选取，不根据翻译后标题或 URL 包含关系判断。 */
+const resolveService = (path, source) => {
+  if (locale.value === 'zh-CN') return { ...source, path }
   const t = translations[path]
   return {
     ...source,
+    path,
     title: t?.enTitle || source.en,
     subtitle:
       t?.enSubtitle || `Build a reliable ${source.en.toLowerCase()} experience for your business.`,
@@ -373,27 +452,288 @@ const page = computed(() => {
     ),
     capabilities: source.capabilities.map((c) => ({ ...c, title: c.title, text: c.text })),
   }
+}
+const services = computed(() =>
+  Object.entries(pages).map(([path, source]) => ({
+    ...resolveService(path, source),
+    id: source.kind,
+    href: locale.value === 'en' ? `/en${path}` : path,
+  })),
+)
+const page = computed(
+  () =>
+    services.value.find((item) => item.path === servicePath.value) ||
+    services.value.find((item) => item.path === '/web-development'),
+)
+const activeIndex = computed(() => {
+  const index = services.value.findIndex((item) => item.path === page.value?.path)
+  return index < 0 ? 0 : index
 })
-let observer
+
+const rootEl = ref(null)
+const parallaxHeadEl = ref(null)
+const statementEl = ref(null)
+const switchListEl = ref(null)
+const pictureEl = ref(null)
+
+const mobileQuery = window.matchMedia('(max-width: 1024px)')
+const reducedQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+const isMobile = ref(mobileQuery.matches)
+const prefersReducedMotion = ref(reducedQuery.matches)
+const isDarkTheme = ref(false)
+
+const titleIn = ref(false)
+const titleChars = computed(() => [...(page.value?.title || '')])
+/** SPEC M-10：逐字入场，每字延迟 index*0.08+0.3s，空格字符 min-width: 10px。 */
+const titleCharStyle = (index, char) => ({
+  transitionDelay: `${index * 0.08 + 0.3}s`,
+  ...(char === ' ' ? { minWidth: '10px' } : {}),
+})
+
+const switchCopy = computed(() => ({
+  title:
+    locale.value === 'en'
+      ? 'Switch services,\nand see how we solve adjacent problems.'
+      : '切换服务，\n看我们如何解决相近的问题。',
+}))
+
+const switching = ref(false)
+const pendingIndex = ref(-1)
+const moveOffset = ref(0)
+
+/** 过渡视频用共享素材路径；素材只覆盖服务 1—3 的六个方向（T00A 登记）。 */
+const TRANSITION_SLOTS = [1, 2, 3]
+const transitionClips = computed(() =>
+  TRANSITION_SLOTS.flatMap((from) =>
+    TRANSITION_SLOTS.filter((to) => to !== from).map((to) => ({
+      key: `${from}_${to}`,
+      src: isDarkTheme.value
+        ? `/assets/transitions/black/${from}-${to}.mp4`
+        : `/assets/transitions/w${from}-${to}.mp4`,
+    })),
+  ),
+)
+const clipFor = (from, to) =>
+  TRANSITION_SLOTS.includes(from) && TRANSITION_SLOTS.includes(to) && from !== to
+    ? `${from}_${to}`
+    : ''
+
+let frame = 0
+let themeObserver
+const timers = { title: 0, transition: 0 }
+let aosPending = []
+const aosDone = new WeakSet()
+
+const scheduleFrame = () => {
+  if (frame || document.hidden) return
+  frame = window.requestAnimationFrame(runScrollDriven)
+}
+
+const collectAosTargets = () => {
+  if (!rootEl.value) return
+  aosPending = [...rootEl.value.querySelectorAll('[data-aos]')].filter((el) => !aosDone.has(el))
+}
+
+/** SPEC M-24/M-25：offset = rect.top - clientHeight + all_num，offset < 0 加 .aos-animate，once。 */
+const runAos = (clientHeight) => {
+  if (!aosPending.length) return
+  const limit = isMobile.value ? 0 : 150
+  const remaining = []
+  for (const el of aosPending) {
+    if (el.getBoundingClientRect().top - clientHeight + limit < 0) {
+      el.classList.add('aos-animate')
+      aosDone.add(el)
+    } else {
+      remaining.push(el)
+    }
+  }
+  aosPending = remaining
+}
+
+/** SPEC M-12：双列视差，系数 −0.02 / +0.1，逐帧直写，锚点 = 顶端 − clientHeight/3。 */
+const runColumnParallax = (scrollTop, clientHeight) => {
+  const group = parallaxHeadEl.value
+  if (!group || group.children.length < 2) return
+  const anchor = group.getBoundingClientRect().top + scrollTop - clientHeight / 3
+  if (scrollTop < anchor) return
+  const offset = scrollTop - anchor
+  group.children[0].style.transform = `translate3d(0, ${offset * -0.02}px, 0)`
+  group.children[1].style.transform = `translate3d(0, ${offset * 0.1}px, 0)`
+}
+
+/** SPEC M-13：逐行 clip-path 擦除，data-speed 默认 200，负百分比照抄。 */
+const runPublicText = (scrollTop, clientHeight) => {
+  const root = statementEl.value
+  if (!root || isMobile.value) return
+  const lines = root.querySelectorAll('.p:first-child .line')
+  if (!lines.length) return
+  const speed = root.dataset.speed ? Number(root.dataset.speed) : 0
+  const dis = speed ? speed * 1 : 200
+  const len = lines.length
+  const allDis = dis * len
+  const ban = allDis / len
+  lines.forEach((line, i) => {
+    const start = line.getBoundingClientRect().top + scrollTop - clientHeight / 1.2
+    const end = start + allDis
+    const value = 100 + ((scrollTop - (start + i * ban)) / ban) * -100
+    if (scrollTop >= start + i * ban && scrollTop <= end) {
+      line.style.clipPath = `inset(0 ${value}% 0 0)`
+    } else if (scrollTop <= start + i * ban) {
+      line.style.clipPath = 'inset(0 100% 0 0)'
+    }
+    if (scrollTop >= end) line.style.clipPath = 'inset(0 0 0 0)'
+  })
+}
+
+const runScrollDriven = () => {
+  frame = 0
+  if (document.hidden || !rootEl.value || prefersReducedMotion.value) return
+  const clientHeight = document.documentElement.clientHeight
+  const scrollTop = window.scrollY || document.documentElement.scrollTop || 0
+  runAos(clientHeight)
+  runColumnParallax(scrollTop, clientHeight)
+  runPublicText(scrollTop, clientHeight)
+}
+
+/** 减少动态效果：不做位移/擦除，内容直接可见。 */
+const revealEverything = () => {
+  if (!rootEl.value) return
+  rootEl.value.querySelectorAll('[data-aos]').forEach((el) => {
+    el.classList.add('aos-animate')
+    aosDone.add(el)
+  })
+  aosPending = []
+  statementEl.value?.querySelectorAll('.line').forEach((el) => {
+    el.style.clipPath = ''
+  })
+  if (parallaxHeadEl.value) {
+    const columns = [...parallaxHeadEl.value.children]
+    columns.forEach((el) => {
+      el.style.transform = ''
+    })
+  }
+}
+
+/** SPEC M-10：加载后 setTimeout(…, 10) 播放逐字入场。 */
+const playTitleEntrance = () => {
+  window.clearTimeout(timers.title)
+  titleIn.value = false
+  timers.title = window.setTimeout(() => {
+    titleIn.value = true
+  }, 10)
+}
+
+/** SPEC M-14：跟随框位移 = index * item.clientHeight，实测高度而非常量。 */
+const syncMoveFrame = (index) => {
+  const firstItem = switchListEl.value?.querySelector('.service-switch__item')
+  moveOffset.value = firstItem ? index * firstItem.clientHeight : 0
+}
+
+/** SPEC M-15：旧片去 .on 并暂停；目标片 currentTime=0 → 加 .on → play()。 */
+const playTransition = (key, onDone) => {
+  const videos = pictureEl.value ? [...pictureEl.value.querySelectorAll('video')] : []
+  const video = videos.find((el) => el.classList.contains(key))
+  if (!video) {
+    onDone()
+    return
+  }
+  videos.forEach((el) => {
+    el.classList.remove('on')
+    el.pause()
+  })
+  let settled = false
+  const settle = () => {
+    if (settled) return
+    settled = true
+    video.removeEventListener('ended', settle)
+    video.removeEventListener('error', settle)
+    window.clearTimeout(timers.transition)
+    onDone()
+  }
+  video.addEventListener('ended', settle)
+  video.addEventListener('error', settle)
+  timers.transition = window.setTimeout(settle, 2500)
+  video.classList.add('on')
+  const played = video.play()
+  if (played?.catch) played.catch(settle)
+}
+
+const switchService = (item, index) => {
+  syncMoveFrame(index)
+  if (switching.value || item.path === page.value?.path) return
+  const key = clipFor(page.value.order, item.order)
+  pendingIndex.value = index
+  if (!key || isMobile.value || prefersReducedMotion.value) {
+    router.push(item.href)
+    return
+  }
+  switching.value = true
+  playTransition(key, () => {
+    switching.value = false
+    router.push(item.href)
+  })
+}
+
+const onViewportChange = () => {
+  isMobile.value = mobileQuery.matches
+  prefersReducedMotion.value = reducedQuery.matches
+  if (prefersReducedMotion.value) revealEverything()
+  collectAosTargets()
+  syncMoveFrame(activeIndex.value)
+  scheduleFrame()
+}
+
 onMounted(() => {
-  observer = new IntersectionObserver(
-    (entries) =>
-      entries.forEach((entry) => entry.isIntersecting && entry.target.classList.add('is-visible')),
-    { threshold: 0.18 },
-  )
-  document
-    .querySelectorAll('.service-page .reveal, .service-page .mask-reveal')
-    .forEach((el) => observer.observe(el))
+  isDarkTheme.value = document.documentElement.dataset.theme === 'dark'
+  themeObserver = new MutationObserver(() => {
+    isDarkTheme.value = document.documentElement.dataset.theme === 'dark'
+  })
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  })
+  mobileQuery.addEventListener('change', onViewportChange)
+  reducedQuery.addEventListener('change', onViewportChange)
+  window.addEventListener('scroll', scheduleFrame, { passive: true })
+  window.addEventListener('resize', onViewportChange)
+  document.addEventListener('visibilitychange', scheduleFrame)
+
+  collectAosTargets()
+  if (prefersReducedMotion.value) revealEverything()
+  syncMoveFrame(activeIndex.value)
+  scheduleFrame()
+  playTitleEntrance()
 })
-onBeforeUnmount(() => observer?.disconnect())
+
+onBeforeUnmount(() => {
+  mobileQuery.removeEventListener('change', onViewportChange)
+  reducedQuery.removeEventListener('change', onViewportChange)
+  window.removeEventListener('scroll', scheduleFrame)
+  window.removeEventListener('resize', onViewportChange)
+  document.removeEventListener('visibilitychange', scheduleFrame)
+  themeObserver?.disconnect()
+  if (frame) window.cancelAnimationFrame(frame)
+  window.clearTimeout(timers.title)
+  window.clearTimeout(timers.transition)
+  pictureEl.value?.querySelectorAll('video').forEach((el) => el.pause())
+})
+
+watch(
+  () => route.path,
+  () => {
+    pendingIndex.value = -1
+    collectAosTargets()
+    if (prefersReducedMotion.value) revealEverything()
+    syncMoveFrame(activeIndex.value)
+    playTitleEntrance()
+    scheduleFrame()
+  },
+)
 </script>
 
 <style scoped>
 .service-page {
-  --ink: #121212;
-  --paper: #f2f2ef;
-  --accent: #f26b24;
-  color: var(--ink);
+  color: var(--yz-black);
   background: #fff;
   overflow: hidden;
 }
@@ -403,7 +743,7 @@ onBeforeUnmount(() => observer?.disconnect())
 }
 .service-kicker {
   margin: 0;
-  color: var(--accent);
+  color: var(--yz-orange);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.2em;
@@ -412,7 +752,7 @@ onBeforeUnmount(() => observer?.disconnect())
   min-height: 580px;
   display: flex;
   align-items: flex-end;
-  background: #111;
+  background: var(--yz-black);
   color: #fff;
 }
 .service-hero__inner {
@@ -425,6 +765,9 @@ onBeforeUnmount(() => observer?.disconnect())
   justify-content: space-between;
   gap: 60px;
   margin-top: 24px;
+  /* 右侧为 .service-hero__index 预留栏位：序号绝对定位在同一右缘，
+     不留空隙时副标题会与「0X / 07」重叠（1440 实测重叠 49px）。 */
+  padding-right: 76px;
 }
 .service-hero h1 {
   margin: 0;
@@ -461,7 +804,7 @@ onBeforeUnmount(() => observer?.disconnect())
   line-height: 1.05;
 }
 .ai-architecture {
-  background: var(--paper);
+  background: var(--yz-offwhite);
 }
 .ai-architecture__head,
 .custom-system__head {
@@ -556,7 +899,7 @@ onBeforeUnmount(() => observer?.disconnect())
   bottom: 26px;
   width: 56px;
   height: 56px;
-  background: var(--accent);
+  background: var(--yz-orange);
   border-radius: 50%;
 }
 .mini-journey ol {
@@ -573,7 +916,7 @@ onBeforeUnmount(() => observer?.disconnect())
 }
 .mini-journey li::before {
   margin-right: 16px;
-  color: var(--accent);
+  color: var(--yz-orange);
   content: '0' counter(list-item);
 }
 .app-product {
@@ -664,7 +1007,7 @@ onBeforeUnmount(() => observer?.disconnect())
 .web-browser__bar i {
   width: 8px;
   height: 8px;
-  background: var(--accent);
+  background: var(--yz-orange);
   border-radius: 50%;
 }
 .web-browser strong {
@@ -749,7 +1092,7 @@ onBeforeUnmount(() => observer?.disconnect())
   border: 0;
 }
 .custom-system__steps span {
-  color: var(--accent);
+  color: var(--yz-orange);
   font-size: 11px;
   font-weight: 700;
 }
@@ -787,7 +1130,7 @@ onBeforeUnmount(() => observer?.disconnect())
 }
 .creative-space__blocks div {
   height: 230px;
-  background: #f26b24;
+  background: var(--yz-orange);
 }
 .creative-space__blocks div:nth-child(2) {
   background: #182539;
@@ -830,7 +1173,7 @@ onBeforeUnmount(() => observer?.disconnect())
   color: #fff;
 }
 .capability-list span {
-  color: var(--accent);
+  color: var(--yz-orange);
   font-size: 11px;
   font-weight: 700;
 }
@@ -856,7 +1199,7 @@ onBeforeUnmount(() => observer?.disconnect())
 }
 .service-approach {
   padding: 125px 0;
-  background: var(--paper);
+  background: var(--yz-offwhite);
 }
 .service-approach__grid {
   display: grid;
@@ -864,11 +1207,16 @@ onBeforeUnmount(() => observer?.disconnect())
   gap: 7vw;
   align-items: start;
 }
-.service-approach h2 {
+.service-approach__statement,
+.service-approach__statement-sj {
   margin: 0;
   font-size: clamp(36px, 4vw, 58px);
+  font-weight: 620;
   letter-spacing: -0.055em;
   line-height: 1.1;
+}
+.service-approach__statement-sj {
+  display: none;
 }
 .service-approach__grid > p:last-child {
   margin: 6px 0 0;
@@ -882,6 +1230,7 @@ onBeforeUnmount(() => observer?.disconnect())
 }
 .service-cta h2 {
   margin: 25px 0 42px;
+  white-space: pre-line;
 }
 .service-cta button {
   width: 210px;
@@ -896,7 +1245,7 @@ onBeforeUnmount(() => observer?.disconnect())
   font-weight: 700;
 }
 .service-cta button span {
-  color: var(--accent);
+  color: var(--yz-orange);
   font-size: 18px;
 }
 @keyframes creative-scroll {
@@ -1115,8 +1464,8 @@ onBeforeUnmount(() => observer?.disconnect())
   background: #e9e6de;
 }
 .ai-flow article:nth-of-type(4) {
-  background: #f26b24;
-  border-color: #f26b24;
+  background: var(--yz-orange);
+  border-color: var(--yz-orange);
 }
 .ai-flow article span {
   color: #888;
@@ -1183,7 +1532,7 @@ onBeforeUnmount(() => observer?.disconnect())
   color: #555;
 }
 .ai-flow > b {
-  color: #f26b24;
+  color: var(--yz-orange);
 }
 .iot-dashboard {
   display: grid;
@@ -1226,7 +1575,7 @@ onBeforeUnmount(() => observer?.disconnect())
   bottom: -40px;
   width: 280px;
   height: 150px;
-  border: 20px solid #f26b24;
+  border: 20px solid var(--yz-orange);
   border-radius: 50%;
   opacity: 0.7;
 }
@@ -1322,30 +1671,88 @@ onBeforeUnmount(() => observer?.disconnect())
     margin-top: 95px;
   }
 }
-\n.reveal {
+/* SPEC M-10：主标题逐字入场（1s，每字延迟 index*0.08+0.3s，起始 translateX(10px)） */
+.each_animate span {
+  display: inline-block;
   opacity: 0;
-  transform: translateY(35px);
-  transition:
-    opacity 0.75s ease,
-    transform 0.85s cubic-bezier(0.2, 0.65, 0.2, 1);
+  transform: translateX(10px);
+  transition: 1s;
 }
-.reveal.is-visible {
+.each_animate.on span {
+  opacity: 1 !important;
+  transform: translateX(0) !important;
+}
+/* SPEC M-24 / M-25：进入视口一次入场；触发阈值（150 / 0）由 JS 逐帧计算 */
+[data-aos] {
+  transition-duration: 1.5s;
+  transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+[data-aos^='fade'] {
+  opacity: 0;
+  transition-property: all;
+}
+[data-aos^='fade'].aos-animate {
   opacity: 1;
-  transform: none;
 }
-.text-reveal {
+[data-aos-delay='100'].aos-animate {
+  transition-delay: 0.1s;
+}
+[data-aos-delay='200'].aos-animate {
+  transition-delay: 0.2s;
+}
+[data-aos='fade-top'] {
+  transform: translate(0, 50px);
+}
+[data-aos='fade-top'].aos-animate {
+  transform: translate(0, 0);
+}
+[data-aos='fade-clip'] {
+  opacity: 1 !important;
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 1.1s cubic-bezier(0.77, 0, 0.18, 1);
+  transition: 2s !important;
+  transition-duration: 2s !important;
 }
-.is-visible .text-reveal {
-  clip-path: inset(0 0 0 0);
+[data-aos='fade-clip'].aos-animate {
+  clip-path: inset(0 0% 0 0);
 }
-.mask-reveal {
-  clip-path: inset(0 0 100% 0);
-  transition: clip-path 1s cubic-bezier(0.77, 0, 0.18, 1);
+/* SPEC M-26：标题横线展开 scaleX(0) → scaleX(1)，2s */
+.headline {
+  display: flex;
+  align-items: center;
+  gap: 22px;
 }
-.mask-reveal.is-visible {
-  clip-path: inset(0 0 0 0);
+.headline__line {
+  flex: 1;
+  height: 1px;
+  background: var(--yz-line);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: 2s;
+}
+.headline.aos-animate .headline__line {
+  transform: scaleX(1);
+}
+/* SPEC M-13：实心层 + 20% 幽灵层的逐行 clip-path 擦除（DOM 与公式见参考站 function.js:4593-4617） */
+.public_text {
+  position: relative;
+}
+.public_text .p {
+  display: block;
+}
+.public_text .p .line {
+  display: block;
+  width: fit-content;
+}
+.public_text .p:first-child {
+  position: relative;
+  z-index: 55;
+}
+.public_text .p:not(:first-child) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: rgba(0, 0, 0, 0.2);
+  z-index: 5;
 }
 .capability-list article:hover {
   transform: translateY(-5px);
@@ -1358,6 +1765,221 @@ onBeforeUnmount(() => observer?.disconnect())
 }
 .service-cta button:hover {
   transform: translateX(8px);
-  border-color: var(--accent);
+  border-color: var(--yz-orange);
+}
+/* SPEC M-14：服务切换跟随框；位移 = index * item.clientHeight（实测高度），transition all .4s */
+.service-switch {
+  background: var(--yz-offwhite);
+}
+.service-switch__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 40px;
+  margin-bottom: 66px;
+}
+.service-switch__head h2 {
+  margin: 0;
+  white-space: pre-line;
+}
+.service-switch__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7vw;
+  align-items: start;
+}
+.service-switch__list {
+  position: relative;
+}
+.service-switch__item {
+  width: 100%;
+  height: 96px;
+  padding: 0 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  text-align: left;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--yz-line);
+  font: inherit;
+  cursor: pointer;
+}
+.service-switch__item:disabled {
+  cursor: default;
+}
+.service-switch__en {
+  color: #8b8b86;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.service-switch__move {
+  width: 100%;
+  height: 96px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px solid rgba(193, 192, 180, 0.97);
+  border-radius: 5px;
+  pointer-events: none;
+  transition: all 0.4s;
+  z-index: 2;
+}
+.service-switch__move::after {
+  content: '';
+  width: 5px;
+  height: 61px;
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  background: var(--yz-orange);
+  border-radius: 5px 0 0 5px;
+  transform: translateY(-50%);
+  transition: all 0.6s;
+}
+/* SPEC M-15：文本上翻与 :after 用 data-text 接过下一行（transition all .6s） */
+.attr {
+  position: relative;
+  overflow: hidden;
+}
+.attr__line {
+  display: block;
+  transition: all 0.6s;
+}
+.attr::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(100%);
+  transition: all 0.6s;
+}
+.service-switch__item.on .attr__line {
+  transform: translateY(-100%);
+}
+.service-switch__item.on .attr::after {
+  transform: translateY(0);
+}
+.service-switch__picture {
+  position: relative;
+}
+.service-switch__picture video {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  opacity: 0;
+}
+.service-switch__picture video.on {
+  opacity: 1;
+}
+.service-switch__picture video:not(:last-of-type) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+.service-switch__caption {
+  margin: 14px 0 0;
+  color: #8b8b86;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.service-switch__mobile {
+  display: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--yz-line);
+}
+.service-switch__mobile li {
+  border-bottom: 1px solid var(--yz-line);
+}
+.service-switch__mobile a {
+  display: block;
+  padding: 20px 0;
+  color: inherit;
+  text-decoration: none;
+}
+/* SPEC 断点速查 ≤1024px：不擦除整段文案、隐藏 PC 专用过渡视频与桌面切换列表 */
+@media (max-width: 1024px) {
+  .service-shell {
+    width: min(calc(100% - 48px), 1320px);
+  }
+  .service-section,
+  .service-approach,
+  .service-cta {
+    padding: 84px 0;
+  }
+  .service-hero {
+    min-height: 420px;
+  }
+  .service-hero h1 {
+    font-size: clamp(40px, 12vw, 88px);
+  }
+  .service-hero__copy {
+    flex-direction: column;
+    align-items: start;
+    gap: 22px;
+    padding-right: 0;
+  }
+  .service-hero__index {
+    bottom: 30px;
+  }
+  .service-capabilities__head,
+  .service-switch__head {
+    flex-direction: column;
+    align-items: start;
+    gap: 18px;
+    margin-bottom: 42px;
+  }
+  .capability-list {
+    grid-template-columns: 1fr;
+  }
+  .capability-list article {
+    min-height: 0;
+    padding: 26px 0;
+    border-right: 0;
+    border-bottom: 1px solid #bbb;
+  }
+  .capability-list article:last-child {
+    border-bottom: 0;
+  }
+  .capability-list h3 {
+    margin: 34px 0 12px;
+  }
+  .service-approach__grid {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  .public_text {
+    display: none !important;
+  }
+  .public_text.sj_text {
+    display: block !important;
+  }
+  .service-switch__list,
+  .service-switch__picture {
+    display: none !important;
+  }
+  .service-switch__mobile {
+    display: block;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .each_animate span,
+  [data-aos] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+  .headline__line {
+    transform: scaleX(1) !important;
+    transition: none !important;
+  }
 }
 </style>
