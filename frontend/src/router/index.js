@@ -72,6 +72,10 @@ const routes = [
         component: () => import('@/views/ServiceLanding.vue'),
         meta: { title: '定制开发' }
       },
+      { path: '/en/ai-consultation', name: 'AiConsultationEn', component: () => import('@/views/AiConsultation/index.vue'), meta: { title: 'AI consultation' } },
+      ...[
+        ['ai-development','AiDevelopmentEn','AI development'],['miniprogram-development','MiniprogramDevelopmentEn','Mini program development'],['app-development','AppDevelopmentEn','App development'],['web-development','WebDevelopmentEn','Web development'],['iot-development','IotDevelopmentEn','IoT solutions'],['digital-creativity','DigitalCreativityEn','Digital creative'],['custom-development','CustomDevelopmentEn','Custom software']
+      ].map(([slug,name,title]) => ({ path: `/en/${slug}`, name, component: () => import('@/views/ServiceLanding.vue'), meta: { title } })),
       {
         path: '/news',
         name: 'News',

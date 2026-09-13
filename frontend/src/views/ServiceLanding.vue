@@ -12,7 +12,7 @@
 
     <section class="service-capabilities service-section"><div class="service-shell service-capabilities__head"><p class="service-kicker">02 / WHAT WE DELIVER</p><h2>{{ page.capabilityTitle }}</h2></div><div class="service-shell capability-list"><article v-for="(item, index) in page.capabilities" :key="item.title"><span>0{{ index + 1 }}</span><h3>{{ item.title }}</h3><p>{{ item.text }}</p><b>↗</b></article></div></section>
     <section class="service-approach"><div class="service-shell service-approach__grid"><p class="service-kicker">03 / HOW WE WORK</p><h2>{{ page.statement }}</h2><p>{{ page.description }}</p></div></section>
-    <section class="service-cta"><div class="service-shell"><p class="service-kicker">START A PROJECT</p><h2>把一个想法，<br>做成真正的产品。</h2><button type="button" @click="router.push('/ai-consultation')">开始沟通 <span>↗</span></button></div></section>
+    <section class="service-cta"><div class="service-shell"><p class="service-kicker">START A PROJECT</p><h2>{{ locale === 'en' ? 'Turn an idea into a\nreal product.' : '把一个想法，\n做成真正的产品。' }}</h2><button type="button" @click="router.push(locale === 'en' ? '/en/ai-consultation' : '/ai-consultation')">{{ locale === 'en' ? 'Start a conversation' : '开始沟通' }} <span>↗</span></button></div></section>
   </main>
 </template>
 
@@ -31,7 +31,17 @@ const pages = {
   '/custom-development': { kind:'custom',order:6,title:'定制开发',en:'CUSTOM SOFTWARE',subtitle:'让系统适配业务，而不是让组织迁就软件。',capabilityTitle:'为真实的组织方式而建。',statement:'把分散的流程、数据与协作，整理成一套真正好用的系统。',description:'我们深入业务现场，完成需求拆解、产品设计、研发交付和系统集成，并为持续演进留出空间。',modules:['业务梳理','产品蓝图','研发交付','持续迭代'],moduleNotes:['先理解组织如何运作。','把复杂需求变成清晰结构。','用稳定工程落地每个关键环节。','随着业务变化持续优化。'],capabilities:base([['业务管理系统','客户、项目、订单、采购与服务流程数字化。'],['数据决策平台','统一数据口径，建立清晰可见的经营视图。'],['系统集成服务','打通已有系统、第三方平台与内部数据资产。'],['遗留系统升级','保障业务连续性的前提下完成架构与体验更新。']]) },
   '/digital-creativity': { kind:'creative',order:7,title:'数字创意',en:'DIGITAL CREATIVE',subtitle:'让技术成为内容表达与品牌体验的一部分。',capabilityTitle:'创造值得参与的品牌时刻。',statement:'当技术真正服务于内容，体验才会留下记忆。',description:'面向品牌传播、展览展示与文化内容，提供互动网站、数字展陈、创意 H5 与视觉化体验设计。',modules:['互动体验','数字展陈','创意 H5','数据可视化'],capabilities:base([['互动品牌体验','通过动效与交互增强内容的参与感和传播力。'],['数字展陈设计','连接空间、屏幕、内容与观众的展示体验。'],['创意 H5 开发','适合活动、传播与叙事的移动互动页面。'],['信息可视化','将复杂数据转化为清晰、有说服力的视觉表达。']]) }
 }
-const page = computed(() => pages[route.path] || pages['/web-development'])
+const locale = computed(() => route.path.startsWith('/en/') ? 'en' : 'zh-CN')
+const translations = {
+  '/miniprogram-development': { title:'小程序开发', enTitle:'Mini Program Development', subtitle:'用更轻的产品形态，让服务更快抵达用户。', enSubtitle:'Reach users faster with a lighter product experience.', capabilityTitle:'把服务，变成顺手的体验。', enCapabilityTitle:'Turn services into effortless experiences.', statement:'从第一步触达，到一次服务完成，每个环节都应该轻、快、清楚。', enStatement:'From first touch to completed service, every step should feel light, fast and clear.', description:'我们围绕微信生态、业务流程和运营需要，搭建可持续生长的小程序服务入口。', enDescription:'We build sustainable mini program touchpoints around WeChat, business workflows and operations.' }
+}
+const page = computed(() => {
+  const path = route.path.replace(/^\/en/, '') || '/web-development'
+  const source = pages[path] || pages['/web-development']
+  if (locale.value === 'zh-CN') return source
+  const t = translations[path]
+  return { ...source, title: t?.enTitle || source.en, subtitle: t?.enSubtitle || `Build a reliable ${source.en.toLowerCase()} experience for your business.`, capabilityTitle: t?.enCapabilityTitle || 'Capabilities that create lasting value.', statement: t?.enStatement || 'Thoughtful product design, stable engineering and a clear path to growth.', description: t?.enDescription || 'From strategy to delivery, we turn complex requirements into useful digital products.', modules: source.modules.map((m, i) => ['Enter service','Complete booking','Pay online','Build loyalty'][i] || m), capabilities: source.capabilities.map((c) => ({ ...c, title: c.title, text: c.text })) }
+})
 </script>
 
 <style scoped>
