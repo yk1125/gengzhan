@@ -23,3 +23,14 @@
 
 尚无合并。后续逐项记录：任务、基准、合入提交、验证结果、证据位置、剩余外部项。
 
+
+## T02 样板集成（2026-09-14）
+- foundationCommit: `0997a1e`（合入 `4c18b6a`、`af63173`）
+- T02-H: `85530e6` → 集成提交 `4a343d6`
+- T02-S: `ad21014` → 集成提交 `5021d76`
+- 修复：`9a17abc` 清理首页提交残留 diff 标记
+- 验证：`frontend/npm.cmd run build` 通过；仅有 baseline-browser-mapping、Browserslist、chunk 体积及 module type 警告。
+- 预览：Vite 已启动，端口 3000 被占用，集成预览运行于 http://localhost:3001/。
+- 验收入口：首页 `/`、英文首页 `/en/`；小程序 `/services/mini-program`、`/en/services/mini-program`。主题切换使用公共主题按钮。
+- 有意差异/待验：视频素材与参考站动效未逐项比对；Logo 当前为文字占位；真实咨询/API未接入；尚未完成真实手机/Safari/微信验收；首页仍有大 chunk 警告。
+- 状态：待用户验收样板，未生成 pilotCommit。
