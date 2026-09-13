@@ -1,5 +1,5 @@
 # Session A · 路由可达性修复 + Git 收敛 + 动效依赖骨架（2026-09-14）
-状态：完成（唯一未决项：Step 3.11 需要用户决定是否改写 main 历史）
+状态：完成（Step 3.11 已由用户裁定为「保持现状」，无未决项）
 基准commit：`45ef250`（main，工作区 clean）
 本任务commit：逐步记录在下方各 Step
 
@@ -269,7 +269,7 @@ git log --oneline main..codex/t00a-assets        # 无输出
 
 ### Step 3.11 main 上 4 个重复提交
 
-**未执行，按指令停下来问用户。** 判断依据：
+**已结案：按选项 1 处理（2026-09-14 用户裁定）——保持现状，不做任何历史改写。** 当时先按指令停下询问用户，判断依据：
 
 - 4 个重复提交（`4a343d6`、`5021d76`、`512565e`、`0997a1e`）已经是 main 的线性历史的一部分，并且 `1d9d632`/`cefb3ad` 两个合并提交的祖先里也有它们。
 - 要真正「清掉」这些重复提交，只能改写 main 已发布的历史（interactive rebase / filter-repo / 重建分支指向），属于任务红线里明确禁止的动作，也可能影响已经从这个 main 建出去的工作树与下游分支。
@@ -280,6 +280,8 @@ git log --oneline main..codex/t00a-assets        # 无输出
 1. 保持现状，只在文档里记为「已收敛、历史含 4 个重复提交」；
 2. 授权改写 main 历史（例如 `git rebase --onto` 去掉 4 个 cherry-pick 提交，或重建 main 指向一个干净历史），并接受所有 main 派生工作树/分支需要重新同步；
 3. 其他指定做法。
+
+**用户裁定结果：选项 1。** 处理方式：只在 `INTEGRATION.md` 记为「已收敛、历史含 4 个重复提交」，不执行 rebase / filter-repo / 强推，不改任何 ref。详见文末「补充记录」。
 
 ### 合并过程中发现的存量缺陷（记录，未代改）
 
@@ -299,7 +301,7 @@ git worktree move "D:/桌面/gengzhan-worktrees/gengzhan-worktrees/session-c" "D
 fatal: failed to move 'D:/桌面/gengzhan-worktrees/gengzhan-worktrees/session-c' to 'D:/桌面/gengzhan-worktrees/session-c': Permission denied
 ```
 
-重试一次仍然 `Permission denied`。判断是 Windows 不允许重命名作为某个进程当前目录（或被句柄占用）的目录——该 worktree 很可能正被另一个终端/编辑器占用。**没有强改、没有删目录**，`session-c` 目前仍在旧路径；待占用解除后按 `SESSIONS.md` 里记的命令补搬。搬移后的实际布局见 `SESSIONS.md`「实际工作树位置」。
+重试一次仍然 `Permission denied`。判断是 Windows 不允许重命名作为某个进程当前目录（或被句柄占用）的目录——该 worktree 很可能正被另一个终端/编辑器占用。**没有强改、没有删目录**，当时 `session-c` 留在旧路径；占用解除后重试成功，见文末「补充记录」。最终布局见 `SESSIONS.md`「实际工作树位置」。
 
 安装与验证：
 
@@ -378,12 +380,64 @@ eslint（只读，不带 --fix）→ ESLINT_EXIT=1，✖ 850 problems (7 errors,
 
 ## 未完成事项与下次第一步
 
-1. **待用户决定**：Step 3.11 的 4 个重复提交是否需要清理（要清理就必须改写 main 历史，A 未自行执行）。
+1. ~~待用户决定：Step 3.11~~ → 已裁定为选项 1（保持现状、不改写历史），已记入 `INTEGRATION.md`。
 2. **待 T00A/T00R 提交**：他们提交后 A 需要再 merge 一次，并把 `SPEC.md`/素材接进 token 与客户墙；届时重跑 `check:routes` + `build`。
 3. **待 C 修**：`ServiceLanding.vue` 第 59 行字面量 `\n`；`handoffs/C.md` 里作废的 `/services/mini-program` 说法。
 4. **待 B/C 开工前置**：main 上仍无 SPEC.md 与素材；客户墙是 24 空槽，服务素材为占位登记。
 5. **T01 存量债**：`routeManifest` 仍只覆盖 `home/contact/ai` 三个键，`check:routes` 会把其余 15 个 routeKey 列为 WARN（已在脚本里标注，不属于本任务修复范围）。
-6. **待补**：`session-c` 工作树搬移；`session-b`/`t00a`/`t00r` 的前置同步与依赖安装策略。
+6. **待补**：`session-t00a`/`session-t00r` 的前置同步与依赖安装（`session-a`/`session-b`/`session-c` 的 node_modules 均已就位）；旧嵌套空目录 `gengzhan-worktrees\gengzhan-worktrees\` 已空，可随时删除。
+
+## 补充记录（用户裁定后 · 2026-09-14）
+
+### 1. Step 3.11 按选项 1 结案
+
+用户裁定：保持现状，只在 `INTEGRATION.md` 里记为「已收敛、历史含 4 个重复提交」，不做任何历史改写。
+
+执行动作（只有文档，没有 git 结构改动）：
+
+- `INTEGRATION.md` 的「集成记录」里，原「未决项」条目改为「已决（2026-09-14 用户裁定，选项 1）」：明确保留 `4a343d6`、`5021d76`、`512565e`、`0997a1e` 这 4 个 cherry-pick 重复提交，不执行 rebase/filter-repo/强推；并说明该冗余不影响功能、门禁与构建。
+- 未执行任何 `git rebase`、`git filter-repo`、`git push --force`、`git reset --hard`；`git log` 仍能看到那 4 个提交。
+
+### 2. Step 4 收尾：session-c 搬移成功
+
+占用解除后重跑同一条命令即成功：
+
+```powershell
+git worktree move "D:/桌面/gengzhan-worktrees/gengzhan-worktrees/session-c" "D:/桌面/gengzhan-worktrees/session-c"   # exit 0
+```
+
+复核输出：
+
+```text
+=== worktree list ===
+D:/桌面/gengzhan                           f1cd935 [main]
+D:/桌面/gengzhan-worktrees/session-a       af63173 [codex/rebuild-foundation]
+D:/桌面/gengzhan-worktrees/session-b       67890da [codex/rebuild-brand]
+D:/桌面/gengzhan-worktrees/session-c       12054b5 [codex/rebuild-services]
+D:/桌面/gengzhan-worktrees/session-t00a    45ef250 [codex/t00a-assets]
+D:/桌面/gengzhan-worktrees/session-t00r    45ef250 [codex/t00r-motion-spec]
+
+=== session-c 现场 ===
+git status --short   →（空，clean）
+node_modules=True
+branch=codex/rebuild-services head=12054b5
+```
+
+六个工作树现在全部位于 `gengzhan-worktrees\` 的一级子目录，不再嵌套。搬移只改路径，没改分支、提交或工作区内容；`session-c` 的 `frontend/node_modules`（本任务安装的 274 包）随目录一起搬过去了，无需重装。旧目录 `gengzhan-worktrees\gengzhan-worktrees\` 搬空后仍存在但**已为空**（`Get-ChildItem -Force` 无输出），删除该空目录的命令被本机策略拦截，未强删，留作可随时手工清理的空壳。
+
+### 3. Step 6 复核证据（本就已完成，此处给出可点验位置）
+
+```text
+ACCEPTANCE.md:71   | AC07b | 动效还原（占位，待 T00R） | 判定值待 T00R 的动效 SPEC.md 定稿后填入。字段已建好，见下方「AC07b 字段」 |
+ACCEPTANCE.md:84   ### AC07b 字段（占位，判定值等 T00R）
+INTEGRATION.md:57  - **D1（2026-09-14）**：外部素材的授权由用户自行处理/承担……素材仍必须下载到仓库、登记来源与 hash……
+INTEGRATION.md:58  - **D2（2026-09-14）**：`/services/:slug` 形状确认为文档笔误，作废；英文路径统一 `/en/<slug>`……
+```
+
+### 4. 明确不做的事
+
+- 不代改 `ServiceLanding.vue`（第 59 行字面量 `\n`）和 `handoffs/C.md`（作废的 `/services/mini-program` 说法）——用户 2026-09-14 明确要求留给 C，A 只保留记录。
+- 不改写 main 历史、不删未提交内容、不触碰他人工作树里的成果（T00A/T00R 的素材与取证保持原样）。
 
 ---
 

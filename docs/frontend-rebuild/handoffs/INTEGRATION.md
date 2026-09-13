@@ -66,7 +66,7 @@ D:/桌面/gengzhan-worktrees/session-t00r                    45ef250 [codex/t00r
 - 2026-09-14（Session A 收敛）：`codex/rebuild-brand` → 合并提交 `1d9d632`；`codex/rebuild-services` → `cefb3ad`；`codex/rebuild-foundation` → `Already up to date.`（其提交已随 brand 的祖先链在 main 中）；`codex/t00a-assets`、`codex/t00r-motion-spec` → 当时无自有提交，合并为空操作。合并后 merge-base 已等于各分支 HEAD：brand `67890da`、services `12054b5`、foundation `af63173`、t00a/t00r `45ef250`。
 - 收敛验证（真实执行）：`npm.cmd run build` 通过（✓ 24.73s）；`npm.cmd run check:routes` → PASS 34 / FAIL 0 / PENDING 2（2 条 PENDING 都指向 `contact`，属 B·T05 未创建页面）；只读 eslint → 7 errors（与基线同一批）+ 843 warnings。
 - 收敛过程中发现的存量问题（记录，未代改他人文件）：`frontend/src/views/ServiceLanding.vue` 第 59 行行首字面量 `\n` 使 `.reveal{...}` 规则失效（C 修）；`handoffs/C.md` 里 `/services/mini-program` 别名的说法按 D2 作废（C 改）。
-- **未决项**：main 上 4 个 cherry-pick 重复提交（`4a343d6`、`5021d76`、`512565e`、`0997a1e`）与分支原始提交同 patch-id。清除它们必须改写 main 历史（rebase/filter-repo），属红线，已停下等用户决定；现状不影响功能与门禁。
+- **已决（2026-09-14 用户裁定，选项 1）**：main 上 4 个 cherry-pick 重复提交（`4a343d6`、`5021d76`、`512565e`、`0997a1e`，与分支原始提交同 patch-id）**保持现状，不做任何历史改写**。收敛结论记为：分支已正式合并（merge-base 等于各分支 HEAD）、历史中保留这 4 个重复提交、不执行 rebase/filter-repo/强推。该冗余不影响功能、门禁与构建；后续如需清理须重新取得用户授权。
 - **下游前置状态：B/C 未就绪**。main 上没有动效 SPEC.md（T00R 只有未提交的取证素材，见其工作树 `docs/frontend-rebuild/evidence/reference-effects/`），也没有素材（T00A 已下载 24 个客户 Logo 与 banner/transition 视频并生成带 SHA256 的 `assets-manifest.json`，但都还在未提交状态）。B 的 T02-H 定稿、C 的 T03 动效在有 SPEC.md 与素材合入前无法收口。
 
 ## T02 样板集成（2026-09-14）

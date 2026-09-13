@@ -75,15 +75,11 @@ git worktree add ../gengzhan-worktrees/session-d -b codex/rebuild-content <pilot
 | 集成主仓（A） | `D:\桌面\gengzhan` | `main` |
 | A 基础 | `D:\桌面\gengzhan-worktrees\session-a` | `codex/rebuild-foundation` |
 | B 品牌 | `D:\桌面\gengzhan-worktrees\session-b` | `codex/rebuild-brand` |
-| C 服务 | `D:\桌面\gengzhan-worktrees\session-c`（搬移待完成，见下） | `codex/rebuild-services` |
+| C 服务 | `D:\桌面\gengzhan-worktrees\session-c` | `codex/rebuild-services` |
 | T00A 素材 | `D:\桌面\gengzhan-worktrees\session-t00a` | `codex/t00a-assets` |
 | T00R 动效规格 | `D:\桌面\gengzhan-worktrees\session-t00r` | `codex/t00r-motion-spec` |
 
-统一约定：所有工作树放在 `gengzhan-worktrees\` 的一级子目录，不再嵌套第二层。`session-c` 仍留在旧位置 `gengzhan-worktrees\gengzhan-worktrees\session-c`，原因是执行 `git worktree move` 时 Windows 报 `Permission denied`（该目录被占用，通常是某个终端/编辑器的工作目录）；占用解除后补执行：
-
-```powershell
-git worktree move "D:/桌面/gengzhan-worktrees/gengzhan-worktrees/session-c" "D:/桌面/gengzhan-worktrees/session-c"
-```
+统一约定：所有工作树放在 `gengzhan-worktrees\` 的一级子目录，不再嵌套第二层。2026-09-14 已全部搬平（`session-b`、`session-c` 由 `gengzhan-worktrees\gengzhan-worktrees\*` 移到一级目录；`session-c` 第一次搬移时报过 `Permission denied`，解除占用后重试成功）。搬移只改路径，不改分支与提交，搬移后各工作树 `git status --short` 均为空。
 
 `session-a`、`session-c` 已按各自锁文件执行 `npm ci`（各 274 个包），`frontend` 里 `npm run build` 均可通过；前置到新基准前请先同步 main 再安装。
 
