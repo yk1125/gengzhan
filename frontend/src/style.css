@@ -1,0 +1,2153 @@
+/* 引入通用响应式样式 - @import必须在最前面 */
+@import './styles/responsive.css';
+@import './styles/service-responsive.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========== CSS变量定义 ========== */
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --tech-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --neon-blue: #00d4ff;
+  --neon-purple: #9d4edd;
+  --neon-pink: #ff006e;
+  --cyber-bg: #0a0e27;
+  --cyber-bg-light: #1a1f3a;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--cyber-bg);
+  color: #fff;
+}
+
+#app {
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ========== 科技感滚动条 ========== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cyber-bg-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--neon-blue), var(--neon-purple));
+  border-radius: 10px;
+  box-shadow: 0 0 10px var(--neon-blue);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--neon-purple), var(--neon-pink));
+  box-shadow: 0 0 20px var(--neon-purple);
+}
+
+/* ========== 毛玻璃效果类 ========== */
+.glass-effect {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* ========== 霓虹灯效果 ========== */
+.neon-border {
+  border: 2px solid var(--neon-blue);
+  box-shadow: 
+    0 0 5px var(--neon-blue),
+    0 0 10px var(--neon-blue),
+    0 0 20px var(--neon-blue),
+    inset 0 0 10px rgba(0, 212, 255, 0.2);
+  animation: neonPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes neonPulse {
+  from {
+    box-shadow: 
+      0 0 5px var(--neon-blue),
+      0 0 10px var(--neon-blue),
+      0 0 20px var(--neon-blue),
+      inset 0 0 10px rgba(0, 212, 255, 0.2);
+  }
+  to {
+    box-shadow: 
+      0 0 10px var(--neon-blue),
+      0 0 20px var(--neon-blue),
+      0 0 40px var(--neon-blue),
+      inset 0 0 20px rgba(0, 212, 255, 0.4);
+  }
+}
+
+.neon-text {
+  color: var(--neon-blue);
+  text-shadow: 
+    0 0 10px var(--neon-blue),
+    0 0 20px var(--neon-blue),
+    0 0 30px var(--neon-blue);
+  animation: neonTextGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes neonTextGlow {
+  from {
+    text-shadow: 
+      0 0 10px var(--neon-blue),
+      0 0 20px var(--neon-blue),
+      0 0 30px var(--neon-blue);
+  }
+  to {
+    text-shadow: 
+      0 0 20px var(--neon-blue),
+      0 0 30px var(--neon-blue),
+      0 0 40px var(--neon-blue),
+      0 0 50px var(--neon-blue);
+  }
+}
+
+/* ========== 渐变文字效果 ========== */
+.gradient-text {
+  background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========== 悬浮动画 ========== */
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* ========== 脉冲动画 ========== */
+.pulse-animation {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ========== 科技感网格背景 ========== */
+.tech-grid-bg {
+  background-image: 
+    linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  position: relative;
+}
+
+.tech-grid-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+  animation: gridPulse 4s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* ========== 加载动画 ========== */
+.tech-loader {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--neon-blue);
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+.tech-loader::after {
+  content: '';  
+  box-sizing: border-box;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-bottom-color: var(--neon-purple);
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== YunZhan visual system: quiet precision ===== */
+:root {
+  --ink-950: #071014;
+  --ink-900: #0b171b;
+  --ink-800: #102329;
+  --paper: #f4f7f2;
+  --muted: #9aada8;
+  --line: rgba(221, 237, 231, 0.14);
+  --accent: #b8f36b;
+  --accent-soft: rgba(184, 243, 107, 0.14);
+  --cyan: #8edce2;
+  --content-max: 1240px;
+  --radius-sm: 8px;
+  --radius-lg: 22px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--ink-950);
+}
+
+body {
+  background:
+    radial-gradient(circle at 82% 8%, rgba(142, 220, 226, 0.11), transparent 28rem),
+    radial-gradient(circle at 10% 30%, rgba(184, 243, 107, 0.06), transparent 24rem),
+    var(--ink-950) !important;
+  color: var(--paper) !important;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif !important;
+  letter-spacing: 0 !important;
+}
+
+::selection { background: var(--accent); color: var(--ink-950); }
+
+/* Neutralise the old all-surface neon treatment while keeping component contracts intact. */
+.glass-effect, .tech-grid-bg { background-image: none !important; background-color: rgba(16, 35, 41, 0.72) !important; box-shadow: none !important; }
+.gradient-text { background: none !important; color: var(--paper) !important; -webkit-text-fill-color: currentColor !important; }
+.neon-text { color: var(--accent) !important; text-shadow: none !important; animation: none !important; }
+
+.container, .header-container, .footer-container {
+  width: min(100% - 48px, var(--content-max)) !important;
+  max-width: var(--content-max) !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.el-button--primary {
+  --el-button-bg-color: var(--accent) !important;
+  --el-button-border-color: var(--accent) !important;
+  --el-button-hover-bg-color: #d1ff9a !important;
+  --el-button-hover-border-color: #d1ff9a !important;
+  --el-button-text-color: var(--ink-950) !important;
+  border-radius: 999px !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+}
+
+.el-button--primary:hover, button:hover:not(:disabled), .el-button:hover:not(.is-disabled) {
+  transform: translateY(-2px) !important;
+  filter: none !important;
+  box-shadow: 0 10px 24px rgba(184, 243, 107, 0.16) !important;
+}
+
+/* Header */
+.header {
+  height: 76px !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  background: rgba(7, 16, 20, 0.72) !important;
+  border-bottom: 1px solid var(--line) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(18px) !important;
+}
+.header::before { display: none !important; }
+.header-fixed { background: rgba(7, 16, 20, 0.94) !important; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22) !important; }
+.main-content { padding-top: 0 !important; }
+.logo { background: transparent !important; padding: 0 !important; }
+.logo-img { height: 40px !important; }
+.nav-menu { gap: 2px !important; }
+.nav-item {
+  color: rgba(244, 247, 242, 0.68) !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 9px 14px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+.nav-item::before, .nav-item::after { display: none !important; }
+.nav-item:hover, .nav-item.active { color: var(--paper) !important; background: rgba(255,255,255,0.08) !important; box-shadow: none !important; text-shadow: none !important; transform: none !important; }
+.nav-item.active { color: var(--accent) !important; }
+.contact-info { border: 1px solid rgba(184, 243, 107, 0.32) !important; background: var(--accent-soft) !important; border-radius: 999px !important; padding: 9px 15px !important; box-shadow: none !important; font-size: 12px !important; }
+.contact-info:hover { border-color: var(--accent) !important; background: rgba(184,243,107,0.2) !important; transform: none !important; box-shadow: none !important; }
+.wechat-icon { color: var(--accent) !important; filter: none !important; animation: none !important; }
+
+/* Shared page rhythm */
+.section-header { margin-bottom: 40px !important; text-align: left !important; }
+.section-header h2 { color: var(--paper) !important; background: none !important; -webkit-text-fill-color: currentColor !important; font-size: clamp(28px, 3vw, 44px) !important; letter-spacing: -0.02em !important; }
+.section-header p { color: var(--muted) !important; font-size: 15px !important; }
+.service-card, .case-card, .advantage-item, .process-step, .footer-section {
+  background: rgba(16, 35, 41, 0.72) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: none !important;
+}
+.service-card:hover, .case-card:hover, .advantage-item:hover, .process-step:hover, .footer-section:hover {
+  border-color: rgba(184, 243, 107, 0.52) !important;
+  background: rgba(19, 43, 47, 0.9) !important;
+  box-shadow: 0 18px 48px rgba(0,0,0,0.22) !important;
+  filter: none !important;
+}
+.service-card::before, .advantage-item::before { display: none !important; }
+.service-icon, .advantage-icon, .step-icon { background: var(--accent-soft) !important; color: var(--accent) !important; box-shadow: none !important; animation: none !important; border: 1px solid rgba(184,243,107,0.25) !important; }
+.service-card h3, .advantage-item h3, .process-step h3, .case-info h3 { color: var(--paper) !important; }
+.service-card p, .advantage-item p, .process-step p, .case-info p { color: var(--muted) !important; }
+.service-features :deep(.el-tag) { background: rgba(142,220,226,0.08) !important; border-color: rgba(142,220,226,0.18) !important; color: var(--cyan) !important; }
+
+@media (max-width: 768px) {
+  .container, .header-container, .footer-container { width: min(100% - 32px, var(--content-max)) !important; }
+  .header { height: 64px !important; }
+  .main-content { padding-top: 0 !important; }
+  .logo-img { display: block !important; height: 34px !important; }
+  .logo-name { display: none !important; }
+  .mobile-slogan { color: var(--muted) !important; text-shadow: none !important; font-size: 11px !important; }
+  .mobile-menu-btn span { background: var(--accent) !important; box-shadow: none !important; }
+  .mobile-menu-overlay { top: 64px !important; background: rgba(7,16,20,0.7) !important; backdrop-filter: blur(10px) !important; }
+  .mobile-nav { background: var(--ink-900) !important; border: 1px solid var(--line) !important; border-top: 0 !important; border-radius: 0 0 16px 16px !important; }
+  .mobile-nav-item { color: var(--paper) !important; border: 0 !important; border-radius: 10px !important; }
+  .mobile-nav-item:hover, .mobile-nav-item.active { color: var(--accent) !important; background: var(--accent-soft) !important; transform: none !important; box-shadow: none !important; }
+  .mobile-contact { background: var(--accent-soft) !important; border-color: rgba(184,243,107,0.3) !important; }
+  .footer { margin-top: 56px !important; padding-top: 54px !important; }
+}
+
+/* ========================================================================== */
+/* YunZhan 2026 — shared studio system for every inner page                   */
+/* ========================================================================== */
+:root {
+  --yz-orange: #f06a21;
+  --yz-black: #111111;
+  --yz-offwhite: #f2f2f0;
+  --yz-line: #d2d2ce;
+  --yz-copy: #676767;
+}
+
+/* One brand and navigation treatment across the whole site. */
+.header:not(.header-home) {
+  height: 76px !important;
+  background: rgba(17,17,17,.97) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(16px) !important;
+}
+.header:not(.header-home)::before { display: none !important; }
+.header:not(.header-home) .brand-simple { color: #fff !important; }
+.header:not(.header-home) .brand-en { color: rgba(255,255,255,.58) !important; }
+.header:not(.header-home) .nav-menu { gap: 8px !important; }
+.header:not(.header-home) .nav-item {
+  padding: 10px 11px !important;
+  color: rgba(255,255,255,.78) !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  font-size: 12px !important;
+  box-shadow: none !important;
+}
+.header:not(.header-home) .nav-item:hover,
+.header:not(.header-home) .nav-item.active { color: #fff !important; background: transparent !important; }
+.header:not(.header-home) .nav-item.active::after {
+  display: block !important;
+  bottom: 0 !important;
+  width: 4px !important;
+  height: 4px !important;
+  background: var(--yz-orange) !important;
+  border-radius: 50% !important;
+  box-shadow: none !important;
+}
+.header:not(.header-home) .desktop-wechat-copy {
+  color: #fff !important;
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,.42) !important;
+  border-radius: 999px !important;
+}
+
+/* Editorial hero shared by service, company, case and news pages. */
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) {
+  color: var(--yz-black) !important;
+  background: #fff !important;
+}
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header {
+  min-height: 500px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  position: relative !important;
+  padding: 0 0 76px !important;
+  overflow: hidden !important;
+  background-position: center !important;
+  background-size: cover !important;
+  border: 0 !important;
+}
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header::before {
+  display: block !important;
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(90deg, rgba(8,10,13,.76), rgba(8,10,13,.18)) !important;
+}
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header > .container {
+  position: relative !important;
+  z-index: 2 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header > .container::before {
+  content: 'YUNZHAN / DIGITAL STUDIO' !important;
+  display: block !important;
+  margin-bottom: 22px !important;
+  color: var(--yz-orange) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: .2em !important;
+}
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header h1 {
+  margin: 0 !important;
+  color: #fff !important;
+  background: none !important;
+  -webkit-text-fill-color: #fff !important;
+  font-size: clamp(54px,6vw,88px) !important;
+  font-weight: 750 !important;
+  letter-spacing: -.055em !important;
+  line-height: 1 !important;
+  text-shadow: none !important;
+}
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header p {
+  max-width: 620px !important;
+  margin: 22px 0 0 !important;
+  color: rgba(255,255,255,.74) !important;
+  font-size: 15px !important;
+  letter-spacing: .08em !important;
+}
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) :is(.header-decoration,.particle-background) { display: none !important; }
+
+/* Shared section rhythm. */
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) :is(.intro-section,.content-section,.types-section,.platforms-section,.scenarios-section,.advantages-section,.process-section,.services-section,.values-section,.team-section,.contact-section,.cta-section) {
+  padding: 120px 0 !important;
+  background: #fff !important;
+}
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) :is(.types-section,.platforms-section,.advantages-section,.values-section,.process-section) {
+  background: var(--yz-offwhite) !important;
+}
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) .section-header {
+  max-width: 720px !important;
+  margin: 0 0 56px !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) .section-header::before {
+  content: 'YUNZHAN CAPABILITY' !important;
+  display: block !important;
+  margin-bottom: 16px !important;
+  color: var(--yz-orange) !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: .2em !important;
+}
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) .section-header h2 {
+  margin: 0 !important;
+  color: var(--yz-black) !important;
+  background: none !important;
+  -webkit-text-fill-color: var(--yz-black) !important;
+  font-size: clamp(40px,4.8vw,66px) !important;
+  font-weight: 650 !important;
+  letter-spacing: -.055em !important;
+  line-height: 1.1 !important;
+}
+:is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) .section-header p { color: var(--yz-copy) !important; }
+
+/* Intro: quiet, generous, image-led. */
+:is(.ai-development,.app-development,.miniprogram-development,.web-development,.custom-development) .intro-content {
+  gap: 7vw !important;
+  align-items: center !important;
+}
+:is(.ai-development,.app-development,.miniprogram-development,.web-development,.custom-development) .intro-text h2 {
+  color: var(--yz-black) !important;
+  font-size: clamp(34px,3.4vw,52px) !important;
+  letter-spacing: -.045em !important;
+}
+:is(.ai-development,.app-development,.miniprogram-development,.web-development,.custom-development) .intro-text p { color: var(--yz-copy) !important; line-height: 1.9 !important; }
+:is(.ai-development,.app-development,.miniprogram-development,.web-development,.custom-development) .intro-image {
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+:is(.ai-development,.app-development,.miniprogram-development,.web-development,.custom-development) .intro-image img {
+  width: 100% !important;
+  min-height: 440px !important;
+  object-fit: cover !important;
+  filter: saturate(.72) !important;
+}
+:is(.ai-development,.app-development,.miniprogram-development,.web-development,.custom-development) .feature-list li {
+  color: #333 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--yz-line) !important;
+  border-radius: 0 !important;
+}
+
+/* Capability cards and processes lose the old rounded SaaS look. */
+:is(.ai-development,.app-development,.web-development,.custom-development) .type-card,
+.miniprogram-development .platform-card,
+:is(.iot-development,.digital-creativity) .service-item,
+.about :is(.stat-card,.value-card,.service-card,.contact-item) {
+  border: 0 !important;
+  border-top: 1px solid #aaa !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+:is(.ai-development,.app-development,.web-development,.custom-development) .type-card:hover,
+.miniprogram-development .platform-card:hover,
+:is(.iot-development,.digital-creativity) .service-item:hover {
+  border-top-color: var(--yz-orange) !important;
+  box-shadow: none !important;
+  transform: translateY(-4px) !important;
+}
+:is(.ai-development,.app-development,.web-development,.custom-development) .type-card::before { display: none !important; }
+:is(.ai-development,.app-development,.web-development,.custom-development) .type-card::after { color: #bbb !important; }
+:is(.ai-development,.app-development,.web-development,.custom-development) .type-icon,
+.miniprogram-development .platform-icon,
+:is(.iot-development,.digital-creativity) .service-icon {
+  color: var(--yz-orange) !important;
+  background: transparent !important;
+  border: 1px solid #aaa !important;
+  border-radius: 50% !important;
+  box-shadow: none !important;
+}
+:is(.ai-development,.app-development,.web-development,.custom-development) .type-card h3,
+.miniprogram-development .platform-card h3,
+:is(.iot-development,.digital-creativity) .service-item h3 { color: var(--yz-black) !important; }
+:is(.app-development,.web-development,.custom-development) .process-timeline { gap: 0 !important; border-top: 1px solid #aaa !important; }
+:is(.app-development,.web-development,.custom-development) .process-item {
+  min-height: 230px !important;
+  padding: 28px !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-right: 1px solid #c8c8c4 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+:is(.app-development,.web-development,.custom-development) .process-number { color: var(--yz-orange) !important; border-color: #bbb !important; }
+:is(.app-development,.web-development,.custom-development) .process-content h3 { color: var(--yz-black) !important; }
+
+/* Images and stories are the visual focus. */
+:is(.ai-development,.app-development,.miniprogram-development,.web-development) .scenario-card,
+.cases .case-card,
+.news .news-card {
+  overflow: hidden !important;
+  background: #171717 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+:is(.ai-development,.app-development,.miniprogram-development,.web-development) .scenario-card { min-height: 420px !important; }
+.cases .cases-grid { gap: 24px !important; }
+.cases .case-card { color: #fff !important; }
+.cases .case-info { background: #171717 !important; }
+.cases .case-info :is(h3,p) { color: #fff !important; }
+.news .news-grid { gap: 24px !important; }
+.news .news-card { background: #fff !important; border-top: 1px solid #aaa !important; }
+.news .news-content { background: #fff !important; }
+.news .news-content h3 { color: var(--yz-black) !important; }
+.news .news-summary,.news .news-meta { color: var(--yz-copy) !important; }
+
+/* Filters read like editorial tabs. */
+:is(.cases,.news) .filter-section { padding: 24px 0 !important; background: #fff !important; border-bottom: 1px solid var(--yz-line) !important; }
+:is(.cases,.news) :is(.category-filter,.news-category-filter) { gap: 30px !important; justify-content: flex-start !important; }
+:is(.cases,.news) :is(.category-item,.news-category-item) {
+  min-height: 44px !important;
+  padding: 0 !important;
+  color: #777 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+:is(.cases,.news) :is(.category-item,.news-category-item).active { color: var(--yz-black) !important; border-bottom: 2px solid var(--yz-orange) !important; }
+:is(.cases,.news) .content-section { padding: 90px 0 130px !important; background: #fff !important; }
+
+/* CTA and footer finish in the same monochrome/orange language. */
+:is(.ai-development,.app-development,.web-development) .cta-section { color: #111 !important; background: var(--yz-orange) !important; }
+:is(.ai-development,.app-development,.web-development) .cta-section::before { display: none !important; }
+:is(.ai-development,.app-development,.web-development) .cta-section h2 { color: #111 !important; }
+:is(.ai-development,.app-development,.web-development) .cta-section p { color: rgba(0,0,0,.62) !important; }
+:is(.ai-development,.app-development,.web-development) .cta-section .el-button { color: #fff !important; background: #111 !important; border-color: #111 !important; border-radius: 0 !important; }
+.corporate-footer.footer { color: #bbb !important; background: #111 !important; border-top: 0 !important; }
+.corporate-footer .corporate-footer-container { padding-top: 80px !important; }
+.corporate-footer .corporate-footer-column h3,.corporate-footer .corporate-footer-logo strong { color: #fff !important; }
+.corporate-footer :is(.corporate-footer-brand > p,.corporate-footer-column a,.corporate-footer-column button,.corporate-footer-column p,.corporate-footer-entries span,.corporate-footer-entries a,.corporate-footer-legal span,.corporate-footer-legal a) { color: #888 !important; }
+.corporate-footer .corporate-footer-bottom { border-top-color: #333 !important; }
+
+/* Detail, policy and AI consultation surfaces. */
+:is(.case-detail,.news-detail,.policy-page,.ai-consultation-page) { color: var(--yz-black) !important; background: var(--yz-offwhite) !important; }
+:is(.case-detail,.news-detail) .detail-content,.policy-document { background: #fff !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+.news-detail .article-header h1,.case-detail .detail-title,.policy-document h1 { color: var(--yz-black) !important; letter-spacing: -.04em !important; }
+.ai-consultation-page .consultation-shell { border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+.ai-consultation-page .consultation-header { background: #111 !important; }
+.ai-consultation-page .consultation-mark,.ai-consultation-page .consultation-composer button { background: var(--yz-orange) !important; }
+
+@media (max-width: 992px) {
+  .header:not(.header-home) { height: 64px !important; }
+  .header:not(.header-home) .brand-simple { font-size: 18px !important; }
+  .header:not(.header-home) .brand-en,.header:not(.header-home) .mobile-wechat-copy { display: none !important; }
+  .header:not(.header-home) .mobile-menu-btn { display: flex !important; margin-left: auto !important; }
+  .header:not(.header-home) .mobile-menu-btn span { height: 1px !important; background: #fff !important; box-shadow: none !important; }
+  .header:not(.header-home) .mobile-menu-overlay { top: 64px !important; }
+  .header:not(.header-home) .mobile-nav { min-height: calc(100svh - 64px); background: #111 !important; border: 0 !important; border-radius: 0 !important; }
+  .header:not(.header-home) .mobile-nav-item { color: #fff !important; background: transparent !important; border-bottom: 1px solid #333 !important; border-radius: 0 !important; }
+}
+
+@media (max-width: 768px) {
+  :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header {
+    min-height: 390px !important;
+    padding: 0 0 46px !important;
+  }
+  :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header h1 { font-size: 48px !important; }
+  :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) :is(.intro-section,.content-section,.types-section,.platforms-section,.scenarios-section,.advantages-section,.process-section,.services-section,.values-section,.team-section,.contact-section,.cta-section) { padding: 78px 0 !important; }
+  :is(.ai-development,.app-development,.miniprogram-development,.web-development,.custom-development) .intro-image img { min-height: 280px !important; }
+  :is(.app-development,.web-development,.custom-development) .process-item { min-height: 0 !important; border-right: 0 !important; border-bottom: 1px solid #bbb !important; }
+}
+
+@media (max-width: 560px) {
+  :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header { min-height: 350px !important; }
+  :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header h1 { font-size: 42px !important; }
+  :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) .section-header h2 { font-size: 38px !important; }
+  :is(.cases,.news) :is(.category-filter,.news-category-filter) { gap: 20px !important; overflow-x: auto !important; flex-wrap: nowrap !important; }
+  :is(.cases,.news) :is(.category-item,.news-category-item) { flex: 0 0 auto !important; }
+}
+
+/* Inner pages share one restrained editorial system. */
+.page-header {
+  position: relative !important;
+  min-height: 280px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  padding: 72px 0 52px !important;
+  overflow: hidden !important;
+  background: linear-gradient(115deg, #0b171b 0%, #102329 100%) !important;
+  border-bottom: 1px solid var(--line) !important;
+}
+.page-header::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  background-image: linear-gradient(rgba(221,237,231,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(221,237,231,.04) 1px, transparent 1px) !important;
+  background-size: 42px 42px !important;
+  mask-image: linear-gradient(to right, black, transparent 88%) !important;
+  opacity: 1 !important;
+}
+.page-header .container { z-index: 1 !important; }
+.page-header h1, .page-header .gradient-text {
+  color: var(--paper) !important;
+  background: none !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-size: clamp(36px, 5vw, 64px) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.04em !important;
+  text-shadow: none !important;
+}
+.page-header p { max-width: 620px !important; margin-top: 15px !important; color: var(--muted) !important; font-size: 16px !important; line-height: 1.7 !important; }
+.page-header .header-decoration { display: none !important; }
+.content-section, .intro-section { padding-top: 76px !important; padding-bottom: 76px !important; }
+.lead, .intro-text > p { color: var(--muted) !important; line-height: 1.9 !important; }
+.service-item, .feature-card, .tech-card, .solution-card, .type-card, .news-card, .company-intro, .contact-card {
+  background: rgba(16,35,41,.72) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+}
+.service-item:hover, .feature-card:hover, .tech-card:hover, .solution-card:hover, .type-card:hover, .news-card:hover, .contact-card:hover {
+  transform: translateY(-5px) !important;
+  border-color: rgba(184,243,107,.48) !important;
+  box-shadow: 0 18px 40px rgba(0,0,0,.2) !important;
+  filter: none !important;
+}
+.category-item, .news-category-item { background: transparent !important; border-color: var(--line) !important; color: var(--muted) !important; border-radius: 999px !important; box-shadow: none !important; }
+.category-item.active, .news-category-item.active, .category-item:hover, .news-category-item:hover { color: var(--ink-950) !important; background: var(--accent) !important; border-color: var(--accent) !important; transform: none !important; }
+.cta-section, .contact-section { background: rgba(16,35,41,.66) !important; border-top: 1px solid var(--line) !important; border-bottom: 1px solid var(--line) !important; }
+.cta-section::before { display: none !important; }
+
+/* Footer reads as a company close, not another card grid. */
+.footer { background: #081317 !important; border-top-color: var(--line) !important; }
+.footer::before { display: none !important; }
+.footer-content { gap: 32px !important; border-bottom-color: var(--line) !important; }
+.footer-section { padding: 0 !important; border: 0 !important; background: transparent !important; border-radius: 0 !important; }
+.footer-section:hover { transform: none !important; box-shadow: none !important; background: transparent !important; }
+.footer-title { color: var(--paper) !important; background: none !important; -webkit-text-fill-color: currentColor !important; font-size: 14px !important; }
+.footer-desc, .footer-links a, .footer-contact { color: var(--muted) !important; }
+.footer-links a:hover, .footer-contact .copyable:hover { color: var(--accent) !important; }
+.footer-links li::before { color: var(--accent) !important; }
+.footer-logo { background: transparent !important; padding: 0 !important; margin-bottom: 8px !important; }
+.social-item { background: transparent !important; border-color: var(--line) !important; box-shadow: none !important; }
+.social-item:hover { border-color: var(--accent) !important; transform: none !important; box-shadow: none !important; }
+.social-item :deep(.el-icon) { color: var(--accent) !important; }
+.footer-bottom { border-top-color: var(--line) !important; }
+
+@media (max-width: 768px) {
+  .page-header { min-height: 220px !important; padding: 54px 0 36px !important; }
+  .page-header p { font-size: 14px !important; }
+  .content-section, .intro-section { padding-top: 52px !important; padding-bottom: 52px !important; }
+  .footer-content { grid-template-columns: 1fr 1fr !important; gap: 34px 18px !important; }
+}
+
+@media (max-width: 480px) {
+  .page-header { min-height: 190px !important; padding: 44px 0 30px !important; }
+  .page-header h1, .page-header .gradient-text { font-size: 34px !important; }
+  .footer-content { grid-template-columns: 1fr !important; gap: 28px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Keep the shared technical backdrop atmospheric instead of competing with page content. */
+.particle-background {
+  display: none !important;
+}
+.home, .about, .cases, .news, [class$="-development"] { background: transparent !important; }
+
+/* Shared enterprise treatment for all non-home public pages. */
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) {
+  background: #fff !important;
+  color: #1a2935 !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news)
+  :is(.intro-section, .content-section, .types-section, .scenarios-section, .advantages-section, .process-section, .filter-section, .cta-section, .contact-section) {
+  background: #fff !important;
+  border: 0 !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news)
+  .section-header {
+  max-width: 680px !important;
+  margin-left: 0 !important;
+  margin-right: auto !important;
+  text-align: left !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news)
+  .section-header h2,
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news)
+  :is(.intro-text h2, .content-section h2, .lead, .company-intro h3) {
+  color: #152f74 !important;
+  -webkit-text-fill-color: #152f74 !important;
+  background: none !important;
+  text-shadow: none !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news)
+  :is(.section-header p, .intro-text p, .content-section p, .lead, .company-intro p) {
+  color: #657582 !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news)
+  :is(.type-card, .scenario-card, .advantage-item, .advantage-card, .feature-card, .service-item, .service-card, .tech-card, .solution-card, .case-card, .news-card, .company-intro, .stat-card, .timeline-content, .contact-card) {
+  background: #fff !important;
+  border: 1px solid #e0e6ee !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news)
+  :is(.type-card:hover, .scenario-card:hover, .advantage-item:hover, .advantage-card:hover, .feature-card:hover, .service-item:hover, .service-card:hover, .tech-card:hover, .solution-card:hover, .case-card:hover, .news-card:hover) {
+  background: #f4f7ff !important;
+  border-color: #9fb6eb !important;
+  box-shadow: 0 12px 26px rgba(30, 67, 142, 0.1) !important;
+  transform: translateY(-4px) !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news)
+  :is(.type-card h3, .scenario-info h3, .advantage-item h3, .advantage-card h3, .feature-card h3, .service-item h3, .service-card h3, .tech-card h3, .solution-card h3, .case-info h3, .news-content h3, .timeline-content h3) {
+  color: #1b2b3b !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news)
+  :is(.type-card p, .scenario-info p, .advantage-item p, .advantage-card p, .feature-card p, .service-item p, .service-card p, .tech-card p, .solution-card p, .case-info p, .news-content p, .timeline-content p) {
+  color: #687887 !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news)
+  :is(.type-icon, .advantage-icon, .service-icon, .feature-icon, .tech-icon) {
+  color: #1f4ca6 !important;
+  background: #eaf0ff !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development)
+  .feature-list li {
+  color: #405364 !important;
+  background: #f4f7fb !important;
+  border-color: #bfd0f7 !important;
+  box-shadow: none !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development)
+  .feature-list :is(.el-icon, svg) { color: #1f55bf !important; }
+:is(.cases, .news) :is(.filter-section, .category-filter, .news-category-filter) { background: #f5f7fb !important; }
+:is(.cases, .news) :is(.category-item, .news-category-item) { background: #fff !important; color: #526474 !important; border-color: #d9e1ea !important; box-shadow: none !important; }
+:is(.cases, .news) :is(.category-item.active, .news-category-item.active) { background: #193a8d !important; color: #fff !important; border-color: #193a8d !important; }
+.cases-empty { max-width: 760px; margin: 28px auto 0; padding: 84px 32px; text-align: center; border: 1px solid #e0e6ee; background: #f6f8fc; }
+.cases-empty span { display: block; color: #365cc8; font-size: 12px; font-weight: 800; letter-spacing: .13em; }
+.cases-empty h2 { margin: 16px 0 12px; color: #152f74; font-size: 30px; }
+.cases-empty p { color: #697887; line-height: 1.8; }
+.cases-empty a { display: inline-block; margin-top: 24px; padding: 13px 20px; color: #fff; background: #193a8d; text-decoration: none; font-weight: 700; }
+
+@media (max-width: 768px) {
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news)
+    .section-header { margin-bottom: 28px !important; }
+}
+
+/* ========== 3D卡片效果 ========== */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.card-3d:hover {
+  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+}
+
+/* ========== 光晕效果 ========== */
+.glow-effect {
+  position: relative;
+}
+
+.glow-effect::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, var(--neon-blue) 0%, transparent 70%);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  filter: blur(20px);
+}
+
+.glow-effect:hover::before {
+  opacity: 0.6;
+}
+
+/* ========== 扫描线效果 ========== */
+.scan-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-line::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 212, 255, 0.3) 50%,
+    transparent 100%
+  );
+  animation: scan 3s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0% {
+    top: -100%;
+  }
+  50% {
+    top: 100%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+/* ========== 悬停元素发光效果（方案3） ========== */
+/* 可点击元素通用发光效果 */
+a,
+button,
+.el-button,
+[role="button"],
+.clickable {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+/* 卡片悬停增强发光效果 - 使用更高优先级 */
+.case-card:hover,
+.news-card:hover,
+.service-card:hover,
+.type-card:hover,
+.advantage-card:hover,
+.advantage-item:hover,
+.process-step:hover,
+.category-item:hover {
+  box-shadow: 
+    0 0 30px rgba(0, 212, 255, 0.6),
+    0 0 60px rgba(0, 212, 255, 0.4),
+    0 0 100px rgba(0, 212, 255, 0.2),
+    0 15px 50px rgba(0, 0, 0, 0.4) !important;
+  filter: brightness(1.15) !important;
+}
+
+/* 按钮悬停发光 */
+button:hover:not(:disabled),
+.el-button:hover:not(.is-disabled),
+.el-button--primary:hover {
+  box-shadow: 
+    0 0 30px rgba(0, 212, 255, 0.7),
+    0 0 60px rgba(0, 212, 255, 0.4),
+    0 8px 30px rgba(0, 0, 0, 0.3) !important;
+  filter: brightness(1.2) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* 导航链接悬停发光 */
+.nav-item:hover {
+  text-shadow: 
+    0 0 10px rgba(0, 212, 255, 0.8),
+    0 0 20px rgba(0, 212, 255, 0.4);
+  color: var(--neon-blue);
+}
+
+/* 按钮悬停发光增强 */
+.el-button--primary:hover,
+button.primary:hover {
+  box-shadow: 
+    0 0 30px rgba(0, 212, 255, 0.6),
+    0 0 60px rgba(0, 212, 255, 0.3),
+    0 10px 40px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+/* 卡片悬停立体感 */
+.case-card:hover,
+.news-card:hover,
+.service-card:hover,
+.type-card:hover,
+.advantage-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* 图标容器悬停发光 */
+.type-icon:hover,
+.service-icon:hover,
+.advantage-icon:hover {
+  box-shadow: 
+    0 0 40px rgba(0, 212, 255, 0.8),
+    0 0 80px rgba(0, 212, 255, 0.4);
+  transform: scale(1.1);
+}
+
+/* 输入框聚焦发光 */
+input:focus,
+textarea:focus,
+.el-input__inner:focus {
+  box-shadow: 
+    0 0 0 2px rgba(0, 212, 255, 0.3),
+    0 0 20px rgba(0, 212, 255, 0.4);
+  border-color: var(--neon-blue) !important;
+}
+
+/* 禁用元素不发光 */
+button:disabled,
+.el-button.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+button:disabled:hover,
+.el-button.is-disabled:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+/* 响应式：移动端减弱效果 */
+@media (max-width: 768px) or (hover: none) {
+  a:hover,
+  button:hover,
+  .case-card:hover,
+  .news-card:hover {
+    box-shadow: 
+      0 0 15px rgba(0, 212, 255, 0.3),
+      0 0 30px rgba(0, 212, 255, 0.15);
+  }
+  
+  .case-card:hover,
+  .news-card:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
+  }
+}
+
+/* Final public-site pass: legacy component effects are deliberately flattened
+   so every public page follows the same enterprise visual language. */
+:is(.cases, .news) :is(.category-filter, .news-category-filter) {
+  justify-content: flex-start !important;
+  gap: 10px !important;
+}
+
+:is(.cases, .news) :is(.category-item, .news-category-item) {
+  min-width: 0 !important;
+  min-height: 42px !important;
+  padding: 10px 16px !important;
+  flex-direction: row !important;
+  gap: 7px !important;
+  border-radius: 0 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  transition: background .2s ease, border-color .2s ease, color .2s ease !important;
+}
+
+:is(.cases, .news) :is(.category-item:hover, .news-category-item:hover) {
+  background: #eef3ff !important;
+  border-color: #9fb6eb !important;
+  color: #193a8d !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+:is(.cases, .news) :is(.category-item.active, .news-category-item.active) {
+  background: #193a8d !important;
+  border-color: #193a8d !important;
+  color: #fff !important;
+}
+
+.news .news-category-icon,
+.news .news-category-label {
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+}
+
+:is(.cases, .news) :is(.case-tag, .news-tag) {
+  border-radius: 0 !important;
+  background: #193a8d !important;
+  box-shadow: none !important;
+}
+
+:is(.cases, .news) :is(.case-info, .news-content) { padding: 24px !important; }
+:is(.cases, .news) :is(.case-meta, .news-meta) { border-color: #e0e6ee !important; }
+:is(.cases, .news) :is(.meta-item, .read-more) { color: #657582 !important; }
+:is(.cases, .news) :is(.meta-item .el-icon, .read-more) { color: #1f55bf !important; }
+.news-empty { min-height: 300px !important; }
+
+.about :is(.company-intro, .services-showcase, .stat-card, .timeline-content, .advantage-card, .contact-item) {
+  background: #fff !important;
+  border: 1px solid #e0e6ee !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.about :is(.company-intro, .services-showcase) {
+  max-width: none !important;
+  padding: 42px !important;
+  text-align: left !important;
+}
+
+.about .intro-icon { display: none !important; }
+.about .company-intro p,
+.about .showcase-desc,
+.about .cert-desc,
+.about .timeline-content p,
+.about .advantage-card p,
+.about .contact-info-text p { color: #657582 !important; }
+.about .company-intro p { max-width: 880px; font-size: 17px !important; }
+
+.about .stats-grid { gap: 0 !important; margin-top: 34px !important; }
+.about .stat-card { padding: 30px 24px !important; }
+.about .stat-number,
+.about .showcase-title,
+.about .cert-title,
+.about .timeline-year { color: #193a8d !important; background: none !important; -webkit-text-fill-color: currentColor !important; text-shadow: none !important; }
+.about .stat-number { font-size: 38px !important; letter-spacing: 0 !important; }
+.about .stat-label { color: #657582 !important; }
+.about .services-showcase { margin-top: 48px !important; }
+.about .showcase-title { font-size: 28px !important; }
+.about .showcase-image-wrapper { max-width: none !important; border-radius: 0 !important; box-shadow: none !important; }
+.about .showcase-image { border-radius: 0 !important; }
+.about .certificate-info { border-top-color: #e0e6ee !important; text-align: left !important; }
+.about .cert-tags { justify-content: flex-start !important; }
+.about .cert-tag { border: 1px solid #bfd0f7 !important; border-radius: 0 !important; background: #eef3ff !important; color: #1f55bf !important; }
+
+.about .timeline { max-width: 980px !important; margin: 0 !important; padding: 0 !important; }
+.about .timeline::before { left: 0 !important; width: 1px !important; background: #c9d7ef !important; box-shadow: none !important; animation: none !important; transform: none !important; }
+.about .timeline::after { display: none !important; }
+.about .timeline-item,
+.about .timeline-item:nth-child(odd) { display: block !important; margin: 0 0 20px 30px !important; opacity: 1 !important; animation: none !important; }
+.about .timeline-dot { left: -30px !important; width: 12px !important; height: 12px !important; border: 2px solid #fff !important; background: #1f55bf !important; box-shadow: none !important; animation: none !important; }
+.about .timeline-dot::before { display: none !important; }
+.about .timeline-content,
+.about .timeline-item:nth-child(odd) .timeline-content,
+.about .timeline-item:nth-child(even) .timeline-content { max-width: none !important; margin: 0 !important; padding: 26px !important; }
+.about .timeline-year { display: block !important; padding: 0 !important; margin-bottom: 8px !important; font-size: 14px !important; box-shadow: none !important; }
+.about .timeline-content h3,
+.about .advantage-card h3,
+.about .contact-info-text strong { color: #1b2b3b !important; }
+
+.about :is(.advantage-card, .contact-item):hover { background: #f4f7ff !important; border-color: #9fb6eb !important; box-shadow: none !important; transform: translateY(-3px) !important; }
+.about .advantage-icon { color: #1f55bf !important; background: #eaf0ff !important; filter: none !important; }
+.about .contact-icon { flex: 0 0 52px !important; width: 52px !important; height: 52px !important; border-radius: 0 !important; color: #1f55bf !important; background: #eaf0ff !important; box-shadow: none !important; }
+
+@media (max-width: 768px) {
+  :is(.cases, .news) :is(.filter-section, .content-section) { padding-top: 28px !important; padding-bottom: 28px !important; }
+  :is(.cases, .news) :is(.category-filter, .news-category-filter) { justify-content: center !important; gap: 8px !important; }
+  :is(.cases, .news) :is(.category-item, .news-category-item) { min-height: 38px !important; padding: 8px 11px !important; font-size: 12px !important; }
+  .about :is(.company-intro, .services-showcase) { padding: 26px !important; }
+  .about .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .about .stat-card { padding: 22px 12px !important; }
+  .about .contact-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .about .contact-item { padding: 22px !important; }
+}
+
+/* Delivery flows use numbered editorial blocks instead of the former neon timelines. */
+:is(.ai-development, .app-development, .web-development, .custom-development) .process-timeline {
+  max-width: 980px !important;
+  margin-left: 0 !important;
+}
+:is(.app-development, .web-development, .custom-development) .process-timeline::before { left: 20px !important; width: 1px !important; background: #c9d7ef !important; box-shadow: none !important; }
+:is(.app-development, .web-development, .custom-development) .process-item { gap: 20px !important; margin-bottom: 20px !important; }
+:is(.app-development, .web-development, .custom-development) .process-number {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 0 !important;
+  background: #193a8d !important;
+  box-shadow: none !important;
+  font-size: 15px !important;
+}
+:is(.app-development, .web-development, .custom-development) .process-content {
+  padding: 22px 24px !important;
+  border: 1px solid #e0e6ee !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+:is(.app-development, .web-development, .custom-development) .process-content h3 { color: #1b2b3b !important; }
+:is(.app-development, .web-development, .custom-development) .process-content p { color: #687887 !important; }
+
+.ai-development .loop-grid { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 0 !important; }
+.ai-development .grid-row { display: contents !important; }
+.ai-development :is(.path-line, .center-space, .step-circle) { display: none !important; }
+.ai-development .process-step,
+.ai-development .process-step.right-side {
+  display: block !important;
+  width: auto !important;
+  opacity: 1 !important;
+  animation: none !important;
+}
+.ai-development .step-card {
+  max-width: none !important;
+  min-height: 160px !important;
+  padding: 26px !important;
+  border: 1px solid #e0e6ee !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+.ai-development .step-card:hover { background: #f4f7ff !important; border-color: #9fb6eb !important; box-shadow: none !important; transform: none !important; }
+.ai-development .step-card h3 { color: #1b2b3b !important; font-size: 18px !important; }
+.ai-development .step-card p { color: #687887 !important; font-size: 14px !important; }
+
+@media (max-width: 768px) {
+  :is(.app-development, .web-development, .custom-development) .process-item { gap: 14px !important; }
+  :is(.app-development, .web-development, .custom-development) .process-content { padding: 18px !important; }
+  .ai-development .loop-grid { grid-template-columns: 1fr !important; }
+  .ai-development .step-card { min-height: 0 !important; padding: 20px !important; }
+}
+
+/* Case and article details are long-form reading surfaces, not dark dashboards. */
+:is(.case-detail, .news-detail) {
+  min-height: 100vh !important;
+  padding: 44px 0 80px !important;
+  background: #fff !important;
+  color: #1b2b3b !important;
+}
+:is(.case-detail, .news-detail) .back-btn {
+  margin: 0 0 24px !important;
+  border: 1px solid #c9d7ef !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  color: #193a8d !important;
+  box-shadow: none !important;
+}
+:is(.case-detail, .news-detail) .detail-content {
+  max-width: 980px !important;
+  margin: 0 auto !important;
+  padding: 46px !important;
+  border: 1px solid #e0e6ee !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+.case-detail .detail-content::after { display: none !important; }
+.case-detail .detail-hero { align-items: flex-start !important; }
+:is(.case-detail, .news-detail) :is(.detail-eyebrow, .meta-label, .meta-item, .gallery-count, .detail-summary, .insight-item, .content-section p, .article-content, .article-content :deep(p)) { color: #657582 !important; }
+.case-detail .detail-eyebrow .dot { background: #1f55bf !important; box-shadow: none !important; }
+:is(.case-detail, .news-detail) :is(.detail-title, .article-header h1, .section-title, .article-content :deep(h2), .article-content :deep(h3)) { color: #152f74 !important; }
+.case-detail .hero-cover { padding: 0 !important; border: 1px solid #e0e6ee !important; border-radius: 0 !important; background: #f5f7fb !important; box-shadow: none !important; }
+.case-detail .cover-glow { display: none !important; }
+.case-detail .hero-cover img { border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+.case-detail .insight-item .bullet { background: #1f55bf !important; box-shadow: none !important; }
+.case-detail .meta-row {
+  min-height: 0 !important;
+  padding: 20px !important;
+  border: 1px solid #e0e6ee !important;
+  border-radius: 0 !important;
+  background: #f8faff !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+.case-detail .meta-row::before,
+.case-detail .meta-row::after { display: none !important; }
+.case-detail .meta-row:hover { border-color: #9fb6eb !important; box-shadow: none !important; transform: none !important; }
+.case-detail .meta-value { color: #1b2b3b !important; }
+.case-detail .meta-tag,
+.case-detail .gallery-badge { border: 1px solid #bfd0f7 !important; border-radius: 0 !important; background: #eef3ff !important; color: #1f55bf !important; box-shadow: none !important; backdrop-filter: none !important; }
+.case-detail .section-title::before { border-radius: 0 !important; background: #1f55bf !important; }
+.case-detail :is(.gallery-card, .related-item) { border: 1px solid #e0e6ee !important; border-radius: 0 !important; background: #fff !important; box-shadow: none !important; }
+.case-detail .gallery-card :deep(.el-image),
+.case-detail .gallery-card :deep(.el-image__inner) { background: #f5f7fb !important; }
+.case-detail .related-item:hover { border-color: #9fb6eb !important; box-shadow: none !important; transform: none !important; }
+.case-detail :is(.related-info h3, .related-info p) { color: #1b2b3b !important; }
+
+.news-detail .article-header { padding-bottom: 28px !important; border-bottom: 1px solid #e0e6ee !important; }
+.news-detail .category-tag { border-radius: 0 !important; background: #193a8d !important; box-shadow: none !important; }
+.news-detail .main-image { border-radius: 0 !important; box-shadow: none !important; }
+.news-detail .article-content :deep(h2) { border-bottom-color: #c9d7ef !important; }
+.news-detail .article-content :deep(strong),
+.news-detail .article-content :deep(code) { color: #1f55bf !important; }
+.news-detail .article-content :deep(code),
+.news-detail .article-content :deep(pre) { border: 1px solid #e0e6ee !important; border-radius: 0 !important; background: #f5f7fb !important; }
+.news-detail .article-content :deep(pre code) { color: #1b2b3b !important; }
+.news-detail .article-footer { border-top-color: #e0e6ee !important; }
+.news-detail .tags :deep(.el-tag) { border-radius: 0 !important; background: #eef3ff !important; border-color: #bfd0f7 !important; color: #1f55bf !important; }
+.news-detail .detail-empty { min-height: 300px !important; color: #657582 !important; }
+
+@media (max-width: 768px) {
+  :is(.case-detail, .news-detail) { padding-top: 28px !important; padding-bottom: 52px !important; }
+  :is(.case-detail, .news-detail) .detail-content { padding: 26px 20px !important; }
+  .case-detail .detail-title,
+  .news-detail .article-header h1 { font-size: 28px !important; }
+  .case-detail .detail-hero { gap: 24px !important; }
+}
+
+/* 2026 public-site rebuild: common navigation and page heroes. */
+.header,
+.header.header-fixed {
+  height: 78px !important;
+  position: sticky !important;
+  top: 0;
+  background: rgba(255, 255, 255, .97) !important;
+  border-bottom: 1px solid #e4e9ef !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(14px) !important;
+}
+.header::before { display: none !important; }
+.main-content { padding-top: 0 !important; }
+.header-container { display: grid !important; grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr) !important; gap: 28px !important; }
+.logo { gap: 10px !important; padding: 0 !important; background: transparent !important; border-radius: 0 !important; transform: none !important; }
+.logo:hover { transform: none !important; }
+.logo-img { height: 46px !important; width: 46px !important; object-fit: contain !important; }
+.logo-name { display: block !important; color: #102c67 !important; font-size: 18px !important; font-weight: 800 !important; line-height: 1.1 !important; letter-spacing: 0 !important; }
+.logo-subname { display: block; margin-top: 4px; color: #8090a2; font-size: 8px; font-weight: 700; letter-spacing: .12em; }
+.nav-menu { gap: 0 !important; height: 100% !important; }
+.nav-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  height: 78px !important;
+  padding: 0 15px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #445366 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+.nav-item::before { display: none !important; }
+.nav-item::after { content: '' !important; position: absolute !important; right: 15px !important; bottom: 0 !important; left: 15px !important; display: block !important; height: 3px !important; background: #1b4aa0 !important; transform: scaleX(0) !important; transition: transform .2s ease !important; }
+.nav-item:hover { color: #1b4aa0 !important; background: transparent !important; text-shadow: none !important; transform: none !important; }
+.nav-item.active { color: #173d86 !important; background: transparent !important; }
+.nav-item.active::after { transform: scaleX(1) !important; }
+.desktop-contact { justify-self: end !important; border: 1px solid #173d86 !important; border-radius: 0 !important; background: #173d86 !important; color: #fff !important; padding: 11px 16px !important; font-size: 13px !important; }
+.desktop-contact .wechat-icon { color: #fff !important; }
+.desktop-contact:hover { border-color: #102c67 !important; background: #102c67 !important; box-shadow: none !important; transform: none !important; }
+
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header {
+  min-height: 392px !important;
+  padding: 84px 0 62px !important;
+  align-items: flex-end !important;
+  background-color: #0d2a50 !important;
+  background-position: center !important;
+  background-size: cover !important;
+  border-bottom: 0 !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header::before {
+  inset: 0 !important;
+  background: linear-gradient(90deg, rgba(5, 22, 48, .94) 0%, rgba(5, 22, 48, .73) 47%, rgba(5, 22, 48, .36) 100%) !important;
+  mask-image: none !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header .container::before {
+  content: 'YUNZHAN TECHNOLOGY' !important;
+  display: block !important;
+  margin-bottom: 18px !important;
+  color: #8bb3ff !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: .18em !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header h1 {
+  display: block !important;
+  margin: 0 !important;
+  color: #fff !important;
+  font-size: clamp(42px, 4.3vw, 62px) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.1 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header p {
+  max-width: 620px !important;
+  margin: 18px 0 0 !important;
+  color: rgba(255, 255, 255, .75) !important;
+  font-size: 16px !important;
+  line-height: 1.7 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .header-decoration { display: none !important; }
+.ai-development .page-header { background-image: url('https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=2400&q=85') !important; }
+.app-development .page-header { background-image: url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=2400&q=85') !important; }
+.iot-development .page-header { background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2400&q=85') !important; }
+.miniprogram-development .page-header { background-image: url('https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=2400&q=85') !important; }
+.web-development .page-header { background-image: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=2400&q=85') !important; }
+.digital-creativity .page-header { background-image: url('https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&w=2400&q=85') !important; }
+.custom-development .page-header { background-image: url('https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2400&q=85') !important; }
+.about .page-header { background-image: url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=2400&q=85') !important; }
+.cases .page-header { background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2400&q=85') !important; }
+.news .page-header { background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=2400&q=85') !important; }
+
+/* The former service templates now read as an editorial service system. */
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) :is(.intro-section, .types-section, .platforms-section, .scenarios-section, .advantages-section, .process-section, .cta-section) { padding: 84px 0 !important; }
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) :is(.types-section, .platforms-section, .advantages-section, .process-section) { background: #f4f7fb !important; }
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) .section-header { margin-bottom: 42px !important; }
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) .section-header::before { content: 'CAPABILITIES' !important; display: block !important; margin-bottom: 10px !important; color: #1f55bf !important; font-size: 11px !important; font-weight: 800 !important; letter-spacing: .14em !important; }
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) :is(.intro-image, .scenario-image) { border-radius: 0 !important; overflow: hidden !important; box-shadow: none !important; }
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) :is(.intro-image img, .scenario-image img) { filter: saturate(.78) contrast(1.03) !important; }
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) :is(.type-card, .scenario-card, .advantage-card, .advantage-item, .platform-card) { border-top: 3px solid #1f55bf !important; }
+
+.cases .filter-section { padding: 30px 0 !important; background: #f3f6fa !important; }
+.cases .category-icon { display: none !important; }
+.cases-empty {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.2fr) minmax(360px, .8fr) !important;
+  gap: 64px !important;
+  max-width: 1120px !important;
+  margin: 0 auto !important;
+  padding: 64px !important;
+  text-align: left !important;
+  border: 0 !important;
+  background: #102c67 !important;
+}
+.cases-empty-copy span { color: #9fbeff !important; }
+.cases-empty h2 { max-width: 590px; margin: 18px 0 !important; color: #fff !important; font-size: 38px !important; line-height: 1.25 !important; }
+.cases-empty p { max-width: 590px; color: rgba(255, 255, 255, .72) !important; font-size: 16px !important; }
+.cases-empty a { margin-top: 30px !important; padding: 14px 22px !important; background: #fff !important; color: #102c67 !important; }
+.cases-empty-points { display: grid; gap: 0; border-top: 1px solid rgba(255, 255, 255, .22); }
+.cases-empty-points > div { display: grid; grid-template-columns: 42px 1fr; column-gap: 10px; padding: 17px 0; border-bottom: 1px solid rgba(255, 255, 255, .22); }
+.cases-empty-points strong { color: #9fbeff; font-size: 14px; }
+.cases-empty-points span { color: #fff; font-weight: 700; }
+.cases-empty-points p { grid-column: 2; margin: 5px 0 0 !important; color: rgba(255,255,255,.65) !important; font-size: 13px !important; }
+
+@media (max-width: 1040px) {
+  .header-container { grid-template-columns: auto 1fr auto !important; gap: 8px !important; }
+  .nav-item { padding: 0 9px !important; font-size: 13px !important; }
+  .nav-item::after { right: 9px !important; left: 9px !important; }
+}
+@media (max-width: 768px) {
+  .header,
+  .header.header-fixed { height: 66px !important; }
+  .main-content { padding-top: 0 !important; }
+  .header-container { display: flex !important; width: calc(100% - 32px) !important; }
+  .logo-img { width: 38px !important; height: 38px !important; }
+  .logo-name { display: none !important; }
+  .logo-subname { display: none !important; }
+  .mobile-slogan { color: #607184 !important; font-size: 10px !important; }
+  .mobile-menu-btn span { background: #173d86 !important; }
+  .mobile-menu-overlay { top: 66px !important; background: rgba(15, 32, 62, .26) !important; }
+  .mobile-nav { background: #fff !important; border: 0 !important; border-radius: 0 !important; box-shadow: 0 18px 30px rgba(20, 44, 80, .14) !important; }
+  .mobile-nav-item { color: #26384b !important; border-radius: 0 !important; }
+  .mobile-nav-item.active { background: #edf3ff !important; color: #173d86 !important; }
+  .mobile-contact { border-radius: 0 !important; background: #173d86 !important; color: #fff !important; }
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header { min-height: 270px !important; padding: 48px 0 34px !important; }
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header .container::before { margin-bottom: 12px !important; font-size: 9px !important; }
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header h1 { font-size: 38px !important; }
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header p { margin-top: 12px !important; font-size: 14px !important; }
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) :is(.intro-section, .types-section, .platforms-section, .scenarios-section, .advantages-section, .process-section, .cta-section) { padding: 54px 0 !important; }
+  .cases-empty { grid-template-columns: 1fr !important; gap: 38px !important; padding: 36px 28px !important; }
+  .cases-empty h2 { font-size: 28px !important; }
+}
+
+/* Inner-page media is separated from the reading column so images never obscure copy. */
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header {
+  --inner-hero-image: none;
+  background-image: none !important;
+  background-color: #081c3b !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header::before {
+  inset: -4% !important;
+  background-image: var(--inner-hero-image) !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: cover !important;
+  animation: yunzhanHeroDrift 18s ease-in-out infinite alternate !important;
+  transform-origin: center !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header::after {
+  content: '' !important;
+  position: absolute !important;
+  z-index: 0 !important;
+  inset: 0 !important;
+  background: linear-gradient(90deg, rgba(5, 19, 43, .96) 0%, rgba(5, 19, 43, .90) 40%, rgba(5, 19, 43, .38) 72%, rgba(5, 19, 43, .20) 100%) !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header .container {
+  position: relative !important;
+  z-index: 1 !important;
+  display: block !important;
+  max-width: var(--content-max) !important;
+  padding-right: 43% !important;
+  text-align: left !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header :is(h1, p) { text-align: left !important; }
+.ai-development .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=2400&q=90'); }
+.app-development .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=2400&q=90'); }
+.iot-development .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2400&q=90'); }
+.miniprogram-development .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=2400&q=90'); }
+.web-development .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=2400&q=90'); }
+.digital-creativity .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&w=2400&q=90'); }
+.custom-development .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2400&q=90'); }
+.about .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=2400&q=90'); }
+.cases .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2400&q=90'); }
+.news .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=2400&q=90'); }
+
+.ai-development .page-header .container { padding-right: 49% !important; }
+.ai-development .ai-hero-visual {
+  position: absolute;
+  right: 0;
+  bottom: -24px;
+  width: min(37vw, 440px);
+  aspect-ratio: 1.25;
+  overflow: hidden;
+  border: 1px solid rgba(167, 195, 255, .42);
+  box-shadow: 0 22px 48px rgba(0, 13, 35, .38);
+  animation: yunzhanVisualFloat 7s ease-in-out infinite;
+}
+.ai-development .ai-hero-visual::after { content: ''; position: absolute; inset: 0; background: linear-gradient(145deg, rgba(8, 34, 87, .08), rgba(8, 34, 87, .58)); }
+.ai-development .ai-hero-visual video { width: 100%; height: 100%; object-fit: cover; animation: yunzhanImageBreath 12s ease-in-out infinite alternate; }
+.ai-development .ai-hero-visual span { position: absolute; z-index: 1; bottom: 16px; left: 17px; color: #fff; font-size: 10px; font-weight: 800; letter-spacing: .16em; }
+
+.about .page-header { overflow: hidden !important; }
+.about .page-header::before { display: none !important; }
+.about .about-hero-video { position: absolute; z-index: 0; inset: -3%; width: 106%; height: 106%; object-fit: cover; animation: yunzhanHeroDrift 18s ease-in-out infinite alternate; }
+.about .page-header::after { z-index: 1 !important; background: linear-gradient(90deg, rgba(5, 19, 43, .96) 0%, rgba(5, 19, 43, .87) 43%, rgba(5, 19, 43, .38) 76%, rgba(5, 19, 43, .24) 100%) !important; }
+.about .page-header .container { z-index: 2 !important; }
+
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) :is(.intro-image, .scenario-image) img { animation: yunzhanImageBreath 16s ease-in-out infinite alternate; transform-origin: center; }
+@keyframes yunzhanHeroDrift { from { transform: scale(1.01) translate3d(0, 0, 0); } to { transform: scale(1.08) translate3d(-1.3%, -1%, 0); } }
+@keyframes yunzhanImageBreath { from { transform: scale(1.01); } to { transform: scale(1.075) translate3d(-1.2%, -.8%, 0); } }
+@keyframes yunzhanVisualFloat { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -10px, 0); } }
+
+@media (max-width: 768px) {
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header::after { background: linear-gradient(180deg, rgba(5, 19, 43, .73) 0%, rgba(5, 19, 43, .92) 100%) !important; }
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header .container { padding-right: 0 !important; }
+  .ai-development .page-header { min-height: 360px !important; padding-bottom: 42px !important; }
+  .ai-development .page-header .container { padding-right: 0 !important; }
+  .ai-development .ai-hero-visual { display: none !important; }
+  .about .page-header::after { background: linear-gradient(180deg, rgba(5, 19, 43, .73) 0%, rgba(5, 19, 43, .92) 100%) !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header::before,
+  .about .about-hero-video,
+  .ai-development .ai-hero-visual,
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) :is(.intro-image, .scenario-image) img { animation: none !important; }
+}
+
+/* Final inner-page system: neutral corporate banners instead of unrelated stock imagery. */
+.logo { flex-wrap: nowrap !important; min-width: 0 !important; }
+.brand-wordmark { display: inline-flex; align-items: center; gap: 10px; min-width: 0; white-space: nowrap; }
+.logo-name { flex: 0 0 auto; white-space: nowrap; }
+.logo-subname { flex: 0 0 auto; margin: 0 !important; white-space: nowrap; }
+
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header {
+  min-height: 300px !important;
+  padding: 68px 0 48px !important;
+  background: #102d54 !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header::before {
+  display: block !important;
+  inset: 0 !important;
+  background-image: linear-gradient(112deg, transparent 0%, rgba(121, 159, 222, .12) 43%, transparent 43.2%, transparent 62%, rgba(121, 159, 222, .08) 62.2%, transparent 100%) !important;
+  background-size: 160% 100% !important;
+  animation: yunzhanBannerSweep 16s ease-in-out infinite alternate !important;
+  transform: none !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header::after {
+  background: linear-gradient(90deg, rgba(7, 24, 48, .28), transparent 70%) !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header .container {
+  padding-right: 0 !important;
+  text-align: left !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header h1 { max-width: 720px !important; }
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header p { max-width: 600px !important; }
+.about .about-hero-video,
+.ai-development .ai-hero-visual { display: none !important; }
+
+.ai-development :is(.scenario-card, .scenario-info) { background: #fff !important; }
+.ai-development .scenario-card { border: 1px solid #dce4ed !important; border-top: 3px solid #1f55bf !important; border-radius: 0 !important; overflow: hidden !important; box-shadow: none !important; }
+.ai-development .scenario-info { min-height: 138px !important; padding: 22px !important; }
+.ai-development .scenario-info h3 { color: #1b2b3b !important; font-size: 19px !important; opacity: 1 !important; }
+.ai-development .scenario-info p { color: #647586 !important; font-size: 14px !important; line-height: 1.7 !important; opacity: 1 !important; }
+.ai-development .scenario-card:hover { border-color: #8eaae4 !important; box-shadow: 0 12px 26px rgba(30, 67, 142, .1) !important; transform: translateY(-4px) !important; }
+
+.ai-development .process-section { background: #f4f7fb !important; }
+.ai-development .process-section .section-header { margin-bottom: 32px !important; }
+.ai-development .process-flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid #cfd9e6; border-left: 1px solid #cfd9e6; }
+.ai-development .process-flow-item { min-height: 198px; padding: 26px; display: grid; grid-template-columns: 56px minmax(0, 1fr); column-gap: 18px; align-items: start; background: #fff; border-right: 1px solid #cfd9e6; border-bottom: 1px solid #cfd9e6; }
+.ai-development .process-flow-index { color: #1f55bf; font-size: 28px; font-weight: 800; letter-spacing: .03em; line-height: 1; }
+.ai-development .process-flow-label { display: block; margin: 1px 0 9px; color: #7c8da0; font-size: 10px; font-weight: 800; letter-spacing: .13em; }
+.ai-development .process-flow-item h3 { margin: 0 0 8px; color: #172b46; font-size: 20px; line-height: 1.35; }
+.ai-development .process-flow-item p { margin: 0; color: #657687; font-size: 14px; line-height: 1.7; }
+.ai-development .process-flow-item:hover { position: relative; z-index: 1; background: #193f91; border-color: #193f91; }
+.ai-development .process-flow-item:hover :is(.process-flow-index, .process-flow-label) { color: #b8ccff; }
+.ai-development .process-flow-item:hover :is(h3, p) { color: #fff; }
+
+:is(.app-development, .web-development, .custom-development) .process-timeline { max-width: none !important; display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid #cfd9e6; border-left: 1px solid #cfd9e6; }
+:is(.app-development, .web-development, .custom-development) .process-timeline::before { display: none !important; }
+:is(.app-development, .web-development, .custom-development) .process-item { display: block !important; margin: 0 !important; border-right: 1px solid #cfd9e6; border-bottom: 1px solid #cfd9e6; }
+:is(.app-development, .web-development, .custom-development) .process-number { width: auto !important; height: auto !important; padding: 24px 24px 0 !important; border-radius: 0 !important; background: transparent !important; color: #1f55bf !important; box-shadow: none !important; justify-content: flex-start !important; font-size: 13px !important; }
+:is(.app-development, .web-development, .custom-development) .process-content { min-height: 178px !important; padding: 18px 24px 28px !important; border: 0 !important; border-radius: 0 !important; background: #fff !important; }
+
+@keyframes yunzhanBannerSweep { from { background-position: 0 0; } to { background-position: 100% 0; } }
+@media (max-width: 768px) {
+  .brand-wordmark { display: none !important; }
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header { min-height: 230px !important; padding: 48px 0 34px !important; }
+  .ai-development .process-flow,
+  :is(.app-development, .web-development, .custom-development) .process-timeline { grid-template-columns: 1fr !important; }
+  .ai-development .process-flow-item { min-height: 154px; padding: 22px; grid-template-columns: 48px minmax(0, 1fr); column-gap: 14px; }
+  .ai-development .process-flow-index { font-size: 24px; }
+}
+
+/* Header contact is always available, including before the mobile menu is opened. */
+.desktop-actions {
+  display: flex;
+  align-items: center;
+  justify-self: end;
+  margin-left: 18px;
+  transform: translateX(10px);
+}
+.desktop-wechat-copy,
+.mobile-wechat-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #b9c9df;
+  color: #173d86;
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+.desktop-wechat-copy {
+  min-height: 38px;
+  padding: 0 13px;
+  color: #28518f;
+  background: #eef4ff;
+  border-color: transparent;
+  border-radius: 4px;
+}
+.desktop-wechat-copy:hover,
+.mobile-wechat-copy:hover { border-color: #173d86; color: #fff; background: #173d86; }
+.mobile-wechat-copy { display: none; }
+
+@media (max-width: 1040px) and (min-width: 769px) {
+  .desktop-wechat-copy { padding: 0 10px; font-size: 11px; }
+  .desktop-actions { gap: 7px; }
+}
+
+@media (max-width: 768px) {
+  .header-container { gap: 10px !important; }
+  .desktop-actions { display: none !important; }
+  .mobile-slogan { display: none !important; }
+  .mobile-wechat-copy {
+    display: inline-flex;
+    min-height: 36px;
+    margin-left: auto;
+    padding: 0 10px;
+    border-color: #9bb1d6;
+    color: #173d86;
+    background: #eef4ff;
+    font-size: 11px;
+  }
+  .mobile-menu-btn { flex: 0 0 auto; }
+}
+
+@media (max-width: 576px) {
+  .mobile-wechat-copy {
+    width: 38px;
+    min-width: 38px;
+    padding: 0;
+  }
+  .mobile-wechat-copy span { display: none; }
+}
+
+@media (max-width: 1040px) {
+  .desktop-actions { margin-left: 0; transform: none; }
+}
+
+/* Corporate footer: a calm, formal information architecture. */
+.corporate-footer.footer {
+  margin-top: 0 !important;
+  padding: 0 !important;
+  background: #fff !important;
+  color: #334155 !important;
+  border-top: 1px solid #e4e9ef !important;
+}
+.corporate-footer .corporate-footer-container {
+  width: min(100% - 64px, 1360px) !important;
+  max-width: 1360px !important;
+  padding: 68px 0 26px !important;
+}
+.corporate-footer .corporate-footer-main { border: 0 !important; }
+.corporate-footer .corporate-footer-brand,
+.corporate-footer .corporate-footer-column { background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+.corporate-footer .corporate-footer-column h3,
+.corporate-footer .corporate-footer-logo strong { color: #1e2f48 !important; -webkit-text-fill-color: currentColor !important; }
+.corporate-footer .corporate-footer-brand > p,
+.corporate-footer .corporate-footer-column :is(a, button, p) { color: #40546a !important; }
+.corporate-footer .corporate-footer-brand > p { color: #4a5d72 !important; }
+.corporate-footer .corporate-footer-logo span { color: #65758a !important; }
+.corporate-footer .corporate-footer-entries { color: #53677d !important; }
+.corporate-footer .corporate-footer-entries :is(span, a) { color: #4a5d72 !important; }
+.corporate-footer .corporate-footer-legal,
+.corporate-footer .corporate-footer-legal :is(span, a) { color: #5a6d82 !important; }
+.corporate-footer .corporate-footer-column :is(a, button):hover,
+.corporate-footer .corporate-wechat:hover { color: #1f55bf !important; }
+.corporate-footer .corporate-footer-bottom { margin-top: 58px !important; padding: 22px 0 0 !important; background: transparent !important; border-top: 1px solid #e6ebf1 !important; }
+@media (max-width: 640px) {
+  .corporate-footer .corporate-footer-container { width: min(100% - 40px, 1360px) !important; padding: 34px 0 22px !important; }
+  .corporate-footer .corporate-footer-bottom { margin-top: 24px !important; padding-top: 18px !important; }
+}
+
+/* Technology product system: compact capability matrices and image-led solution cards. */
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) {
+  background: #fff !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) > .particle-background {
+  display: none !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) :is(.types-section, .platforms-section, .advantages-section, .process-section) {
+  background: #f5f7fa !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) :is(.intro-section, .types-section, .platforms-section, .scenarios-section, .advantages-section, .process-section, .cta-section) {
+  padding: 96px 0 !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) .section-header {
+  max-width: 1280px !important;
+  margin: 0 auto 34px !important;
+  padding: 0 30px !important;
+  text-align: left !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) .section-header::before {
+  margin-bottom: 12px !important;
+  color: #1d5fd0 !important;
+  font-size: 10px !important;
+  letter-spacing: .16em !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) .section-header h2 {
+  margin: 0 !important;
+  color: #10274b !important;
+  -webkit-text-fill-color: currentColor !important;
+  font-size: clamp(30px, 3vw, 44px) !important;
+  font-weight: 760 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.2 !important;
+}
+:is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) .section-header p {
+  max-width: 620px !important;
+  margin: 14px 0 0 !important;
+  color: #62738a !important;
+  font-size: 15px !important;
+  line-height: 1.75 !important;
+}
+
+/* Service capability matrix */
+:is(.ai-development, .app-development, .web-development, .custom-development) .types-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 22px !important;
+  counter-reset: capability !important;
+}
+:is(.ai-development, .app-development, .web-development, .custom-development) .type-card {
+  min-height: 276px !important;
+  padding: 30px 32px 28px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 54px !important;
+  grid-template-rows: auto auto 1fr auto !important;
+  gap: 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background: #fff !important;
+  border: 1px solid #dce4ed !important;
+  border-top: 1px solid #dce4ed !important;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+  counter-increment: capability !important;
+  transition: border-color .24s ease, box-shadow .24s ease, transform .24s ease !important;
+}
+:is(.ai-development, .app-development, .web-development, .custom-development) .type-card::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: auto !important;
+  width: 38% !important;
+  opacity: 1 !important;
+  background: repeating-linear-gradient(135deg, rgba(32, 91, 190, .035) 0 1px, transparent 1px 11px) !important;
+  pointer-events: none !important;
+}
+:is(.ai-development, .app-development, .web-development, .custom-development) .type-card::after {
+  content: '0' counter(capability) !important;
+  position: absolute !important;
+  right: 26px !important;
+  bottom: 22px !important;
+  color: #d7e1ee !important;
+  font-size: 42px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: .02em !important;
+}
+:is(.ai-development, .app-development, .web-development, .custom-development) .type-card:hover {
+  transform: translateY(-5px) !important;
+  border-color: #89aee5 !important;
+  box-shadow: 0 16px 32px rgba(17, 55, 111, .1) !important;
+}
+:is(.ai-development, .app-development, .web-development, .custom-development) .type-icon {
+  grid-column: 2 !important;
+  grid-row: 1 / span 2 !important;
+  width: 50px !important;
+  height: 50px !important;
+  margin: 0 !important;
+  align-self: start !important;
+  justify-self: end !important;
+  border-radius: 14px !important;
+  color: #1e5cc4 !important;
+  background: #edf4ff !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+:is(.ai-development, .app-development, .web-development, .custom-development) .type-card h3 {
+  position: relative !important;
+  z-index: 1 !important;
+  grid-column: 1 !important;
+  margin: 0 0 12px !important;
+  color: #152b4a !important;
+  font-size: 24px !important;
+  font-weight: 760 !important;
+  line-height: 1.25 !important;
+}
+:is(.ai-development, .app-development, .web-development, .custom-development) .type-card p {
+  position: relative !important;
+  z-index: 1 !important;
+  grid-column: 1 / -1 !important;
+  margin: 0 0 20px !important;
+  max-width: 88% !important;
+  color: #5f7187 !important;
+  font-size: 14px !important;
+  line-height: 1.7 !important;
+}
+:is(.ai-development, .app-development, .web-development, .custom-development) :is(.type-tech, .type-features) {
+  position: relative !important;
+  z-index: 1 !important;
+  grid-column: 1 / -1 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 7px !important;
+  align-self: end !important;
+}
+:is(.ai-development, .app-development, .web-development, .custom-development) :is(.type-tech .el-tag, .type-features span) {
+  display: flex !important;
+  align-items: center !important;
+  min-height: 30px !important;
+  padding: 0 11px !important;
+  color: #355879 !important;
+  background: #f7f9fc !important;
+  border: 1px solid #e1e8f0 !important;
+  border-radius: 7px !important;
+  font-size: 12px !important;
+  white-space: nowrap !important;
+}
+
+/* Image-led industry solution rails */
+:is(.ai-development, .app-development, .miniprogram-development, .web-development) .scenarios-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+}
+:is(.ai-development, .app-development, .miniprogram-development, .web-development) .scenario-card {
+  min-height: 330px !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  overflow: hidden !important;
+  background: #10294d !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+:is(.ai-development, .app-development, .miniprogram-development, .web-development) .scenario-image {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+:is(.ai-development, .app-development, .miniprogram-development, .web-development) .scenario-image::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(180deg, rgba(6, 22, 44, .02) 25%, rgba(6, 22, 44, .92) 100%) !important;
+}
+:is(.ai-development, .app-development, .miniprogram-development, .web-development) .scenario-image img {
+  width: 100% !important;
+  height: 100% !important;
+  filter: saturate(.75) contrast(1.04) !important;
+  transform: none !important;
+}
+:is(.ai-development, .app-development, .miniprogram-development, .web-development) .scenario-info {
+  position: relative !important;
+  z-index: 2 !important;
+  min-height: 0 !important;
+  padding: 26px 24px !important;
+  background: transparent !important;
+}
+:is(.ai-development, .app-development, .miniprogram-development, .web-development) .scenario-info h3 {
+  margin: 0 0 8px !important;
+  color: #fff !important;
+  font-size: 23px !important;
+  line-height: 1.2 !important;
+}
+:is(.ai-development, .app-development, .miniprogram-development, .web-development) .scenario-info p {
+  margin: 0 !important;
+  color: rgba(255,255,255,.76) !important;
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+}
+:is(.ai-development, .app-development, .miniprogram-development, .web-development) .scenario-card:hover .scenario-image img {
+  transform: scale(1.055) !important;
+}
+
+@media (max-width: 900px) {
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) :is(.intro-section, .types-section, .platforms-section, .scenarios-section, .advantages-section, .process-section, .cta-section) { padding: 68px 0 !important; }
+  :is(.ai-development, .app-development, .web-development, .custom-development) .types-grid { grid-template-columns: 1fr !important; }
+  :is(.ai-development, .app-development, .miniprogram-development, .web-development) .scenarios-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 560px) {
+  :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) .section-header { padding: 0 20px !important; }
+  :is(.ai-development, .app-development, .web-development, .custom-development) .type-card { min-height: 254px !important; padding: 25px 22px !important; }
+  :is(.ai-development, .app-development, .web-development, .custom-development) .type-card h3 { font-size: 21px !important; }
+  :is(.ai-development, .app-development, .web-development, .custom-development) :is(.type-tech, .type-features) { grid-template-columns: 1fr !important; }
+  :is(.ai-development, .app-development, .miniprogram-development, .web-development) .scenarios-grid { grid-template-columns: 1fr !important; }
+  :is(.ai-development, .app-development, .miniprogram-development, .web-development) .scenario-card { min-height: 278px !important; }
+}
+
+/* Delivery steps read as a product operating model, not a bordered spreadsheet. */
+:is(.app-development, .web-development, .custom-development) .process-timeline {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+:is(.app-development, .web-development, .custom-development) .process-item {
+  min-height: 176px !important;
+  padding: 25px 26px !important;
+  display: block !important;
+  background: #fff !important;
+  border: 1px solid #dce4ed !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease !important;
+}
+:is(.app-development, .web-development, .custom-development) .process-item:hover {
+  z-index: 1 !important;
+  transform: translateY(-4px) !important;
+  border-color: #8caee1 !important;
+  box-shadow: 0 13px 26px rgba(27, 67, 132, .10) !important;
+}
+:is(.app-development, .web-development, .custom-development) .process-number {
+  display: flex !important;
+  align-items: center !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 0 15px !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid #e5ebf2 !important;
+  color: #1d5fd0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  letter-spacing: .1em !important;
+}
+:is(.app-development, .web-development, .custom-development) .process-number::before {
+  content: 'STAGE' !important;
+  margin-right: 8px !important;
+  color: #7a8da5 !important;
+  font-size: 10px !important;
+  letter-spacing: .14em !important;
+}
+:is(.app-development, .web-development, .custom-development) .process-content {
+  min-height: 0 !important;
+  padding: 17px 0 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+:is(.app-development, .web-development, .custom-development) .process-content h3 {
+  margin: 0 0 9px !important;
+  color: #152b4a !important;
+  font-size: 20px !important;
+  line-height: 1.3 !important;
+}
+:is(.app-development, .web-development, .custom-development) .process-content p {
+  margin: 0 !important;
+  color: #64768b !important;
+  font-size: 14px !important;
+  line-height: 1.7 !important;
+}
+
+/* One clear consultation action at the end of each service page. */
+:is(.ai-development, .app-development, .web-development) .cta-section {
+  padding: 0 !important;
+  color: #fff !important;
+  background: #102e5c !important;
+  border: 0 !important;
+  text-align: left !important;
+  overflow: hidden !important;
+}
+:is(.ai-development, .app-development, .web-development) .cta-section::before {
+  display: block !important;
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: repeating-linear-gradient(132deg, rgba(148, 183, 238, .12) 0 1px, transparent 1px 22px) !important;
+  pointer-events: none !important;
+}
+:is(.ai-development, .app-development, .web-development) .cta-section .container {
+  min-height: 272px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  column-gap: 60px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+:is(.ai-development, .app-development, .web-development) .cta-section h2 {
+  max-width: 760px !important;
+  margin: 0 !important;
+  color: #fff !important;
+  font-size: clamp(30px, 3.1vw, 44px) !important;
+  font-weight: 760 !important;
+  line-height: 1.22 !important;
+}
+:is(.ai-development, .app-development, .web-development) .cta-section p {
+  max-width: 620px !important;
+  grid-column: 1 !important;
+  margin: 14px 0 0 !important;
+  color: rgba(231, 240, 255, .78) !important;
+  font-size: 15px !important;
+  line-height: 1.7 !important;
+}
+:is(.ai-development, .app-development, .web-development) .cta-section .el-button {
+  grid-column: 2 !important;
+  grid-row: 1 / span 2 !important;
+  min-width: 160px !important;
+  height: 52px !important;
+  padding: 0 22px !important;
+  color: #102e5c !important;
+  background: #fff !important;
+  border: 1px solid #fff !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+}
+:is(.ai-development, .app-development, .web-development) .cta-section .el-button:hover {
+  color: #fff !important;
+  background: #1d5fd0 !important;
+  border-color: #1d5fd0 !important;
+  transform: translateY(-2px) !important;
+}
+
+@media (max-width: 768px) {
+  :is(.app-development, .web-development, .custom-development) .process-timeline { grid-template-columns: 1fr !important; }
+  :is(.app-development, .web-development, .custom-development) .process-item { min-height: 0 !important; padding: 22px !important; }
+  :is(.ai-development, .app-development, .web-development) .cta-section .container { min-height: 250px !important; grid-template-columns: 1fr !important; row-gap: 0 !important; }
+  :is(.ai-development, .app-development, .web-development) .cta-section p { grid-column: 1 !important; }
+  :is(.ai-development, .app-development, .web-development) .cta-section .el-button { grid-column: 1 !important; grid-row: auto !important; justify-self: start !important; margin-top: 24px !important; }
+}
+
+/* Final cascade lock: the studio system must win over legacy page CSS. */
+body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) { background: #fff !important; color: #111 !important; }
+body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header {
+  min-height: 500px !important; display: flex !important; align-items: flex-end !important; padding: 0 0 76px !important; background-size: cover !important; background-position: center !important;
+}
+body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header::before { display: block !important; inset: 0 !important; background: linear-gradient(90deg,rgba(8,10,13,.76),rgba(8,10,13,.18)) !important; }
+body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header > .container { position: relative !important; z-index: 2 !important; text-align: left !important; }
+body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header h1 { color: #fff !important; -webkit-text-fill-color: #fff !important; font-size: clamp(54px,6vw,88px) !important; letter-spacing: -.055em !important; }
+body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header p { color: rgba(255,255,255,.74) !important; }
+body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) :is(.intro-section,.content-section,.types-section,.platforms-section,.scenarios-section,.advantages-section,.process-section,.services-section,.values-section,.team-section,.contact-section) { padding: 120px 0 !important; border: 0 !important; }
+body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) :is(.types-section,.platforms-section,.advantages-section,.values-section,.process-section) { background: #f2f2f0 !important; }
+body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) .section-header { max-width: 720px !important; margin: 0 0 56px !important; padding: 0 !important; text-align: left !important; }
+body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) .section-header h2,
+body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) :is(.intro-text h2,.content-section h2,.lead,.company-intro h3) { color: #111 !important; -webkit-text-fill-color: #111 !important; letter-spacing: -.045em !important; }
+body :is(.ai-development,.app-development,.web-development,.custom-development) .type-card,
+body .miniprogram-development .platform-card,
+body :is(.iot-development,.digital-creativity) .service-item,
+body .about :is(.stat-card,.value-card,.service-card,.contact-item) { background: transparent !important; border: 0 !important; border-top: 1px solid #aaa !important; border-radius: 0 !important; box-shadow: none !important; }
+body :is(.ai-development,.app-development,.web-development,.custom-development) .type-icon,
+body .miniprogram-development .platform-icon,
+body :is(.iot-development,.digital-creativity) .service-icon { color: #f06a21 !important; background: transparent !important; border: 1px solid #aaa !important; border-radius: 50% !important; box-shadow: none !important; }
+body :is(.ai-development,.app-development,.miniprogram-development,.web-development) .scenario-card,
+body .cases .case-card { background: #171717 !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+body .cases .case-info { background: #171717 !important; }
+body .cases .case-info :is(h3,p) { color: #fff !important; }
+body .news .news-card { background: #fff !important; border: 0 !important; border-top: 1px solid #aaa !important; border-radius: 0 !important; box-shadow: none !important; }
+body :is(.cases,.news) .filter-section { background: #fff !important; border-bottom: 1px solid #d2d2ce !important; }
+body :is(.cases,.news) :is(.category-item,.news-category-item) { color: #777 !important; background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+body :is(.cases,.news) :is(.category-item,.news-category-item).active { color: #111 !important; border-bottom: 2px solid #f06a21 !important; }
+body :is(.ai-development,.app-development,.web-development) .cta-section { color: #111 !important; background: #f06a21 !important; }
+body :is(.ai-development,.app-development,.web-development) .cta-section h2 { color: #111 !important; }
+body :is(.ai-development,.app-development,.web-development) .cta-section .el-button { color: #fff !important; background: #111 !important; border-color: #111 !important; border-radius: 0 !important; }
+body .corporate-footer.footer { color: #999 !important; background: #111 !important; border: 0 !important; }
+body .corporate-footer :is(.corporate-footer-column h3,.corporate-footer-logo strong) { color: #fff !important; }
+
+@media (max-width: 768px) {
+  body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header { min-height: 390px !important; padding: 0 0 46px !important; }
+  body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header h1 { font-size: 48px !important; }
+  body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) :is(.intro-section,.content-section,.types-section,.platforms-section,.scenarios-section,.advantages-section,.process-section,.services-section,.values-section,.team-section,.contact-section) { padding: 78px 0 !important; }
+}
+
+body .ai-development .page-header { background-image: url('https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=2400&q=88') !important; }
+body .app-development .page-header { background-image: url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=2400&q=88') !important; }
+body .iot-development .page-header { background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2400&q=88') !important; }
+body .miniprogram-development .page-header { background-image: url('https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=2400&q=88') !important; }
+body .web-development .page-header { background-image: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=2400&q=88') !important; }
+body .custom-development .page-header { background-image: url('https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2400&q=88') !important; }
+body .digital-creativity .page-header { background-image: url('https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&w=2400&q=88') !important; }
+body .about .page-header { background-image: url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=2400&q=88') !important; }
+body .cases .page-header { background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2400&q=88') !important; }
+body .news .page-header { background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=2400&q=88') !important; }
+
+/* Keep public navigation available and legible at every scroll position. */
+body .header,
+body .header.header-fixed,
+body .header:not(.header-home) {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  left: 0 !important;
+  z-index: 3000 !important;
+  height: 76px !important;
+  background: rgba(17,17,17,.98) !important;
+  border-bottom: 1px solid rgba(255,255,255,.14) !important;
+  box-shadow: 0 4px 18px rgba(0,0,0,.16) !important;
+  backdrop-filter: blur(14px) !important;
+}
+body .header .brand-simple,
+body .header .nav-item,
+body .header .desktop-wechat-copy { color: #fff !important; }
+body .header .brand-en { color: rgba(255,255,255,.58) !important; }
+body .header .nav-item.active { color: #fff !important; }
+body .header .nav-item.active::after { background: #f06a21 !important; }
+@media (max-width: 768px) {
+  body .header,
+  body .header.header-fixed,
+  body .header:not(.header-home) { height: 64px !important; }
+}

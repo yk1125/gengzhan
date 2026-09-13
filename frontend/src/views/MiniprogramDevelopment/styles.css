@@ -1,0 +1,402 @@
+/* 小程序开发页面样式 */
+.miniprogram-development {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0a0e27 0%, #1a1f3a 100%);
+}
+
+/* 页面头部 */
+.page-header {
+  position: relative;
+  padding: 150px 0 100px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(7, 193, 96, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+}
+
+.page-header h1 {
+  font-size: 56px;
+  font-weight: 900;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.page-header p {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 2;
+}
+
+.header-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+  position: relative;
+  z-index: 2;
+}
+
+.deco-line {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #07C160, transparent);
+  box-shadow: 0 0 10px rgba(7, 193, 96, 0.5);
+}
+
+.deco-dot {
+  width: 8px;
+  height: 8px;
+  background: #07C160;
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(7, 193, 96, 0.8);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* 服务介绍 */
+.intro-section {
+  padding: 100px 0;
+  position: relative;
+}
+
+.intro-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.intro-text h2 {
+  font-size: 36px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 24px;
+}
+
+.intro-text p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 32px;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+}
+
+.feature-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 16px;
+}
+
+.feature-list li .el-icon {
+  color: #07C160;
+  font-size: 20px;
+}
+
+.intro-image {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.intro-image img {
+  width: 100%;
+  display: block;
+}
+
+/* 平台卡片 */
+.platforms-section {
+  padding: 80px 0;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-header h2 {
+  font-size: 40px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 16px;
+}
+
+.section-header p {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.platforms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+}
+
+.platform-card {
+  padding: 32px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.platform-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(7, 193, 96, 0.5);
+  box-shadow: 0 15px 40px rgba(7, 193, 96, 0.2);
+}
+
+.platform-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.platform-card h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 12px;
+}
+
+.platform-card p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 24px;
+}
+
+.platform-stats {
+  display: flex;
+  gap: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #07C160;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* 应用场景 */
+.scenarios-section {
+  padding: 80px 0;
+}
+
+.scenarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+}
+
+.scenario-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.scenario-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(7, 193, 96, 0.3);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.scenario-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.scenario-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.scenario-card:hover .scenario-image img {
+  transform: scale(1.1);
+}
+
+.scenario-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.85) 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 0;
+}
+
+.overlay-content {
+  padding: 24px;
+  width: 100%;
+}
+
+.scenario-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.scenario-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.scenario-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.scenario-tags-wrapper {
+  padding: 16px 20px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* 技术优势 */
+.advantages-section {
+  padding: 80px 0 100px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.advantages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+}
+
+.advantage-item {
+  padding: 32px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.advantage-item:hover {
+  transform: translateY(-8px);
+  border-color: rgba(7, 193, 96, 0.5);
+  box-shadow: 0 15px 40px rgba(7, 193, 96, 0.2);
+}
+
+.advantage-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(7, 193, 96, 0.2) 0%, rgba(0, 212, 255, 0.2) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #07C160;
+}
+
+.advantage-item h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 12px;
+}
+
+.advantage-item p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* 通用容器 */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* 动画 */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(7, 193, 96, 0.8);
+  }
+  50% {
+    transform: scale(1.2);
+    box-shadow: 0 0 30px rgba(7, 193, 96, 1);
+  }
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .page-header h1 {
+    font-size: 40px;
+  }
+  
+  .intro-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .platforms-grid,
+  .scenarios-grid,
+  .advantages-grid {
+    grid-template-columns: 1fr;
+  }
+}

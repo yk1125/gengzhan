@@ -1,0 +1,589 @@
+/* 
+ * 服务页面通用响应式样式
+ * 适用于所有服务详情页（AI开发、小程序开发、App开发、Web开发等）
+ */
+
+/* ===== 1200px以下 ===== */
+@media screen and (max-width: 1200px) {
+  .service-page .container {
+    padding: 0 30px;
+  }
+
+  .service-page .section-header h2 {
+    font-size: 38px;
+  }
+
+  .service-page .section-header p {
+    font-size: 17px;
+  }
+
+  /* 卡片网格 */
+  .service-page .features-grid,
+  .service-page .types-grid,
+  .service-page .advantages-grid,
+  .service-page .tech-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+
+  /* 流程步骤 */
+  .service-page .process-steps {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+  }
+}
+
+/* ===== 992px以下 ===== */
+@media screen and (max-width: 992px) {
+  .service-page .container {
+    padding: 0 25px;
+  }
+
+  /* Banner区域 */
+  .service-page .hero-section {
+    padding: 60px 0 50px;
+    min-height: 400px;
+  }
+
+  .service-page .hero-content h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+
+  .service-page .hero-content p {
+    font-size: 16px;
+    margin-bottom: 25px;
+  }
+
+  /* Section间距 */
+  .service-page section {
+    padding: 50px 0;
+  }
+
+  .service-page .section-header {
+    margin-bottom: 45px;
+  }
+
+  .service-page .section-header h2 {
+    font-size: 34px;
+  }
+
+  .service-page .section-header p {
+    font-size: 16px;
+  }
+
+  /* 卡片样式 */
+  .service-page .feature-card,
+  .service-page .type-card,
+  .service-page .advantage-card,
+  .service-page .tech-card {
+    padding: 25px 20px;
+  }
+
+  .service-page .feature-icon,
+  .service-page .type-icon,
+  .service-page .advantage-icon,
+  .service-page .tech-icon {
+    width: 65px;
+    height: 65px;
+    margin-bottom: 18px;
+  }
+
+  .service-page .feature-icon :deep(.el-icon),
+  .service-page .type-icon :deep(.el-icon),
+  .service-page .advantage-icon :deep(.el-icon),
+  .service-page .tech-icon :deep(.el-icon) {
+    font-size: 32px;
+  }
+
+  .service-page .card-title {
+    font-size: 19px;
+    margin-bottom: 10px;
+  }
+
+  .service-page .card-desc {
+    font-size: 14px;
+  }
+
+  /* 流程步骤 */
+  .service-page .process-step {
+    padding: 22px 18px;
+  }
+
+  .service-page .step-icon {
+    width: 75px;
+    height: 75px;
+    margin-bottom: 20px;
+  }
+
+  .service-page .step-number {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+}
+
+/* ===== 768px以下 ===== */
+@media screen and (max-width: 768px) {
+  .service-page .container {
+    padding: 0 20px;
+  }
+
+  /* Banner区域 */
+  .service-page .hero-section {
+    padding: 50px 0 40px;
+    min-height: 350px;
+  }
+
+  .service-page .hero-content h1 {
+    font-size: 30px;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+  }
+
+  .service-page .hero-content p {
+    font-size: 15px;
+    margin-bottom: 22px;
+    line-height: 1.6;
+  }
+
+  .service-page .hero-content :deep(.el-button) {
+    padding: 12px 28px;
+    font-size: 14px;
+  }
+
+  /* Section间距 */
+  .service-page section {
+    padding: 40px 0;
+  }
+
+  .service-page .section-header {
+    margin-bottom: 35px;
+  }
+
+  .service-page .section-header h2 {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .service-page .section-header p {
+    font-size: 15px;
+  }
+
+  /* 卡片网格 - 单列布局 */
+  .service-page .features-grid,
+  .service-page .types-grid,
+  .service-page .advantages-grid,
+  .service-page .tech-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  /* 卡片样式 */
+  .service-page .feature-card,
+  .service-page .type-card,
+  .service-page .advantage-card,
+  .service-page .tech-card {
+    padding: 22px 18px;
+  }
+
+  .service-page .feature-card:hover,
+  .service-page .type-card:hover,
+  .service-page .advantage-card:hover,
+  .service-page .tech-card:hover {
+    transform: translateY(-8px) scale(1.02);
+  }
+
+  .service-page .feature-icon,
+  .service-page .type-icon,
+  .service-page .advantage-icon,
+  .service-page .tech-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+  }
+
+  .service-page .feature-icon :deep(.el-icon),
+  .service-page .type-icon :deep(.el-icon),
+  .service-page .advantage-icon :deep(.el-icon),
+  .service-page .tech-icon :deep(.el-icon) {
+    font-size: 30px;
+  }
+
+  .service-page .card-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .service-page .card-desc {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* 流程步骤 - 单列布局 */
+  .service-page .process-steps {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .service-page .process-step {
+    padding: 20px 18px;
+  }
+
+  .service-page .process-step:hover {
+    transform: translateY(-5px);
+  }
+
+  .service-page .step-icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 18px;
+  }
+
+  .service-page .step-icon :deep(.el-icon) {
+    font-size: 24px;
+  }
+
+  .service-page .step-number {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    top: -15px;
+    right: 20px;
+  }
+
+  .service-page .step-title {
+    font-size: 19px;
+    margin-bottom: 12px;
+  }
+
+  .service-page .step-desc {
+    font-size: 14px;
+  }
+
+  /* 案例展示 */
+  .service-page .case-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .service-page .case-card {
+    max-width: 100%;
+  }
+
+  .service-page .case-image {
+    height: 200px;
+  }
+
+  /* 标签 */
+  .service-page :deep(.el-tag) {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+}
+
+/* ===== 576px以下 ===== */
+@media screen and (max-width: 576px) {
+  .service-page .container {
+    padding: 0 15px;
+  }
+
+  /* Banner区域 */
+  .service-page .hero-section {
+    padding: 40px 0 35px;
+    min-height: 300px;
+  }
+
+  .service-page .hero-content h1 {
+    font-size: 26px;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+  }
+
+  .service-page .hero-content p {
+    font-size: 14px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .service-page .hero-content :deep(.el-button) {
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+
+  /* Section间距 */
+  .service-page section {
+    padding: 30px 0;
+  }
+
+  .service-page .section-header {
+    margin-bottom: 30px;
+  }
+
+  .service-page .section-header h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .service-page .section-header p {
+    font-size: 14px;
+  }
+
+  /* 卡片网格 */
+  .service-page .features-grid,
+  .service-page .types-grid,
+  .service-page .advantages-grid,
+  .service-page .tech-grid {
+    gap: 20px;
+  }
+
+  /* 卡片样式 */
+  .service-page .feature-card,
+  .service-page .type-card,
+  .service-page .advantage-card,
+  .service-page .tech-card {
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
+
+  .service-page .feature-icon,
+  .service-page .type-icon,
+  .service-page .advantage-icon,
+  .service-page .tech-icon {
+    width: 55px;
+    height: 55px;
+    margin-bottom: 12px;
+  }
+
+  .service-page .feature-icon :deep(.el-icon),
+  .service-page .type-icon :deep(.el-icon),
+  .service-page .advantage-icon :deep(.el-icon),
+  .service-page .tech-icon :deep(.el-icon) {
+    font-size: 28px;
+  }
+
+  .service-page .card-title {
+    font-size: 17px;
+    margin-bottom: 8px;
+  }
+
+  .service-page .card-desc {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* 流程步骤 */
+  .service-page .process-steps {
+    gap: 25px;
+  }
+
+  .service-page .process-step {
+    padding: 18px 15px;
+    border-radius: 16px;
+  }
+
+  .service-page .step-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+  }
+
+  .service-page .step-icon :deep(.el-icon) {
+    font-size: 22px;
+  }
+
+  .service-page .step-number {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    top: -12px;
+    right: 15px;
+  }
+
+  .service-page .step-title {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+
+  .service-page .step-desc {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* 案例展示 */
+  .service-page .case-grid {
+    gap: 20px;
+  }
+
+  .service-page .case-card {
+    border-radius: 15px;
+  }
+
+  .service-page .case-image {
+    height: 180px;
+  }
+
+  .service-page .case-info {
+    padding: 18px;
+  }
+
+  .service-page .case-info h3 {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .service-page .case-info p {
+    font-size: 12px;
+  }
+
+  /* 标签 */
+  .service-page :deep(.el-tag) {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+
+  /* 按钮组 */
+  .service-page .button-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .service-page .button-group :deep(.el-button) {
+    width: 100%;
+  }
+}
+
+/* ===== 400px以下（极小屏幕） ===== */
+@media screen and (max-width: 400px) {
+  .service-page .hero-content h1 {
+    font-size: 22px;
+  }
+
+  .service-page .hero-content p {
+    font-size: 13px;
+  }
+
+  .service-page .section-header h2 {
+    font-size: 22px;
+  }
+
+  .service-page .card-title {
+    font-size: 16px;
+  }
+
+  .service-page .card-desc {
+    font-size: 12px;
+  }
+}
+
+/* ===== 特殊组件响应式 ===== */
+
+/* 时间线组件 */
+@media screen and (max-width: 768px) {
+  .service-page .timeline {
+    padding-left: 30px;
+  }
+
+  .service-page .timeline-item::before {
+    left: -30px;
+  }
+
+  .service-page .timeline-item {
+    padding: 15px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .service-page .timeline {
+    padding-left: 25px;
+  }
+
+  .service-page .timeline-item::before {
+    left: -25px;
+    width: 10px;
+    height: 10px;
+  }
+
+  .service-page .timeline-item {
+    padding: 12px;
+  }
+}
+
+/* 统计数字 */
+@media screen and (max-width: 768px) {
+  .service-page .stat-number {
+    font-size: 32px;
+  }
+
+  .service-page .stat-label {
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .service-page .stat-number {
+    font-size: 28px;
+  }
+
+  .service-page .stat-label {
+    font-size: 12px;
+  }
+}
+
+/* FAQ部分 */
+@media screen and (max-width: 768px) {
+  .service-page .faq-item {
+    padding: 15px;
+  }
+
+  .service-page .faq-question {
+    font-size: 16px;
+  }
+
+  .service-page .faq-answer {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .service-page .faq-item {
+    padding: 12px;
+  }
+
+  .service-page .faq-question {
+    font-size: 15px;
+  }
+
+  .service-page .faq-answer {
+    font-size: 13px;
+  }
+}
+
+/* CTA (Call to Action) 按钮区域 */
+@media screen and (max-width: 768px) {
+  .service-page .cta-section {
+    padding: 40px 20px;
+  }
+
+  .service-page .cta-title {
+    font-size: 24px;
+  }
+
+  .service-page .cta-desc {
+    font-size: 15px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .service-page .cta-section {
+    padding: 30px 15px;
+  }
+
+  .service-page .cta-title {
+    font-size: 20px;
+  }
+
+  .service-page .cta-desc {
+    font-size: 14px;
+  }
+}
