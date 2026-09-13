@@ -13,6 +13,12 @@ const routes = [
         meta: { title: '首页' }
       },
       {
+        path: '/en',
+        name: 'HomeEn',
+        component: () => import('@/views/Home/index.vue'),
+        meta: { title: 'Home' }
+      },
+      {
         path: '/ai-development',
         name: 'AiDevelopment',
         component: () => import('@/views/ServiceLanding.vue'),
@@ -76,6 +82,15 @@ const routes = [
       ...[
         ['ai-development','AiDevelopmentEn','AI development'],['miniprogram-development','MiniprogramDevelopmentEn','Mini program development'],['app-development','AppDevelopmentEn','App development'],['web-development','WebDevelopmentEn','Web development'],['iot-development','IotDevelopmentEn','IoT solutions'],['digital-creativity','DigitalCreativityEn','Digital creative'],['custom-development','CustomDevelopmentEn','Custom software']
       ].map(([slug,name,title]) => ({ path: `/en/${slug}`, name, component: () => import('@/views/ServiceLanding.vue'), meta: { title } })),
+      ...[
+        ['/en/cases','CasesEn','Cases',() => import('@/views/Cases/index.vue')],
+        ['/en/cases/:id','CaseDetailEn','Case detail',() => import('@/views/Cases/detail.vue')],
+        ['/en/news','NewsEn','News',() => import('@/views/News/index.vue')],
+        ['/en/news/:id','NewsDetailEn','News detail',() => import('@/views/News/detail.vue')],
+        ['/en/about','AboutEn','About',() => import('@/views/About/index.vue')],
+        ['/en/privacy-policy','PrivacyPolicyEn','Privacy policy',() => import('@/views/PrivacyPolicy.vue')],
+        ['/en/legal-statement','LegalStatementEn','Legal statement',() => import('@/views/LegalStatement.vue')]
+      ].map(([path,name,title,component]) => ({ path, name, component, meta: { title } })),
       {
         path: '/news',
         name: 'News',
@@ -105,6 +120,18 @@ const routes = [
         name: 'LegalStatement',
         component: () => import('@/views/LegalStatement.vue'),
         meta: { title: '法律声明' }
+      },
+      {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: () => import('@/views/NotFound.vue'),
+        meta: { title: '页面不存在' }
+      },
+      {
+        path: '/en/:pathMatch(.*)*',
+        name: 'NotFoundEn',
+        component: () => import('@/views/NotFound.vue'),
+        meta: { title: 'Page not found' }
       }
     ]
   }
@@ -123,6 +150,10 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  if (to.path.length > 1 && to.path.endsWith('/')) {
+    next({ path: to.path.replace(/\/+$/, ''), query: to.query, hash: to.hash, replace: true })
+    return
+  }
   if (to.meta.title) {
     document.title = `${to.meta.title} - 北京耘栈科技`
   }
