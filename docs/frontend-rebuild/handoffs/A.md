@@ -368,9 +368,13 @@ eslint（只读，不带 --fix）→ ESLINT_EXIT=1，✖ 850 problems (7 errors,
 | `cefb3ad` | Merge branch 'codex/rebuild-services' |
 | `1a47c40` | fix(home): 客户墙去掉假公司名与参考站热链，改 24 槽位占位 |
 | `50160d1` | docs: 补素材本地化/禁热链规则；记录 Step 2—3 |
-| （最后一个提交） | chore: gsap+lenis 精确版本、motion token 骨架、删除 MouseFollower、AC07b 占位、SESSIONS 工作树位置、D1/D2、Step 4—6 记录 |
+| `4f5cd76` | style(notfound): 让新建的 NotFound 页满足仓库 lint 规则（消除 12 条新文件告警） |
+| `f918efa` | chore(deps): 锁定 gsap 3.15.0 + lenis 1.3.26、新增 motion token 骨架、删除死代码 MouseFollower.vue |
+| `118432d` | docs: AC07b 占位、D1/D2 决定、SESSIONS 工作树位置、Step 4—6 记录、INTEGRATION 合并记录 |
 
 工作树：本任务开始到结束，主仓 `git status --short` 在每次提交后都为空；没有执行 `git reset --hard`、强推、改写他人分支历史或删除未提交内容。
+
+「最终验证」里的 build / check:routes / eslint 三次运行都发生在 `4f5cd76` 之后，即针对 `118432d` 的内容；此后没有改动任何被验证的文件。
 
 ## 未完成事项与下次第一步
 
