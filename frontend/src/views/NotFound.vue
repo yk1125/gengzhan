@@ -1,12 +1,28 @@
 <template>
   <main class="not-found">
     <div class="not-found__inner">
-      <p class="not-found__code">404</p>
-      <h1 class="not-found__title">{{ copy.title }}</h1>
-      <p class="not-found__text">{{ copy.text }}</p>
+      <p class="not-found__code">
+        404
+      </p>
+      <h1 class="not-found__title">
+        {{ copy.title }}
+      </h1>
+      <p class="not-found__text">
+        {{ copy.text }}
+      </p>
       <div class="not-found__actions">
-        <router-link class="not-found__link" :to="homePath">{{ copy.home }}</router-link>
-        <router-link class="not-found__link not-found__link--primary" :to="consultPath">{{ copy.consult }}</router-link>
+        <router-link
+          class="not-found__link"
+          :to="homePath"
+        >
+          {{ copy.home }}
+        </router-link>
+        <router-link
+          class="not-found__link not-found__link--primary"
+          :to="consultPath"
+        >
+          {{ copy.consult }}
+        </router-link>
       </div>
     </div>
   </main>
