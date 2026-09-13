@@ -2,6 +2,46 @@
 
 维护人：Session A。当前只完成规划，未开始产品实现。
 
+## Git 收敛记录（2026-09-14 · Session A）
+
+### Step 3.9 零改动记录（记录时未改任何 git 状态）
+
+记录时 `HEAD = 1e4f564`（其上是路由修复提交），`git status --short` 为空（clean，无未提交改动）。
+
+各分支 HEAD 与相对 main 的 merge-base（`git rev-parse <branch>` / `git merge-base main <branch>`）：
+
+| 分支 | HEAD | merge-base（收敛前） |
+| --- | --- | --- |
+| `main` | `1e4f564` | — |
+| `codex/rebuild-foundation` | `af63173` | `b484790` |
+| `codex/rebuild-brand` | `67890da` | `b484790` |
+| `codex/rebuild-services` | `12054b5` | `b484790` |
+| `codex/t00a-assets` | `45ef250` | `45ef250`（无自有提交） |
+| `codex/t00r-motion-spec` | `45ef250` | `45ef250`（无自有提交） |
+| `codex/frontend-rebuild` | `b484790` | `b484790` |
+
+`git reflog` 显示 main 上 4 个提交是 `cherry-pick:`（不是 merge），因此与分支上的原始提交内容重复：
+
+| main 提交（cherry-pick） | 分支原始提交 | `git patch-id --stable` | 判定 |
+| --- | --- | --- | --- |
+| `4a343d6` feat(home): build bilingual homepage pilot | `85530e6` | `1606f1e05df3...` | 同一改动 |
+| `5021d76` feat: add bilingual service landing and mini program routes | `ad21014` | `db1292ac8e3d...` | 同一改动 |
+| `512565e` feat: freeze frontend foundation contracts | `4c18b6a` | `038283ba844e...` | 同一改动 |
+| `0997a1e` docs: record foundation integration commits | `af63173` | `21f3134c94d0...` | 同一改动 |
+
+工作树与 dirty 状态（`git worktree list`，各工作树 `git status --short` 均为空）：
+
+```text
+D:/桌面/gengzhan                                           1e4f564 [main]
+D:/桌面/gengzhan-worktrees/gengzhan-worktrees/session-b    67890da [codex/rebuild-brand]
+D:/桌面/gengzhan-worktrees/gengzhan-worktrees/session-c    12054b5 [codex/rebuild-services]
+D:/桌面/gengzhan-worktrees/session-a                       af63173 [codex/rebuild-foundation]
+D:/桌面/gengzhan-worktrees/session-t00a                    45ef250 [codex/t00a-assets]
+D:/桌面/gengzhan-worktrees/session-t00r                    45ef250 [codex/t00r-motion-spec]
+```
+
+`frontend/node_modules` 只在主仓存在；session-a、session-c 尚无（见工作树整理记录）。
+
 | 基准 | 实际提交 | 状态 |
 | --- | --- | --- |
 | 原源码 | `0ed5dcf` | 已核实 |
