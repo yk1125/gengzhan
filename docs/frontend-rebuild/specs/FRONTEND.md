@@ -159,6 +159,7 @@ sessionStorage['yz.theme.override'] = { value, expiresAt: 下一当地07:00/19:0
 - 动画在 route unload 清理；视频/滚动观察者只在可见时运行；`prefers-reduced-motion`、节省流量及触控设备不依赖重动画完成主要任务。
 - 不整包加载源站第三方跟踪、客服或企业提交接口；取证与产品资产分开存放。
 - 素材必须有本地副本与来源登记：入库时记录 source URL、获取日期、文件 hash、尺寸或 viewBox、本地路径（登记口径见 REFERENCE §3）；禁止运行时引用参考站 URL，禁止热链 `seniorweb.cn` / `cdn.seniorweb.cn`。素材未到位时使用显式占位，不得用公司名或参考站图片填充。
+- 页头入场动画门槛（2026-09-14 用户决策，**有意偏离参考站**）：参考站用 `document.body.clientWidth > 1365` 作为 `head_animate()` 的唯一门槛（`function.js:4558`），因此 1025–1365px 区间页头不播入场动画（元素仍正常可见，无 opacity 隐藏）。该数值全库仅此一处，不属于参考站断点体系（真实断点为 1024 移动端 / 1920 大屏），且参考站布局 CSS 在 1025–1365 仍按桌面处理，判定为遗漏而非设计。本项目**不照抄**：门槛改为 `clientWidth > 1024`，与统一移动端断点对齐——≤1024px 不播放，≥1025px 播放。其余参数照抄 T00R SPEC M-03（延迟 `index*200+200` ms、时长 1s、`fadeInDown`、`.outdated svg` 1300ms、`.sun` 1400ms）。页头属 A 的公共层（`frontend/src/layout/index.vue`），B/C 只消费，不得各自实现页头入场。
 
 ## 8. 页面实现约束
 
