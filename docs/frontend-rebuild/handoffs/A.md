@@ -538,3 +538,44 @@ BACKEND-TODO / 缺译 / 素材缺口：服务页暗色要等 C 把 `--svc-*` 换
 - 本批没有新增截图证据（视觉改动已在浏览器抽查记录，未落盘）。
 
 下次恢复的第一步：待用户就上述 4 个仍开放项继续答复；答复前可先排 G2—G4 的 i18n 任务。
+
+---
+
+# Session A · i18n（G2—G4）+ motion token 填值（2026-09-15 三批）
+
+状态：完成（共享外壳与服务页 i18n 已落地；About/Cases/News 内容翻译仍归 B/D）
+基准commit：`9680010`（main）
+本任务commit：`57f0604`（motion token）、`2c7cfba`（i18n）
+
+目标与完成范围：
+
+1. **G2 共享外壳**：`router/index.js` 按路由设置 `html lang`，英文标题后缀改 `Beijing Yunzhan Technology`；`Header.vue` 英文品牌名 / 首页跳转 / 菜单 aria-label / 导航 / 主题 / 微信文案；`Footer.vue` 英文 footer 与英文路径。
+2. **G3 en 服务页**：新增 `frontend/src/content/service-landing-i18n.js`，`ServiceLanding.vue` 接入七条服务页英文数据与 01 分区文案。
+3. **G4 h1 断词**：`.service-hero h1.is-en` 增加 `overflow-wrap: anywhere`。
+4. **motion token**：按用户授权只填 SPEC-backed 字段，无对应条目的 `instant/exit/inOut/micro/scaleIn` 保留 `MOTION_TODO`。
+
+修改文件：
+
+- `frontend/src/content/service-landing-i18n.js`（新增）
+- `frontend/src/views/ServiceLanding.vue`
+- `frontend/src/layout/components/Header.vue`
+- `frontend/src/layout/components/Footer.vue`
+- `frontend/src/router/index.js`
+- `frontend/src/styles/motion.js`
+
+验证命令、实际结果与证据路径：
+
+- `npm.cmd run build` → PASS；主入口 CSS gzip 68.45 kB。
+- `npm.cmd run check:motion` → PASS 2 / FAIL 0 / BASELINE-STALE 0。
+- `npm.cmd run check:routes` → PASS 34 / FAIL 0 / PENDING 2（contact，B/T05）。
+- 只读 eslint（touched files）→ 0 errors / 83 warnings（既有格式规则，无新增 error）。
+- 浏览器抽查：`/en`、`/en/ai-development`、`/en/iot-development`、`/en/custom-development`、`/en/digital-creativity` 的 `html lang=en`、外壳英文、服务页 `main` 0 中文；`/en/about` 内容仍中文，归 B/T05。
+
+BACKEND-TODO / 缺译 / 素材缺口：B/T05 待翻译 About/Contact/Privacy/Legal；D/T04 待翻译 Cases/News；`News/detail.vue` 6 条 unsplash 存量仍归 D。
+
+未完成事项与原因：
+
+- IoT 全站入口（G5 中剩余部分）尚未解决；数字创意按用户 2026-09-15 裁决不再处理。
+- About/Cases/News 等英文页面内容不在本批 A 的授权范围。
+
+下次恢复的第一步：视用户验收；若继续 G5，需用户指定 IoT 的入口落点（footer 服务列 / 服务概览页等）。

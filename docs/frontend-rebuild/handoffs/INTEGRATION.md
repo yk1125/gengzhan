@@ -604,3 +604,38 @@ $ .\node_modules\.bin\eslint.cmd . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .
 7. **M-16 / M-17**：是否纳入 1.0 待用户裁定。
 8. **G2—G4（i18n）**：按用户「按建议来」独立排任务。
 9. **存量**：`views/News/detail.vue` 的 mock 数组里还有 6 条 `images.unsplash.com`（`/news/:id` 是活路由，归 D / T04）；移动菜单 768px 两侧不一致；`/cases` 需后端；`lint` 带 `--fix`；无 `test:unit/test:e2e`。
+
+### 6. 本轮 i18n（G2—G4）与 motion token 完成记录（2026-09-15 续）
+
+提交：
+
+- `57f0604` `feat(motion): fill SPEC-backed shared motion tokens`
+- `2c7cfba` `feat(i18n): complete English shell and service landing content`
+
+完成范围：
+
+- **G2 共享外壳**：`router/index.js` 在 `beforeEach` 设置 `documentElement.lang`，英文路由 `lang="en"`，标题后缀改为 `Beijing Yunzhan Technology`；`Header.vue` 英文态品牌名、首页跳转、菜单 aria-label、导航 / 主题 / 微信文案全部切换；`Footer.vue` 全站英文 footer 文案与英文路径。
+- **G3 en 服务页**：新增 `frontend/src/content/service-landing-i18n.js`，集中维护七条服务页的英文 title/subtitle/capabilities/process 与 01 分区文案；`ServiceLanding.vue` 的 `resolveService` 与模板全部接线。
+- **G4 h1 断词**：`.service-hero h1.is-en { overflow-wrap: anywhere }`，英文长标题不再在 1440 断成 `Developme / nt`。
+- **motion token**：只填 SPEC 有明确对应条目的 `duration.fast/base/slow/scroll`、`ease.standard/enter/scroll`、`distance.reveal/hero/maskOverflow`；`instant/exit/inOut/micro/scaleIn` 保持 `MOTION_TODO`，不编数。
+
+验证（在 `frontend/` 下）：
+
+```text
+npm.cmd run build        → PASS（主入口 CSS gzip 68.45 kB）
+npm.cmd run check:motion → PASS 2 / FAIL 0 / BASELINE-STALE 0
+npm.cmd run check:routes → PASS 34 / FAIL 0 / PENDING 2
+npx eslint（只读，touched files）→ 0 errors / 83 warnings（warning 为既有格式规则，无新增 error）
+```
+
+浏览器抽查（dev server @ `127.0.0.1:4173`）：
+
+- `/en`、`/en/ai-development`、`/en/iot-development`、`/en/custom-development`、`/en/digital-creativity`：`html lang=en`，页头/footer 英文，服务页 `main` 内 0 个中文字符。
+- `/en/ai-development` 页头品牌为 `Yunzhan Technology`，导航 8 项英文，标题为 `AI development - Beijing Yunzhan Technology`。
+- `/en/about` 的内容仍为中文，按 A.md 既有边界归 B/T05（本批只负责共享外壳与服务页 i18n，不越权改 About 内容）。
+
+仍待用户/下游：
+
+- G5（IoT / 数字创意入口）、M-31、M-16/M-17 已按用户 2026-09-15 裁定：数字创意页面不管；M-16/M-17 不纳入；`/services` 不建；M-31 不需要。G5 中「数字创意」按用户裁决不再处理，IoT 入口仍未解决。
+- B/T05：About / Contact / Privacy / Legal 的英文页面内容。
+- D/T04：Cases / News 英文内容与 `News/detail.vue` 的 6 条 unsplash 存量。
