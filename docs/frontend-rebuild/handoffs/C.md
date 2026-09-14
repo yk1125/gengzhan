@@ -357,3 +357,150 @@ npx.cmd eslint . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore
 1. 读本节 + `handoffs/INTEGRATION.md`，确认 `aea702a`（以及后续 C 的提交）是否已被 A 收敛进 main。
 2. 复现（约 3 分钟）：`cd frontend && npm.cmd run build && npm.cmd run preview -- --port 4181 --strictPort`，浏览器开 `http://localhost:4181/web-development`，滚到底看视差/擦除/横线/切换。
 3. 等 A 对第 6 节三条给出结论后：收窄全局按钮规则 → 复核 `.service-cta button:hover` 是否变成 `translateX(8px)`；主题层若落地 → 重跑本节的 8 组合截图回归；en 文案归属确定 → 接入双语模块。
+
+---
+
+# 第 3 轮：用户 6 条反馈的裁决与落地（2026-09-14 晚）
+
+## 9. 六条反馈 → 我的提问 → 用户裁决 → 本轮结果
+
+| # | 用户原话（问题） | 我的提问 | 用户裁决 | 本轮结果 |
+| --- | --- | --- | --- | --- |
+| 1 | 「文字/卡片渐显只在第一次滑动出现，第二次滑动是纯静态」 | 是否允许偏离 SPEC M-24 的 `once: true`，改成交互每次重放？ | **不允许** | **未改**：保持 SPEC `once: true`（一次滚动内 0→3→8→11→14→16，滚回顶部仍 16 不回退；换路由时按 M-24 语义重来）。第 11 节有实测 |
+| 2 | 「两块 `.service-section` 内容不稳定：刷新才出现，点导航栏跳转就不出现」 | （无需提问，直接定位） | — | **已修并双向复测**：14 条路由走 SPA 导航后滚到底，`hidden aos = 0`、未动画 = 0（修前实测 9/16，`.web-brand__grid`/`.web-browser` 停在 `opacity:0`）。见 10.1 |
+| 3 | 「缺图片/动图；品牌故事应放图；每张图像首页那样有蓝色圆盘且可跳转；可用现有资源占位，不够从网上找；最后要一份完整图片清单」 | 是否授权联网找图 + 下载入库 + 登记来源/hash？ | **授权** | **已做**：14 张入库 `frontend/public/assets/services/`（hero + 分区配图各 7），全部 `router-link` + `item_hover`（A 的蓝色圆盘），点击进 `/ai-consultation`；清单 `evidence/service-pages/service-images.md` |
+| 3b | 同上 | 清单写多细？ | **简单一点、AI 看得懂即可，可加尺寸范围** | 清单按「位置 / 用途 / 建议尺寸范围 / 当前文件 / 来源 URL + 许可 / 替换两步法」成文，第 2 节给了每张的实测像素与 sha256 |
+| 4 | 「不同服务页不要不同主题色（小程序绿、App 灰），统一成首页米色」 | 统一范围＝只统一 hero，还是整页？ | **整页，文字转深色，但要高级一些** | **已做**：删除 7 组 per-kind hero 配色；全页统一米色 `#F2F1E4` + 深色文字；所有硬编码 hex 收敛为页内 10 个 token。见 10.2 |
+| 5 | 「亮色态各服务页 footer 背景仍是黑的，footer（包括 cta）参考首页 footer 改颜色和背景」 | footer 本体在 A 的文件里，是我直接改还是写申请？ | **写申请 + 本轮先把 CTA 改完** | CTA **已改**（米色底 + 深色字 + 蓝箭头，实测 `bg rgb(242,241,228)` / `color rgb(17,17,17)`）；footer 本体未动，申请见第 13 节 |
+| 6 | 「`.service-hero` 排版不够高级，参考 seniorweb.cn/solution/34.html」 | 是否允许抓取参考站页面取证？ | **允许** | **已抓取入库**（`evidence/service-pages/reference-solution/`：html + css + NOTES.md + 2 张对照图），hero 逐值移植。见 10.3 |
+
+## 10. 逐条实施记录
+
+### 10.1 反馈 2：SPA 导航后分区空白（根因 + 修法 + 双向实测）
+
+- 根因（上一轮已定位，本轮复测确认）：7 条服务路由共用同一个 `ServiceLanding` 实例；`watch(() => route.path)` 默认在 DOM 更新前触发，`collectAosTargets()` 收集到的是**旧 DOM**，新节点进不了待办表；而 SPA 跳转不产生滚动事件 → 首屏以下的节点永久 `opacity: 0`。刷新能出现，是因为重新挂载。
+- 修法（本文件 script）：`watch(..., { flush: 'post' })` + `await nextTick()` + `resetReveal()`（清 `.aos-animate`、重建 `WeakSet`/待办表）+ 重新 `collectAosTargets()`，随后 `syncMoveFrame` / `playTitleEntrance` / `scheduleFrame`。
+- 实测（1440×900，真实鼠标滚轮逐屏扫到底）：修前 `/ai-development` → 点导航 `/web-development` 滚到 3521/3686 → `animated 9/16`，`.web-brand__grid`、`.web-browser` 停在 `opacity:0`；修后 = `animated 16/16`、`wrongOp: []`、`hiddenStill: 0`。本轮 14 条路由批量复测见第 11 节。
+- 判定口径必须用 SPEC 阈值 `rect.top - clientHeight + 150 < 0`，不能用「是否进入视口」；`window.scrollTo` 之后要等 rAF 再读，否则 `scrollY` 读到 0。
+
+### 10.2 反馈 4：整页统一米色 + 深色文字（"高级一些"）
+
+- 页内调色板（`.service-page`，值取自首页 `Home/index.vue:522-528` 实测）：`--svc-bg:#f2f1e4`、`--svc-surface:#ffffff`、`--svc-surface-soft:#e7e5da`、`--svc-ink:#111111`、`--svc-ink-soft:#6d6c60`、`--svc-ink-body:#3d3d3d`（参考站导语色）、`--svc-line:#adadad`、`--svc-line-soft:#d6d3c6`、`--svc-accent:#184dc4`、`--svc-on-accent:#ffffff`。
+  - `#184DC4` 不是自选：SPEC M-15（`docs/frontend-rebuild/evidence/reference-effects/SPEC.md:329`）实测参考站的服务项高亮就是 `#184DC4`，与首页 accent 同值。
+  - 仍然只做**页内副本**，没有改全局 token（A 的 `:root` 里目前只有 `--yz-orange:#f06a21 / --yz-black / --yz-offwhite:#f2f2f0 / --yz-line:#d2d2ce / --yz-copy`，没有语义色阶；申请见第 13 节）。
+- 删除的 per-kind 主题（反馈原话里的"绿/灰"就是这七组）：`.service-page--mini/--app/--web/--iot/--custom/--creative .service-hero` 的背景与文字色共 9 条规则，全部移除。
+- 分区底色：`.service-capabilities`（原 `#fff`）、`.service-approach`（原 `var(--yz-offwhite)`）、`.service-switch`（原同）、`.service-cta`（原 `#151515`）统一为 `var(--svc-bg)`；`.creative-space`（原 `#c3d6e9`）同样归一。
+- 深色块全部改浅：`.ai-flow article:nth-of-type(2)`（原 `#1a1a1a`）→ `--svc-surface-soft`；`:nth-of-type(4)`（原橙）→ accent 底 + 白字；`.iot-dashboard__main`（`#e8e8e1`）→ soft；`.iot-dashboard__side article`（`#202224`）→ 白卡、`:last-child`（`#607974`）→ accent 底；`.creative-panels article`（`#17263a`）→ 白卡、`:nth-child(3)`（`#d86e45`）→ accent 底。
+- hover「高级感」：`.capability-list article:hover` 由 `#1a1a1a` 黑底改成 **accent 底 + 白字 + 上浮 5px**（实测 `bg rgb(24,77,196)`、`color rgb(255,255,255)`、`transform matrix(1,0,0,1,0,-5)`、`0.28s`）。
+- 死标记 CSS 清理（占位遗留，不属于用户反馈，但影响配色扫描）：`.ai-map*`（模板已无 ai-map）、`.iot-network__map`、`.iot-device--0..3`、`.creative-space__strip`、`.creative-space__blocks*`、`@keyframes creative-scroll`、`.service-hero__inner/__copy`（模板已换成 `__title/__lead`），共 12 组。
+- 硬编码 hex 收敛结果：`rg -n "#[0-9a-fA-F]{3,8}" frontend/src/views/ServiceLanding.vue` **只剩调色板定义那 10 行**（+1 行注释里的来源说明）；`--yz-orange/--yz-line/--yz-offwhite` 在本文件的 17 处引用全部改为页内 token（本文件现已 0 处 `--yz-`）。
+
+### 10.3 反馈 6：hero 排版按参考站逐值移植
+
+取证（`evidence/service-pages/reference-solution/`，已入库）：`solution34.html`（195,085 B，sha256 `D5DC8EA20DB0179E25D3D92AF2BB579365A1BABED73430D971F22713B1266C6E`）、`solution.css`（36,103 B，sha256 `9FD337DD4AB1A16DB3594931E8963F45A9E2262B10D3D71C5889D9211107E6F8`，www 与 cdn 取回一致）、`NOTES.md`（逐值 + 行号）、`ref-solution34-hero-1440.png`、`ref-solution34-hero-390.png`。
+
+参考站 hero 结构 = **左标题 + 右导语 + 通栏图 + 大留白**（无 kicker / 无序号 / 无按钮）。移植值与本页实测：
+
+| 值 | 参考站 | 本页实现 | 本页 1440 实测 |
+| --- | --- | --- | --- |
+| h1 字号 | >1666px `67px/79px`；≤1666px `49px/61px`；≤1024px `23px/1.5` | 同值三档（新增 `@media (max-width:1666px)`） | `49px / 61px` |
+| 导语 | `width:650px; 16px/38px; font-weight:500`；≤1024 `100% / 14px/35px` | 同值（容器更宽，加 `max-width:49%` 上限） | `646.8px`、`16px/38px` |
+| 标题行布局 | `display:flex; justify-content:space-between; margin:0 auto 90px` | 同值（`margin:26px auto 90px`，间距用 `5vw`） | h1 在左、导语右对齐 |
+| 通栏图 | `1440×401`，原图 `3840×1070`（3.59:1） | `aspect-ratio: 3840/1070`，满宽 | `1430×398`，y=402 |
+| 上留白 | `.wrap { margin: 243px auto 0 }` | `padding: 208px 0 0`（**偏差**：差值给固定 Header 让位） | `208px` |
+| ≤1024 | `.wrap 80px`、`.title` 竖排 `margin: 0 auto 42px`、图高 `250px` | 同值 | 390 截图见第 12 节 |
+
+差异登记（不擅自"对齐"用户没要求的东西）：容器宽度本页用全站 `.service-shell`（`min(100% - 96px, 1320px)`），参考站是 `1195px` —— 若改成 1195，hero 的左右边距会与本页其他分区不一致，故保留 1320 并在导语上加 49% 上限。
+
+### 10.4 反馈 3：图片（14 张已入库 + 清单）
+
+- 目录 `frontend/public/assets/services/`：`{ai,mini,app,web,iot,custom,creative}-hero.jpg`（2400×670，通栏）+ `…-media.jpg`（1600×1000，分区）。
+- 全部 Pexels License（可商用免署名）；逐张像素 / 字节 / sha256 / 来源 URL 见 `evidence/service-pages/service-images.md`。**没有**任何运行时热链，页面只引用 `/assets/services/...`。
+- 交互：hero 图与每个分区配图都是 `<router-link class="… item_hover" :to="consultPath">` → A 的 `CustomCursor`（`item_hover` 在 `CUT_SELECTOR` 里）负责蓝色圆盘，页面只加类名、不改公共层；跳转目标 `/ai-consultation`（en 为 `/en/ai-consultation`，新增 `consultPath` computed）。
+- 小程序 / App / Web 三条路由的假屏（原先画出来的手机/设备/浏览器）改为"真图 + 外壳"：`.mini-phone__screen` / `.app-device__screen` / `.web-browser__screen` 里放 `mediaImage`，外壳本身改白底 + `--svc-line` 描边（原来是深色假屏）。
+
+### 10.5 反馈 5：CTA 已改米色（footer 见第 13 节申请）
+
+- `.service-cta { background: var(--svc-bg); color: var(--svc-ink) }`；`.service-cta button` 深色字 + `1px solid var(--svc-line)` 下划线 + accent 箭头（`rgb(24,77,196)`）。
+- 实测 hover：`transform: matrix(1, 0, 0, 1, 0, -2)`（**A 的全局 `!important` 仍然压过本页声明的 `translateX(8px)`**，见 13.2）、`border-bottom-color: rgb(24,77,196)`（本页声明生效）。
+
+### 10.6 反馈 1：reveal 只播一次 —— 按裁决保持 SPEC 原样
+
+- 用户裁决「不允许」偏离 SPEC M-24 的 `once: true`，因此**没有**改成"每次进入视口重放"。本轮只保证另一件事不退化：**换路由后重新计算**（10.1），所以点导航跳到另一条服务路由时，新页面的显影会重新播一遍。
+
+### 10.7 SPEC M-10 / M-12 / M-13 / M-14 / M-15 / M-24 / M-25 / M-26 逐条复测（本轮改色后）
+
+全部仍与 SPEC 数值一致（1440×900；M-10 用 `/en/ai-development` 覆盖空格字符）：
+
+| 条目 | 本轮实测 | SPEC 要求 | 判定 |
+| --- | --- | --- | --- |
+| M-10 | 14 字符；`transitionDelay` = `0.3s / 0.38s / 0.46s / 0.54s`，末位 `1.34s`；空格 `min-width:10px`；`transition-duration: 1s`；`.on` 已挂 | `index*0.08+0.3s`、空格 `min-width:10px` | 成立 |
+| M-12 | y=2400 → 列0 `translate3d(0,-21.85px,0)`、列1 `translate3d(0,109.25px,0)`；y=3600 → `-45.85 / 229.25`；Δ1200 → `-24 / +120`，系数 `-0.02 / +0.1`，比值恒 **-5.0** | 系数 `-0.02 / +0.1` | 成立 |
+| M-13 | `lines=1`、`data-speed=200`；`T = offsetTop - clientHeight/1.2 = 1603`；y=1503 → `100%`、1603 → `99.72%`、1703 → `49.72%`、1803(=end) → `inset(0px)` | 每 100px 走 50% | 成立（`T` 随 hero 高度变化，属预期） |
+| M-14 | item 高 **95px**；web(activeIndex 3) → `translateY(285px)` = 3×95；点 index 1 → 新页 `/miniprogram-development` 读回 `translateY(95px)`；`.move` `0.4s`；指示条 `::after` `0.6s` | `translateY(index*item.clientHeight)`、`.4s`、指示条 `.6s` | 成立 |
+| M-15 | `.attr__line` `0.6s / all`、`.attr::after` `0.6s`、`content: attr(data-text)`；`.on` 时 line `translateY(-24px)`（= -100%）、after `translateY(0)` | `all .6s` + 上翻 | 成立 |
+| M-24 / M-25 | 6 个滚动位置（0/700/1400/2100/2800/3500）阈值违规数 **全 0**；动画数 0→3→8→11→14→16；`fade-top` `1.5s` + `cubic-bezier(0.175, 0.885, 0.32, 1.275)`；`fade-clip` `2s`；滚回顶部仍 16（once 不回退） | `all_num` 桌面 150、`once`、上列时长/缓动 | 成立 |
+| M-26 | 未显影 `matrix(0,0,0,1,0,0)`（= `scaleX(0)`）、`transform-origin: 0px 0.5px`（left）、`2s`；显影后 `scaleX(1)` | `2s`、`origin: left` | 成立 |
+
+## 11. 真实验证输出（本轮真跑，命令原文）
+
+1. `cd frontend && npm.cmd run build` → `✓ built in 14.30s`（0 error；仅 Vite 既有的 `chunk > 500 kB` 提示）。产物含 `dist/assets/ServiceLanding-*.js | .css`。
+2. `npm.cmd run check:routes` → `结果：PASS 34 / FAIL 0 / PENDING 2`（PENDING 仍是 B 的 contact 与 routeManifest，未变）。
+3. 只读 eslint（**不带 `--fix`**，`npx.cmd eslint …`）：
+   - 本文件：`0 errors / 0 warnings`。为达此数，本轮对 `ServiceLanding.vue` **单独**跑过一次 `eslint --fix`（仓库 `npm run lint` 本身就带 `--fix`；本次只对这一个文件跑），`173 → 0` 全部是 `vue/*` 格式类告警。
+   - 全仓：`802 problems (7 errors, 795 warnings)`；同命令修前为 `975 problems (7 errors, 968 warnings)`，上一轮基线 `7 errors / 926 warnings`。**错误数仍为 7，未增未减；告警比基线少 131。**
+4. 路由数据隔离 + 显影（Chromium；真实 SPA 点击 `.service-switch__mobile a` 切路由，逐屏滚到底）：
+
+| 语言 | 路由命中 | 读回 h1 | 该路由首分区 | hero 图 | 扫到底后 hidden aos |
+| --- | --- | --- | --- | --- | --- |
+| zh | 7/7 | AI开发 / 小程序开发 / App开发 / 网站建设 / 物联网开发 / 定制开发 / 数字创意 | ai-architecture / mini-journey / app-product / web-brand / iot-network / custom-system / creative-space | 各自 `*-hero.jpg` | 0（共 16–17 个节点） |
+| en | 7/7 | AIDEVELOPMENT / MiniProgramDevelopment / APPDEVELOPMENT / WEBDESIGN / IOTSOLUTIONS / CUSTOMSOFTWARE / DIGITALCREATIVE | 同上（同 kind） | 各自 `*-hero.jpg` | 0 |
+
+`switchOn`（切换列表高亮）与 `capTitle`（能力标题）在 14 条路由上逐条不同，**没有出现 A 服务显示 B 服务内容**。
+
+5. 过渡视频：DOM 实测 6 个 `<video>`，`src` = `/assets/transitions/w1-2.mp4 / w1-3 / w2-1 / w2-3 / w3-1 / w3-2`（共享 `frontend/public/assets/transitions/`，未复制副本、未热链）；`preload=none`、`opacity:0`，切换时才加 `.on` 并 `play()`（SPEC M-15）。
+
+## 12. 截图证据（`docs/frontend-rebuild/evidence/service-pages/round3/`，26 张）
+
+- `1440-{zh,en}-{ai,miniprogram,app,web,iot,custom,digital-creativity}-hero.jpg`（14 张）：7 条路由 × zh/en 首屏，逐张可见"左标题 + 右导语 + 通栏图"，且各路由标题与图不同 —— 这是"数据不串"的视觉证据。
+- `1440-zh-{web,ai,miniprogram}-full.jpg`、`1440-en-web-full.jpg`、`390-{zh,en}-web-full.jpg`、`390-zh-{ai,miniprogram}-full.jpg`（8 张）：整页（`prefers-reduced-motion: reduce` 下拍摄，全部内容可见，用来看排版与配色）。
+  注意：**减少动效模式下 M-13 的实心层不擦除**，所以这些整页图里「03 / HOW WE WORK」的大字呈现的是 20% 幽灵层（`rgba(0,0,0,0.2)`）。正常动效下实测 `clip-path: inset(0px)`（实心层完整显示），截图见 `1440-zh-approach.jpg`。
+- `1440-zh-approach.jpg`（真实滚轮滚到 03 段，实心层已擦出）、`1440-zh-switch.jpg`（04 段切换列表 + 跟随框套在"网站建设"）、`1440-zh-capability-hover.jpg`（能力卡 hover = accent 蓝底白字）、`1440-zh-cta.jpg`（CTA 米色态 + 下方仍是黑 footer，即反馈 5 的现状）。
+
+## 13. 申请 A 处理的共享层事项（本轮新增 1 条，C 未自行改动）
+
+### 13.1 【新增·阻断反馈 5 的一半】服务页 footer 仍是黑色：请把米色 footer 从"仅首页"放开
+
+- 现象：亮色态下 7 条服务路由的 footer 仍是黑底（见 `1440-zh-cta.jpg` 下半部）。
+- 根因（A 的文件）：`frontend/src/style.css:628` `.corporate-footer { --footer-bg:#111 … }`；米色系统只挂在 `:642` 的 `html:not([data-theme='dark']) .corporate-footer.footer-home { --footer-bg:#F2F1E4; --footer-heading:#1e2f48; --footer-copy:#334155; … }`；而 `frontend/src/layout/components/Footer.vue:81` 里 `isHome = route.path === '/' || route.path === '/en'` —— 除首页外都不带 `footer-home` 类，故一律黑底。
+- 用户裁决：**写申请，本轮 C 只改 CTA**。
+- 申请内容（择一，由 A 定）：① 让米色变量对所有路由生效（例如把"是否首页"的判断改成"非暗色即米色"，或把米色定义从 `.footer-home` 移到 `.corporate-footer`）；② 或提供等价 hook（例如在 `:root` 加 `--footer-*` 语义 token，布局/页面按 token 取值）。
+- 影响面：只影响 footer 的**颜色/背景**，布局与排版不动（用户明确"布局排版不需要改"）；A 改完后 C 无需再动 `ServiceLanding.vue`，可直接重跑第 12 节的整页截图复核。
+
+### 13.2 【沿用第 6 节，仍成立】`style.css:282-286` 的 `button:hover:not(:disabled){ transform: translateY(-2px) !important }`
+
+- 本轮复测：`.service-cta button:hover` → `transform: matrix(1, 0, 0, 1, 0, -2)`（C 声明的 `translateX(8px)` 仍被压过），同时套上青色霓虹 `box-shadow`；同一规则命中 7 个 `.service-switch__item`。C 侧 transition 已就绪，A 收窄作用域后立即生效。
+
+### 13.3 【沿用第 6 节，仍成立】无暗色 token 层
+
+- 本轮仍实测：无主题两态按钮、无 19:00–07:00 逻辑、`data-theme='dark'` 全站只在首页 footer 规则里出现一次；因此服务页亮/暗渲染完全一致，暗色态截图无意义（第 12 节只给亮色）。
+
+### 13.4 【新增·待 A 决策】语义色 token 缺失
+
+- 本页按用户裁决统一到米色后，用的是**页内副本** `--svc-*`（值 = 首页 `--home-*` 实测值）。若 A 把米色系提到 `:root`（例如 `--color-bg / --color-ink / --color-ink-soft / --color-line / --color-accent / --color-on-accent`），C 可把 `--svc-*` 改成引用全局，页面无需其他改动。请求 A 确认命名（用户第 3 步要求"换成 A 定的语义 token（`--color-accent` 等）"，但目前 `:root` 里并没有这组 token）。
+
+## 14. 未完成 / 未运行（本轮结束后仍成立）
+
+- **未在真实手机 / Safari / 微信内置浏览器运行**（只有 Chromium 1440×900 与 390×844 视口）。
+- `test:unit` / `test:e2e` 脚本**不存在**，未运行、未声称通过。
+- 服务页 **footer 仍是黑的**（等 13.1）；**暗色态**不存在（13.3），未做暗色视觉评估。
+- en 文案缺译仍在：`capabilityTitle` / `statement` / `description` 以及各 kind 固有分区文案（如"把企业已有资料…"）仍是中文，归属待定。
+- 新发现（**待用户/A 裁决，本轮未动**）：`04 / EXPLORE SERVICES` 右侧的 `.service-switch__picture` **在用户没有切换过服务前没有画面**（6 个 `<video>` 都 `preload=none`、`opacity:0`，只有点击切换时才加 `.on`）。SPEC M-15 只定义了"点击后换片"，参考站初始态未取证，C 未擅自加初始静帧。见 `1440-zh-switch.jpg` 右侧空白。
+- 反馈 1（reveal 只播一次）按用户裁决**保持不改**，不是遗漏。
+
+## 15. 下次第一步
+
+1. 读本节 + `handoffs/INTEGRATION.md`，确认 `codex/rebuild-services` 上本轮提交是否已被 A 收敛进 main。
+2. **看 A 对 13.1 的结论**：footer 米色一放开，立刻在 1440/390 × zh/en 重拍整页截图，确认亮色态 footer 由黑转米色，并复核 13.2 的按钮 hover（收窄后 `translateX(8px)` 应生效）。
+3. 就"切换区初始帧"（第 14 节最后一条）向用户取一次裁决：给初始静帧 or 保持空白。
+4. 用户若提供正式图片，按 `evidence/service-pages/service-images.md` 第 4 节两步替换（覆盖同名文件即可，不需改代码）。

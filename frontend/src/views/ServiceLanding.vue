@@ -1,34 +1,70 @@
 <template>
-  <main ref="rootEl" class="service-page" :class="`service-page--${page.kind}`">
+  <main
+    ref="rootEl"
+    class="service-page"
+    :class="`service-page--${page.kind}`"
+  >
+    <!-- hero 排版照参考站 /solution/34.html：左标题 + 右导语 + 通栏图（见 evidence/service-pages/reference-solution）。 -->
     <section class="service-hero">
-      <div class="service-shell service-hero__inner">
-        <p class="service-kicker">YUNZHAN / {{ page.en }}</p>
-        <div class="service-hero__copy">
-          <h1 class="each_animate" :class="{ on: titleIn }">
-            <span
-              v-for="(char, index) in titleChars"
-              :key="index"
-              :style="titleCharStyle(index, char)"
-              >{{ char }}</span
-            >
-          </h1>
-          <p>{{ page.subtitle }}</p>
-        </div>
-        <p class="service-hero__index">0{{ page.order }} / 07</p>
+      <div class="service-shell service-hero__head">
+        <p class="service-kicker">
+          YUNZHAN / {{ page.en }}
+        </p>
+        <p class="service-hero__index">
+          0{{ page.order }} / 07
+        </p>
       </div>
+      <div class="service-shell service-hero__title">
+        <h1
+          class="each_animate"
+          :class="{ on: titleIn }"
+        >
+          <span
+            v-for="(char, index) in titleChars"
+            :key="index"
+            :style="titleCharStyle(index, char)"
+          >{{ char }}</span>
+        </h1>
+        <p class="service-hero__lead">
+          {{ page.subtitle }}
+        </p>
+      </div>
+      <router-link
+        class="service-hero__media item_hover"
+        :to="consultPath"
+      >
+        <img
+          :src="page.heroImage"
+          :alt="page.mediaAlt"
+        >
+      </router-link>
     </section>
 
-    <section v-if="page.kind === 'ai'" class="ai-architecture service-section">
-      <div class="service-shell ai-architecture__head" data-aos="fade-top">
-        <p class="service-kicker">01 / FROM DATA TO ACTION</p>
+    <section
+      v-if="page.kind === 'ai'"
+      class="ai-architecture service-section"
+    >
+      <div
+        class="service-shell ai-architecture__head"
+        data-aos="fade-top"
+      >
+        <p class="service-kicker">
+          01 / FROM DATA TO ACTION
+        </p>
         <div>
-          <h2 data-aos="fade-clip">把企业已有资料，<br />变成随时可用的智能助手。</h2>
+          <h2 data-aos="fade-clip">
+            把企业已有资料，<br>变成随时可用的智能助手。
+          </h2>
           <p>
             不必从零开始。制度、产品资料、历史案例和业务流程，经过整理后就能成为 AI 的可靠依据。
           </p>
         </div>
       </div>
-      <div class="service-shell ai-flow" data-aos="fade-top" data-aos-delay="100">
+      <div
+        class="service-shell ai-flow"
+        data-aos="fade-top"
+        data-aos-delay="100"
+      >
         <article>
           <span>第一步</span>
           <h3>整理企业资料</h3>
@@ -53,62 +89,178 @@
           <p>客服、销售、运营和内部员工</p>
         </article>
       </div>
+      <div
+        class="service-shell"
+        data-aos="fade-top"
+        data-aos-delay="200"
+      >
+        <router-link
+          class="service-media item_hover"
+          :to="consultPath"
+        >
+          <img
+            :src="page.mediaImage"
+            :alt="page.mediaAlt"
+            loading="lazy"
+            decoding="async"
+          >
+        </router-link>
+      </div>
     </section>
-    <section v-else-if="page.kind === 'mini'" class="mini-journey service-section">
-      <div class="service-shell mini-journey__grid" data-aos="fade-top">
+    <section
+      v-else-if="page.kind === 'mini'"
+      class="mini-journey service-section"
+    >
+      <div
+        class="service-shell mini-journey__grid"
+        data-aos="fade-top"
+      >
         <div>
-          <p class="service-kicker">01 / USER JOURNEY</p>
-          <h2 data-aos="fade-clip">把服务放进用户<br />最顺手的入口。</h2>
+          <p class="service-kicker">
+            01 / USER JOURNEY
+          </p>
+          <h2 data-aos="fade-clip">
+            把服务放进用户<br>最顺手的入口。
+          </h2>
         </div>
-        <div class="mini-phone" data-aos="fade-top" data-aos-delay="100">
-          <span>品牌服务</span><b>预约<br />支付<br />会员</b><i></i>
+        <div
+          class="mini-phone"
+          data-aos="fade-top"
+          data-aos-delay="100"
+        >
+          <span>品牌服务</span>
+          <router-link
+            class="mini-phone__screen item_hover"
+            :to="consultPath"
+          >
+            <img
+              :src="page.mediaImage"
+              :alt="page.mediaAlt"
+              loading="lazy"
+              decoding="async"
+            >
+          </router-link>
         </div>
-        <ol data-aos="fade-top" data-aos-delay="200">
-          <li v-for="item in page.modules" :key="item">{{ item }}</li>
+        <ol
+          data-aos="fade-top"
+          data-aos-delay="200"
+        >
+          <li
+            v-for="item in page.modules"
+            :key="item"
+          >
+            {{ item }}
+          </li>
         </ol>
       </div>
     </section>
-    <section v-else-if="page.kind === 'app'" class="app-product service-section">
-      <div class="service-shell" data-aos="fade-top">
-        <p class="service-kicker">01 / MOBILE PRODUCT</p>
-        <h2 data-aos="fade-clip">让每一次触达，<br />都有完整的产品体验。</h2>
+    <section
+      v-else-if="page.kind === 'app'"
+      class="app-product service-section"
+    >
+      <div
+        class="service-shell"
+        data-aos="fade-top"
+      >
+        <p class="service-kicker">
+          01 / MOBILE PRODUCT
+        </p>
+        <h2 data-aos="fade-clip">
+          让每一次触达，<br>都有完整的产品体验。
+        </h2>
       </div>
-      <div class="service-shell app-devices" data-aos="fade-top" data-aos-delay="100">
-        <div class="app-device app-device--back"><span>数据总览</span></div>
-        <div class="app-device">
-          <span>YUNZHAN</span><b>{{ page.modules[0] }}</b
-          ><i>{{ page.modules[1] }}</i>
+      <div
+        class="service-shell app-devices"
+        data-aos="fade-top"
+        data-aos-delay="100"
+      >
+        <div class="app-device app-device--back">
+          <span>数据总览</span>
         </div>
-        <div class="app-device app-device--small"><span>消息</span><b>01</b></div>
+        <div class="app-device">
+          <span>YUNZHAN</span>
+          <router-link
+            class="app-device__screen item_hover"
+            :to="consultPath"
+          >
+            <img
+              :src="page.mediaImage"
+              :alt="page.mediaAlt"
+              loading="lazy"
+              decoding="async"
+            >
+          </router-link>
+        </div>
+        <div class="app-device app-device--small">
+          <span>消息</span><b>01</b>
+        </div>
       </div>
     </section>
-    <section v-else-if="page.kind === 'web'" class="web-brand service-section">
-      <div class="service-shell web-brand__grid" data-aos="fade-top">
+    <section
+      v-else-if="page.kind === 'web'"
+      class="web-brand service-section"
+    >
+      <div
+        class="service-shell web-brand__grid"
+        data-aos="fade-top"
+      >
         <div>
-          <p class="service-kicker">01 / DIGITAL PRESENCE</p>
-          <h2 data-aos="fade-clip">让品牌第一眼，<br />就值得被相信。</h2>
+          <p class="service-kicker">
+            01 / DIGITAL PRESENCE
+          </p>
+          <h2 data-aos="fade-clip">
+            让品牌第一眼，<br>就值得被相信。
+          </h2>
           <p class="service-lead">
             从内容逻辑到视觉系统，再到稳定、易维护的技术实现，品牌网站应是一项长期资产。
           </p>
         </div>
-        <div class="web-browser" data-aos="fade-top" data-aos-delay="100">
-          <div class="web-browser__bar"><i></i><i></i><i></i></div>
-          <strong>{{ page.modules[0] }}</strong
-          ><span>{{ page.modules[1] }}</span
-          ><b>SCROLL TO DISCOVER</b>
+        <div
+          class="web-browser"
+          data-aos="fade-top"
+          data-aos-delay="100"
+        >
+          <div class="web-browser__bar">
+            <i /><i /><i />
+          </div>
+          <router-link
+            class="web-browser__screen item_hover"
+            :to="consultPath"
+          >
+            <img
+              :src="page.mediaImage"
+              :alt="page.mediaAlt"
+              loading="lazy"
+              decoding="async"
+            >
+          </router-link>
         </div>
       </div>
     </section>
-    <section v-else-if="page.kind === 'iot'" class="iot-network service-section">
-      <div class="service-shell" data-aos="fade-top">
-        <p class="service-kicker">01 / CONNECTED SYSTEM</p>
-        <h2 data-aos="fade-clip">设备有了语言，<br />现场才真正可见。</h2>
+    <section
+      v-else-if="page.kind === 'iot'"
+      class="iot-network service-section"
+    >
+      <div
+        class="service-shell"
+        data-aos="fade-top"
+      >
+        <p class="service-kicker">
+          01 / CONNECTED SYSTEM
+        </p>
+        <h2 data-aos="fade-clip">
+          设备有了语言，<br>现场才真正可见。
+        </h2>
       </div>
-      <div class="service-shell iot-dashboard" data-aos="fade-top" data-aos-delay="100">
+      <div
+        class="service-shell iot-dashboard"
+        data-aos="fade-top"
+        data-aos-delay="100"
+      >
         <div class="iot-dashboard__main">
           <span>设备运行总览</span><b>98.6<small>%</small></b>
           <p>今日设备在线率</p>
-          <i></i>
+          <i />
         </div>
         <div class="iot-dashboard__side">
           <article>
@@ -125,26 +277,91 @@
           </article>
         </div>
       </div>
-    </section>
-    <section v-else-if="page.kind === 'custom'" class="custom-system service-section">
-      <div class="service-shell custom-system__head" data-aos="fade-top">
-        <p class="service-kicker">01 / BUILT FOR YOUR BUSINESS</p>
-        <h2 data-aos="fade-clip">不迁就软件，<br />让软件适配组织。</h2>
+      <div
+        class="service-shell"
+        data-aos="fade-top"
+        data-aos-delay="200"
+      >
+        <router-link
+          class="service-media item_hover"
+          :to="consultPath"
+        >
+          <img
+            :src="page.mediaImage"
+            :alt="page.mediaAlt"
+            loading="lazy"
+            decoding="async"
+          >
+        </router-link>
       </div>
-      <div class="service-shell custom-system__steps" data-aos="fade-top" data-aos-delay="100">
-        <article v-for="(item, index) in page.modules" :key="item">
+    </section>
+    <section
+      v-else-if="page.kind === 'custom'"
+      class="custom-system service-section"
+    >
+      <div
+        class="service-shell custom-system__head"
+        data-aos="fade-top"
+      >
+        <p class="service-kicker">
+          01 / BUILT FOR YOUR BUSINESS
+        </p>
+        <h2 data-aos="fade-clip">
+          不迁就软件，<br>让软件适配组织。
+        </h2>
+      </div>
+      <div
+        class="service-shell custom-system__steps"
+        data-aos="fade-top"
+        data-aos-delay="100"
+      >
+        <article
+          v-for="(item, index) in page.modules"
+          :key="item"
+        >
           <span>0{{ index + 1 }}</span>
           <h3>{{ item }}</h3>
           <p>{{ page.moduleNotes[index] }}</p>
         </article>
       </div>
-    </section>
-    <section v-else class="creative-space service-section">
-      <div class="service-shell creative-space__top" data-aos="fade-top">
-        <p class="service-kicker">01 / CREATIVE TECHNOLOGY</p>
-        <h2 data-aos="fade-clip">让内容、空间和技术<br />成为一次完整体验。</h2>
+      <div
+        class="service-shell"
+        data-aos="fade-top"
+        data-aos-delay="200"
+      >
+        <router-link
+          class="service-media item_hover"
+          :to="consultPath"
+        >
+          <img
+            :src="page.mediaImage"
+            :alt="page.mediaAlt"
+            loading="lazy"
+            decoding="async"
+          >
+        </router-link>
       </div>
-      <div class="service-shell creative-panels" data-aos="fade-top" data-aos-delay="100">
+    </section>
+    <section
+      v-else
+      class="creative-space service-section"
+    >
+      <div
+        class="service-shell creative-space__top"
+        data-aos="fade-top"
+      >
+        <p class="service-kicker">
+          01 / CREATIVE TECHNOLOGY
+        </p>
+        <h2 data-aos="fade-clip">
+          让内容、空间和技术<br>成为一次完整体验。
+        </h2>
+      </div>
+      <div
+        class="service-shell creative-panels"
+        data-aos="fade-top"
+        data-aos-delay="100"
+      >
         <article>
           <span>01 / BRAND</span>
           <h3>互动品牌体验</h3>
@@ -161,12 +378,36 @@
           <p>为一次活动或传播，创造可分享的互动入口。</p>
         </article>
       </div>
+      <div
+        class="service-shell"
+        data-aos="fade-top"
+        data-aos-delay="200"
+      >
+        <router-link
+          class="service-media item_hover"
+          :to="consultPath"
+        >
+          <img
+            :src="page.mediaImage"
+            :alt="page.mediaAlt"
+            loading="lazy"
+            decoding="async"
+          >
+        </router-link>
+      </div>
     </section>
 
     <section class="service-capabilities service-section">
-      <div ref="parallaxHeadEl" class="service-shell service-capabilities__head">
-        <p class="service-kicker">02 / WHAT WE DELIVER</p>
-        <h2 data-aos="fade-clip">{{ page.capabilityTitle }}</h2>
+      <div
+        ref="parallaxHeadEl"
+        class="service-shell service-capabilities__head"
+      >
+        <p class="service-kicker">
+          02 / WHAT WE DELIVER
+        </p>
+        <h2 data-aos="fade-clip">
+          {{ page.capabilityTitle }}
+        </h2>
       </div>
       <div class="service-shell capability-list">
         <article
@@ -184,32 +425,57 @@
     </section>
     <section class="service-approach">
       <div class="service-shell service-approach__grid">
-        <div class="headline" data-aos="fade-top">
-          <p class="service-kicker">03 / HOW WE WORK</p>
-          <span class="headline__line"></span>
+        <div
+          class="headline"
+          data-aos="fade-top"
+        >
+          <p class="service-kicker">
+            03 / HOW WE WORK
+          </p>
+          <span class="headline__line" />
         </div>
-        <h2 ref="statementEl" class="service-approach__statement public_text" data-speed="200">
-          <span class="p"
-            ><span class="line">{{ page.statement }}</span></span
+        <h2
+          ref="statementEl"
+          class="service-approach__statement public_text"
+          data-speed="200"
+        >
+          <span class="p"><span class="line">{{ page.statement }}</span></span>
+          <span
+            class="p"
+            aria-hidden="true"
           >
-          <span class="p" aria-hidden="true">
             <span class="line">{{ page.statement }}</span>
           </span>
         </h2>
-        <p class="service-approach__statement-sj public_text sj_text">{{ page.statement }}</p>
-        <p data-aos="fade-top">{{ page.description }}</p>
+        <p class="service-approach__statement-sj public_text sj_text">
+          {{ page.statement }}
+        </p>
+        <p data-aos="fade-top">
+          {{ page.description }}
+        </p>
       </div>
     </section>
     <section class="service-switch service-section">
       <div class="service-shell service-switch__head">
-        <div class="headline" data-aos="fade-top">
-          <p class="service-kicker">04 / EXPLORE SERVICES</p>
-          <span class="headline__line"></span>
+        <div
+          class="headline"
+          data-aos="fade-top"
+        >
+          <p class="service-kicker">
+            04 / EXPLORE SERVICES
+          </p>
+          <span class="headline__line" />
         </div>
-        <h2 data-aos="fade-clip">{{ switchCopy.title }}</h2>
+        <h2 data-aos="fade-clip">
+          {{ switchCopy.title }}
+        </h2>
       </div>
       <div class="service-shell service-switch__body">
-        <div ref="switchListEl" class="service-switch__list" data-aos="fade-top">
+        <div
+          ref="switchListEl"
+          class="service-switch__list"
+          data-aos="fade-top"
+        >
           <button
             v-for="(item, index) in services"
             :key="item.id"
@@ -220,7 +486,10 @@
             :disabled="switching"
             @click="switchService(item, index)"
           >
-            <span class="attr" :data-text="item.title">
+            <span
+              class="attr"
+              :data-text="item.title"
+            >
               <span class="attr__line">{{ item.title }}</span>
             </span>
             <span class="service-switch__en">{{ item.en }}</span>
@@ -228,7 +497,7 @@
           <span
             class="service-switch__move"
             :style="{ transform: `translateY(${moveOffset}px)` }"
-          ></span>
+          />
         </div>
         <div
           ref="pictureEl"
@@ -244,19 +513,31 @@
             preload="none"
             muted
             playsinline
-          ></video>
-          <p class="service-switch__caption">{{ page.title }} / {{ page.en }}</p>
+          />
+          <p class="service-switch__caption">
+            {{ page.title }} / {{ page.en }}
+          </p>
         </div>
         <ul class="service-switch__mobile">
-          <li v-for="item in services" :key="item.id">
-            <RouterLink :to="item.href">{{ item.title }}</RouterLink>
+          <li
+            v-for="item in services"
+            :key="item.id"
+          >
+            <RouterLink :to="item.href">
+              {{ item.title }}
+            </RouterLink>
           </li>
         </ul>
       </div>
     </section>
     <section class="service-cta">
-      <div class="service-shell" data-aos="fade-top">
-        <p class="service-kicker">START A PROJECT</p>
+      <div
+        class="service-shell"
+        data-aos="fade-top"
+      >
+        <p class="service-kicker">
+          START A PROJECT
+        </p>
         <h2 data-aos="fade-clip">
           {{
             locale === 'en'
@@ -276,7 +557,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
@@ -287,6 +568,9 @@ const pages = {
     order: 1,
     title: 'AI 开发',
     en: 'AI DEVELOPMENT',
+    heroImage: '/assets/services/ai-hero.jpg',
+    mediaImage: '/assets/services/ai-media.jpg',
+    mediaAlt: '团队在数据与代码前工作',
     subtitle: '让智能能力进入真实业务，而不是停留在演示里。',
     capabilityTitle: '从模型能力，到业务结果。',
     statement: '把大模型、知识与流程，转化为组织可持续使用的产品能力。',
@@ -304,6 +588,9 @@ const pages = {
     order: 2,
     title: '小程序开发',
     en: 'MINI PROGRAM',
+    heroImage: '/assets/services/mini-hero.jpg',
+    mediaImage: '/assets/services/mini-media.jpg',
+    mediaAlt: '用户在门店用手机与平板办理服务',
     subtitle: '用更轻的产品形态，让服务更快抵达用户。',
     capabilityTitle: '把服务，变成顺手的体验。',
     statement: '从第一步触达，到一次服务完成，每个环节都应该轻、快、清楚。',
@@ -321,6 +608,9 @@ const pages = {
     order: 3,
     title: 'App 开发',
     en: 'APP DEVELOPMENT',
+    heroImage: '/assets/services/app-hero.jpg',
+    mediaImage: '/assets/services/app-media.jpg',
+    mediaAlt: '移动应用的界面草图与设计稿',
     subtitle: '构建兼具体验品质与工程稳定性的移动产品。',
     capabilityTitle: '从第一屏，到长期使用。',
     statement: '移动产品的价值，不只是装进手机，而是融入用户每天的动作。',
@@ -338,6 +628,9 @@ const pages = {
     order: 4,
     title: '网站建设',
     en: 'WEB DESIGN',
+    heroImage: '/assets/services/web-hero.jpg',
+    mediaImage: '/assets/services/web-media.jpg',
+    mediaAlt: '桌面上的网站设计与前端实现',
     subtitle: '让网站成为品牌在数字世界最有分量的表达。',
     capabilityTitle: '不止被看见，更值得被记住。',
     statement: '好的品牌网站，应该同时完成表达、理解与信任。',
@@ -356,6 +649,9 @@ const pages = {
     order: 5,
     title: '物联网开发',
     en: 'IOT SOLUTIONS',
+    heroImage: '/assets/services/iot-hero.jpg',
+    mediaImage: '/assets/services/iot-media.jpg',
+    mediaAlt: '现场设备与自动化终端',
     subtitle: '连接设备、数据与决策，让现场持续可见。',
     capabilityTitle: '让现场数据，成为经营依据。',
     statement: '从一台设备到一个园区，数据链路都应稳定、清楚、可追溯。',
@@ -374,6 +670,9 @@ const pages = {
     order: 6,
     title: '定制开发',
     en: 'CUSTOM SOFTWARE',
+    heroImage: '/assets/services/custom-hero.jpg',
+    mediaImage: '/assets/services/custom-media.jpg',
+    mediaAlt: '业务团队围绕系统需求讨论',
     subtitle: '让系统适配业务，而不是让组织迁就软件。',
     capabilityTitle: '为真实的组织方式而建。',
     statement: '把分散的流程、数据与协作，整理成一套真正好用的系统。',
@@ -398,6 +697,9 @@ const pages = {
     order: 7,
     title: '数字创意',
     en: 'DIGITAL CREATIVE',
+    heroImage: '/assets/services/creative-hero.jpg',
+    mediaImage: '/assets/services/creative-media.jpg',
+    mediaAlt: '展览空间中的光影装置',
     subtitle: '让技术成为内容表达与品牌体验的一部分。',
     capabilityTitle: '创造值得参与的品牌时刻。',
     statement: '当技术真正服务于内容，体验才会留下记忆。',
@@ -413,6 +715,8 @@ const pages = {
   },
 }
 const locale = computed(() => (route.path.startsWith('/en/') ? 'en' : 'zh-CN'))
+/** 咨询入口：与底部 CTA 按钮同一去向（英文走 /en 前缀）。 */
+const consultPath = computed(() => (locale.value === 'en' ? '/en/ai-consultation' : '/ai-consultation'))
 const translations = {
   '/miniprogram-development': {
     title: '小程序开发',
@@ -522,7 +826,8 @@ let frame = 0
 let themeObserver
 const timers = { title: 0, transition: 0 }
 let aosPending = []
-const aosDone = new WeakSet()
+/** `once` 语义下已显影的节点。换页要整体重来，WeakSet 不能 clear，所以这里是可变引用。 */
+let aosDone = new WeakSet()
 
 const scheduleFrame = () => {
   if (frame || document.hidden) return
@@ -532,6 +837,21 @@ const scheduleFrame = () => {
 const collectAosTargets = () => {
   if (!rootEl.value) return
   aosPending = [...rootEl.value.querySelectorAll('[data-aos]')].filter((el) => !aosDone.has(el))
+}
+
+/**
+ * 路由切换前先把显影状态清零。
+ *
+ * 7 条服务路由（zh 七条 + en 七条）在 router 里是**同一个组件**，组件实例被复用，
+ * 被复用的 DOM 会把上一页的 `.aos-animate` 与 `aosDone` 一起带过来；新页面新增的
+ * `[data-aos]` 节点又不在旧表里 —— 两者都会让新页面的节点永远停在 `opacity: 0`
+ * （用户实测：点导航栏跳转看不到内容，刷新才出现）。
+ */
+const resetReveal = () => {
+  if (!rootEl.value) return
+  rootEl.value.querySelectorAll('[data-aos]').forEach((el) => el.classList.remove('aos-animate'))
+  aosDone = new WeakSet()
+  aosPending = []
 }
 
 /** SPEC M-24/M-25：offset = rect.top - clientHeight + all_num，offset < 0 加 .aos-animate，once。 */
@@ -720,21 +1040,41 @@ onBeforeUnmount(() => {
 
 watch(
   () => route.path,
-  () => {
+  async () => {
     pendingIndex.value = -1
+    /** DOM 更新之后再收集：见 resetReveal() 注释。 */
+    await nextTick()
+    resetReveal()
     collectAosTargets()
     if (prefersReducedMotion.value) revealEverything()
     syncMoveFrame(activeIndex.value)
     playTitleEntrance()
     scheduleFrame()
   },
+  { flush: 'post' },
 )
 </script>
 
 <style scoped>
+/**
+ * 页面调色板（用户 2026-09-14 裁决 4：七条服务路由不再各有主题色，统一到首页那套米色）。
+ * 取值来源：首页实测 `Home/index.vue:522-528`
+ * （`--home-bg:#F2F1E4` / `--home-ink:#111111` / `--home-ink-soft:#6D6C60` / `--home-line:#ADADAD` / `--home-accent:#184DC4`）。
+ * 本页只做页内副本，不改全局 token；A 若把 `--home-*` 提到 `:root`，这里改为引用即可。
+ */
 .service-page {
-  color: var(--yz-black);
-  background: #fff;
+  --svc-bg: #f2f1e4;
+  --svc-surface: #ffffff;
+  --svc-surface-soft: #e7e5da;
+  --svc-ink: #111111;
+  --svc-ink-soft: #6d6c60;
+  --svc-ink-body: #3d3d3d;
+  --svc-line: #adadad;
+  --svc-line-soft: #d6d3c6;
+  --svc-accent: #184dc4;
+  --svc-on-accent: #ffffff;
+  color: var(--svc-ink);
+  background: var(--svc-bg);
   overflow: hidden;
 }
 .service-shell {
@@ -743,53 +1083,81 @@ watch(
 }
 .service-kicker {
   margin: 0;
-  color: var(--yz-orange);
+  color: var(--svc-accent);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.2em;
 }
+/* hero：照参考站共享模板页 solution/34.html 的排版＝「左标题 + 右导语 + 通栏图 + 大留白」。
+   数值与行号见 evidence/service-pages/reference-solution/NOTES.md，与本页的差异见 handoffs/C.md。 */
 .service-hero {
-  min-height: 580px;
-  display: flex;
-  align-items: flex-end;
-  background: var(--yz-black);
-  color: #fff;
+  padding: 208px 0 0;
 }
-.service-hero__inner {
-  position: relative;
-  padding-bottom: 78px;
-}
-.service-hero__copy {
+.service-hero__head {
   display: flex;
-  align-items: end;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 60px;
-  margin-top: 24px;
-  /* 右侧为 .service-hero__index 预留栏位：序号绝对定位在同一右缘，
-     不留空隙时副标题会与「0X / 07」重叠（1440 实测重叠 49px）。 */
-  padding-right: 76px;
+  gap: 24px;
+}
+.service-hero__title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 5vw;
+  margin: 26px auto 90px;
 }
 .service-hero h1 {
   margin: 0;
-  font-size: clamp(64px, 9vw, 144px);
-  font-weight: 620;
-  letter-spacing: -0.07em;
-  line-height: 0.86;
+  max-width: 45%;
+  color: var(--svc-ink);
+  font-size: 67px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 79px;
 }
-.service-hero__copy p {
-  max-width: 400px;
-  margin: 0;
-  color: #aaa;
-  font-size: 15px;
-  line-height: 1.8;
+.service-hero__lead {
+  width: 650px;
+  max-width: 49%;
+  margin: 8px 0 0;
+  color: var(--svc-ink-soft);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 38px;
 }
 .service-hero__index {
-  position: absolute;
-  right: 0;
-  bottom: 82px;
-  color: #777;
+  margin: 0;
+  color: var(--svc-ink-soft);
   font-size: 11px;
   letter-spacing: 0.16em;
+}
+/* 参考站 .h1 字号阶梯（数值与行号见 NOTES.md）：>1666px 67px/79px；≤1666px 49px/61px。 */
+@media (max-width: 1666px) {
+  .service-hero h1 {
+    font-size: 49px;
+    line-height: 61px;
+  }
+}
+.service-hero__media {
+  display: block;
+  overflow: hidden;
+}
+.service-hero__media img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3840 / 1070;
+  object-fit: cover;
+}
+/* 分区内的可点击配图（问题 3）：与 hero 同一套圆盘交互。 */
+.service-media {
+  display: block;
+  margin-top: 86px;
+  overflow: hidden;
+}
+.service-media img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
 }
 .service-section {
   padding: 132px 0;
@@ -803,9 +1171,6 @@ watch(
   letter-spacing: -0.065em;
   line-height: 1.05;
 }
-.ai-architecture {
-  background: var(--yz-offwhite);
-}
 .ai-architecture__head,
 .custom-system__head {
   display: grid;
@@ -815,57 +1180,6 @@ watch(
 .ai-architecture__head h2,
 .custom-system__head h2 {
   margin: 0;
-}
-.ai-map {
-  position: relative;
-  height: 430px;
-  margin-top: 86px;
-  border: 1px solid #bdbdb8;
-}
-.ai-map__node,
-.ai-map__core {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  border: 1px solid #999;
-  border-radius: 50%;
-  font-size: 12px;
-  font-weight: 700;
-}
-.ai-map__core {
-  top: 50%;
-  left: 50%;
-  width: 140px;
-  height: 140px;
-  background: #161616;
-  color: #fff;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  line-height: 1.1;
-}
-.ai-map__node {
-  width: 112px;
-  height: 112px;
-  background: #fff;
-}
-.ai-map__node:nth-child(1) {
-  top: 46px;
-  left: 18%;
-}
-.ai-map__node:nth-child(2) {
-  top: 46px;
-  right: 18%;
-}
-.ai-map__node:nth-child(3) {
-  bottom: 46px;
-  left: 18%;
-}
-.ai-map__node:nth-child(4) {
-  right: 18%;
-  bottom: 46px;
-}
-.mini-journey {
-  background: #e8ece2;
 }
 .mini-journey__grid {
   display: grid;
@@ -877,51 +1191,48 @@ watch(
   position: relative;
   min-height: 420px;
   padding: 28px;
-  background: #183f32;
-  color: #fff;
-  border: 10px solid #111;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--svc-surface);
+  color: var(--svc-ink);
+  border: 10px solid var(--svc-ink);
   border-radius: 26px;
-  box-shadow: 12px 14px 0 #c7cfc1;
+  box-shadow: 12px 14px 0 var(--svc-surface-soft);
 }
 .mini-phone span {
+  color: var(--svc-ink-soft);
   font-size: 10px;
   letter-spacing: 0.14em;
 }
-.mini-phone b {
+.mini-phone__screen {
   display: block;
-  margin-top: 110px;
-  font-size: 38px;
-  line-height: 1.35;
+  flex: 1;
+  overflow: hidden;
 }
-.mini-phone i {
-  position: absolute;
-  right: 28px;
-  bottom: 26px;
-  width: 56px;
-  height: 56px;
-  background: var(--yz-orange);
-  border-radius: 50%;
+.mini-phone__screen img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  object-fit: cover;
 }
 .mini-journey ol {
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid #777;
+  border-top: 1px solid var(--svc-line);
 }
 .mini-journey li {
   padding: 22px 0;
-  border-bottom: 1px solid #777;
+  border-bottom: 1px solid var(--svc-line);
   font-size: 18px;
   font-weight: 700;
 }
 .mini-journey li::before {
   margin-right: 16px;
-  color: var(--yz-orange);
+  color: var(--svc-accent);
   content: '0' counter(list-item);
-}
-.app-product {
-  background: #202125;
-  color: #fff;
 }
 .app-devices {
   display: flex;
@@ -934,32 +1245,37 @@ watch(
   width: 260px;
   height: 490px;
   padding: 25px;
-  background: #e2e4df;
-  color: #111;
-  border: 10px solid #090909;
+  display: flex;
+  flex-direction: column;
+  background: var(--svc-surface);
+  color: var(--svc-ink);
+  border: 10px solid var(--svc-ink);
   border-radius: 32px;
-  box-shadow: 0 0 0 1px #555;
+  box-shadow: 0 0 0 1px var(--svc-line);
+  overflow: hidden;
 }
 .app-device span {
+  color: var(--svc-ink-soft);
   font-size: 10px;
   letter-spacing: 0.14em;
 }
-.app-device b {
+.app-device__screen {
   display: block;
-  margin-top: 180px;
-  font-size: 34px;
-}
-.app-device i {
-  display: block;
+  flex: 1;
   margin-top: 16px;
-  color: #777;
-  font-style: normal;
+  overflow: hidden;
+}
+.app-device__screen img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .app-device--back {
   width: 205px;
   height: 390px;
-  background: #52585a;
-  color: #fff;
+  background: var(--svc-surface-soft);
+  color: var(--svc-ink-soft);
   transform: translateX(48px);
 }
 .app-device--back span {
@@ -969,14 +1285,11 @@ watch(
 .app-device--small {
   width: 190px;
   height: 330px;
-  background: #d66d45;
+  background: var(--svc-surface-soft);
   transform: translateX(-48px);
 }
 .app-device--small b {
   margin-top: 120px;
-}
-.web-brand {
-  background: #f7f7f4;
 }
 .web-brand__grid {
   display: grid;
@@ -987,7 +1300,7 @@ watch(
 .service-lead {
   max-width: 460px;
   margin: 42px 0 0;
-  color: #666;
+  color: var(--svc-ink-soft);
   line-height: 1.9;
 }
 .web-browser {
@@ -995,104 +1308,48 @@ watch(
   padding: 20px 28px;
   display: flex;
   flex-direction: column;
-  background: #1d1d1d;
-  color: #fff;
-  box-shadow: 16px 16px 0 #d7d7d2;
+  background: var(--svc-surface);
+  box-shadow: 16px 16px 0 var(--svc-surface-soft);
 }
 .web-browser__bar {
   display: flex;
   gap: 7px;
-  padding-bottom: 70px;
+  padding-bottom: 22px;
 }
 .web-browser__bar i {
   width: 8px;
   height: 8px;
-  background: var(--yz-orange);
+  background: var(--svc-accent);
   border-radius: 50%;
 }
-.web-browser strong {
-  font-size: 44px;
-  letter-spacing: -0.05em;
+.web-browser__screen {
+  display: block;
+  flex: 1;
+  overflow: hidden;
 }
-.web-browser span {
-  max-width: 180px;
-  margin: 22px 0;
-  color: #999;
-  line-height: 1.6;
-}
-.web-browser b {
-  margin-top: auto;
-  color: #aaa;
-  font-size: 9px;
-  letter-spacing: 0.16em;
-}
-.iot-network {
-  background: #151719;
-  color: #fff;
-}
-.iot-network__map {
-  position: relative;
-  height: 460px;
-  margin-top: 82px;
-  border: 1px solid #3d4140;
-}
-.iot-cloud,
-.iot-device {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  border: 1px solid #838b87;
-  border-radius: 50%;
-  font-size: 12px;
-}
-.iot-cloud {
-  top: 50%;
-  left: 50%;
-  width: 150px;
-  height: 150px;
-  background: #deded9;
-  color: #111;
-  transform: translate(-50%, -50%);
-}
-.iot-device {
-  width: 100px;
-  height: 100px;
-}
-.iot-device--0 {
-  top: 36px;
-  left: 15%;
-}
-.iot-device--1 {
-  top: 36px;
-  right: 15%;
-}
-.iot-device--2 {
-  bottom: 36px;
-  left: 15%;
-}
-.iot-device--3 {
-  right: 15%;
-  bottom: 36px;
-}
-.custom-system {
-  background: #e7e3dd;
+.web-browser__screen img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  object-fit: cover;
 }
 .custom-system__steps {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   margin-top: 80px;
-  border-top: 1px solid #888;
+  border-top: 1px solid var(--svc-line);
 }
 .custom-system__steps article {
   min-height: 260px;
   padding: 28px;
-  border-right: 1px solid #aaa;
+  border-right: 1px solid var(--svc-line-soft);
 }
 .custom-system__steps article:last-child {
   border: 0;
 }
 .custom-system__steps span {
-  color: var(--yz-orange);
+  color: var(--svc-accent);
   font-size: 11px;
   font-weight: 700;
 }
@@ -1101,45 +1358,15 @@ watch(
   font-size: 21px;
 }
 .custom-system__steps p {
-  color: #666;
+  color: var(--svc-ink-soft);
   font-size: 13px;
   line-height: 1.7;
 }
 .creative-space {
-  background: #c3d6e9;
-}
-.creative-space__strip {
-  display: flex;
-  width: max-content;
-  margin: 74px 0 0;
-  animation: creative-scroll 24s linear infinite;
-}
-.creative-space__strip span {
-  padding: 0 55px;
-  color: #192639;
-  font-size: clamp(46px, 7vw, 96px);
-  font-weight: 650;
-  letter-spacing: -0.07em;
-  white-space: nowrap;
-}
-.creative-space__blocks {
-  display: grid;
-  grid-template-columns: 1.5fr 0.8fr 1fr;
-  gap: 15px;
-  margin-top: 72px;
-}
-.creative-space__blocks div {
-  height: 230px;
-  background: var(--yz-orange);
-}
-.creative-space__blocks div:nth-child(2) {
-  background: #182539;
-}
-.creative-space__blocks div:nth-child(3) {
-  background: #e9e4d8;
+  background: var(--svc-bg);
 }
 .service-capabilities {
-  background: #fff;
+  background: var(--svc-bg);
 }
 .service-capabilities__head {
   display: flex;
@@ -1154,13 +1381,13 @@ watch(
 .capability-list {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  border-top: 1px solid #aaa;
+  border-top: 1px solid var(--svc-line);
 }
 .capability-list article {
   position: relative;
   min-height: 340px;
   padding: 28px;
-  border-right: 1px solid #bbb;
+  border-right: 1px solid var(--svc-line-soft);
   transition:
     background 0.28s ease,
     color 0.28s ease,
@@ -1170,11 +1397,11 @@ watch(
   border: 0;
 }
 .capability-list article:hover {
-  background: #1a1a1a;
-  color: #fff;
+  background: var(--svc-accent);
+  color: var(--svc-on-accent);
 }
 .capability-list span {
-  color: var(--yz-orange);
+  color: var(--svc-accent);
   font-size: 11px;
   font-weight: 700;
 }
@@ -1185,12 +1412,12 @@ watch(
 .capability-list p {
   max-width: 240px;
   margin: 0;
-  color: #777;
+  color: var(--svc-ink-soft);
   font-size: 14px;
   line-height: 1.8;
 }
 .capability-list article:hover p {
-  color: #bbb;
+  color: rgba(255, 255, 255, 0.82);
 }
 .capability-list b {
   position: absolute;
@@ -1200,7 +1427,7 @@ watch(
 }
 .service-approach {
   padding: 125px 0;
-  background: var(--yz-offwhite);
+  background: var(--svc-bg);
 }
 .service-approach__grid {
   display: grid;
@@ -1221,13 +1448,13 @@ watch(
 }
 .service-approach__grid > p:last-child {
   margin: 6px 0 0;
-  color: #666;
+  color: var(--svc-ink-body);
   line-height: 1.9;
 }
 .service-cta {
   padding: 130px 0;
-  background: #151515;
-  color: #fff;
+  background: var(--svc-bg);
+  color: var(--svc-ink);
 }
 .service-cta h2 {
   margin: 25px 0 42px;
@@ -1238,46 +1465,20 @@ watch(
   padding: 0 0 10px;
   display: flex;
   justify-content: space-between;
-  color: #fff;
+  color: var(--svc-ink);
   background: transparent;
   border: 0;
-  border-bottom: 1px solid #888;
+  border-bottom: 1px solid var(--svc-line);
   font-size: 13px;
   font-weight: 700;
 }
 .service-cta button span {
-  color: var(--yz-orange);
+  color: var(--svc-accent);
   font-size: 18px;
-}
-@keyframes creative-scroll {
-  to {
-    transform: translateX(-20%);
-  }
 }
 @media (max-width: 800px) {
   .service-shell {
     width: calc(100% - 40px);
-  }
-  .service-hero {
-    min-height: 480px;
-  }
-  .service-hero__inner {
-    padding-bottom: 60px;
-  }
-  .service-hero__copy {
-    display: block;
-    margin-top: 22px;
-  }
-  .service-hero h1 {
-    font-size: 62px;
-  }
-  .service-hero__copy p {
-    margin-top: 24px;
-    font-size: 14px;
-  }
-  .service-hero__index {
-    right: 0;
-    bottom: 64px;
   }
   .service-section {
     padding: 85px 0;
@@ -1289,26 +1490,6 @@ watch(
   .service-approach__grid {
     grid-template-columns: 1fr;
     gap: 32px;
-  }
-  .ai-map {
-    height: 520px;
-    margin-top: 50px;
-  }
-  .ai-map__node:nth-child(1) {
-    top: 36px;
-    left: 12%;
-  }
-  .ai-map__node:nth-child(2) {
-    top: 36px;
-    right: 12%;
-  }
-  .ai-map__node:nth-child(3) {
-    bottom: 36px;
-    left: 12%;
-  }
-  .ai-map__node:nth-child(4) {
-    right: 12%;
-    bottom: 36px;
   }
   .mini-phone {
     max-width: 250px;
@@ -1348,24 +1529,6 @@ watch(
   .web-browser {
     min-height: 330px;
   }
-  .iot-network__map {
-    height: 440px;
-    margin-top: 52px;
-  }
-  .iot-device--0 {
-    left: 8%;
-  }
-  .iot-device--1 {
-    right: 8%;
-  }
-  .iot-device--2 {
-    bottom: 28px;
-    left: 8%;
-  }
-  .iot-device--3 {
-    right: 8%;
-    bottom: 28px;
-  }
   .custom-system__steps,
   .capability-list {
     grid-template-columns: 1fr;
@@ -1377,16 +1540,10 @@ watch(
   .capability-list article {
     min-height: 180px;
     border-right: 0;
-    border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid var(--svc-line-soft);
   }
   .custom-system__steps h3 {
     margin-top: 36px;
-  }
-  .creative-space__blocks {
-    grid-template-columns: 1fr 1fr;
-  }
-  .creative-space__blocks div {
-    height: 140px;
   }
   .service-capabilities__head {
     display: block;
@@ -1405,41 +1562,13 @@ watch(
     padding: 85px 0;
   }
 }
-.service-page--mini .service-hero {
-  background: #183f32;
-}
-.service-page--app .service-hero {
-  background: #292e34;
-}
-.service-page--web .service-hero {
-  background: #e7e5de;
-  color: #111;
-}
-.service-page--web .service-hero__copy p,
-.service-page--web .service-hero__index {
-  color: #555;
-}
-.service-page--iot .service-hero {
-  background: #102a34;
-}
-.service-page--custom .service-hero {
-  background: #5c564e;
-}
-.service-page--creative .service-hero {
-  background: #b8cfdf;
-  color: #182539;
-}
-.service-page--creative .service-hero__copy p,
-.service-page--creative .service-hero__index {
-  color: #334d64;
-}
 .ai-architecture__head {
   align-items: start;
 }
 .ai-architecture__head > div > p {
   max-width: 520px;
   margin: 25px 0 0;
-  color: #666;
+  color: var(--svc-ink-soft);
   font-size: 15px;
   line-height: 1.9;
 }
@@ -1453,32 +1582,28 @@ watch(
 .ai-flow article {
   min-height: 260px;
   padding: 26px;
-  background: #fff;
-  border: 1px solid #c7c7c0;
+  background: var(--svc-surface);
+  border: 1px solid var(--svc-line-soft);
 }
 .ai-flow article:nth-of-type(2) {
-  background: #1a1a1a;
-  color: #fff;
-  border-color: #1a1a1a;
+  background: var(--svc-surface-soft);
 }
 .ai-flow article:nth-of-type(3) {
-  background: #e9e6de;
+  background: var(--svc-surface);
 }
 .ai-flow article:nth-of-type(4) {
-  background: var(--yz-orange);
-  border-color: var(--yz-orange);
+  color: var(--svc-on-accent);
+  background: var(--svc-accent);
+  border-color: var(--svc-accent);
 }
 .ai-flow article span {
-  color: #888;
+  color: var(--svc-ink-soft);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.12em;
 }
-.ai-flow article:nth-of-type(2) span {
-  color: #bbb;
-}
 .ai-flow article:nth-of-type(4) span {
-  color: #5b2c15;
+  color: rgba(255, 255, 255, 0.85);
 }
 .ai-flow h3 {
   margin: 72px 0 13px;
@@ -1487,20 +1612,17 @@ watch(
 }
 .ai-flow p {
   margin: 0;
-  color: #747474;
+  color: var(--svc-ink-soft);
   font-size: 13px;
   line-height: 1.75;
 }
-.ai-flow article:nth-of-type(2) p {
-  color: #b9b9b9;
-}
 .ai-flow article:nth-of-type(4) p {
-  color: #4c2c20;
+  color: rgba(255, 255, 255, 0.85);
 }
 .ai-flow > b {
   display: grid;
   place-items: center;
-  color: #555;
+  color: var(--svc-ink-soft);
   font-size: 22px;
   font-weight: 400;
 }
@@ -1524,16 +1646,8 @@ watch(
     font-size: 14px;
   }
 }
-.ai-flow article:nth-of-type(4) {
-  background: #d8d5ce;
-  border-color: #d8d5ce;
-}
-.ai-flow article:nth-of-type(4) span,
-.ai-flow article:nth-of-type(4) p {
-  color: #555;
-}
 .ai-flow > b {
-  color: var(--yz-orange);
+  color: var(--svc-accent);
 }
 .iot-dashboard {
   display: grid;
@@ -1545,8 +1659,8 @@ watch(
   position: relative;
   min-height: 360px;
   padding: 34px;
-  background: #e8e8e1;
-  color: #141414;
+  background: var(--svc-surface-soft);
+  color: var(--svc-ink);
   overflow: hidden;
 }
 .iot-dashboard span,
@@ -1567,7 +1681,7 @@ watch(
 }
 .iot-dashboard__main p,
 .iot-dashboard__side p {
-  color: #666;
+  color: var(--svc-ink-soft);
   font-size: 13px;
 }
 .iot-dashboard__main i {
@@ -1576,7 +1690,7 @@ watch(
   bottom: -40px;
   width: 280px;
   height: 150px;
-  border: 20px solid var(--yz-orange);
+  border: 20px solid var(--svc-accent);
   border-radius: 50%;
   opacity: 0.7;
 }
@@ -1588,22 +1702,28 @@ watch(
 .iot-dashboard__side article {
   min-height: 172px;
   padding: 25px;
-  background: #202224;
+  background: var(--svc-surface);
 }
 .iot-dashboard__side article:last-child {
   grid-column: span 2;
-  background: #607974;
+  background: var(--svc-accent);
 }
 .iot-dashboard__side b {
   display: block;
   margin-top: 36px;
-  color: #fff;
+  color: var(--svc-ink);
   font-size: 44px;
   letter-spacing: -0.05em;
 }
 .iot-dashboard__side p {
   margin: 8px 0 0;
-  color: #b7bab9;
+  color: var(--svc-ink-soft);
+}
+.iot-dashboard__side article:last-child b {
+  color: var(--svc-on-accent);
+}
+.iot-dashboard__side article:last-child p {
+  color: rgba(255, 255, 255, 0.85);
 }
 .creative-panels {
   display: grid;
@@ -1616,15 +1736,15 @@ watch(
   padding: 30px;
   display: flex;
   flex-direction: column;
-  background: #17263a;
-  color: #fff;
+  background: var(--svc-surface);
+  color: var(--svc-ink);
 }
 .creative-panels article:nth-child(2) {
-  background: #e4dfd2;
-  color: #1c2636;
+  background: var(--svc-surface-soft);
 }
 .creative-panels article:nth-child(3) {
-  background: #d86e45;
+  color: var(--svc-on-accent);
+  background: var(--svc-accent);
 }
 .creative-panels span {
   font-size: 10px;
@@ -1639,15 +1759,12 @@ watch(
 .creative-panels p {
   max-width: 230px;
   margin: 0;
-  color: #b6c1cd;
+  color: var(--svc-ink-soft);
   font-size: 14px;
   line-height: 1.8;
 }
-.creative-panels article:nth-child(2) p {
-  color: #68707b;
-}
 .creative-panels article:nth-child(3) p {
-  color: #573027;
+  color: rgba(255, 255, 255, 0.85);
 }
 @media (max-width: 800px) {
   .iot-dashboard {
@@ -1725,7 +1842,7 @@ watch(
 .headline__line {
   flex: 1;
   height: 1px;
-  background: var(--yz-line);
+  background: var(--svc-line);
   transform: scaleX(0);
   transform-origin: left;
   transition: 2s;
@@ -1766,11 +1883,11 @@ watch(
 }
 .service-cta button:hover {
   transform: translateX(8px);
-  border-color: var(--yz-orange);
+  border-color: var(--svc-accent);
 }
 /* SPEC M-14：服务切换跟随框；位移 = index * item.clientHeight（实测高度），transition all .4s */
 .service-switch {
-  background: var(--yz-offwhite);
+  background: var(--svc-bg);
 }
 .service-switch__head {
   display: flex;
@@ -1804,7 +1921,7 @@ watch(
   color: inherit;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid var(--yz-line);
+  border-bottom: 1px solid var(--svc-line);
   font: inherit;
   cursor: pointer;
 }
@@ -1812,7 +1929,7 @@ watch(
   cursor: default;
 }
 .service-switch__en {
-  color: #8b8b86;
+  color: var(--svc-ink-soft);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -1823,7 +1940,7 @@ watch(
   position: absolute;
   top: 0;
   left: 0;
-  border: 1px solid rgba(193, 192, 180, 0.97);
+  border: 1px solid var(--svc-line);
   border-radius: 5px;
   pointer-events: none;
   transition: all 0.4s;
@@ -1836,7 +1953,7 @@ watch(
   position: absolute;
   left: -5px;
   top: 50%;
-  background: var(--yz-orange);
+  background: var(--svc-accent);
   border-radius: 5px 0 0 5px;
   transform: translateY(-50%);
   transition: all 0.6s;
@@ -1884,7 +2001,7 @@ watch(
 }
 .service-switch__caption {
   margin: 14px 0 0;
-  color: #8b8b86;
+  color: var(--svc-ink-soft);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -1894,10 +2011,10 @@ watch(
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--yz-line);
+  border-top: 1px solid var(--svc-line);
 }
 .service-switch__mobile li {
-  border-bottom: 1px solid var(--yz-line);
+  border-bottom: 1px solid var(--svc-line);
 }
 .service-switch__mobile a {
   display: block;
@@ -1915,20 +2032,31 @@ watch(
   .service-cta {
     padding: 84px 0;
   }
+  /* SPEC 断点速查 ≤1024px / 参考站 .solution 移动档：hero 上留白 80px、标题 23px/1.5、导语 14px/35px、图高 250px。 */
   .service-hero {
-    min-height: 420px;
+    padding: 80px 0 0;
+  }
+  .service-hero__title {
+    flex-direction: column;
+    gap: 0;
+    margin: 0 auto 42px;
   }
   .service-hero h1 {
-    font-size: clamp(40px, 12vw, 88px);
+    max-width: none;
+    margin: 0 0 20px;
+    font-size: 23px;
+    line-height: 1.5;
   }
-  .service-hero__copy {
-    flex-direction: column;
-    align-items: start;
-    gap: 22px;
-    padding-right: 0;
+  .service-hero__lead {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    font-size: 14px;
+    line-height: 35px;
   }
-  .service-hero__index {
-    bottom: 30px;
+  .service-hero__media img {
+    aspect-ratio: auto;
+    height: 250px;
   }
   .service-capabilities__head,
   .service-switch__head {
@@ -1944,7 +2072,7 @@ watch(
     min-height: 0;
     padding: 26px 0;
     border-right: 0;
-    border-bottom: 1px solid #bbb;
+    border-bottom: 1px solid var(--svc-line-soft);
   }
   .capability-list article:last-child {
     border-bottom: 0;
