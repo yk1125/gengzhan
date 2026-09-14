@@ -378,3 +378,20 @@ $ .\node_modules\.bin\eslint.cmd src/views/Home/index.vue src/views/Home/useHome
 
 - 浏览器探针（dev `http://localhost:3000/`，1440×900）：`pages error 无`、`fixPosition: "sticky"`、`index3Present: false`、`index4Top: 3223`、`index4H: 7900`、`pageH: 12671`。
 - 删 index3 后锚点前移：`.index4` 的布局 top 4164 → 3223（前移 941px = index3 原占位高度），改后 `pageH = 12671`；下游锚点全部由 `measure()` 在挂载时重算，无需手工改常量。
+
+### 9.7 已做：占位动图落地（用户决定「只抓体积小的、允许重复复用、先占位」）
+
+- 抓取：3 张**动图 WebP**（保留原文件名、未转码未压缩），落在 `frontend/public/assets/cases/`，合计 **8.27 MB**。参考站 index2 原本共 8 张动图、原图合计 93.75 MB，按用户决定只取最小的 3 张。
+
+| 文件 | 尺寸 | 帧 | 时长 | 字节数 | SHA256（前 12 位） |
+| --- | --- | --- | --- | --- | --- |
+| `83db3640125b7463feef8d0221cc5f27.webp` | 640×360 | 152 | 7.6s | 1,119,156 | `540b67f5afc4` |
+| `019048b100726a98fcc517959dad7e33.webp` | 960×540 | 194 | 9.7s | 1,667,200 | `d89d604d71c4` |
+| `c61e07c88f465c23dfbdb6ccf8411064.webp` | 630×630 | 80 | 4.0s | 5,888,814 | `f53f0953ac8c` |
+
+- 登记：已追加进 `docs/frontend-rebuild/evidence/reference-assets/assets-manifest.json` 的 `items`（+3 条，含源 URL / 本地路径 / 字节数 / SHA256 / 尺寸帧数 / 对应选择器 / 来源归属 / 抓取时间 / 备注）。三个文件都实测过 VP8X `ANIMATION` 位 + `ANMF` 帧数与总时长。代码与配置里没有出现参考站域名。
+- 复用：`content/home.js` 新增 `HOME_CASE_PLACEHOLDERS`；index2 的 8 个图文条目按槽位循环复用（0,1,2,0,1,2,0,1），index5 四张卡统一用最小那张（用户：「四个都一样」）。
+- 实现：index2 的 `.item` 改成「一图一文」（图在上、文在下，图各自保持原始比例，照参考站 `.item > .img + .text`）；index5 每张卡顶部加图；两处容器加 `public_hover` 类，作为 SPEC M-29 蓝盘的钩子（等光标层落地即生效）。
+- 实测（1440×900，dev `http://localhost:3000/`）：index2 进入视口即 **8/8** 张加载完成（`i.complete && i.naturalWidth > 0`）；index5 **4/4** 张加载完成；`pageerror` / console error / 请求失败 **0 条**；`npm.cmd run build` ✓ 16.02s。静帧：`probe-index4/imgs-index2.png`、`probe-index4/imgs-index5-fixed.png`（仓库外采集目录）。
+- ⚠️ **上线阻断项**：占位画面里是参考站客户（海天集团 `HAITIAN LASER MACHINERY`、旭升集团 `XUSHENG`）的品牌案例动画，**上线前必须替换成耘栈自有素材**；已同时写进 manifest 的 `备注`。
+- 仍未做：自定义光标 M-27/28/29 + 磁吸 M-30/31（`public_hover` 已就位，落地后蓝盘立即生效）、Header M-04/05。

@@ -72,6 +72,18 @@ export const HOME_BANNER_MEDIA = {
 export const HOME_STATEMENT_BG = '/services-showcase.jpg'
 
 /**
+ * index2「四项主服务 / 交付能力」图文条目与 index5 四张卡的**占位动图**。
+ * 用户 2026-09-14 决定：只抓小体积、允许重复复用、当前仅占位，上线前替换。
+ * 三张都是动图 WebP（ANIMATION 位已置位），放在 <img> 里自动播放并无限循环，不需要 JS。
+ * 来源 / SHA256 / 帧数登记见 docs/frontend-rebuild/evidence/reference-assets/assets-manifest.json。
+ */
+export const HOME_CASE_PLACEHOLDERS = [
+  '/assets/cases/83db3640125b7463feef8d0221cc5f27.webp',
+  '/assets/cases/019048b100726a98fcc517959dad7e33.webp',
+  '/assets/cases/c61e07c88f465c23dfbdb6ccf8411064.webp'
+]
+
+/**
  * 四项主服务（FRONTEND §3：AI、mini、app、web 四项内部路由）。
  * `transitionIndex` 显式声明本产品服务槽位与源站过渡视频编号的对应关系，
  * 不使用翻译后的标题或 class 字符串猜测（FRONTEND §8）。

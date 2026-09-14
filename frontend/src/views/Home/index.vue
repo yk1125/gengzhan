@@ -103,7 +103,7 @@
     <!-- index2：服务能力与交付能力（SPEC M-12 双列视差 + M-13 + M-24） -->
     <section id="capability" class="index2">
       <div class="wrap">
-        <div v-for="(row, rowIndex) in capabilityRows" :key="'fist-' + rowIndex" class="fist">
+        <div v-for="(row, rowIndex) in capabilityRows" :key="'fist-' + rowIndex" class="fist public_hover">
           <div v-for="(column, columnIndex) in row" :key="'flex-' + rowIndex + '-' + columnIndex" class="flex">
             <div v-if="column.headline" class="title">
               <div class="blue public_text" data-aos="fade-top">
@@ -128,6 +128,9 @@
               data-aos="fade-top"
               data-aos-delay="100"
             >
+              <div class="img">
+                <img :src="item.image" alt="" loading="lazy" decoding="async" />
+              </div>
               <div class="text">
                 <p class="item-name">{{ item.name }}</p>
                 <p class="item-desc">{{ item.desc }}</p>
@@ -180,9 +183,12 @@
           <h2 class="insights-title">{{ c.insights.title }}</h2>
         </div>
 
-        <div class="swiper insights-swiper" data-aos="fade-top" data-aos-delay="100">
+        <div class="swiper insights-swiper public_hover" data-aos="fade-top" data-aos-delay="100">
           <div class="swiper-wrapper">
             <article v-for="card in insightCards" :key="card.key" class="swiper-slide card">
+              <div class="card-img">
+                <img :src="card.image" alt="" loading="lazy" decoding="async" />
+              </div>
               <p class="card-kicker">
                 <span>{{ card.kicker }}</span>
                 <span v-if="card.demo" class="card-flag">{{ c.insights.demoLabel }}</span>
@@ -224,6 +230,7 @@ import {
   CUSTOMER_SLOT_SIZE_MOBILE,
   CUSTOMER_SLOT_SIZE_PC,
   HOME_BANNER_MEDIA,
+  HOME_CASE_PLACEHOLDERS,
   HOME_SERVICES,
   HOME_STATEMENT_BG,
   customerSlots,
@@ -382,7 +389,7 @@ const capabilityRows = computed(() => {
     const fact = capability.facts[index]
     return { key: `fact-${index}`, name: fact.value, label: fact.label, desc: fact.desc }
   }
-  return [
+  const rows = [
     [
       { key: 'col-headline', headline: capability.title, items: list.slice(0, 2).map(asItem) },
       { key: 'col-services', items: list.slice(2, 4).map(asItem) }
@@ -392,6 +399,14 @@ const capabilityRows = computed(() => {
       { key: 'col-facts', items: [asFact(2), asFact(3)] }
     ]
   ]
+
+  // 占位动图：按槽位循环复用（用户决定「只抓小体积、允许重复、先占位」）。
+  let slot = 0
+  rows.forEach((row) => row.forEach((column) => column.items.forEach((item) => {
+    item.image = HOME_CASE_PLACEHOLDERS[slot % HOME_CASE_PLACEHOLDERS.length]
+    slot += 1
+  })))
+  return rows
 })
 
 /* ------------------------------------------------- M-18—M-23 index4 品牌宣言 */
@@ -417,6 +432,7 @@ const insightCards = computed(() => {
   return [
     {
       key: 'case-demo',
+      image: HOME_CASE_PLACEHOLDERS[0],
       demo: true,
       kicker: 'CASE',
       title: demoCases[0].title[locale.value],
@@ -426,6 +442,7 @@ const insightCards = computed(() => {
     },
     {
       key: 'news-demo',
+      image: HOME_CASE_PLACEHOLDERS[0],
       demo: true,
       kicker: 'NEWS',
       title: demoNews[0].title[locale.value],
@@ -435,6 +452,7 @@ const insightCards = computed(() => {
     },
     {
       key: 'service-ai',
+      image: HOME_CASE_PLACEHOLDERS[0],
       kicker: 'SERVICE',
       title: list[0].name,
       desc: list[0].desc,
@@ -443,6 +461,7 @@ const insightCards = computed(() => {
     },
     {
       key: 'service-web',
+      image: HOME_CASE_PLACEHOLDERS[0],
       kicker: 'SERVICE',
       title: list[3].name,
       desc: list[3].desc,
@@ -703,6 +722,10 @@ html[data-theme='dark'] .home {
 .index2 .item-desc { margin: 0 0 12px; font-size: 15px; line-height: 1.8; color: var(--home-ink-soft); }
 .index2 .item-link { font-size: 14px; color: var(--home-accent); text-decoration: none; }
 .index2 .item-meta { margin: 0; font-size: 13px; letter-spacing: 0.06em; color: var(--home-ink-soft); }
+/* 占位动图：`<img>` 内自动播放并循环；各自保持原始比例（参考站 index2 的图也是混比例）。
+   来源与 SHA256 登记见 evidence/reference-assets/assets-manifest.json，上线前必须替换。 */
+.index2 .item .img { margin: 0 0 16px; }
+.index2 .item .img img { display: block; width: 100%; height: auto; }
 
 /* ---- M-18 — M-23 index4 品牌宣言 ---- */
 /* M-21：参考站用 JS 逐帧写 `translate` 把整屏钉住；原生滚动跑在合成线程，主线程 rAF 写 transform
@@ -798,6 +821,8 @@ html[data-theme='dark'] .home {
   border-radius: 6px;
   background: var(--home-card);
 }
+.card-img { margin: -28px -28px 0; border-radius: 6px 6px 0 0; overflow: hidden; }
+.card-img img { display: block; width: 100%; height: auto; }
 .card-kicker {
   display: flex;
   justify-content: space-between;
