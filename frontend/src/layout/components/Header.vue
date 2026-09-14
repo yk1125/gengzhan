@@ -1,5 +1,9 @@
 <template>
-  <header class="header" :class="{ 'header-fixed': isFixed, 'header-home': $route.path === '/' }">
+<header
+    ref="headerRef"
+    class="header"
+    :class="{ 'header-fixed': !isHome && isFixed, 'header-home': isHome, on: isOn, hide: isHidden }"
+  >
     <div class="header-container">
       <div class="logo" @click="$router.push('/')">
         <span class="brand-simple">耘栈科技</span>
@@ -75,11 +79,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { ChatDotRound } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
+const route = useRoute()
+const isHome = computed(() => route.path === '/' || route.path === '/en')
+// 英文站首页是独立路由 /en（router: Home / HomeEn），M-04/M-05 对两者都要生效。
+
+const headerRef = ref(null)
 const isFixed = ref(false)
+/** SPEC M-04：`.on` —— 滚过 `clientHeight - headerHeight / 2` 后页头底色与配色反转。 */
+const isOn = ref(false)
+/** SPEC M-05：`.hide` —— 滚轮向下收起、向上恢复。 */
+const isHidden = ref(false)
 const mobileMenuOpen = ref(false)
 
 const menuList = [
@@ -93,8 +107,21 @@ const menuList = [
   { name: '关于我们', path: '/about' }
 ]
 
+const headerHeight = () => {
+  const el = headerRef.value
+  return el ? el.getBoundingClientRect().height : 0
+}
+
 const handleScroll = () => {
   isFixed.value = window.scrollY > 100
+  // M-04：distance = clientHeight - header.height() / 2，scrollTop > distance 时加 `.on`
+  isOn.value = window.scrollY > document.documentElement.clientHeight - headerHeight() / 2
+}
+
+// M-05：由滚轮方向驱动（不是滚动位置）——deltaY > 0 加 `.hide`，deltaY < 0 移除。
+const handleWheel = (event) => {
+  if (event.deltaY > 0) isHidden.value = true
+  else if (event.deltaY < 0) isHidden.value = false
 }
 
 const toggleMobileMenu = () => {
@@ -122,11 +149,14 @@ const copyToClipboard = async (text, type) => {
 }
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  window.addEventListener('wheel', handleWheel, { passive: true })
+  handleScroll()
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('wheel', handleWheel)
   // 清理body样式
   document.body.style.overflow = ''
 })
@@ -635,68 +665,71 @@ onUnmounted(() => {
   }
 }
 
-/* The homepage header sits directly over the hero for a stronger first impression. */
-.header-home:not(.header-fixed) {
-  position: absolute !important;
+/* ==========================================================================
+   首页页头 —— SPEC M-04 / M-05
+   参考站 sources/style.css：基类 `.header` 不写 background（:213-228，即透明底）；
+   `.header.on { background: #F2F1E4 }` + logo / nav / 图标转黑（:586-607）；
+   `.header.hide { transform: translateY(-100%) }`（:624-626）；三处时长都是 `transition: .6s`。
+   选择器统一加 `.header.header-home` 前缀，避免被 style.css 里那几条
+   `.header { … !important }` 按源码顺序压回去。
+   ========================================================================== */
+.header.header-home {
+  height: 76px !important;
+  position: fixed !important;
   top: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(180deg, rgba(4, 15, 39, .82), rgba(4, 15, 39, 0)) !important;
-  border-bottom-color: transparent !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-.header-home {
-  height: 68px !important;
-  background: #030a17 !important;
-  border-bottom: 1px solid rgba(154, 196, 247, .14) !important;
+  background: transparent !important;
+  border: 0 !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+  transition: all .6s ease !important;
 }
-.header-home .header-container { max-width: 1360px !important; }
-.header-home .logo { background: transparent !important; }
-.header-home .logo-img { height: 46px !important; }
-.header-home .nav-item { color: rgba(255,255,255,.9) !important; border-radius: 0 !important; font-size: 15px !important; }
-.header-home .nav-item:hover, .header-home .nav-item.active { color: #fff !important; background: transparent !important; border-color: transparent !important; }
-.header-home .nav-item.active::after { display: block !important; bottom: -14px !important; width: 32px !important; height: 3px !important; background: #168fe0 !important; box-shadow: none !important; }
-.header-home .desktop-wechat-copy { color: #fff !important; background: #0d76c1 !important; border-radius: 0 !important; }
+.header.header-home::before { display: none !important; }
+/* M-04：越过 `clientHeight - header.height() / 2` 后转米色 #F2F1E4 */
+.header.header-home.on { background: #F2F1E4 !important; }
+/* M-05：滚轮向下收起，向上恢复 */
+.header.header-home.hide { transform: translateY(-100%) !important; }
 
-/* Minimal studio-style homepage navigation. */
-.header-home,
-.header-home:not(.header-fixed) {
-  height: 76px !important;
-  position: fixed !important;
-  background: linear-gradient(180deg, rgba(8,12,15,.46), transparent) !important;
-  border: 0 !important;
-}
-.header-home.header-fixed { background: rgba(17,17,17,.92) !important; backdrop-filter: blur(16px) !important; }
-.header-home::before { display: none !important; }
+.header.header-home .header-container { max-width: 1360px !important; }
+.header.header-home .logo { min-width: 190px; padding: 0 !important; background: transparent !important; color: #fff; }
+.header.header-home .logo-img { height: 46px !important; }
+.header.header-home .brand-simple { color: #fff; }
+.header.header-home .brand-en { color: rgba(255,255,255,.68); }
+.header.header-home .nav-menu { gap: 8px !important; }
+.header.header-home .nav-item { padding: 10px 11px !important; color: rgba(255,255,255,.88) !important; background: transparent !important; border: 0 !important; border-radius: 0 !important; font-size: 12px !important; font-weight: 600 !important; }
+.header.header-home .nav-item:hover,
+.header.header-home .nav-item.active { color: #fff !important; background: transparent !important; }
+.header.header-home .nav-item.active::after { display: block !important; bottom: 1px !important; width: 4px !important; height: 4px !important; background: #f06a21 !important; border-radius: 50% !important; box-shadow: none !important; }
+.header.header-home .desktop-wechat-copy { min-height: 38px; color: #fff !important; background: transparent !important; border: 1px solid rgba(255,255,255,.45) !important; border-radius: 999px !important; }
+.header.header-home .desktop-wechat-copy:hover { color: #111 !important; background: #fff !important; }
+
+/* M-04 配色反转：参考站写作 `.header.on .l .logo img { filter: invert(1) }` + `color: #000`。 */
+.header.header-home.on .logo-img { filter: invert(1); }
+.header.header-home.on .brand-simple,
+.header.header-home.on .brand-en,
+.header.header-home.on .nav-item,
+.header.header-home.on .nav-item:hover,
+.header.header-home.on .nav-item.active { color: #000 !important; }
+.header.header-home.on .desktop-wechat-copy { color: #000 !important; background: transparent !important; border-color: rgba(0, 0, 0, .4) !important; }
+.header.header-home.on .desktop-wechat-copy:hover { color: #fff !important; background: #111 !important; }
+.header.header-home.on .mobile-menu-btn span { background: #000 !important; }
 .brand-simple { color: #16213b; font-size: 22px; font-weight: 800; letter-spacing: .06em; white-space: nowrap; }
 .brand-en { margin-left: 10px; color: #738096; font-size: 8px; font-weight: 700; letter-spacing: .18em; white-space: nowrap; }
-.header-home .logo { min-width: 190px; color: #fff; }
-.header-home .brand-simple { color: #fff; }
-.header-home .brand-en { color: rgba(255,255,255,.68); }
-.header-home .nav-menu { gap: 8px !important; }
-.header-home .nav-item { padding: 10px 11px !important; color: rgba(255,255,255,.88) !important; font-size: 12px !important; font-weight: 600 !important; }
-.header-home .nav-item:hover, .header-home .nav-item.active { color: #fff !important; }
-.header-home .nav-item.active::after { bottom: 1px !important; width: 4px !important; height: 4px !important; background: #f06a21 !important; border-radius: 50% !important; }
-.header-home .desktop-wechat-copy { min-height: 38px; color: #fff !important; background: transparent !important; border: 1px solid rgba(255,255,255,.45) !important; border-radius: 999px !important; }
-.header-home .desktop-wechat-copy:hover { color: #111 !important; background: #fff !important; }
 
 @media (max-width: 992px) {
-  .header-home { height: 64px !important; }
-  .header-home .logo { min-width: 0; padding: 0 !important; }
-  .header-home .brand-simple { font-size: 18px; }
-  .header-home .brand-en { display: none; }
-  .header-home .mobile-wechat-copy { display: none !important; }
-  .header-home .mobile-menu-btn { display: flex !important; margin-left: auto; }
-  .header-home .mobile-menu-btn span { height: 1px !important; background: #fff !important; box-shadow: none !important; }
-  .header-home .mobile-menu-overlay { top: 64px !important; }
-  .header-home .mobile-nav { min-height: calc(100svh - 64px); padding: 28px 20px; background: #111 !important; border: 0 !important; border-radius: 0 !important; }
-  .header-home .mobile-nav-item { margin: 0; padding: 16px 8px; color: #fff !important; background: transparent !important; border-bottom: 1px solid #333 !important; border-radius: 0 !important; font-size: 18px; }
-  .header-home .mobile-nav-item.active { color: #f06a21 !important; }
+  .header.header-home { height: 64px !important; }
+  .header.header-home .logo { min-width: 0; padding: 0 !important; }
+  .header.header-home .brand-simple { font-size: 18px; }
+  .header.header-home .brand-en { display: none; }
+  .header.header-home .mobile-wechat-copy { display: none !important; }
+  .header.header-home .mobile-menu-btn { display: flex !important; margin-left: auto; }
+  .header.header-home .mobile-menu-btn span { height: 1px !important; background: #fff !important; box-shadow: none !important; }
+  .header.header-home .mobile-menu-overlay { top: 64px !important; }
+  .header.header-home .mobile-nav { min-height: calc(100svh - 64px); padding: 28px 20px; background: #111 !important; border: 0 !important; border-radius: 0 !important; }
+  .header.header-home .mobile-nav-item { margin: 0; padding: 16px 8px; color: #fff !important; background: transparent !important; border-bottom: 1px solid #333 !important; border-radius: 0 !important; font-size: 18px; }
+  .header.header-home .mobile-nav-item.active { color: #f06a21 !important; }
   .mobile-menu-btn {
     display: flex !important;
     position: absolute !important;
