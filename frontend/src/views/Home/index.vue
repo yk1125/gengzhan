@@ -533,9 +533,9 @@ onBeforeUnmount(() => {
 
   position: relative;
   overflow-x: clip;
-  /* 注意：全局 style.css:759 用 !important 把 .home 强制为 transparent（A 的文件，本页不改）。
-     因此本页每个 section 自己声明底色，见下面的 .index1 / .index2 / .index5。 */
-  background: var(--home-bg);
+  /* 2026-09-15 用户授权删除本页 .home 的 background：全局 style.css 的 .home 已改
+     transparent 且不再依赖 !important。本页每个 section 自己声明底色，见下面
+     .index1 / .index2 / .index5。 */
   color: var(--home-ink);
 }
 

@@ -341,12 +341,16 @@ body {
   --yz-line: #d2d2ce;
   --yz-copy: #676767;
 
-  /* 语义色（C.md §13.4 / §20.5 请求定名）。取值 = C 现在页内副本 --svc-* 的字面值，
-     所以 C 改成引用本组后逐像素等价。 */
+  /* 语义色（C.md §13.4 / §20.5 请求定名）。亮色取值 = C 页内副本 --svc-* 的字面值
+     （10 个成员与 C 的 10 个一一对应），所以 C 改成引用本组后逐像素等价。 */
   --color-bg: #f2f1e4;
   --color-ink: #111111;
   --color-ink-soft: #6d6c60;
+  --color-ink-body: #3d3d3d;
   --color-line: #adadad;
+  --color-line-soft: #d6d3c6;
+  --color-surface: #ffffff;
+  --color-surface-soft: #e7e5da;
   --color-accent: #184dc4;
   --color-on-accent: #ffffff;
 }
@@ -358,7 +362,13 @@ html[data-theme='dark'] {
   --color-bg: #14140f;
   --color-ink: #f2f1e4;
   --color-ink-soft: #9a978a;
+  /* 下面 4 个暗色值 A 定稿（与 --color-bg 同一套口径，等 C 复核）：
+     ink-body / line-soft / surface / surface-soft 在 SPEC 里没有对应条目。 */
+  --color-ink-body: #cfcbbc;
   --color-line: #45443c;
+  --color-line-soft: #33322b;
+  --color-surface: #1c1c16;
+  --color-surface-soft: #23231c;
   --color-accent: #4d7ce8;
   --color-on-accent: #ffffff;
 }
@@ -746,9 +756,9 @@ html:not([data-theme='dark']) .corporate-footer.footer-home {
 /* 收窄（B.md §6.6 第 2 条）：原来把 .about / .cases / .news / [class$="-development"]
    也一起声明成 transparent，但这些选择器全被后面的 body :is(…) 那组 #fff !important
    盖死（特异度更高），是死规则；真正生效的只有 .home。
-   !important 暂时保留：views/Home/index.vue:538 的 .home{background:var(--home-bg)}
-   需要被压住，否则首页根元素会露出米色。要摘掉它得先由 B 删除那条声明（见 handoffs/A.md）。 */
-.home { background: transparent !important; }
+   !important 已摘除（2026-09-15，用户授权）：B 侧的 views/Home/index.vue 不再给 .home
+   声明 background，这里不必再靠 !important 压它。 */
+.home { background: transparent; }
 
 /* Shared enterprise treatment for all non-home public pages. */
 :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) {
@@ -2124,10 +2134,36 @@ body :is(.ai-development,.app-development,.web-development) .cta-section .el-but
 /* M-05：滚轮向下收起、向上恢复（全站）。参考站 `sources/style.css:624-626`。 */
 .header.hide { transform: translateY(-100%); }
 
-/* 透明顶皮肤：由路由 `meta.headerTransparent` 声明（目前是首页 `/` 与 `/en`）。
-   为什么不做成全站：内页首屏底色不统一 —— ServiceLanding 的 creative 首屏是浅蓝
-   `#b8cfdf` + 深色字、custom 是 `#5c564e`，透明顶配白字不可读。口径与决定见
-   specs/FRONTEND.md §7。 */
+/* 主题两态按钮（桌面那一份；手机那一份在 Header.vue 的移动菜单皮肤里）。
+   页头样式按规格只在「页头（Header）」段一处定义，所以皮肤写在这里。 */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  margin-right: 8px;
+  padding: 0 12px;
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: .82;
+  cursor: pointer;
+  transition: opacity .3s ease, border-color .3s ease, background-color .3s ease, color .3s ease;
+}
+.theme-toggle:hover { opacity: 1; }
+.header:not(.header-transparent) .theme-toggle,
+.header.header-ink-light .theme-toggle { color: #fff; }
+.header.header-ink-dark .theme-toggle { color: #111; }
+.header.header-transparent.on .theme-toggle { color: #000; }
+
+/* 透明顶皮肤：**全站默认**（2026-09-15 用户裁定：「透明不止给首页，要全局使用，即全局的
+   导航栏都跟首页一样」）。要实底的页面用 `route.meta.headerTransparent === false` 显式关掉。
+   字色分两档，由 `route.meta.headerInk` 决定（Header.vue 映射成 .header-ink-light / -dark）：
+   深色首屏用白字（首页），浅色首屏用深字（米色的服务页等）。 */
 .header.header-transparent {
   background: transparent;
   border-bottom-color: transparent;
@@ -2135,7 +2171,8 @@ body :is(.ai-development,.app-development,.web-development) .cta-section .el-but
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
-/* M-04 透明顶：底色转参考站米色 #F2F1E4 + 文字/图标反转（`sources/style.css:586-607`）。 */
+/* M-04 透明顶：底色转参考站米色 #F2F1E4 + 文字/图标反转（`sources/style.css:586-607`）。
+   两档字色在 `.on` 之后都落到「米底黑字」，所以这条不需要分叉。 */
 .header.header-transparent.on { background: #F2F1E4; }
 
 /* 字标与导航：几何两套皮肤共用，只有配色分叉。 */
@@ -2207,20 +2244,36 @@ body :is(.ai-development,.app-development,.web-development) .cta-section .el-but
   border-radius: 999px;
 }
 
-/* 透明顶皮肤配色（首页） */
-.header-transparent .brand-simple { color: #fff; }
-.header-transparent .brand-en { color: rgba(255, 255, 255, .58); }
-.header-transparent .nav-item { color: rgba(255, 255, 255, .88); }
-.header-transparent .nav-item:hover,
-.header-transparent .nav-item.active { color: #fff; background: transparent; }
+/* 透明顶皮肤配色 · 白字档（深色首屏：首页 `/` `/en`、关于、案例详情、资讯详情）。 */
+.header-transparent.header-ink-light .brand-simple { color: #fff; }
+.header-transparent.header-ink-light .brand-en { color: rgba(255, 255, 255, .58); }
+.header-transparent.header-ink-light .nav-item { color: rgba(255, 255, 255, .88); }
+.header-transparent.header-ink-light .nav-item:hover,
+.header-transparent.header-ink-light .nav-item.active { color: #fff; background: transparent; }
 .header-transparent .nav-item.active::after { bottom: 1px; background: #f06a21; }
-.header-transparent .desktop-wechat-copy {
+.header-transparent.header-ink-light .desktop-wechat-copy {
   color: #fff;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, .45);
   border-radius: 999px;
   min-height: 38px;
 }
+
+/* 透明顶皮肤配色 · 深字档（浅色首屏：米色的七类服务页、案例 / 资讯列表、AI 咨询、法律 / 404）。
+   服务页整页底色是 #F2F1E4，透明顶配白字不可读，所以这一档用深字（C.md §20.1 的配色要求）。 */
+.header-transparent.header-ink-dark .brand-simple { color: #111; }
+.header-transparent.header-ink-dark .brand-en { color: rgba(17, 17, 17, .58); }
+.header-transparent.header-ink-dark .nav-item { color: rgba(17, 17, 17, .78); }
+.header-transparent.header-ink-dark .nav-item:hover,
+.header-transparent.header-ink-dark .nav-item.active { color: #111; background: transparent; }
+.header-transparent.header-ink-dark .desktop-wechat-copy {
+  color: #111;
+  background: transparent;
+  border: 1px solid rgba(17, 17, 17, .4);
+  border-radius: 999px;
+  min-height: 38px;
+}
+.header-transparent.header-ink-dark .mobile-menu-btn span { background: #111; }
 
 /* M-04 透明顶反色：米底上的文字/图标转黑（参考站 `.header.on` 的 `color: #000` + logo
    `filter: invert(1)`；本项目字标是文字，没有 <img>，所以只反色不过滤）。 */

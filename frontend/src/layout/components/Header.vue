@@ -2,7 +2,7 @@
   <header
     ref="headerRef"
     class="header"
-    :class="{ 'header-transparent': headerTransparent, on: isOn, hide: isHidden }"
+    :class="[{ 'header-transparent': headerTransparent, on: isOn, hide: isHidden }, headerInkClass]"
   >
     <div class="header-container">
       <div class="logo" @click="$router.push('/')">
@@ -112,9 +112,14 @@ const route = useRoute()
 /** 主题（stores/theme.js）：19:00—07:00 按当地时间转暗，两态按钮手动切换、到下个边界到期。 */
 const themeStore = useThemeStore()
 const themeToggleLabel = computed(() => (themeStore.theme === 'dark' ? '切换到亮色' : '切换到暗色'))
-/** 透明顶：由路由 `meta.headerTransparent` 声明（首页 `/` 与 `/en`）。
-    为什么只给首页、以及 M-04/M-05 全站生效的口径，见 specs/FRONTEND.md §7。 */
-const headerTransparent = computed(() => route.meta.headerTransparent === true)
+/** 透明顶：2026-09-15 用户裁定「全站默认透明，导航栏都跟首页一样」。
+    由 `route.meta.headerTransparent !== false` 得到；个别要实底的页面才显式关掉。
+    M-04/M-05 与皮肤无关，继续全站生效；口径见 specs/FRONTEND.md §7。 */
+const headerTransparent = computed(() => route.meta.headerTransparent !== false)
+/** 透明顶字色档：`route.meta.headerInk` 显式声明，Header 只负责映射成 CSS 类。
+    light = 深色首屏上的白字（首页 / 关于 / 案例详情 / 资讯详情）；
+    dark = 浅色首屏上的深字（米色服务页 / 案例列表 / 资讯列表 / 法律 / 404 等）。 */
+const headerInkClass = computed(() => (route.meta.headerInk === 'light' ? 'header-ink-light' : 'header-ink-dark'))
 
 const headerRef = ref(null)
 /** SPEC M-04：`.on` —— 滚过 `clientHeight - headerHeight / 2` 后页头底色反转（全站生效）。 */

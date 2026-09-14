@@ -1156,19 +1156,20 @@ watch(
  * 页面调色板（用户 2026-09-14 裁决 4：七条服务路由不再各有主题色，统一到首页那套米色）。
  * 取值来源：首页实测 `Home/index.vue:522-528`
  * （`--home-bg:#F2F1E4` / `--home-ink:#111111` / `--home-ink-soft:#6D6C60` / `--home-line:#ADADAD` / `--home-accent:#184DC4`）。
- * 本页只做页内副本，不改全局 token；A 若把 `--home-*` 提到 `:root`，这里改为引用即可。
+ * 2026-09-15 起改为引用 `:root` 的 `--color-*`，暗色随全局主题自动切换；
+ * 本页继续保留 `--svc-*` 别名，避免 100+ 处使用点重写。
  */
 .service-page {
-  --svc-bg: #f2f1e4;
-  --svc-surface: #ffffff;
-  --svc-surface-soft: #e7e5da;
-  --svc-ink: #111111;
-  --svc-ink-soft: #6d6c60;
-  --svc-ink-body: #3d3d3d;
-  --svc-line: #adadad;
-  --svc-line-soft: #d6d3c6;
-  --svc-accent: #184dc4;
-  --svc-on-accent: #ffffff;
+  --svc-bg: var(--color-bg);
+  --svc-surface: var(--color-surface);
+  --svc-surface-soft: var(--color-surface-soft);
+  --svc-ink: var(--color-ink);
+  --svc-ink-soft: var(--color-ink-soft);
+  --svc-ink-body: var(--color-ink-body);
+  --svc-line: var(--color-line);
+  --svc-line-soft: var(--color-line-soft);
+  --svc-accent: var(--color-accent);
+  --svc-on-accent: var(--color-on-accent);
   color: var(--svc-ink);
   background: var(--svc-bg);
   overflow: hidden;
@@ -2024,9 +2025,10 @@ watch(
   .service-cta {
     padding: 84px 0;
   }
-  /* SPEC 断点速查 ≤1024px / 参考站 .solution 移动档：hero 上留白 80px、标题 23px/1.5、导语 14px/35px、图高 250px。 */
+  /* 2026-09-15 用户允许：配合全站透明页头，≤1024 的 hero 上留白从 SPEC 的 80px 调到 104px。
+     其余仍按 SPEC 断点表：标题 23px/1.5、导语 14px/35px、图高 250px。 */
   .service-hero {
-    padding: 80px 0 0;
+    padding: 104px 0 0;
   }
   .service-hero__title {
     flex-direction: column;
