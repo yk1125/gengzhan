@@ -1,0 +1,216 @@
+{
+  "note": "存量 `transition: all` 清单（check:motion 基线）。只允许减少；新增会被门禁拦下。key = 文件 | 选择器 | 值，均已折叠空白。",
+  "capturedAt": "b6a2c72 (main) + docs 合并后",
+  "transitionAll": [
+    {
+      "file": "src/components/BackToTop.vue",
+      "selector": ".back-icon",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/components/BackToTop.vue",
+      "selector": ".back-to-top",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/components/CompetitiveAdvantage.vue",
+      "selector": ".difference-card",
+      "value": "all 0.4s ease"
+    },
+    {
+      "file": "src/components/CompetitiveAdvantage.vue",
+      "selector": ".metric-item",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/components/CustomCursor.vue",
+      "selector": ".whole::after",
+      "value": "all 0.25s ease-out"
+    },
+    {
+      "file": "src/components/CustomCursor.vue",
+      "selector": ".whole::before",
+      "value": "all 0.3s"
+    },
+    {
+      "file": "src/components/LiveProjects.vue",
+      "selector": ".project-card",
+      "value": "all 0.4s ease"
+    },
+    {
+      "file": "src/components/LiveProjects.vue",
+      "selector": ".stat-item",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/components/PriceCalculator.vue",
+      "selector": ".comparison-item",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/components/PriceCalculator.vue",
+      "selector": ".feature-checkbox",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/components/PriceCalculator.vue",
+      "selector": ".feature-item",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/components/PriceCalculator.vue",
+      "selector": ".option-card",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/components/RealFeedback.vue",
+      "selector": ".feedback-card",
+      "value": "all 0.4s ease"
+    },
+    {
+      "file": "src/components/RealFeedback.vue",
+      "selector": ".stat-card",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/components/TechStack.vue",
+      "selector": ".close-inline-btn",
+      "value": "all 0.2s ease"
+    },
+    {
+      "file": "src/components/TechStack.vue",
+      "selector": ".legend-item",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/components/TechStack.vue",
+      "selector": ".slide-up-enter-active,.slide-up-leave-active",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/components/TechStack.vue",
+      "selector": ".tech-dot",
+      "value": "all 0.4s cubic-bezier(0.34,1.56,0.64,1)"
+    },
+    {
+      "file": "src/components/TechStack.vue",
+      "selector": ".tech-emoji",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/AiDevelopment/index.vue",
+      "selector": ".advantage-item",
+      "value": "all 0.4s ease"
+    },
+    {
+      "file": "src/views/AiDevelopment/index.vue",
+      "selector": ".advantage-item::before",
+      "value": "all 0.5s ease"
+    },
+    {
+      "file": "src/views/AiDevelopment/index.vue",
+      "selector": ".cta-section :deep(.el-button)",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/AiDevelopment/index.vue",
+      "selector": ".feature-list li",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/AiDevelopment/index.vue",
+      "selector": ".intro-card",
+      "value": "all 0.5s cubic-bezier(0.23,1,0.32,1)"
+    },
+    {
+      "file": "src/views/AiDevelopment/index.vue",
+      "selector": ".intro-image img",
+      "value": "all 0.4s ease"
+    },
+    {
+      "file": "src/views/AiDevelopment/index.vue",
+      "selector": ".scenario-card",
+      "value": "all 0.5s cubic-bezier(0.23,1,0.32,1)"
+    },
+    {
+      "file": "src/views/AiDevelopment/index.vue",
+      "selector": ".step-card",
+      "value": "all 0.4s ease"
+    },
+    {
+      "file": "src/views/AiDevelopment/index.vue",
+      "selector": ".type-card",
+      "value": "all 0.5s cubic-bezier(0.23,1,0.32,1)"
+    },
+    {
+      "file": "src/views/AppDevelopment/index.vue",
+      "selector": ".scenario-card",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/AppDevelopment/index.vue",
+      "selector": ".type-card",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/Cases/detail.vue",
+      "selector": ".related-item",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/CustomDevelopment/index.vue",
+      "selector": ".advantage-card",
+      "value": "all 0.4s ease"
+    },
+    {
+      "file": "src/views/CustomDevelopment/index.vue",
+      "selector": ".type-card",
+      "value": "all 0.4s ease"
+    },
+    {
+      "file": "src/views/MiniprogramDevelopment/index.vue",
+      "selector": ".advantage-item",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/MiniprogramDevelopment/index.vue",
+      "selector": ".platform-card",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/MiniprogramDevelopment/index.vue",
+      "selector": ".scenario-card",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/MiniprogramDevelopment/styles.css",
+      "selector": ".advantage-item",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/MiniprogramDevelopment/styles.css",
+      "selector": ".platform-card",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/MiniprogramDevelopment/styles.css",
+      "selector": ".scenario-card",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/WebDevelopment/index.vue",
+      "selector": ".advantage-card",
+      "value": "all 0.4s ease"
+    },
+    {
+      "file": "src/views/WebDevelopment/index.vue",
+      "selector": ".scenario-card",
+      "value": "all 0.3s ease"
+    },
+    {
+      "file": "src/views/WebDevelopment/index.vue",
+      "selector": ".type-card",
+      "value": "all 0.4s ease"
+    }
+  ]
+}

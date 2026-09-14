@@ -174,7 +174,7 @@ eslint 与基线逐 commit 对比（同一条只读命令，`-f json` 逐文件�
 | `/en` 1440 亮 / 暗 footer | #F2F1E4 / 146px → #111 / 68px，与 `/` 一致 |
 | `/` 与 `/en` 390（亮/暗） | header **64px**；footer `footer-home`，亮 #F2F1E4 + `padding-top 34px`、暗 #111 + 34px（移动断点未被污染）；`documentElement.scrollWidth <= innerWidth`（无横向溢出）；`.fixed_cursor` `display:none` |
 | `/` 390 `#statement`（index4） | 文案 `opacity:1`、`color: rgb(255,255,255)`，命中测试落点在文案自身的 `.sj_jump` 包裹层（不是遮挡物）→ §9.21.7 的手机端可见性修复成立 |
-| `/ai-development` 1440（内页回归抽查） | y=0 `header`；y=600 `header header-fixed`、bg `rgba(17,17,17,.98)`、h 76；footer `footer corporate-footer`（无 `footer-home`）、#111、68px、h3 #fff、legal `#5a6d82` → 与 §9.15 的表逐项吻合，**内页未被公共层改动带偏** |
+| `/ai-development` 1440（内页回归抽查） | y=0 `header`；y=600 `header header-fixed`、bg `rgba(17,17,17,.98)`、h 76；footer `footer corporate-footer`（无 `footer-home`）、#111、68px、h3 #fff、legal `#5a6d82` → 与 §9.15 的表逐项吻合，**内页未被公共层改动带偏**。⚠️ **本行是 merge 时点（`84b7929`）的快照，已被下方「A 收编 B 的公共层」一节取代**：`header-fixed` 类已删除，同一场景现在是 `header`（y=0）/ `header on`（y=600）、`.on` 把底色压深一档。footer 六项值未变。 |
 | 三条路由 console | `/`、`/en`、`/ai-development` 的 `error`/`warn` 均为 **0 条**；`[src]/[href]/[style]` 扫描 **external URLs: none**（无参考站热链） |
 | 自定义光标层 | 首页 1440 `display:block`、`.hover_button` 磁吸目标 1 个；`/en` 光标文案 `Explore`（语言切换生效）；≤1024px 整层不注册 |
 
@@ -187,6 +187,195 @@ eslint 与基线逐 commit 对比（同一条只读命令，`-f json` 逐文件�
 3. `B` 的 §9.14 三项申请 + §9.20 A4（M-01 lenis）**仍未落地**，本次只合并、未代做。其中申请 1（把 `transform` 从 `style.css` 全局 `transition: all` 里摘掉）与本合并的 Header/磁吸强相关，建议紧接着做。
 4. 存量（非本次引入，未处理）：`/cases` 直连 500（后端未起，有失败态）；`npm.cmd run lint` 带 `--fix` 不是只读检查；M-19 mask 展开速度与参考站不符（§9.23 D3）；`package.json` 无 `test:unit/test:e2e` 脚本（T01 未做，本次未声称可运行）。
 5. 首页仍是大 chunk（1,139.35 kB / gzip 364.40 kB）+ 90MB 级占位动图，属已登记的素材/构建缺口，本次未动。
+
+## A 收编 B 的公共层（2026-09-14 · Session A）
+
+回应 `handoffs/B.md` §9.14 三项申请 + §9.20 A4，并落实上面「逐个判定」里承诺的收口。**本次改动未提交**（工作区修改，未 `git add` / `git commit`，可整体回滚）。
+
+### 改动清单
+
+| 文件 | 动作 |
+| --- | --- |
+| `frontend/src/router/index.js` | `Home` / `HomeEn` 加 `meta: { headerTransparent: true }` |
+| `frontend/src/layout/components/Header.vue` | 透明顶改由 `route.meta.headerTransparent` 声明；删 `isHome` / `isFixed`；删自带的 `.header` 底色层（原 scoped 里那份 `rgba(10,14,39,.8)`）；scoped 只剩汉堡按钮、移动菜单皮肤、`.mobile-slogan` 与 M-03 入场 |
+| `frontend/src/style.css` | 删掉原来四处互相 `!important` 压制的 header 声明层，新增**全站唯一**的「页头（Header）」段；全局可点击元素过渡 `transition: all …` → `--ui-transition`（显式属性，**不含 `transform`**） |
+| `frontend/src/composables/useJsTransformGuard.js` | **新增**：§9.14 申请 2 的 JS transform 守卫（`const release = useJsTransformGuard(el, on)`，幂等、空值安全） |
+| `frontend/src/composables/useMagnetic.js` | 改用 `useJsTransformGuard`（行为未变） |
+| `frontend/src/composables/useSmoothScroll.js` | **新增**：§9.20 A4 / SPEC M-01 的滚动惯性（`lenis@1.3.26`） |
+| `frontend/src/layout/index.vue` | `useSmoothScroll()`；回顶改走 `scrollToTop()`（M-32 1200ms） |
+| `frontend/scripts/check-motion.mjs` | **新增**：§9.14 申请 3 的动效门禁（只读静态扫描，仿 `check-routes.mjs`） |
+| `frontend/scripts/motion-baseline.json` | **新增**：存量 `transition: all` 清单（42 条，只允许减少） |
+| `frontend/package.json` | 新增 `check:motion` / `check:motion:strict` |
+
+`Header.vue` 的 `!important`：**41 处 → 2 处**，且这 2 处都在注释文字里（`rg -n '!important'` 只命中 `:167` / `:222` 两句说明），**声明里 0 处**。四个新文件均为 LF、无 BOM。
+
+### 命令实测（真实输出）
+
+```text
+$ npm.cmd run build            # frontend/
+dist/assets/index-b59b95c2.js            1,139.39 kB │ gzip: 364.40 kB
+(!) Some chunks are larger than 500 kBs after minification. …（既有告警）
+✓ built in 15.91s
+=== EXIT: 0 ===
+
+$ npm.cmd run check:routes
+尾斜杠规范化：match 31/31，router beforeEach 守卫 存在 → PASS
+routeManifest：3 条记录，PASS
+[WARN] routeManifest 尚未覆盖 §3 的 15 个 routeKey …（T01 未完成，不属于本次修复范围）
+[PENDING] contact — Contact/index.vue 尚未创建（B / T05）
+结果：PASS 34 / FAIL 0 / PENDING 2
+=== EXIT: 0 ===
+（--strict 下 FAIL 1 = 那 2 条 PENDING，与改动前逐项一致）
+
+$ npm.cmd run check:motion
+动效门禁（check:motion）—— 只读扫描 frontend/src 的 <style> 与 .css
+[PASS] transition: all —— 基线 42 条，本次扫到 42 条，新增 0 条
+[PASS] 可点击元素 hover 改 transform —— 无 transform 过渡的规则 0 条
+结果：PASS 2 / FAIL 0 / BASELINE-STALE 0
+=== EXIT: 0 ===
+（--strict EXIT 0；--verbose 追加 [INFO] 可点击元素 hover+transform 规则共 8 条，其中 8 条已有 transform 过渡）
+
+$ .\node_modules\.bin\eslint.cmd . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore
+✖ 930 problems (7 errors, 923 warnings)
+=== EXIT: 1 ===
+```
+
+**门禁真的会拦（不是空跑）**：用一次性探针 `src/__gate_probe.css` 验过两次——(a) 加一条新的 `transition: all` → FAIL + EXIT 1；(b) 加一条 `a.pill:hover{transform:…}` 且无 transform 过渡 → FAIL + EXIT 1。探针已删除（`Test-Path` = False）。
+
+eslint 与合并时点基线逐文件比对（同一条只读命令 + `-f json`）：
+
+| 基准 | errors | warnings |
+| --- | --- | --- |
+| `84b7929`（合并时点，见上一节） | 7 | 924 |
+| 本次改动后 | 7 | **923** |
+| 增量 | **0** | **−1** |
+
+- −1 全部来自 `src/layout/components/Header.vue`（25 → 24）：收编时删掉了 scoped 里那一整份重复的 `.header` 样式。`useMagnetic.js` / `layout/index.vue` / `router/index.js` 与两个新 JS 文件**零告警**。
+- 7 个 error 仍是 `CompetitiveAdvantage.vue`（3）+ `Cases/detail.vue`（4），**未被本次触碰**，属存量。
+- 注：`AGENTS.md` 记的基线 `7 errors / 846 warnings` 与实测（`84b7929` = 7 / 924）差 78 条。本次以实测为准，**未改任何规则、未降级规则**。
+
+### Header 透明 / 收放实测（preview = 本次 `dist`，`http://localhost:3006/`）
+
+探针为页面内 `evaluate`（真实 class 与 computed style，非静态推断）。`阈值 = clientHeight − headerHeight / 2`。
+
+**首页 `/`（zh）· 1441×900 亮 —— 皮肤与过渡**
+
+| 场景 | class | bg | 其它实测 |
+| --- | --- | --- | --- |
+| y=0 | `header header-transparent` | `rgba(0,0,0,0)` | `bbc rgba(0,0,0,0)`、`box-shadow none`、`transform none`、h **76**、`position fixed`、`z-index 3000`、`transition-property: background-color, border-color, box-shadow, backdrop-filter, transform` / `0.6s` / `ease`、nav `rgb(255,255,255)`、brand `rgb(255,255,255)`、`.header-container` maxW **1240px**、列 `272.229 / 639.542 / 272.229` |
+| y=861（阈下 1px） | `header header-transparent` | `rgba(0,0,0,0)` | `.on` 未加（阈值 **862** = 900 − 38） |
+| y=863（阈上） | `header header-transparent on` | **`rgb(242,241,228)` = #F2F1E4** | nav / brand → `rgb(0,0,0)`、微信按钮 border → `rgba(0,0,0,0.4)` |
+| y=400（回退） | `header header-transparent` | `rgba(0,0,0,0)` | `.on` 移除 |
+| 跨阈值过渡中途两次采样 | — | `rgba(242,241,228,0.643)` → `rgba(242,241,228,0.94)` → `rgb(242,241,228)` | 证明 0.6s 过渡真的在跑 `background-color`（不是瞬切） |
+| wheel ↓ +300（沉降后） | `header header-transparent hide` | `rgba(0,0,0,0)` | `transform: matrix(1, 0, 0, 1, 0, -76)` |
+| wheel ↑ −300 | `header header-transparent` | `rgba(0,0,0,0)` | `.hide` 移除、`transform: none` |
+
+**首页 `/en` · 1441×900**
+
+| 场景 | class | bg | 其它 |
+| --- | --- | --- | --- |
+| 亮 y=0 / y=861 | `header header-transparent` | `rgba(0,0,0,0)` | nav `rgba(255,255,255,0.88)`、brand `rgb(255,255,255)`、微信 border `rgba(255,255,255,0.45)`、maxW 1240 |
+| 亮 y=863 / y=900 | `header header-transparent on` | `rgb(242,241,228)` | nav / brand `rgb(0,0,0)`、微信 border `rgba(0,0,0,0.4)` |
+| 亮 wheel↓ / wheel↑ | `… hide` / `…` | `rgba(0,0,0,0)` | `matrix(1,0,0,1,0,-76)` → `none` |
+| 暗 y=0 / y=900 | 与亮逐项一致 | 同上 | 暗色 `.on` 仍 #F2F1E4（= B.md §9.20 B2 已裁决「保持参考站字面值」） |
+| footer | `footer corporate-footer footer-home` | `rgb(242,241,228)` | `padding-top 146px` |
+
+**首页 `/` 与 `/en` · 390×844**
+
+| 场景 | class | bg | 其它 |
+| --- | --- | --- | --- |
+| `/` 亮 y=0 | `header header-transparent` | `rgba(0,0,0,0)` | h **64**、栅格 `auto 1fr auto`、子项宽 `logo:76` + `mobile-menu-btn:44`，`nav-menu` / `.mobile-slogan` / `.desktop-actions` 均 `display:none` 且宽 0、`scrollWidth 390 = innerWidth 390`、`html` 无 `lenis`、brand `animation-name: none`（≤1024 不播 M-03） |
+| `/` 亮 y=845 / 暗 y=845 | `header header-transparent on` | `rgb(242,241,228)` | nav → `rgb(0,0,0)`；阈值 **812** = 844 − 32 |
+| `/en` 亮 y=812 / y=814 | `header header-transparent` / `… on` | `rgba(0,0,0,0)` / `rgb(242,241,228)` | 逐像素卡在阈值两侧 |
+| `/en` 390 footer | `footer corporate-footer footer-home` | `rgb(242,241,228)` | `padding-top 34px` |
+| 汉堡菜单（开） | `.mobile-menu-overlay` `display:block`、`top 64px`、`z 999`、bg `rgba(15,32,62,0.26)`；`.mobile-nav` `28px 20px`、bg `rgb(17,17,17)`、`min-height 780px`、宽 390；条目 `16px 8px` / 18px / `border-bottom 0.666667px solid rgb(51,51,51)` / `radius 0`；active（首页）`rgb(240,106,33)`；`.mobile-contact` bg `rgb(23,61,134)`；`body overflow: hidden` | | 8 条；关闭后 `body overflow: visible` |
+
+**服务页 `/miniprogram-development`（zh）· 1441×900**
+
+| 场景 | class | bg | 其它实测 |
+| --- | --- | --- | --- |
+| y=0 | `header`（**无** `header-transparent`） | `rgba(17,17,17,0.98)` | `border-bottom 0.666667px rgba(255,255,255,0.14)`、`box-shadow rgba(0,0,0,0.16) 0 4px 18px`、h 76、nav `rgba(255,255,255,0.78)`、maxW **1240px**、navW **639.542** |
+| y=861（阈下） | `header` | `rgba(17,17,17,0.98)` | — |
+| y=863 / y=900（阈上） | `header on` | **`rgba(10,10,10,0.99)`** | `box-shadow → rgba(0,0,0,0.28) 0 10px 28px`（收编前内页是 `header-fixed`，`.on` 这条压深不生效） |
+| wheel ↓ / ↑ | `header hide` → `header` | `.98` → `.98` | `matrix(1,0,0,1,0,-76)` → `none` |
+| 暗 y=0 / y=900 | 与亮逐项一致 | 同上 | 实底皮肤不随主题变（与改动前一致） |
+| `.nav-item.active` | `href="/miniprogram-development"` | — | `::after` = **4×4 `rgb(240,106,33)`、`border-radius 50%`**；首页项虽带 vue-router 自动加的 `router-link-active`，其 `::after` 仍是 `scaleX(0)`（不误亮） |
+| footer | `footer corporate-footer` | `rgb(17,17,17)` | `padding-top 68px` |
+
+**服务页 `/en/miniprogram-development`（en）** —— 上表六项**逐项一致**（class 变化、bg、shadow、transform、阈值 862、footer）。390 端同样一致：y=0 `header` / h 64 / `scrollWidth 390`；y=814 起 `header on` `rgba(10,10,10,0.99)`；暗色两态一致；汉堡菜单开（8 条、`body overflow hidden`）关（`visible`）正常。中文服务页 390 菜单的 active 项是「小程序开发」`rgb(240,106,33)`。
+
+**M-03 页头入场（1441 端实测）**：`animation-name: headerFadeInDown-<hash>`（scoped 哈希，不撞 animate.css）、`1s`；延迟 logo `0s`、8 个导航项 `0.2s / 0.4s / 0.6s / 0.8s / 1s / 1.2s / 1.4s / 1.6s`、`.desktop-actions` `1.3s`。≤1024 端 `animation-name: none`（口径见 `specs/FRONTEND.md` §7 的 1025px 门槛决策）。
+
+**视觉复核（本次新增 PNG，`handoffs/A/shots/`）**
+
+| 文件 | 对应实测值 |
+| --- | --- |
+| `10-hdr-home-1441-light-y0.png` | `/` 1441 亮 y=0：透明页头 + 白色字标/导航（bg `rgba(0,0,0,0)`） |
+| `11-hdr-home-1441-light-y900-on.png` | `/` 1441 亮 y=900：`.on` 米底 **#F2F1E4** + 黑字/黑导航 |
+| `12-hdr-home-1441-wheel-down-hide.png` | `/` wheel↓：`.hide`，页头整体 `translateY(-76px)` 离屏 |
+| `13-hdr-home-390-light-menu-open.png` | `/` 390：汉堡菜单（深底 8 条、首页橙 `rgb(240,106,33)`、微信按钮蓝） |
+| `14-hdr-service-1441-light-y0.png` | 服务页 1441 亮 y=0：实底 `rgba(17,17,17,.98)`（无 `header-transparent`） |
+| `15-hdr-service-1441-light-y900-on.png` | 服务页 `.on`：`rgba(10,10,10,.99)` + 阴影加深 |
+| `16-hdr-service-390-dark-y900-on.png` | 服务页 390 暗 y=900：`.on` / h 64 / `scrollWidth 380 ≤ 390` |
+
+### M-01 滚动惯性实测（同一 preview）
+
+```text
+html class = "lenis"（仅 clientWidth ≥ 1025）；lenis 样式已随构建注入（/assets/index-1e78e00f.css）
+
+从 y=0 起 wheel deltaY=900（1441 宽），scrollY 逐帧采样（t 自派发起算）：
+  124ms → 412.00      854ms → 885.33
+  246ms → 627.33     1100ms → 895.33
+  367ms → 748.00     1343ms → 898.67
+  489ms → 815.33     1587ms → 900.00（到位）
+  → 总行程 Σ = 900 = 初始 momentum；指数衰减、无回弹、无过冲
+wheel deltaY=9000 → finalY 8999.33（同样是 Σ = 初始 momentum）
+
+逐帧滚动管线未被改挂（`.index4 .bg` 在惯性进行中仍随 window.scroll 更新）：
+  t≈1200ms 时 y = 8972.67、transform matrix(1, 0, 0, 1, 0, -63.4637)
+  连续采样 0 → -11.76 → -37.98 → -48.99 → -56.49 → -59.38 → -61.44 → -62.52
+
+降级（≤1024）：emulate 1024 宽后 documentElement.clientWidth = 1014（含滚动条）
+  → html class = ""（无 lenis），不再创建实例；程序化滚动回原生
+  （`style.css:243` 的 `scroll-behavior: smooth` 是既有全局值，非本次引入）
+```
+
+### M-31：判定 **N/A（未做）**，附证据
+
+- 目标元素 `footer .position_circle .circle`（SPEC M-31，参考站 `sources/style.css:819-903`）在本项目**不存在**：`rg -n 'position_circle' frontend/src` 无命中；`rg -n '\.circle\b'` 只剩 legacy 的 `AiDevelopment/index.vue:763 .circle-ring`（该 view 已不挂路由）。
+- 参考站那个圆按钮在首页 index5 的 `<footer>` 里（`sources/home.html:3246`）。本项目同一位置是 B 的 `views/Home/index.vue` 的 `.cta` 区块，主按钮渲染成 `<a class="pill hover_button">`（`:218`）——**磁吸 M-30 已在跑**（`.hover_button` 全仓 1 个实例，在首页），只是形态是 pill 不是圆环。
+- 因此要做 M-31，只有两条路：改 B 已验收的首页样板（B 的文件、已验收几何），或在共享 `Footer.vue` 里新造一个全站圆按钮（会和首页 CTA 重复，且是**新增 UI** 而不是收口）。**两条都超出本次「收编公共层」的授权范围，故未做**，等用户指定方向。
+
+### 发现、未修（本次范围外，记录备查）
+
+1. **共享外壳没有英文**（pre-existing，非本次引入）：`/en` 与 `/en/miniprogram-development` 实测 `documentElement.lang === 'zh-CN'`，桌面导航 8 项仍是中文（`Header.vue` 的 `menuList` 是硬编码中文，`git show 84b7929:frontend/src/layout/components/Header.vue` 逐字相同），链接目标也是中文路由。属 i18n 契约（语言注册 + 词典），需要专门任务。
+2. **`style.css` 仍写着 Unsplash 热链**（pre-existing）：`.page-header` 的 9 条 `https://images.unsplash.com/...`。实测**运行时零外部请求**（`performance.getEntriesByType('resource')` 过滤非本站 = `[]`；`/` 与 `/ai-development` 的 Network 也只有本站 8 条请求），因为规则目标 `.page-header` 现在不渲染（路由已改走 `ServiceLanding`）——属死规则。但写法仍违反 AGENTS「外部素材必须落到仓库并登记」，建议随素材任务一起清。
+3. **footer 的两层 `!important` 还没合并**（上一节判定里承诺给 A 的收口项，不在本次四条指令内，未动）：`style.css:1608` 一套 + `body .corporate-footer.footer`（`:2034`/`:2035`）一套，后者生效。在合并之前，`Footer.vue` 里 `var(--footer-*, 原值)` 的字面回退值仍**不能**当成有效值。
+4. **主题（亮/暗）没有 UI 入口**（pre-existing）：`stores/theme.js` 的 `toggle()` 全仓无人 import，本次上表的「暗」列一律是 `document.documentElement.dataset.theme='dark'` 注入，不是从界面点出来的。AGENTS 要求「19:00—07:00 暗 + 两态按钮」，属共享层，需要专门任务。
+5. `frontend/src/views/AiDevelopment/index.vue:968` 仍是 `transition: all 0.3s`，同文件 `:hover { transform: translateY(-3px) }` 因此只是「恰好」有过渡。该 view 当前不挂路由（`/ai-development` 走 `ServiceLanding`），且是 C/D 的文件，未动。
+6. 存量：`/cases` 直连 500（后端未起，有失败态）；`npm.cmd run lint` 带 `--fix` 不是只读；`package.json` 无 `test:unit/test:e2e`（T01 未做）。
+7. **移动端菜单在 768px 两侧不一致**（pre-existing，收编时按「不改行为」原样保留）：`.mobile-contact` / `.mobile-menu-overlay` / `.header-container` 在 ≤768px 被 `style.css` 的一组 legacy `!important` 盖住（`:320`、`:1372`、`:1373`、`:1374`，都在 `@media (max-width: 768px)`）。实测：
+
+   | 值 | 390（≤768，已验收） | 800（769–992，从未验收） |
+   | --- | --- | --- |
+   | `.mobile-contact` bg | `rgb(23,61,134)` = #173d86 | `rgba(7,193,96,0.1)`（Header.vue scoped 的绿色） |
+   | `.mobile-contact` radius | `0px` | `15px` |
+   | `.mobile-menu-overlay` bg | `rgba(15,32,62,0.26)` | `rgba(0,0,0,0.8)` |
+   | `.header-container` display / width | `flex` / `358px` | `grid` / `752px` |
+
+   要收口就得把这组 legacy 规则一次性并进页头段，并重跑 ≤768 / 769–992 两段矩阵（会影响 390 已验收几何），**本次未做**。已在 `Header.vue` 的 scoped 注释里标注例外，避免下一个 session 误读。
+
+### 给 C 的通知（§9.14 申请 1 的第 8 处）
+
+- `frontend/src/views/ServiceLanding.vue:59` **本次未改**。实测该规则本来就是显式属性（`transition: transform .25s ease, border-color .25s ease`），不含 `all`，`check:motion` 判定它已带 `transform` 过渡 → 无需改动。
+- 服务页的透明/收放**不需要 C 做任何事**：`/miniprogram-development` 与 `/en/miniprogram-development` 已实测拿到 `header` / `header on` / `header hide`（见上表）。C 只要**不**在页面里再写页头样式、不给逐帧写 `transform` 的元素加 `transition: all`。
+
+### 下次第一步
+
+1. 用户验收本次收编（预览 `http://localhost:3006/`）；工作区改动尚未提交，待指示。
+2. 待定：M-31 的方向（改首页样板变成圆按钮 / 不做）。
+3. 待做（各有独立授权）：共享外壳 i18n、主题 UI 入口 + 19:00–07:00 暗、footer 两层 `!important` 合并、Unsplash 死规则清理。
+
 ## T02-S 服务页样板集成与样板验收矩阵（2026-09-15 · Session A）
 
 ### 1. 合并
@@ -321,3 +510,95 @@ eslint 与基线逐 commit 对比（同一条只读命令，`-f json` 逐文件�
 1. 把本轮结论交给用户确认（预览命令见 §9；截图见 §4 路径）。
 2. 用户确认后：记录批准日期，向 B 发 T05、向 D 发 T04、向 C 发 T03。
 3. 未确认前不启动下游页面定稿；A 可先做 G1 / G2 / G3 / G4 / G5 与工作区公共层收编的处置。
+
+## A 收口 B / C 的共享层申请（2026-09-15 · Session A · 工作区改动，未提交）
+
+回应 `handoffs/B.md` §6.6、§9.14 登记 1 / 登记 2，与 `handoffs/C.md` §6.1—§6.3、§13.1—§13.4、§20.1—§20.5、§29.1。
+与上一批「收编公共层」一样 **尚未 `git add` / `git commit`**，两批一起待指示。
+
+### 1. 改动清单
+
+| 文件 | 动作 | 关闭的申请 |
+| --- | --- | --- |
+| `frontend/src/style.css` | 裸 `button:hover:not(:disabled)` 的 `transform: translateY(-2px) !important` 改写成 `:where(button:hover:not(:disabled))`（特异度 0）；下面发光块里的裸 `button:hover` 选择器删除，只留 Element Plus 按钮族 | B §9.14 登记 1、C §6.1 / §13.2 / §20.3 |
+| `frontend/src/style.css` | footer 米色从 `html:not([data-theme='dark']) .corporate-footer.footer-home` 移到 `… .corporate-footer`（间距 `--footer-pad-top: 146px` 仍只挂首页） | C §13.1 / §20.2 / §29.3 |
+| `frontend/src/style.css` | footer 两层 `!important` 合并：删掉 `body .corporate-footer.footer` 两条，把实际生效值（`border: 0`）并进 `.corporate-footer.footer` | B §9.14 登记 2、本文件「发现、未修」第 3 条 |
+| `frontend/src/style.css` | `:root` 新增语义色 `--color-bg / -ink / -ink-soft / -line / -accent / -on-accent`（取值 = C 页内 `--svc-*` 的字面值，替换后逐像素等价） | C §13.4 / §20.5 |
+| `frontend/src/style.css` | 新增 `html[data-theme='dark']` 层（`--color-*` 覆盖 + body 底色），取值与 `views/Home/index.vue` 的暗色 token 对齐 | G1 / B §6.2 / C §6.2 / §13.3 |
+| `frontend/src/style.css` | 删除 30 条 `.page-header` 的 `images.unsplash.com` 热链（3 组各 10 条） | 不变量「外部素材必须落仓库并登记」 |
+| `frontend/src/style.css` | `.home, .about, .cases, .news, [class$="-development"] { background: transparent !important }` 收窄成只留 `.home` | B §6.6 第 2 条（**部分**，理由见 §5） |
+| `frontend/src/styles/responsive.css` | `img, video, iframe` 的 `height: auto !important` → 去掉 `height` 上的 `!important`（`max-width: 100% !important` 保留） | B §6.6 第 3 条、C §20.4 |
+| `frontend/src/layout/index.vue` | 换页过渡 0.3s → 0.18s（`mode="out-in"` 保留，避免新旧两页同时占位） | C §29.1 |
+| `frontend/src/router/index.js` | `meta.title` 笔误：`数字文创`→`数字创意`、`WEB网站开发`→`WEB 网站开发`、`App开发`→`App 开发` | C「需 A 决策」第 1 条 |
+| `frontend/src/content/services.js` | 删掉 `https://www.seniorweb.cn/solution/34.html`（改成文字说明；`seniorweb` 全仓 0 命中） | G7 / 本文件 §6 |
+| `frontend/src/stores/theme.js` | 重写：`themeFromClock()` / `nextBoundary()` / `init()` / `toggle()` / `syncFromClock()` / `armBoundaryRefresh()` | G1 / B §6.2 |
+| `frontend/src/main.js` | 挂载前 `themeStore.init()` + `armBoundaryRefresh()`（避免首屏先闪一下错的颜色） | G1 |
+| `frontend/src/layout/components/Header.vue` | 新增两态按钮：桌面在 `.desktop-actions` 内、手机在汉堡菜单底部，`@click="themeStore.toggle()"` | G1 / B §6.2 |
+| `frontend/src/views/ServiceLanding.vue` | `[data-aos^='fade'] { transition-property: all }` → `opacity, transform`。**这是门禁修复**：合并 C 之后 main 上 `check:motion` 原本 `FAIL 1`（新增 1 条 transition-all） | C §6.3（按「收窄属性」而不是「加白名单」处理） |
+
+### 2. 命令实测
+
+```text
+$ npm.cmd run build
+dist/assets/index-1ea7242a.js   1,144.18 kB │ gzip: 366.19 kB
+dist/assets/index-6c1211d0.css    522.02 kB │ gzip:  68.14 kB   ← 收窄/删死规则后比基线 69.44 小
+✓ built in 14.63s                                              === EXIT: 0 ===
+
+$ npm.cmd run check:motion
+[PASS] transition: all —— 基线 42 条，本次扫到 42 条，新增 0 条
+[PASS] 可点击元素 hover 改 transform —— 无 transform 过渡的规则 0 条
+结果：PASS 2 / FAIL 0 / BASELINE-STALE 0                        === EXIT: 0 ===
+
+$ npm.cmd run check:routes
+结果：PASS 34 / FAIL 0 / PENDING 2（与改动前逐项一致）           === EXIT: 0 ===
+
+$ .\node_modules\.bin\eslint.cmd . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore
+✖ 801 problems (7 errors, 794 warnings)   ← 7 个 error 与基线同一批；warning 846 → 794
+```
+
+（`npm run lint` 带 `--fix`，不是只读检查，按 AGENTS 未使用。）
+
+### 3. 浏览器实测（`npm.cmd run preview` @ `localhost:4188`，headless Chromium 1217）
+
+**主题机制**（当地 01:09，落在 19:00—07:00 区间内）：
+
+| 场景 | 实测 |
+| --- | --- |
+| 首次进入（无存档） | `html.dataset.theme = "dark"` —— 由当地时间算出，不是注入 |
+| 点页头两态按钮 | `theme = "light"`，`localStorage.yz-theme = {"theme":"light","expiresAt":1789426800000}`；换算后正是 **今天 07:00** |
+| 刷新 | 仍是 `light`（手动选择存在存档里） |
+| 把存档 `expiresAt` 改成过期再刷新 | 回到 `dark` 且存档被清空 —— 即「手动选择到下一个边界到期」 |
+| 390 端汉堡菜单里的按钮 | 文案 `切换到暗色`，点击后 `theme = "dark"`、`scrollWidth 390 = innerWidth` |
+
+**全站矩阵**（17 条路由 × 1440/390 × 亮/暗 = **68 格**；含 `/`、`/en`、7 条服务路由、`/en/miniprogram-development`、`/ai-consultation`、`/about`、`/cases`、`/news`、`/privacy-policy`、`/legal-statement`、404）：
+
+- `documentElement.dataset.theme` 68/68 与预期一致（亮/暗真的分开了）。
+- 横向溢出 **0**；真实破图 **0**（首屏 `brokenImages` 计数来自 `loading="lazy"` 未进视口，手工复核 `complete && naturalWidth === 0` = 0 条）。
+- 外部请求 **0**（`seniorweb` 0 命中、unsplash 0 命中）。
+- console error 只有 `/cases` / `/news` 各 3 条，全部是后端未起的 500（存量 G8），非本次引入。
+
+**逐项复核（1440 与 390 实测值）**：
+
+| 项 | 改前 | 改后 |
+| --- | --- | --- |
+| 服务页 footer 底色（亮） | `rgb(17,17,17)` | `rgb(242,241,228)`，文字 `rgb(51,65,85)` |
+| `.service-hero__media img` 高（390） | 106px（被全局 `height:auto !important` 打回图片自身比例） | **250px**（SPEC 断点值） |
+| `.service-cta button:hover` transform | `matrix(1,0,0,1,0,-2)`（被全局 `!important` 压过） | `matrix(1,0,0,1,8,0)` = C 声明的 `translateX(8px)` |
+| 页头 `.desktop-actions` 几何（1440） | — | 右边界 1340 = 容器右边界；`scrollWidth 1440 = innerWidth`，未溢出 |
+
+证据图：`handoffs/A/shots/theme/`（13 张：`{1440|390}-{light|dark}-{home-top|service-top|service-footer}.png` + `390-dark-menu-open.png`）。
+
+### 4. 交给 C / B 的下一步（各自文件，A 不代改）
+
+- **给 C**：① `ServiceLanding.vue` 把页内 `--svc-*` 改成引用 `:root` 的 `--color-*`（值已按你的现值取名，逐像素等价），暗色就会自动跟随；② §6.3 的 `transition: all` 不再需要白名单（已按收窄属性处理，门禁现在 PASS）；③ 若仍要「服务页透明页头」（§20.1 / §29.2），需要先推翻 `specs/FRONTEND.md` §7 的「透明只给首页」裁定。
+- **给 B**：§6.6 第 2 条要彻底摘掉 `.home` 的 `!important`，需要你先删 `views/Home/index.vue:538` 的 `.home{background:var(--home-bg)}`（它现在正靠这条全局 `!important` 压着），删完 A 再摘。
+
+### 5. 未做 / 待用户决策（本批范围外）
+
+1. **服务页仍不是暗色**：`ServiceLanding.vue` 用的是 `--svc-*` 字面值，`--color-*` 的暗色覆盖不会自动跟（见 §4 给 C 的第 ① 条）。
+2. **C §20.1 / §29.2（服务页透明页头）**：与 `specs/FRONTEND.md` §7 已裁定的「透明只给首页」冲突，**未做**，需要先定口径。
+3. **C §20.1 留白（≤1024 的 80px → ~104px）**：属对 SPEC 断点表的偏离，**等用户允许**。
+4. **M-31（footer 圆形按钮发光）**：仍判定 N/A（目标元素在本项目不存在），等用户定方向。
+5. **G5（IoT / 数字创意全站零入口）**：主导航只能列四类服务是硬不变量，入口方案（footer 服务列 / 服务概览页）需要用户裁定。
+6. **`src/styles/motion.js` 三组 token 仍是 `MOTION_TODO`**（B §6.1）：SPEC 有明确条目的档位可以填，但 `ease.exit` / `ease.inOut` 这类字段在 SPEC 里没有对应条目，直接编数值违反「拿到 SPEC 前不要编造数值」，需要先定映射表。
+7. **存量**：`views/News/detail.vue` 的 mock 数组里还有 6 条 `images.unsplash.com`（`/news/:id` 是活路由，归 D / T04）；移动菜单 768px 两侧不一致；`/cases` 需后端；`lint` 带 `--fix`；无 `test:unit/test:e2e`。

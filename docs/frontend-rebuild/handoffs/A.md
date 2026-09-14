@@ -493,3 +493,14 @@ INTEGRATION.md:58  - **D2（2026-09-14）**：`/services/:slug` 形状确认为�
 BACKEND-TODO / 缺译 / 素材缺口：真实API/表单未接入；T00移动真机与完整截图未执行。
 未完成事项与原因：完整组件与双语注册将在后续基础迭代补齐。
 下次恢复的第一步：补齐Layout主题初始化和英文路由注册。
+
+# Session A · 收口 B / C 申请 + 主题机制（2026-09-15）
+
+基准commit：`96f561e`（main）
+本任务commit：**尚未提交**（与 2026-09-14 的「收编公共层」同在工作区，待指示）
+目标与完成范围：逐条收口 `B.md` §6.6 / §9.14 登记 1·2 与 `C.md` §6.1—§6.3 / §13.1—§13.4 / §20.1—§20.5 / §29.1；实现 AGENTS 不变量里的「主题两态按钮 + 当地时间 19:00—07:00 暗 + 手动选择到下一个边界到期」；修掉合并 C 之后 main 上 `check:motion` 的 `FAIL 1`。
+修改文件：`frontend/src/{style.css, styles/responsive.css, layout/index.vue, layout/components/Header.vue, router/index.js, content/services.js, stores/theme.js, main.js, views/ServiceLanding.vue}`
+验证命令、实际结果与证据路径：build / check:motion / check:routes / 只读 eslint 的真实输出、68 格矩阵、主题机制的逐项实测，全部见 `INTEGRATION.md` 的「A 收口 B / C 的共享层申请」一节（§2 命令、§3 浏览器）；证据图 `handoffs/A/shots/theme/`（13 张）。
+BACKEND-TODO / 缺译 / 素材缺口：服务页暗色要等 C 把 `--svc-*` 换成 `--color-*`；`views/News/detail.vue` 的 6 条 unsplash 热链归 D（T04）。
+未完成事项与原因：见 `INTEGRATION.md` 第 5 节 7 条（其中 4 条在等用户裁定或等 C/B 先动自己那份文件）。
+下次恢复的第一步：① 等用户对「服务页透明页头口径 / ≤1024 留白能否偏离 SPEC / G5 入口方案 / motion token 映射表」的裁定；② 把工作区两批改动一起提交（或按指示回滚）。

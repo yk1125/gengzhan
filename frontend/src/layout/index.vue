@@ -29,12 +29,18 @@ import { ArrowUp, ChatDotRound } from '@element-plus/icons-vue'
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
 import CustomCursor from '@/components/CustomCursor.vue'
+import { scrollToTop as smoothScrollToTop, useSmoothScroll } from '@/composables/useSmoothScroll'
 
 const router = useRouter()
 const showFloatButton = true
 
+// SPEC M-01：全站滚动惯性（桌面 `clientWidth > 1024` 才启用）。口径与有意偏离见
+// composables/useSmoothScroll.js 的文件头与 specs/FRONTEND.md §7。
+useSmoothScroll()
+
 const openAiConsultation = () => router.push('/ai-consultation')
-const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+// SPEC M-32：回顶走 M-01 的惯性（1200ms）；没有惯性实例时回退原生平滑滚动。
+const scrollToTop = () => smoothScrollToTop()
 
 </script>
 
@@ -52,7 +58,10 @@ const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  /* C.md §29.1：原 0.3s + mode="out-in" 让每次 SPA 跳转空等 330-375ms
+     （实测 373/355/337/330ms）。降到 0.18s 后旧页淡出更快，观感不空等；
+     mode="out-in" 保留，避免新旧两页同时占位造成跳动。 */
+  transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
 .fade-enter-from,

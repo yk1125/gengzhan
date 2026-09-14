@@ -10,13 +10,13 @@ const routes = [
         path: '',
         name: 'Home',
         component: () => import('@/views/Home/index.vue'),
-        meta: { title: '首页' }
+        meta: { title: '首页', headerTransparent: true }
       },
       {
         path: '/en',
         name: 'HomeEn',
         component: () => import('@/views/Home/index.vue'),
-        meta: { title: 'Home' }
+        meta: { title: 'Home', headerTransparent: true }
       },
       {
         path: '/ai-development',
@@ -34,7 +34,7 @@ const routes = [
         path: '/app-development',
         name: 'AppDevelopment',
         component: () => import('@/views/ServiceLanding.vue'),
-        meta: { title: 'App开发' }
+        meta: { title: 'App 开发' }
       },
       {
         path: '/iot-development',
@@ -52,13 +52,13 @@ const routes = [
         path: '/web-development',
         name: 'WebDevelopment',
         component: () => import('@/views/ServiceLanding.vue'),
-        meta: { title: 'WEB网站开发' }
+        meta: { title: 'WEB 网站开发' }
       },
       {
         path: '/digital-creativity',
         name: 'DigitalCreativity',
         component: () => import('@/views/ServiceLanding.vue'),
-        meta: { title: '数字文创' }
+        meta: { title: '数字创意' }
       },
       {
         path: '/cases',

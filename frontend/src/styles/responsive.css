@@ -183,7 +183,10 @@
   /* 防止横向溢出 */
   img, video, iframe {
     max-width: 100% !important;
-    height: auto !important;
+    /* 收窄（B.md §6.6 第 3 条 / C.md §20.4）：height 不再带 !important。
+       原来它把服务页 ≤768 的 hero 通栏图从 SPEC 的 250px 打回图片自身比例
+       （2400×670 → 212/137/106px），页面即使声明具体高度也盖不动。 */
+    height: auto;
   }
 
   /* 表单元素优化 */

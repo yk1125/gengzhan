@@ -15,16 +15,16 @@
  * （理论极值 25px）；反向 `translate(-20.1351px,-20.1648px)`；`mouseout` 后 t+1500ms 回 `translate(0px,0px)`。
  *
  * 必须摘掉元素自身的 CSS `transform` 过渡，否则 gsap 写不进去（B.md §9.10）：
- * 参考站那个 `.circle.hover_button` 是 `<div>`，自身没有 `transition`；本项目全局
- * `style.css:917-921` 给 `a, button, .el-button, [role="button"], .clickable` 都加了
- * `transition: all .3s cubic-bezier(...)`，而首页的磁吸实例恰恰是个 `<a class="pill hover_button">`。
- * 两者抢同一个 `transform` 时过渡会每帧重新计时，把位移拖成「先停滞、后追赶」——实测
- * t+306ms 时 gsap 的 inline 已写到 `translate3d(19.75px, 19.05px, 0)`，屏幕上的 computed
- * 只有 `matrix(1,0,0,1,1.14,1.1)`。绑定期间把 `transition-property` 置为 `none`
- * （inline，不依赖选择器、也不吃类的优先级），解绑时还原元素原本的 inline 值。
+ * 参考站那个 `.circle.hover_button` 是 `<div>`，自身没有 `transition`；本项目的磁吸
+ * 实例是 `<a class="pill hover_button">`，两者抢同一个 `transform` 时过渡会每帧重新
+ * 计时，把位移拖成「先停滞、后追赶」——实测 t+306ms 时 gsap 的 inline 已写到
+ * `translate3d(19.75px, 19.05px, 0)`，屏幕上的 computed 只有 `matrix(1,0,0,1,1.14,1.1)`。
+ * 守卫已抽成公共 composable（B.md §9.14 申请 2）：绑定期间把 inline
+ * `transition-property` 置为 `none`（不依赖选择器、也不吃类的优先级），解绑时还原。
  */
 import { onBeforeUnmount } from 'vue'
 import gsap from 'gsap'
+import { useJsTransformGuard } from '@/composables/useJsTransformGuard'
 
 /** SPEC M-30：无 `data-speed` 时的强度。 */
 const DEFAULT_STRENGTH = 50
@@ -54,12 +54,12 @@ export function useMagnetic (resolveRoot, selector = '.hover_button') {
   }
 
   function detach () {
-    bound.forEach(({ el, prevTransitionProperty }) => {
+    bound.forEach(({ el, release }) => {
       el.removeEventListener('mousemove', onMove)
       el.removeEventListener('mouseout', onOut)
       gsap.killTweensOf(el)
       gsap.set(el, { clearProps: 'transform' })
-      el.style.transitionProperty = prevTransitionProperty
+      release()
     })
     bound = []
   }
@@ -69,11 +69,10 @@ export function useMagnetic (resolveRoot, selector = '.hover_button') {
     detach()
     const root = (typeof resolveRoot === 'function' ? resolveRoot() : resolveRoot) || document
     bound = Array.from(root.querySelectorAll(selector)).map((el) => {
-      const prevTransitionProperty = el.style.transitionProperty
-      el.style.transitionProperty = 'none'
+      const release = useJsTransformGuard(el, true)
       el.addEventListener('mousemove', onMove)
       el.addEventListener('mouseout', onOut)
-      return { el, prevTransitionProperty }
+      return { el, release }
     })
     return bound.length
   }

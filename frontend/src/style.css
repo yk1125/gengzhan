@@ -279,43 +279,26 @@ body {
   box-shadow: none !important;
 }
 
-.el-button--primary:hover, button:hover:not(:disabled), .el-button:hover:not(.is-disabled) {
+/* 裸 `button:hover` 的抬升不再走 `!important`（B.md §9.14 登记 1 + C.md §6.1 / §13.2 / §20.3）：
+   1) B 要把磁吸挂到 <button> 上，逐帧写的 transform 不能被全局 `!important` 压掉；
+   2) C 的 `.service-cta button:hover{transform:translateX(8px)}` 要能盖过它。
+   改写成语义等价的 `:where()`（特异度 0）：默认观感不变，但页面规则可以覆盖。 */
+:where(button:hover:not(:disabled)) {
+  transform: translateY(-2px);
+  filter: none;
+}
+
+/* Element Plus 按钮族保留原有抬升与描边（当前仅 /cases/:id 与 /news/:id 在用）。 */
+.el-button--primary:hover, .el-button:hover:not(.is-disabled) {
   transform: translateY(-2px) !important;
   filter: none !important;
   box-shadow: 0 10px 24px rgba(184, 243, 107, 0.16) !important;
 }
 
-/* Header */
-.header {
-  height: 76px !important;
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  background: rgba(7, 16, 20, 0.72) !important;
-  border-bottom: 1px solid var(--line) !important;
-  box-shadow: none !important;
-  backdrop-filter: blur(18px) !important;
-}
-.header::before { display: none !important; }
-.header-fixed { background: rgba(7, 16, 20, 0.94) !important; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22) !important; }
+/* 页头的旧「深青 + 霓虹绿」皮肤已整段删除：它是与 Header.vue scoped `.header` 相互
+   覆盖的旧层之一，全部声明都被后来的规则压死（实测见 handoffs/INTEGRATION.md 的页头段
+   记录）。页头现在只有一处定义 —— 文件末尾的「页头（Header）」段。 */
 .main-content { padding-top: 0 !important; }
-.logo { background: transparent !important; padding: 0 !important; }
-.logo-img { height: 40px !important; }
-.nav-menu { gap: 2px !important; }
-.nav-item {
-  color: rgba(244, 247, 242, 0.68) !important;
-  border: 0 !important;
-  border-radius: 999px !important;
-  padding: 9px 14px !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-}
-.nav-item::before, .nav-item::after { display: none !important; }
-.nav-item:hover, .nav-item.active { color: var(--paper) !important; background: rgba(255,255,255,0.08) !important; box-shadow: none !important; text-shadow: none !important; transform: none !important; }
-.nav-item.active { color: var(--accent) !important; }
-.contact-info { border: 1px solid rgba(184, 243, 107, 0.32) !important; background: var(--accent-soft) !important; border-radius: 999px !important; padding: 9px 15px !important; box-shadow: none !important; font-size: 12px !important; }
-.contact-info:hover { border-color: var(--accent) !important; background: rgba(184,243,107,0.2) !important; transform: none !important; box-shadow: none !important; }
 .wechat-icon { color: var(--accent) !important; filter: none !important; animation: none !important; }
 
 /* Shared page rhythm */
@@ -342,16 +325,8 @@ body {
 
 @media (max-width: 768px) {
   .container, .header-container, .footer-container { width: min(100% - 32px, var(--content-max)) !important; }
-  .header { height: 64px !important; }
   .main-content { padding-top: 0 !important; }
-  .logo-img { display: block !important; height: 34px !important; }
-  .logo-name { display: none !important; }
-  .mobile-slogan { color: var(--muted) !important; text-shadow: none !important; font-size: 11px !important; }
-  .mobile-menu-btn span { background: var(--accent) !important; box-shadow: none !important; }
   .mobile-menu-overlay { top: 64px !important; background: rgba(7,16,20,0.7) !important; backdrop-filter: blur(10px) !important; }
-  .mobile-nav { background: var(--ink-900) !important; border: 1px solid var(--line) !important; border-top: 0 !important; border-radius: 0 0 16px 16px !important; }
-  .mobile-nav-item { color: var(--paper) !important; border: 0 !important; border-radius: 10px !important; }
-  .mobile-nav-item:hover, .mobile-nav-item.active { color: var(--accent) !important; background: var(--accent-soft) !important; transform: none !important; box-shadow: none !important; }
   .mobile-contact { background: var(--accent-soft) !important; border-color: rgba(184,243,107,0.3) !important; }
   .footer { margin-top: 56px !important; padding-top: 54px !important; }
 }
@@ -365,47 +340,36 @@ body {
   --yz-offwhite: #f2f2f0;
   --yz-line: #d2d2ce;
   --yz-copy: #676767;
+
+  /* 语义色（C.md §13.4 / §20.5 请求定名）。取值 = C 现在页内副本 --svc-* 的字面值，
+     所以 C 改成引用本组后逐像素等价。 */
+  --color-bg: #f2f1e4;
+  --color-ink: #111111;
+  --color-ink-soft: #6d6c60;
+  --color-line: #adadad;
+  --color-accent: #184dc4;
+  --color-on-accent: #ffffff;
+}
+
+/* 暗色层（html[data-theme='dark'] 由 stores/theme.js 在 19:00—07:00 或手动切换时挂上）。
+   取值与 views/Home/index.vue 的暗色 token 对齐（同一套口径）。页面只要引用 --color-*，
+   亮/暗会自动跟随；服务页目前用的还是页内 --svc-* 字面值（C.md §13.4 / §20.5）。 */
+html[data-theme='dark'] {
+  --color-bg: #14140f;
+  --color-ink: #f2f1e4;
+  --color-ink-soft: #9a978a;
+  --color-line: #45443c;
+  --color-accent: #4d7ce8;
+  --color-on-accent: #ffffff;
+}
+
+/* 外壳暗色：body 跟随页面底色，避免暗色下页面之间露出亮色缝隙。 */
+html[data-theme='dark'] body {
+  background: #14140f;
+  color: #f2f1e4;
 }
 
 /* One brand and navigation treatment across the whole site. */
-.header:not(.header-home) {
-  height: 76px !important;
-  background: rgba(17,17,17,.97) !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  backdrop-filter: blur(16px) !important;
-}
-.header:not(.header-home)::before { display: none !important; }
-.header:not(.header-home) .brand-simple { color: #fff !important; }
-.header:not(.header-home) .brand-en { color: rgba(255,255,255,.58) !important; }
-.header:not(.header-home) .nav-menu { gap: 8px !important; }
-.header:not(.header-home) .nav-item {
-  padding: 10px 11px !important;
-  color: rgba(255,255,255,.78) !important;
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  font-size: 12px !important;
-  box-shadow: none !important;
-}
-.header:not(.header-home) .nav-item:hover,
-.header:not(.header-home) .nav-item.active { color: #fff !important; background: transparent !important; }
-.header:not(.header-home) .nav-item.active::after {
-  display: block !important;
-  bottom: 0 !important;
-  width: 4px !important;
-  height: 4px !important;
-  background: var(--yz-orange) !important;
-  border-radius: 50% !important;
-  box-shadow: none !important;
-}
-.header:not(.header-home) .desktop-wechat-copy {
-  color: #fff !important;
-  background: transparent !important;
-  border: 1px solid rgba(255,255,255,.42) !important;
-  border-radius: 999px !important;
-}
-
 /* Editorial hero shared by service, company, case and news pages. */
 :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) {
   color: var(--yz-black) !important;
@@ -639,13 +603,19 @@ body {
   --footer-link-hover: #1f55bf;
   --footer-pad-top: 68px;
 }
-html:not([data-theme='dark']) .corporate-footer.footer-home {
+/* 亮色态：全站 footer 都用这套米色（C.md §13.1 / §20.2 / §29.3，用户反馈 ⑤
+   「服务页 footer 参考首页 footer 改颜色和背景」）。只换颜色 / 背景，不动排版：
+   间距类变量与 Footer.vue 里的 .footer-home 布局规则仍只挂首页。 */
+html:not([data-theme='dark']) .corporate-footer {
   --footer-bg: #F2F1E4;
   --footer-copy: #334155;
   --footer-heading: #1e2f48;
   --footer-line: #DDDCCE;
   --footer-icon: #184DC4;
   --footer-link-hover: #184DC4;
+}
+/* 首页亮色态额外的顶部留白（参考站 .footer .wrap 的 146px）。 */
+html:not([data-theme='dark']) .corporate-footer.footer-home {
   --footer-pad-top: 146px;
 }
 
@@ -658,14 +628,6 @@ html:not([data-theme='dark']) .corporate-footer.footer-home {
 .ai-consultation-page .consultation-mark,.ai-consultation-page .consultation-composer button { background: var(--yz-orange) !important; }
 
 @media (max-width: 992px) {
-  .header:not(.header-home) { height: 64px !important; }
-  .header:not(.header-home) .brand-simple { font-size: 18px !important; }
-  .header:not(.header-home) .brand-en,.header:not(.header-home) .mobile-wechat-copy { display: none !important; }
-  .header:not(.header-home) .mobile-menu-btn { display: flex !important; margin-left: auto !important; }
-  .header:not(.header-home) .mobile-menu-btn span { height: 1px !important; background: #fff !important; box-shadow: none !important; }
-  .header:not(.header-home) .mobile-menu-overlay { top: 64px !important; }
-  .header:not(.header-home) .mobile-nav { min-height: calc(100svh - 64px); background: #111 !important; border: 0 !important; border-radius: 0 !important; }
-  .header:not(.header-home) .mobile-nav-item { color: #fff !important; background: transparent !important; border-bottom: 1px solid #333 !important; border-radius: 0 !important; }
 }
 
 @media (max-width: 768px) {
@@ -781,7 +743,12 @@ html:not([data-theme='dark']) .corporate-footer.footer-home {
 .particle-background {
   display: none !important;
 }
-.home, .about, .cases, .news, [class$="-development"] { background: transparent !important; }
+/* 收窄（B.md §6.6 第 2 条）：原来把 .about / .cases / .news / [class$="-development"]
+   也一起声明成 transparent，但这些选择器全被后面的 body :is(…) 那组 #fff !important
+   盖死（特异度更高），是死规则；真正生效的只有 .home。
+   !important 暂时保留：views/Home/index.vue:538 的 .home{background:var(--home-bg)}
+   需要被压住，否则首页根元素会露出米色。要摘掉它得先由 B 删除那条声明（见 handoffs/A.md）。 */
+.home { background: transparent !important; }
 
 /* Shared enterprise treatment for all non-home public pages. */
 :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) {
@@ -934,6 +901,28 @@ html:not([data-theme='dark']) .corporate-footer.footer-home {
 }
 
 /* ========== 悬停元素发光效果（方案3） ========== */
+/* 可点击元素的过渡清单，**不含 transform**（B.md §9.14 申请 1 / §9.10 逐帧实测）。
+   写成显式属性而不是 `transition: all`：`all` 会把 `transform` 也纳入过渡，而任何由
+   JS/gsap 逐帧写 transform 的元素（磁吸 / 自定义光标 / 滚动惯性）一旦同时被 CSS 过渡
+   覆盖，浏览器每帧都对同一属性重新计时，位移被拖成「先停滞、后追赶」（实测：tween 写完
+   0.3s 之后屏幕上的位移才走完）。
+   清单覆盖本项目可点击元素 hover 实际会改的全部属性（机械扫描：color / background /
+   border-color / box-shadow / opacity / filter / transform / text-shadow）。`background`
+   简写里只有 background-color 参与过渡——这也是改前 `all` 与改后的唯一差别，本项目没有
+   任何 hover 换 background-image 的可点击元素。
+   需要过渡 transform 的由下面第二条规则与各组件自己的规则补齐；`check:motion` 守住
+   「可点击元素 hover 改 transform 却没有 transform 过渡」这条不变量。 */
+:root {
+  --ui-transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    text-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --ui-transition-transform: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* 可点击元素通用发光效果 */
 a,
 button,
@@ -941,8 +930,20 @@ button,
 [role="button"],
 .clickable {
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--ui-transition);
   position: relative;
+}
+
+/* 自己会改变 transform 的按钮族：把 transform 过渡补回来（B.md §9.14 申请 1 的 8 处
+   里，有 5 处就是 button / .el-button 的 hover 规则。补在基态而不是 hover 块里，进出
+   两个方向才有过渡）。刻意不含 `<a>`：`<a>` 上唯一由 JS 逐帧写 transform 的就是磁吸
+   实例（`<a class="pill hover_button">`），它由 useJsTransformGuard 在绑定期间兜底；
+   其余需要过渡 transform 的 `<a>` 由各自组件规则声明。 */
+button,
+.el-button,
+[role="button"],
+.clickable {
+  transition: var(--ui-transition), var(--ui-transition-transform);
 }
 
 /* 卡片悬停增强发光效果 - 使用更高优先级 */
@@ -962,8 +963,11 @@ button,
   filter: brightness(1.15) !important;
 }
 
-/* 按钮悬停发光 */
-button:hover:not(:disabled),
+/* 按钮悬停发光（收窄：只留 Element Plus 按钮族，B.md §6.6 第 1 条 / C.md §6.1）。
+   原来这里的裸 `button:hover:not(:disabled)` 是「青色霓虹 box-shadow + brightness + 抬升」
+   三件套，全部 `!important`：它压掉 C 的 `.service-cta button:hover`，页面只能靠更高
+   特异性硬顶。裸 `<button>` 的 hover 抬升已由上面的 `:where(button:hover:not(:disabled))`
+   提供，这里不再重复声明。 */
 .el-button:hover:not(.is-disabled),
 .el-button--primary:hover {
   box-shadow: 
@@ -983,8 +987,7 @@ button:hover:not(:disabled),
 }
 
 /* 按钮悬停发光增强 */
-.el-button--primary:hover,
-button.primary:hover {
+.el-button--primary:hover {
   box-shadow: 
     0 0 30px rgba(0, 212, 255, 0.6),
     0 0 60px rgba(0, 212, 255, 0.3),
@@ -1320,47 +1323,10 @@ button:disabled:hover,
   .case-detail .detail-hero { gap: 24px !important; }
 }
 
-/* 2026 public-site rebuild: common navigation and page heroes. */
-.header,
-.header.header-fixed {
-  height: 78px !important;
-  position: sticky !important;
-  top: 0;
-  background: rgba(255, 255, 255, .97) !important;
-  border-bottom: 1px solid #e4e9ef !important;
-  box-shadow: none !important;
-  backdrop-filter: blur(14px) !important;
-}
-.header::before { display: none !important; }
+/* 2026 public-site rebuild: common navigation and page heroes.
+   这里原有一整套 `.header / .logo / .nav-item` 第二层皮肤，已收编进文件末尾的
+   「页头（Header）」段（全站唯一一层）；`.desktop-contact` 是模板里不存在的死元素。 */
 .main-content { padding-top: 0 !important; }
-.header-container { display: grid !important; grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr) !important; gap: 28px !important; }
-.logo { gap: 10px !important; padding: 0 !important; background: transparent !important; border-radius: 0 !important; transform: none !important; }
-.logo:hover { transform: none !important; }
-.logo-img { height: 46px !important; width: 46px !important; object-fit: contain !important; }
-.logo-name { display: block !important; color: #102c67 !important; font-size: 18px !important; font-weight: 800 !important; line-height: 1.1 !important; letter-spacing: 0 !important; }
-.logo-subname { display: block; margin-top: 4px; color: #8090a2; font-size: 8px; font-weight: 700; letter-spacing: .12em; }
-.nav-menu { gap: 0 !important; height: 100% !important; }
-.nav-item {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  position: relative !important;
-  height: 78px !important;
-  padding: 0 15px !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  color: #445366 !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-}
-.nav-item::before { display: none !important; }
-.nav-item::after { content: '' !important; position: absolute !important; right: 15px !important; bottom: 0 !important; left: 15px !important; display: block !important; height: 3px !important; background: #1b4aa0 !important; transform: scaleX(0) !important; transition: transform .2s ease !important; }
-.nav-item:hover { color: #1b4aa0 !important; background: transparent !important; text-shadow: none !important; transform: none !important; }
-.nav-item.active { color: #173d86 !important; background: transparent !important; }
-.nav-item.active::after { transform: scaleX(1) !important; }
-.desktop-contact { justify-self: end !important; border: 1px solid #173d86 !important; border-radius: 0 !important; background: #173d86 !important; color: #fff !important; padding: 11px 16px !important; font-size: 13px !important; }
-.desktop-contact .wechat-icon { color: #fff !important; }
-.desktop-contact:hover { border-color: #102c67 !important; background: #102c67 !important; box-shadow: none !important; transform: none !important; }
 
 :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header {
   min-height: 392px !important;
@@ -1408,16 +1374,8 @@ button:disabled:hover,
   transform: none !important;
 }
 :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .header-decoration { display: none !important; }
-.ai-development .page-header { background-image: url('https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=2400&q=85') !important; }
-.app-development .page-header { background-image: url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=2400&q=85') !important; }
-.iot-development .page-header { background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2400&q=85') !important; }
-.miniprogram-development .page-header { background-image: url('https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=2400&q=85') !important; }
-.web-development .page-header { background-image: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=2400&q=85') !important; }
-.digital-creativity .page-header { background-image: url('https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&w=2400&q=85') !important; }
-.custom-development .page-header { background-image: url('https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2400&q=85') !important; }
-.about .page-header { background-image: url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=2400&q=85') !important; }
-.cases .page-header { background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2400&q=85') !important; }
-.news .page-header { background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=2400&q=85') !important; }
+/* 已删除 10 条 .page-header 的第三方图床热链（AGENTS 不变量：外部素材必须落仓库并登记；
+   .page-header 只存在于 7 个已不挂路由的 legacy *Development/index.vue 里，属死规则，运行时零请求）。 */
 
 /* The former service templates now read as an editorial service system. */
 :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development) :is(.intro-section, .types-section, .platforms-section, .scenarios-section, .advantages-section, .process-section, .cta-section) { padding: 84px 0 !important; }
@@ -1451,25 +1409,10 @@ button:disabled:hover,
 .cases-empty-points span { color: #fff; font-weight: 700; }
 .cases-empty-points p { grid-column: 2; margin: 5px 0 0 !important; color: rgba(255,255,255,.65) !important; font-size: 13px !important; }
 
-@media (max-width: 1040px) {
-  .header-container { grid-template-columns: auto 1fr auto !important; gap: 8px !important; }
-  .nav-item { padding: 0 9px !important; font-size: 13px !important; }
-  .nav-item::after { right: 9px !important; left: 9px !important; }
-}
 @media (max-width: 768px) {
-  .header,
-  .header.header-fixed { height: 66px !important; }
   .main-content { padding-top: 0 !important; }
   .header-container { display: flex !important; width: calc(100% - 32px) !important; }
-  .logo-img { width: 38px !important; height: 38px !important; }
-  .logo-name { display: none !important; }
-  .logo-subname { display: none !important; }
-  .mobile-slogan { color: #607184 !important; font-size: 10px !important; }
-  .mobile-menu-btn span { background: #173d86 !important; }
-  .mobile-menu-overlay { top: 66px !important; background: rgba(15, 32, 62, .26) !important; }
-  .mobile-nav { background: #fff !important; border: 0 !important; border-radius: 0 !important; box-shadow: 0 18px 30px rgba(20, 44, 80, .14) !important; }
-  .mobile-nav-item { color: #26384b !important; border-radius: 0 !important; }
-  .mobile-nav-item.active { background: #edf3ff !important; color: #173d86 !important; }
+  .mobile-menu-overlay { background: rgba(15, 32, 62, .26) !important; }
   .mobile-contact { border-radius: 0 !important; background: #173d86 !important; color: #fff !important; }
   :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header { min-height: 270px !important; padding: 48px 0 34px !important; }
   :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header .container::before { margin-bottom: 12px !important; font-size: 9px !important; }
@@ -1511,16 +1454,8 @@ button:disabled:hover,
   text-align: left !important;
 }
 :is(.ai-development, .app-development, .iot-development, .miniprogram-development, .web-development, .digital-creativity, .custom-development, .about, .cases, .news) .page-header :is(h1, p) { text-align: left !important; }
-.ai-development .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=2400&q=90'); }
-.app-development .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=2400&q=90'); }
-.iot-development .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2400&q=90'); }
-.miniprogram-development .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=2400&q=90'); }
-.web-development .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=2400&q=90'); }
-.digital-creativity .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&w=2400&q=90'); }
-.custom-development .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2400&q=90'); }
-.about .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=2400&q=90'); }
-.cases .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2400&q=90'); }
-.news .page-header { --inner-hero-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=2400&q=90'); }
+/* 已删除 10 条 .page-header 的第三方图床热链（AGENTS 不变量：外部素材必须落仓库并登记；
+   .page-header 只存在于 7 个已不挂路由的 legacy *Development/index.vue 里，属死规则，运行时零请求）。 */
 
 .ai-development .page-header .container { padding-right: 49% !important; }
 .ai-development .ai-hero-visual {
@@ -1707,9 +1642,12 @@ button:disabled:hover,
 .corporate-footer.footer {
   margin-top: 0 !important;
   padding: 0 !important;
-  background: var(--footer-bg, #fff) !important;
-  color: var(--footer-copy, #334155) !important;
-  border-top: 1px solid var(--footer-line, #e4e9ef) !important;
+  background: var(--footer-bg, #111) !important;
+  color: var(--footer-copy, #999) !important;
+  /* 原来是 border-top: 1px solid var(--footer-line)，但它被后面
+     body .corporate-footer.footer { border: 0 !important } 压掉、实际不生效。
+     收口成一处声明：B.md §9.14 登记 2 / INTEGRATION 发现 3。 */
+  border: 0 !important;
 }
 .corporate-footer .corporate-footer-container {
   width: min(100% - 64px, 1360px) !important;
@@ -2130,8 +2068,6 @@ body :is(.cases,.news) :is(.category-item,.news-category-item).active { color: #
 body :is(.ai-development,.app-development,.web-development) .cta-section { color: #111 !important; background: #f06a21 !important; }
 body :is(.ai-development,.app-development,.web-development) .cta-section h2 { color: #111 !important; }
 body :is(.ai-development,.app-development,.web-development) .cta-section .el-button { color: #fff !important; background: #111 !important; border-color: #111 !important; border-radius: 0 !important; }
-body .corporate-footer.footer { color: var(--footer-copy, #999) !important; background: var(--footer-bg, #111) !important; border: 0 !important; }
-body .corporate-footer :is(.corporate-footer-column h3,.corporate-footer-logo strong) { color: var(--footer-heading, #fff) !important; }
 
 @media (max-width: 768px) {
   body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header { min-height: 390px !important; padding: 0 0 46px !important; }
@@ -2139,40 +2075,201 @@ body .corporate-footer :is(.corporate-footer-column h3,.corporate-footer-logo st
   body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about) :is(.intro-section,.content-section,.types-section,.platforms-section,.scenarios-section,.advantages-section,.process-section,.services-section,.values-section,.team-section,.contact-section) { padding: 78px 0 !important; }
 }
 
-body .ai-development .page-header { background-image: url('https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=2400&q=88') !important; }
-body .app-development .page-header { background-image: url('https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=2400&q=88') !important; }
-body .iot-development .page-header { background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=2400&q=88') !important; }
-body .miniprogram-development .page-header { background-image: url('https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=2400&q=88') !important; }
-body .web-development .page-header { background-image: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=2400&q=88') !important; }
-body .custom-development .page-header { background-image: url('https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2400&q=88') !important; }
-body .digital-creativity .page-header { background-image: url('https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&w=2400&q=88') !important; }
-body .about .page-header { background-image: url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=2400&q=88') !important; }
-body .cases .page-header { background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2400&q=88') !important; }
-body .news .page-header { background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=2400&q=88') !important; }
+/* 已删除 10 条 .page-header 的第三方图床热链（AGENTS 不变量：外部素材必须落仓库并登记；
+   .page-header 只存在于 7 个已不挂路由的 legacy *Development/index.vue 里，属死规则，运行时零请求）。 */
 
-/* Keep public navigation available and legible at every scroll position. */
-body .header,
-body .header.header-fixed,
-body .header:not(.header-home) {
-  position: fixed !important;
-  top: 0 !important;
-  right: 0 !important;
-  left: 0 !important;
-  z-index: 3000 !important;
-  height: 76px !important;
-  background: rgba(17,17,17,.98) !important;
-  border-bottom: 1px solid rgba(255,255,255,.14) !important;
-  box-shadow: 0 4px 18px rgba(0,0,0,.16) !important;
-  backdrop-filter: blur(14px) !important;
+/* ==========================================================================
+   页头（Header）—— 全站唯一一层
+
+   2026-09-14（Session A 收编 B 的临时接管，见 handoffs/INTEGRATION.md）。收编前同一批
+   声明散在四处并用 `body .header … !important` / `.header:not(.header-home) … !important`
+   相互压制，Header.vue 的 scoped 层里还另有一份 `.header` 底色 —— 这正是 AGENTS 说的
+   「继续叠加全局 !important 掩盖结构错误」。现在本段是页头样式的唯一定义处，靠**选择器
+   作用域 + 源码顺序**取胜，不用 `!important`（例外：为了让统一后的移动端菜单压过
+   `@media (max-width: 768px)` 里 `!important` 的 legacy 内页移动样式，见下）。
+
+   规格与有意偏离见 specs/FRONTEND.md §7；参考站证据见 evidence/reference-effects/SPEC.md
+   M-03/M-04/M-05。
+   ========================================================================== */
+
+/* 基类：定位 / 层级 / 高度 / 过渡。过渡写成显式属性而不是 `transition: all`（§9.14 申请 1，
+   check:motion 守这条不变量）。0.6s 与参考站 `.header { transition: .6s }` 一致，M-04 的
+   底色反转与 M-05 的收起共用同一条过渡。 */
+.header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 3000;
+  height: 76px;
+  transition: background-color .6s ease, border-color .6s ease, box-shadow .6s ease,
+    backdrop-filter .6s ease, transform .6s ease;
 }
-body .header .brand-simple,
-body .header .nav-item,
-body .header .desktop-wechat-copy { color: #fff !important; }
-body .header .brand-en { color: rgba(255,255,255,.58) !important; }
-body .header .nav-item.active { color: #fff !important; }
-body .header .nav-item.active::after { background: #f06a21 !important; }
-@media (max-width: 768px) {
-  body .header,
-  body .header.header-fixed,
-  body .header:not(.header-home) { height: 64px !important; }
+.header::before { display: none; }
+
+/* 实底皮肤（默认；内页用的就是这套）：深色实底 + 1px 亮边 + 轻阴影。 */
+.header {
+  background: rgba(17, 17, 17, .98);
+  border-bottom: 1px solid rgba(255, 255, 255, .14);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, .16);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+/* M-04：滚过「一屏高 − 半个页头」后实底压深一档（全站生效；透明顶另见下面的米色分支）。
+   参考站：`sources/function.js:4587-4591`（阈值）+ `sources/style.css:586-607`（配色）。 */
+.header.on {
+  background: rgba(10, 10, 10, .99);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .28);
+}
+/* M-05：滚轮向下收起、向上恢复（全站）。参考站 `sources/style.css:624-626`。 */
+.header.hide { transform: translateY(-100%); }
+
+/* 透明顶皮肤：由路由 `meta.headerTransparent` 声明（目前是首页 `/` 与 `/en`）。
+   为什么不做成全站：内页首屏底色不统一 —— ServiceLanding 的 creative 首屏是浅蓝
+   `#b8cfdf` + 深色字、custom 是 `#5c564e`，透明顶配白字不可读。口径与决定见
+   specs/FRONTEND.md §7。 */
+.header.header-transparent {
+  background: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+/* M-04 透明顶：底色转参考站米色 #F2F1E4 + 文字/图标反转（`sources/style.css:586-607`）。 */
+.header.header-transparent.on { background: #F2F1E4; }
+
+/* 字标与导航：几何两套皮肤共用，只有配色分叉。 */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  cursor: pointer;
+}
+.brand-simple { font-size: 22px; font-weight: 800; letter-spacing: .06em; white-space: nowrap; }
+.brand-en { margin-left: 10px; font-size: 8px; font-weight: 700; letter-spacing: .18em; white-space: nowrap; }
+.nav-menu { display: flex; align-items: center; gap: 8px; height: 100%; }
+.nav-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 78px;
+  padding: 10px 11px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  /* 12px 下 0.5px 的字距是 B 样板实测值：`.nav-item` 的每字 0.5px 让 8 个菜单项的
+     总宽停在 583.542px（nav 含 7×8px gap = 639.542px），与参考站尺度一致。
+     这是收编时唯一需要按字面恢复的几何量，见 handoffs/INTEGRATION.md 的对照表。 */
+  letter-spacing: .5px;
+  box-shadow: none;
+  text-shadow: none;
+  transform: none;
+}
+.nav-item::before { display: none; }
+.nav-item::after {
+  content: '';
+  position: absolute;
+  right: 15px;
+  left: 15px;
+  bottom: 0;
+  display: block;
+  height: 3px;
+  background: #1b4aa0;
+  transform: scaleX(0);
+  transition: transform .2s ease;
+}
+.nav-item.active::after {
+  transform: scaleX(1);
+  width: 4px;
+  height: 4px;
+  background: var(--yz-orange);
+  border-radius: 50%;
+  box-shadow: none;
+}
+
+/* 实底皮肤配色（内页） */
+.header:not(.header-transparent) .brand-simple { color: #fff; }
+.header:not(.header-transparent) .brand-en { color: rgba(255, 255, 255, .58); }
+.header:not(.header-transparent) .nav-item { color: rgba(255, 255, 255, .78); }
+.header:not(.header-transparent) .nav-item:hover,
+.header:not(.header-transparent) .nav-item.active { color: #fff; background: transparent; }
+.header:not(.header-transparent) .desktop-wechat-copy {
+  color: #fff;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, .42);
+  border-radius: 999px;
+}
+
+/* 透明顶皮肤配色（首页） */
+.header-transparent .brand-simple { color: #fff; }
+.header-transparent .brand-en { color: rgba(255, 255, 255, .58); }
+.header-transparent .nav-item { color: rgba(255, 255, 255, .88); }
+.header-transparent .nav-item:hover,
+.header-transparent .nav-item.active { color: #fff; background: transparent; }
+.header-transparent .nav-item.active::after { bottom: 1px; background: #f06a21; }
+.header-transparent .desktop-wechat-copy {
+  color: #fff;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, .45);
+  border-radius: 999px;
+  min-height: 38px;
+}
+
+/* M-04 透明顶反色：米底上的文字/图标转黑（参考站 `.header.on` 的 `color: #000` + logo
+   `filter: invert(1)`；本项目字标是文字，没有 <img>，所以只反色不过滤）。 */
+.header-transparent.on .brand-simple,
+.header-transparent.on .brand-en,
+.header-transparent.on .nav-item,
+.header-transparent.on .nav-item:hover,
+.header-transparent.on .nav-item.active { color: #000; }
+.header-transparent.on .desktop-wechat-copy { color: #000; background: transparent; border-color: rgba(0, 0, 0, .4); }
+.header-transparent.on .desktop-wechat-copy:hover { color: #fff; background: #111; }
+.header-transparent.on .mobile-menu-btn span { background: #000; }
+
+/* 桌面容器：三列栅格（字标 / 导航 / 操作）。宽度由上面的
+   `.container, .header-container, .footer-container` 统一给出。 */
+.header-container {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr);
+  gap: 28px;
+  margin: 0 auto;
+  height: 100%;
+  align-items: center;
+  position: relative;
+}
+
+/* 移动端微信按钮在全站都是隐藏的（桌面走 .desktop-actions，手机走汉堡菜单里的条目）。
+   这条要盖过 `@media (max-width: 768px)` 里把 .mobile-wechat-copy 打开的那段 legacy。 */
+.header .mobile-wechat-copy { display: none; }
+
+@media (max-width: 1040px) {
+  .header-container { grid-template-columns: auto 1fr auto; gap: 8px; }
+  .nav-item::after { right: 9px; left: 9px; }
+}
+
+/* ≤992px：桌面导航收起，改汉堡 + 全屏深色菜单。两套皮肤共用同一套移动端外观
+   （收编前首页与内页各有一份几乎相同的 `!important`；唯一差异是激活项颜色，
+   这里统一取首页的橙色 —— 与桌面 `.nav-item.active::after` 的橙色一致）。 */
+@media (max-width: 992px) {
+  .header { height: 64px; }
+  .brand-simple { font-size: 18px; }
+  .brand-en { display: none; }
+  /* 桌面导航收起，改汉堡 + 全屏菜单。收编前这条在 Header.vue 的 scoped 层里
+     （`.desktop-nav, .desktop-contact { display: none }`），漏掉它会让 8 个导航项
+     在手机上继续参与栅格 —— 实测 390px 下 `.header-container` 变成三列挤在 390 内。
+     右侧 `.desktop-actions`（微信按钮）在两套皮肤下都保留，与样板一致。 */
+  .desktop-nav { display: none; }
+  /* `.mobile-menu-overlay` 的 display/top 不在这里：它的基类（display: none; top: 80px）
+     在 Header.vue 的 scoped 层，只有同层同选择器才能按源码顺序压过去 —— 放到这里会被
+     压死，实测汉堡点开后遮罩 display:none、菜单打不开。这一层只给遮罩的皮肤。 */
+  /* 移动端菜单面板与条目的皮肤不在这里：那一层没有全局规则了（旧的 `--paper`/`#edf3ff`
+     两套 legacy 已随这次收编删除），全部收在 Header.vue 的 scoped 块里 —— 写在这里会
+     被 scoped 属性选择器的优先级压死，反而要重新加 `!important`。 */
 }

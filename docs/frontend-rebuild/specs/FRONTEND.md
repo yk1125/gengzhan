@@ -160,6 +160,15 @@ sessionStorage['yz.theme.override'] = { value, expiresAt: 下一当地07:00/19:0
 - 不整包加载源站第三方跟踪、客服或企业提交接口；取证与产品资产分开存放。
 - 素材必须有本地副本与来源登记：入库时记录 source URL、获取日期、文件 hash、尺寸或 viewBox、本地路径（登记口径见 REFERENCE §3）；禁止运行时引用参考站 URL，禁止热链 `seniorweb.cn` / `cdn.seniorweb.cn`。素材未到位时使用显式占位，不得用公司名或参考站图片填充。
 - 页头入场动画门槛（2026-09-14 用户决策，**有意偏离参考站**）：参考站用 `document.body.clientWidth > 1365` 作为 `head_animate()` 的唯一门槛（`function.js:4558`），因此 1025–1365px 区间页头不播入场动画（元素仍正常可见，无 opacity 隐藏）。该数值全库仅此一处，不属于参考站断点体系（真实断点为 1024 移动端 / 1920 大屏），且参考站布局 CSS 在 1025–1365 仍按桌面处理，判定为遗漏而非设计。本项目**不照抄**：门槛改为 `clientWidth > 1024`，与统一移动端断点对齐——≤1024px 不播放，≥1025px 播放。其余参数照抄 T00R SPEC M-03（延迟 `index*200+200` ms、时长 1s、`fadeInDown`、`.outdated svg` 1300ms、`.sun` 1400ms）。页头属 A 的公共层（`frontend/src/layout/index.vue`），B/C 只消费，不得各自实现页头入场。
+- 页头透明顶**只给首页**，且由路由显式声明（2026-09-14 收编 B 的临时接管时裁定；用户把「透明是只给首页还是全站」交给 A 定）：透明/实底由 `route.meta.headerTransparent` 决定，目前只挂在首页两个路由（`Home` `/` 与 `HomeEn` `/en`），其余页面一律实底皮肤。理由 = 内页首屏底色不统一：服务模板的 `creative` 首屏是浅蓝 `#b8cfdf` + 深色正文 `rgb(24,37,57)`，透明白字不可读。**M-04（`.on` 底色反转）与 M-05（`.hide` 滚轮收放）与皮肤无关，全站生效**——七类服务模板因此白拿同一套行为。页头样式只允许在 `frontend/src/style.css` 的「页头（Header）」段一处定义（靠选择器作用域 + 源码顺序取胜，**新增规则不得再叠 `!important`**）；`frontend/src/layout/components/Header.vue` 只保留汉堡按钮、移动菜单皮肤与 M-03 入场。C/D 的页面不得再写页头样式。
+- 逐帧写 `transform` 的元素（gsap / rAF / 磁吸 / 自定义光标 / 滚动惯性）**不得同时存在 CSS `transform` 过渡**，否则浏览器每帧对同一属性重新计时，位移被拖成「先停滞、后追赶」（逐帧实测见 handoffs/B.md §9.10）。绑定期间用 `useJsTransformGuard(el, on)`（`frontend/src/composables/useJsTransformGuard.js`）把 inline `transition-property` 置 `none`、解绑时还原。全局可点击元素过渡（`style.css` 的 `--ui-transition`）已不含 `transform`。`npm.cmd run check:motion` 只读守这两条不变量：不得新增 `transition: all`；可点击元素（`a` / `button` / `.el-button` / `[role=button]` / `.clickable`）的 `:hover` 改 `transform` 时必须有 `transform` 过渡。存量清单在 `frontend/scripts/motion-baseline.json`，只允许减少。
+- 全局滚动惯性（M-01）由 `frontend/src/composables/useSmoothScroll.js` 承载（`lenis@1.3.26`，`lerp: 0.08` = 逐帧指数衰减，与 SPEC 的 `momentum *= 1 - damping` 同一条；桌面 `clientWidth > 1024` 才建实例，≤1024 与 `prefers-reduced-motion: reduce` 回原生滚动）。**口径（2026-09-14 定，回应 handoffs/B.md §9.20 A4）**：
+  1. M-04 / M-05 继续挂在 `window` 的 `scroll` / `wheel` 上，**不改挂** lenis 的事件；
+  2. `[data-view]` / `[data-aos]` 触发点继续逐帧读真实 `window.scrollY`（`views/Home/useHomeScroll.js` 未改）；
+  3. 回顶（M-32）走 `lenis.scrollTo(0, { duration: 1.2 })`（对齐参考站 1200ms），无实例时回退原生 `behavior: 'smooth'`；
+  4. 其它原生 `window.scrollTo({ behavior: 'smooth' })` 由 lenis 的 `onNativeScroll` 自动重同步，不逐处改；
+  5. 路由切换在 `router.afterEach` 里 `reset()`（停上一页惯性 + 重新对齐；不主动写 scrollTop，避免与 `scrollBehavior` 抢）。
+  页面侧无需改动：只要仍按「每帧拿到一个 scrollTop」消费即可（`window.scrollY` 与 `scroll` 事件仍是唯一真源）。
 
 ## 8. 页面实现约束
 

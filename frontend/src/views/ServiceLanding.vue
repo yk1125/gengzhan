@@ -1937,7 +1937,9 @@ watch(
 }
 [data-aos^='fade'] {
   opacity: 0;
-  transition-property: all;
+  /* 收窄：本组只改 opacity 与 transform（位移见下方 [data-aos='fade-top']）。
+     `all` 会被 check:motion 判成「新增 transition-all」（B.md §9.14 申请 3）。 */
+  transition-property: opacity, transform;
 }
 [data-aos^='fade'].aos-animate {
   opacity: 1;

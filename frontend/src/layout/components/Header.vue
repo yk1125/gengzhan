@@ -1,8 +1,8 @@
 <template>
-<header
+  <header
     ref="headerRef"
     class="header"
-    :class="{ 'header-fixed': !isHome && isFixed, 'header-home': isHome, on: isOn, hide: isHidden }"
+    :class="{ 'header-transparent': headerTransparent, on: isOn, hide: isHidden }"
   >
     <div class="header-container">
       <div class="logo" @click="$router.push('/')">
@@ -11,7 +11,7 @@
       </div>
 
       <span class="mobile-slogan">软件研发服务</span>
-      
+
       <!-- 桌面端导航 -->
       <nav class="nav-menu desktop-nav">
         <router-link
@@ -24,9 +24,20 @@
           {{ item.name }}
         </router-link>
       </nav>
-      
+
       <!-- 桌面端操作 -->
       <div class="desktop-actions">
+        <button
+          class="theme-toggle"
+          type="button"
+          :title="themeToggleLabel"
+          :aria-label="themeToggleLabel"
+          :aria-pressed="themeStore.theme === 'dark'"
+          @click="themeStore.toggle()"
+        >
+          <el-icon :size="18"><Sunny v-if="themeStore.theme === 'light'" /><Moon v-else /></el-icon>
+          <span>{{ themeStore.theme === 'dark' ? '暗色' : '亮色' }}</span>
+        </button>
         <button class="wechat-copy desktop-wechat-copy" type="button" @click="copyToClipboard('YunZhanKk', '微信号')" title="点击复制微信号">
           <el-icon :size="18"><ChatDotRound /></el-icon>
           <span>微信：YunZhanKk</span>
@@ -67,7 +78,18 @@
           >
             {{ item.name }}
           </router-link>
-          
+
+          <button
+            class="mobile-theme-toggle"
+            type="button"
+            :aria-label="themeToggleLabel"
+            :aria-pressed="themeStore.theme === 'dark'"
+            @click="themeStore.toggle()"
+          >
+            <el-icon :size="20"><Sunny v-if="themeStore.theme === 'light'" /><Moon v-else /></el-icon>
+            <span>{{ themeStore.theme === 'dark' ? '切换到亮色' : '切换到暗色' }}</span>
+          </button>
+
           <div class="mobile-contact" @click="copyToClipboard('YunZhanKk', '微信号')">
             <el-icon :size="20" class="wechat-icon"><ChatDotRound /></el-icon>
             <span>WX: YunZhanKk</span>
@@ -81,18 +103,23 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { ChatDotRound } from '@element-plus/icons-vue'
+import { ChatDotRound, Moon, Sunny } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
+import { useThemeStore } from '@/stores/theme'
+
 const route = useRoute()
-const isHome = computed(() => route.path === '/' || route.path === '/en')
-// 英文站首页是独立路由 /en（router: Home / HomeEn），M-04/M-05 对两者都要生效。
+/** 主题（stores/theme.js）：19:00—07:00 按当地时间转暗，两态按钮手动切换、到下个边界到期。 */
+const themeStore = useThemeStore()
+const themeToggleLabel = computed(() => (themeStore.theme === 'dark' ? '切换到亮色' : '切换到暗色'))
+/** 透明顶：由路由 `meta.headerTransparent` 声明（首页 `/` 与 `/en`）。
+    为什么只给首页、以及 M-04/M-05 全站生效的口径，见 specs/FRONTEND.md §7。 */
+const headerTransparent = computed(() => route.meta.headerTransparent === true)
 
 const headerRef = ref(null)
-const isFixed = ref(false)
-/** SPEC M-04：`.on` —— 滚过 `clientHeight - headerHeight / 2` 后页头底色与配色反转。 */
+/** SPEC M-04：`.on` —— 滚过 `clientHeight - headerHeight / 2` 后页头底色反转（全站生效）。 */
 const isOn = ref(false)
-/** SPEC M-05：`.hide` —— 滚轮向下收起、向上恢复。 */
+/** SPEC M-05：`.hide` —— 滚轮向下收起、向上恢复（全站生效）。 */
 const isHidden = ref(false)
 const mobileMenuOpen = ref(false)
 
@@ -113,7 +140,6 @@ const headerHeight = () => {
 }
 
 const handleScroll = () => {
-  isFixed.value = window.scrollY > 100
   // M-04：distance = clientHeight - header.height() / 2，scrollTop > distance 时加 `.on`
   isOn.value = window.scrollY > document.documentElement.clientHeight - headerHeight() / 2
 }
@@ -163,249 +189,11 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.header {
-  width: 100%;
-  height: 80px;
-  background: rgba(10, 14, 39, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
-  box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.5),
-    0 0 40px rgba(0, 212, 255, 0.1);
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 1000;
-}
-
-.header::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(0, 212, 255, 0.5) 20%, 
-    rgba(0, 212, 255, 0.8) 50%, 
-    rgba(0, 212, 255, 0.5) 80%, 
-    transparent 100%);
-  animation: borderFlow 3s ease-in-out infinite;
-}
-
-@keyframes borderFlow {
-  0%, 100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.header-fixed {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  animation: slideDown 0.3s ease;
-  background: rgba(10, 14, 39, 0.95);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.7),
-    0 0 60px rgba(0, 212, 255, 0.2);
-}
-
-@keyframes slideDown {
-  from {
-    transform: translateY(-100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-.header-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 40px;
-  position: relative;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding: 5px;
-  border-radius: 10px;
-  background: rgba(10, 14, 39, 0.8);
-}
-
-.logo:hover {
-  transform: scale(1.05);
-}
-
-.logo-img {
-  height: 50px;
-  width: auto;
-  object-fit: contain;
-}
-
-.logo-name {
-  display: none;
-  color: #e8f8ff;
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.mobile-slogan {
-  display: none;
-  color: #bff1ff;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  text-shadow:
-    0 0 8px rgba(94, 213, 255, 0.75),
-    0 0 16px rgba(94, 213, 255, 0.35);
-}
-
-.nav-menu {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.nav-item {
-  padding: 10px 18px;
-  color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
-  font-size: 15px;
-  font-weight: 600;
-  border-radius: 10px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  border: 1px solid transparent;
-  letter-spacing: 0.5px;
-}
-
-.nav-item::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #00d4ff, transparent);
-  transform: translateX(-50%);
-  transition: width 0.3s ease;
-}
-
-.nav-item:hover {
-  color: #00d4ff;
-  background: rgba(0, 212, 255, 0.25);
-  border-color: rgba(0, 212, 255, 1);
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 
-    0 0 30px rgba(0, 212, 255, 1),
-    0 0 60px rgba(0, 212, 255, 0.7),
-    0 0 90px rgba(0, 212, 255, 0.5),
-    0 4px 15px rgba(0, 0, 0, 0.4);
-  text-shadow: 
-    0 0 15px rgba(0, 212, 255, 1),
-    0 0 30px rgba(0, 212, 255, 0.8),
-    0 0 45px rgba(0, 212, 255, 0.6);
-}
-
-.nav-item:hover::before {
-  width: 80%;
-}
-
-.nav-item.active {
-  color: #00d4ff;
-  background: rgba(0, 212, 255, 0.15);
-  border-color: rgba(0, 212, 255, 0.4);
-  box-shadow: 
-    0 0 15px rgba(0, 212, 255, 0.3),
-    0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.nav-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #00d4ff, transparent);
-  border-radius: 2px;
-  box-shadow: 0 0 10px #00d4ff;
-}
-
-.contact-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 20px;
-  background: rgba(7, 193, 96, 0.1);
-  border-radius: 25px;
-  border: 1px solid rgba(7, 193, 96, 0.3);
-  transition: all 0.3s ease;
-  position: relative;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  backdrop-filter: blur(10px);
-  overflow: hidden;
-}
-
-.contact-info::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: radial-gradient(circle, rgba(0, 212, 255, 0.3) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  transition: all 0.4s ease;
-}
-
-.contact-info:hover::before {
-  width: 200px;
-  height: 200px;
-}
-
-.contact-info:hover {
-  background: rgba(0, 212, 255, 0.15);
-  border-color: rgba(0, 212, 255, 0.6);
-  transform: scale(1.05);
-  box-shadow: 
-    0 0 20px rgba(0, 212, 255, 0.4),
-    0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-.wechat-icon {
-  color: #07c160;
-  filter: drop-shadow(0 0 5px rgba(7, 193, 96, 0.8));
-  position: relative;
-  z-index: 1;
-  animation: wechatPulse 2s ease-in-out infinite;
-}
-
-@keyframes wechatPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
+/* 页头的「皮肤」（底色 / 高度 / 字标 / 导航 / 移动端菜单骨架）已经收编进
+   src/style.css 的「页头（Header）」段 —— 全站唯一一层，界面里不再有第二份
+   `.header` 定义，这也是这里能一条 `!important` 都不用的原因。
+   本文件只保留这个组件自己特有的交互件：汉堡按钮、移动端菜单面板的几何与过渡、
+   以及 M-03 页头入场动画。 */
 
 /* 移动端汉堡菜单按钮 */
 .mobile-menu-btn {
@@ -427,8 +215,8 @@ onUnmounted(() => {
   height: 3px;
   background: #00d4ff;
   border-radius: 3px;
-  transition: all 0.3s ease;
   box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+  transition: transform 0.3s ease, opacity 0.3s ease, height 0.3s ease, background-color 0.3s ease;
 }
 
 .mobile-menu-btn.active span:nth-child(1) {
@@ -443,7 +231,7 @@ onUnmounted(() => {
   transform: rotate(-45deg) translate(7px, -7px);
 }
 
-/* 移动端菜单遮罩层 */
+/* 移动端菜单遮罩层：默认不显示，≤992px 由 style.css 的页头段打开 */
 .mobile-menu-overlay {
   position: fixed;
   top: 80px;
@@ -456,37 +244,49 @@ onUnmounted(() => {
   display: none;
 }
 
-/* 移动端导航菜单 */
+/* 移动端导航面板的皮肤：取值 = 首页 390 的实测值（样板就这么定的，收编后全站共用）。
+   放在这一层而不是 style.css：`.mobile-nav` / `.mobile-nav-item` 已经没有全局规则，
+   写在这里选择器优先级最高、也不必再加 `!important`（收编前这里是两套皮肤互相压制）。
+   实测对照见 handoffs/INTEGRATION.md 的 390 表：面板 28px 20px、条目 16px 8px / 18px /
+   直角 / 1px #333 分隔线、激活橙色 #f06a21、面板底 #111、min-height `100svh - 64px`。
+   ⚠️ 例外（存量，见 INTEGRATION.md「发现、未修」第 7 条）：`.mobile-contact` 与
+   `.mobile-menu-overlay` 的底色/圆角和 `.header-container` 的 display/width 在
+   ≤768px 仍被 style.css 里那一组 legacy `!important`（`:320` / `:1372` / `:1373` / `:1374`，
+   都在 `@media (max-width: 768px)`）盖住 —— 390 实测的 `#173d86` + 直角、遮罩
+   `rgba(15,32,62,.26)`、容器 `display:flex` 来自那几条，**不是下面这段**。收编时按
+   「不改行为」保留原样，所以 769–992px 与 ≤768px 的这几个值目前不一致。 */
 .mobile-nav {
-  background: linear-gradient(180deg, #0a0e27 0%, #1a1f3a 100%);
-  border-radius: 0 0 20px 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(0, 212, 255, 0.3);
-  border-top: none;
-  padding: 20px;
+  min-height: calc(100svh - 64px);
+  padding: 28px 20px;
   max-width: 100%;
+  background: #111;
+  border: 0;
+  border-radius: 0;
 }
 
 .mobile-nav-item {
   display: block;
-  padding: 15px 20px;
-  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  padding: 16px 8px;
+  color: #fff;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  margin-bottom: 10px;
-  border: 1px solid transparent;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #333;
+  border-radius: 0;
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease,
+    transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .mobile-nav-item:hover,
 .mobile-nav-item.active {
-  color: #00d4ff;
-  background: rgba(0, 212, 255, 0.15);
-  border-color: rgba(0, 212, 255, 0.4);
   transform: translateX(10px);
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.mobile-nav-item.active {
+  color: #f06a21;
 }
 
 .mobile-contact {
@@ -500,13 +300,54 @@ onUnmounted(() => {
   border: 1px solid rgba(7, 193, 96, 0.3);
   margin-top: 20px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }
 
 .mobile-contact:hover {
   background: rgba(0, 212, 255, 0.15);
   border-color: rgba(0, 212, 255, 0.6);
   transform: scale(1.05);
+}
+
+/* 主题两态按钮（桌面在 .desktop-actions 里，手机在汉堡菜单底部）。
+   颜色继承页头当前皮肤：透明顶是白字，.on 之后是黑字。 */
+.theme-toggle,
+.mobile-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.82;
+  cursor: pointer;
+  transition: opacity 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.theme-toggle:hover,
+.mobile-theme-toggle:hover {
+  opacity: 1;
+}
+
+.desktop-actions .theme-toggle {
+  margin-right: 8px;
+}
+
+.mobile-theme-toggle {
+  width: 100%;
+  margin-top: 20px;
+  padding: 15px 20px;
+  color: #fff;
+  border-color: #333;
+  border-radius: 0;
+  font-size: 16px;
+  opacity: 1;
 }
 
 /* 移动端菜单过渡动画 */
@@ -533,211 +374,97 @@ onUnmounted(() => {
   transform: translateY(-20px);
 }
 
-/* 响应式媒体查询 */
-@media screen and (max-width: 1200px) {
-  .header-container {
-    padding: 0 30px;
-  }
-
-  .nav-item {
-    padding: 10px 14px;
-    font-size: 14px;
-  }
-
-  .contact-info span {
-    font-size: 14px;
-  }
+/* 移动端标语：只在手机端显示 */
+.mobile-slogan {
+  display: none;
+  color: #bff1ff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-shadow:
+    0 0 8px rgba(94, 213, 255, 0.75),
+    0 0 16px rgba(94, 213, 255, 0.35);
 }
 
-@media screen and (max-width: 992px) {
-  .header {
-    height: 70px;
-  }
-
-  .header-container {
-    padding: 0 20px;
-  }
-
-  .logo-img {
-    display: none;
-  }
-
-  .logo-name {
-    display: block;
-    font-size: 15px;
-  }
-
-  .desktop-nav,
-  .desktop-contact {
-    display: none;
-  }
-
-  .mobile-menu-btn {
-    display: flex;
-  }
-
-  .mobile-slogan {
-    display: block;
-  }
-
+@media (max-width: 992px) {
+  /* 遮罩层的 display/top 必须留在这一层：基类（`display: none; top: 80px`）就在同一个
+     scoped 块里，同选择器同优先级、靠源码顺序压过去才有效。放到 style.css 里写
+     `.mobile-menu-overlay { display: block }` 会被这里的基类按 scoped 属性选择器的
+     优先级压死 —— 实测：点开汉堡后遮罩仍是 `display: none`，菜单打不开。
+     top 取 64px = 同一断点下的页头高度，遮罩紧贴页头下沿。 */
   .mobile-menu-overlay {
     display: block;
+    top: 64px;
   }
-}
-
-@media screen and (max-width: 576px) {
-  .header {
-    height: 56px;
-  }
-
-  .header-container {
-    padding: 0 12px;
-  }
-
-  .logo {
-    padding: 4px 8px;
-    border-radius: 8px;
-  }
-
-  .logo-name {
-    font-size: 14px;
-  }
-
-  .mobile-slogan {
-    font-size: 12px;
-    letter-spacing: 0.4px;
-  }
-
   .mobile-menu-btn {
+    display: flex;
+    position: absolute;
+    top: 20px;
+    right: 0;
     width: 28px;
     height: 22px;
   }
-
   .mobile-menu-btn span {
-    height: 2.5px;
+    height: 1px;
+    background: #fff;
+    box-shadow: none;
   }
-
-  .mobile-menu-overlay {
-    top: 56px;
-  }
-
-  .mobile-nav {
-    padding: 12px;
-    border-radius: 0 0 16px 16px;
-  }
-
-  .mobile-nav-item {
-    padding: 12px 16px;
-    font-size: 15px;
-    margin-bottom: 6px;
-    border-radius: 8px;
-  }
-
-  .mobile-contact {
-    padding: 12px 16px;
-    margin-top: 16px;
-    border-radius: 12px;
-    font-size: 14px;
+  .mobile-slogan {
+    display: block;
   }
 }
 
-/* 极小屏幕（<400px） */
-@media screen and (max-width: 400px) {
-  .header {
-    height: 52px;
-  }
-
-  .logo-name {
-    font-size: 13px;
-  }
-
+@media (max-width: 400px) {
   .mobile-slogan {
     font-size: 11px;
-  }
-
-  .mobile-menu-overlay {
-    top: 52px;
-  }
-
-  .mobile-nav-item {
-    padding: 10px 14px;
-    font-size: 14px;
   }
 }
 
 /* ==========================================================================
-   首页页头 —— SPEC M-04 / M-05
-   参考站 sources/style.css：基类 `.header` 不写 background（:213-228，即透明底）；
-   `.header.on { background: #F2F1E4 }` + logo / nav / 图标转黑（:586-607）；
-   `.header.hide { transform: translateY(-100%) }`（:624-626）；三处时长都是 `transition: .6s`。
-   选择器统一加 `.header.header-home` 前缀，避免被 style.css 里那几条
-   `.header { … !important }` 按源码顺序压回去。
+   M-03 页头入场逐项下坠
+
+   SPEC 值（`evidence/reference-effects/SPEC.md` M-03，证据 `sources/function.js:4557-4567`
+   `head_animate()` + `sources/main.css:2055-2067` 的 `@keyframes fadeInDown`）：
+   起始 `opacity: 0; transform: translate3d(0, -100%, 0)` → 结束 `opacity: 1; transform: none`；
+   `animation-duration: 1s`、`animation-fill-mode: both`、`ease`；只播一次、不做 scrub。
+   延迟：`.logo` 0ms；第 n 个导航项 `n * 200ms`（参考站 7 项 = 0.2s…1.4s）；
+   右侧工具栏 `1300ms`（参考站 `.r .outdated svg` 1300ms / `.r .sun` 1400ms）。
+
+   本项目的两处口径（见 specs/FRONTEND.md §7）：
+   1. 触发宽度取 **1025px** 而不是参考站的 `clientWidth > 1365`：本站在 1025–1365px 之间
+      仍是完整的桌面页头（桌面导航 992px 才收起），只让 992–1365 的笔记本没有入场动画
+      没有依据；统一用 SPEC M-01 的桌面线（>1024）更好解释。
+   2. 本页头有 8 个导航项（参考站 7 项）→ 延迟梯度到 1.6s；右侧工具栏只有一个按钮，
+      取参考站两个图标里的 **1300ms**。
+   keyframes 内联在这里而不是复用 animate.css：名字要跟着 scoped 一起改写，避免和
+   全局 animate.css 的同名 keyframes 互相干扰；数值与 animate.css 的 `fadeInDown` 相同。
    ========================================================================== */
-.header.header-home {
-  height: 76px !important;
-  position: fixed !important;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  transition: all .6s ease !important;
-}
-.header.header-home::before { display: none !important; }
-/* M-04：越过 `clientHeight - header.height() / 2` 后转米色 #F2F1E4 */
-.header.header-home.on { background: #F2F1E4 !important; }
-/* M-05：滚轮向下收起，向上恢复 */
-.header.header-home.hide { transform: translateY(-100%) !important; }
-
-.header.header-home .header-container { max-width: 1360px !important; }
-.header.header-home .logo { min-width: 190px; padding: 0 !important; background: transparent !important; color: #fff; }
-.header.header-home .logo-img { height: 46px !important; }
-.header.header-home .brand-simple { color: #fff; }
-.header.header-home .brand-en { color: rgba(255,255,255,.68); }
-.header.header-home .nav-menu { gap: 8px !important; }
-.header.header-home .nav-item { padding: 10px 11px !important; color: rgba(255,255,255,.88) !important; background: transparent !important; border: 0 !important; border-radius: 0 !important; font-size: 12px !important; font-weight: 600 !important; }
-.header.header-home .nav-item:hover,
-.header.header-home .nav-item.active { color: #fff !important; background: transparent !important; }
-.header.header-home .nav-item.active::after { display: block !important; bottom: 1px !important; width: 4px !important; height: 4px !important; background: #f06a21 !important; border-radius: 50% !important; box-shadow: none !important; }
-.header.header-home .desktop-wechat-copy { min-height: 38px; color: #fff !important; background: transparent !important; border: 1px solid rgba(255,255,255,.45) !important; border-radius: 999px !important; }
-.header.header-home .desktop-wechat-copy:hover { color: #111 !important; background: #fff !important; }
-
-/* M-04 配色反转：参考站写作 `.header.on .l .logo img { filter: invert(1) }` + `color: #000`。 */
-.header.header-home.on .logo-img { filter: invert(1); }
-.header.header-home.on .brand-simple,
-.header.header-home.on .brand-en,
-.header.header-home.on .nav-item,
-.header.header-home.on .nav-item:hover,
-.header.header-home.on .nav-item.active { color: #000 !important; }
-.header.header-home.on .desktop-wechat-copy { color: #000 !important; background: transparent !important; border-color: rgba(0, 0, 0, .4) !important; }
-.header.header-home.on .desktop-wechat-copy:hover { color: #fff !important; background: #111 !important; }
-.header.header-home.on .mobile-menu-btn span { background: #000 !important; }
-.brand-simple { color: #16213b; font-size: 22px; font-weight: 800; letter-spacing: .06em; white-space: nowrap; }
-.brand-en { margin-left: 10px; color: #738096; font-size: 8px; font-weight: 700; letter-spacing: .18em; white-space: nowrap; }
-
-@media (max-width: 992px) {
-  .header.header-home { height: 64px !important; }
-  .header.header-home .logo { min-width: 0; padding: 0 !important; }
-  .header.header-home .brand-simple { font-size: 18px; }
-  .header.header-home .brand-en { display: none; }
-  .header.header-home .mobile-wechat-copy { display: none !important; }
-  .header.header-home .mobile-menu-btn { display: flex !important; margin-left: auto; }
-  .header.header-home .mobile-menu-btn span { height: 1px !important; background: #fff !important; box-shadow: none !important; }
-  .header.header-home .mobile-menu-overlay { top: 64px !important; }
-  .header.header-home .mobile-nav { min-height: calc(100svh - 64px); padding: 28px 20px; background: #111 !important; border: 0 !important; border-radius: 0 !important; }
-  .header.header-home .mobile-nav-item { margin: 0; padding: 16px 8px; color: #fff !important; background: transparent !important; border-bottom: 1px solid #333 !important; border-radius: 0 !important; font-size: 18px; }
-  .header.header-home .mobile-nav-item.active { color: #f06a21 !important; }
-  .mobile-menu-btn {
-    display: flex !important;
-    position: absolute !important;
-    top: 20px !important;
-    right: 0 !important;
-    width: 28px !important;
-    height: 22px !important;
+@media (min-width: 1025px) {
+  .header .logo,
+  .header .nav-item,
+  .header .desktop-actions {
+    animation: headerFadeInDown 1s ease both;
   }
-  .mobile-menu-btn span { height: 1px !important; background: #fff !important; box-shadow: none !important; }
+  .header .logo { animation-delay: 0ms; }
+  .header .nav-item:nth-child(1) { animation-delay: 200ms; }
+  .header .nav-item:nth-child(2) { animation-delay: 400ms; }
+  .header .nav-item:nth-child(3) { animation-delay: 600ms; }
+  .header .nav-item:nth-child(4) { animation-delay: 800ms; }
+  .header .nav-item:nth-child(5) { animation-delay: 1000ms; }
+  .header .nav-item:nth-child(6) { animation-delay: 1200ms; }
+  .header .nav-item:nth-child(7) { animation-delay: 1400ms; }
+  .header .nav-item:nth-child(8) { animation-delay: 1600ms; }
+  .header .desktop-actions { animation-delay: 1300ms; }
+}
+
+@keyframes headerFadeInDown {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 </style>

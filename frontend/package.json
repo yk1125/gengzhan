@@ -8,7 +8,9 @@
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "check:routes": "node scripts/check-routes.mjs",
-    "check:routes:strict": "node scripts/check-routes.mjs --strict"
+    "check:routes:strict": "node scripts/check-routes.mjs --strict",
+    "check:motion": "node scripts/check-motion.mjs",
+    "check:motion:strict": "node scripts/check-motion.mjs --strict"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
