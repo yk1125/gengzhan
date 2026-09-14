@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "说明": "本项目自有 / 用户提供素材的登记表。与 reference-assets/assets-manifest.json 分开：那张表只登记从参考站抓取的素材（字段含抓取时间、源 URL 等），本表登记不来自参考站的素材。",
+  "登记依据": "AGENTS.md：外部素材（客户Logo、图标、图片、字体、视频）必须下载到仓库并登记来源与hash；禁止运行时热链参考站域名。",
+  "登记字段": ["用途", "本地路径", "字节数", "SHA256", "尺寸", "来源", "权利归属", "运行时处理", "登记时间", "登记人", "备注"],
+  "登记时间": "2026-09-14",
+  "登记人": "Session B",
+  "registry": [
+    {
+      "用途": "首页 index4 品牌宣言区块背景图（frontend/src/content/home.js 的 HOME_STATEMENT_BG）",
+      "本地路径": "frontend/public/assets/home/statement-bg.jpg",
+      "字节数": 467986,
+      "SHA256": "EAE77DB8B6908CDE59158ACFF791D524D71E78F75804BCF8A78C724C2869A071",
+      "尺寸": "2048x1536（4:3，JPEG，24bpp）",
+      "来源": "用户提供（2026-09-14）。原始文件 D:\\桌面\\微信图片_20260914014848.jpg，与本仓库副本 SHA256 一致，字节级复制，未转码、未裁剪、未重压缩。",
+      "权利归属": "北京耘栈科技有限公司（自有素材，公司 logo 墙实拍）",
+      "运行时处理": "仅 CSS 层处理，不改文件本体：index.vue 的 .index4 .bg 上 filter: brightness(0.55) saturate(0.9)（白字对比度需要，实测见 handoffs/B.md 9.21）。",
+      "登记时间": "2026-09-14",
+      "登记人": "Session B",
+      "备注": "替换原先占位的 frontend/public/services-showcase.jpg（CMMI 证书占位图，替换后已无任何引用）。原文件仍留在仓库，未删除（属既有仓库内容，是否清理交由该素材归属方决定）。"
+    }
+  ],
+  "未登记项": [
+    "仓库既有的 frontend/public/yunzhan-hero.mp4、yunzhan-hero-mobile-v3.mp4、logo-new.png、logo-v2.png 属项目原有素材，引入时没有登记记录；本表只登记本次新引入的素材，既有项待归属方补登记。"
+  ]
+}

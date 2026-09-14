@@ -1,0 +1,106 @@
+{
+  "index4": {
+    "rect": {
+      "x": 0,
+      "y": 3125,
+      "w": 390,
+      "h": 440
+    },
+    "pos": "relative",
+    "top": "0px",
+    "display": "block",
+    "visibility": "visible",
+    "opacity": "1",
+    "zIndex": "auto",
+    "color": "rgb(17, 17, 17)",
+    "fontSize": "14px",
+    "overflow": "visible",
+    "transform": "none",
+    "clipPath": "none"
+  },
+  "fix": {
+    "rect": {
+      "x": 0,
+      "y": 3125,
+      "w": 390,
+      "h": 440
+    },
+    "pos": "static",
+    "top": "0px",
+    "display": "block",
+    "visibility": "visible",
+    "opacity": "1",
+    "zIndex": "auto",
+    "color": "rgb(17, 17, 17)",
+    "fontSize": "14px",
+    "overflow": "clip",
+    "transform": "none",
+    "clipPath": "none"
+  },
+  "bg": {
+    "rect": {
+      "x": 0,
+      "y": 3125,
+      "w": 390,
+      "h": 440
+    },
+    "pos": "relative",
+    "top": "0px",
+    "display": "block",
+    "visibility": "visible",
+    "opacity": "1",
+    "zIndex": "1",
+    "color": "rgb(17, 17, 17)",
+    "fontSize": "14px",
+    "overflow": "visible",
+    "transform": "none",
+    "clipPath": "none"
+  },
+  "mask": {
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0
+    },
+    "pos": "absolute",
+    "top": "0px",
+    "display": "none",
+    "visibility": "visible",
+    "opacity": "1",
+    "zIndex": "3",
+    "color": "rgb(17, 17, 17)",
+    "fontSize": "14px",
+    "overflow": "visible",
+    "transform": "none",
+    "clipPath": "none"
+  },
+  "text": {
+    "rect": {
+      "x": 0,
+      "y": 3180,
+      "w": 390,
+      "h": 63
+    },
+    "pos": "static",
+    "top": "76%",
+    "display": "block",
+    "visibility": "visible",
+    "opacity": "1",
+    "zIndex": "5",
+    "color": "rgb(255, 255, 255)",
+    "fontSize": "14px",
+    "overflow": "visible",
+    "transform": "none",
+    "clipPath": "none"
+  },
+  "textHTMLfirst120": "<div data-v-8584c21f=\"\" data-view=\"auto\" data-distance=\"4000\" data-animate=\"1000\" data-opacity=\"1,0\"><p data-v-8584c21f=",
+  "textInnerText": "与值得信赖的伙伴长期共创。\n把一次合作，做成持续多年的技术伙伴关系。",
+  "childrenRects": [
+    "DIV y=3180 h=63 op=1"
+  ],
+  "elementAtTextCenter": null,
+  "domOrder": [
+    "fix"
+  ]
+}

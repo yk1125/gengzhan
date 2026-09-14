@@ -1,0 +1,266 @@
+{
+  "m26": {
+    "headlineOffsetTop": 1056,
+    "samples": [
+      {
+        "y": 0,
+        "headlineRectTop": 1106,
+        "aos": false,
+        "line": "matrix(0, 0, 0, 1, 0, 0)"
+      },
+      {
+        "y": 200,
+        "headlineRectTop": 906,
+        "aos": false,
+        "line": "matrix(0, 0, 0, 1, 0, 0)"
+      },
+      {
+        "y": 280,
+        "headlineRectTop": 826,
+        "aos": false,
+        "line": "matrix(0, 0, 0, 1, 0, 0)"
+      },
+      {
+        "y": 300,
+        "headlineRectTop": 806,
+        "aos": false,
+        "line": "matrix(0, 0, 0, 1, 0, 0)"
+      },
+      {
+        "y": 306,
+        "headlineRectTop": 800,
+        "aos": false,
+        "line": "matrix(0, 0, 0, 1, 0, 0)"
+      },
+      {
+        "y": 320,
+        "headlineRectTop": 786,
+        "aos": false,
+        "line": "matrix(0, 0, 0, 1, 0, 0)"
+      },
+      {
+        "y": 400,
+        "headlineRectTop": 663,
+        "aos": true,
+        "line": "matrix(0.288984, 0, 0, 1, 0, 0)"
+      },
+      {
+        "y": 600,
+        "headlineRectTop": 452,
+        "aos": true,
+        "line": "matrix(0.683401, 0, 0, 1, 0, 0)"
+      }
+    ]
+  },
+  "m26Expand": [
+    {
+      "at": 266,
+      "transform": "matrix(0.984358, 0, 0, 1, 0, 0)"
+    },
+    {
+      "at": 532,
+      "transform": "matrix(0.999548, 0, 0, 1, 0, 0)"
+    },
+    {
+      "at": 797,
+      "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    {
+      "at": 1062,
+      "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    {
+      "at": 1313,
+      "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    {
+      "at": 1578,
+      "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    {
+      "at": 1844,
+      "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    {
+      "at": 2110,
+      "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    {
+      "at": 2378,
+      "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    {
+      "at": 2646,
+      "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    {
+      "at": 2911,
+      "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    {
+      "at": 3176,
+      "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    }
+  ],
+  "m11": {
+    "config": {
+      "pcSlots": 8,
+      "mobileSlots": 4,
+      "totalSwipers": 12,
+      "pcSlotSlideCounts": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "wrapperTransitionDuration": "0s",
+      "slotOverflow": "clip"
+    },
+    "ticks": [
+      {
+        "at": 0,
+        "activeIndex": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "wrapper": ""
+      },
+      {
+        "at": 1000,
+        "activeIndex": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "wrapper": ""
+      },
+      {
+        "at": 2000,
+        "activeIndex": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "wrapper": ""
+      },
+      {
+        "at": 3000,
+        "activeIndex": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "wrapper": "translate3d(0px, -96px, 0px)"
+      },
+      {
+        "at": 4000,
+        "activeIndex": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "wrapper": "translate3d(0px, -96px, 0px)"
+      },
+      {
+        "at": 5000,
+        "activeIndex": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "wrapper": "translate3d(0px, -96px, 0px)"
+      },
+      {
+        "at": 6000,
+        "activeIndex": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "wrapper": "translate3d(0px, -96px, 0px)"
+      },
+      {
+        "at": 7000,
+        "activeIndex": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "wrapper": "translate3d(0px, -192px, 0px)"
+      },
+      {
+        "at": 8000,
+        "activeIndex": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "wrapper": "translate3d(0px, -192px, 0px)"
+      },
+      {
+        "at": 9000,
+        "activeIndex": [
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "wrapper": "translate3d(0px, -192px, 0px)"
+      }
+    ]
+  }
+}

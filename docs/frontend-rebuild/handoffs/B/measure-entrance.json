@@ -1,0 +1,106 @@
+[
+  {
+    "markMs": 200,
+    "actualMs": 517,
+    "name": "08-entrance-0200ms-1440-zh-light.png",
+    "st": {
+      "chars": 24,
+      "charsVisible": 0,
+      "firstCharOpacity": "0.0149458",
+      "videoPaused": false,
+      "videoReady": 1,
+      "videoTime": 0
+    }
+  },
+  {
+    "markMs": 400,
+    "actualMs": 840,
+    "name": "08-entrance-0400ms-1440-zh-light.png",
+    "st": {
+      "chars": 24,
+      "charsVisible": 8,
+      "firstCharOpacity": "0.875552",
+      "videoPaused": false,
+      "videoReady": 4,
+      "videoTime": 0.36
+    }
+  },
+  {
+    "markMs": 700,
+    "actualMs": 1492,
+    "name": "08-entrance-0700ms-1440-zh-light.png",
+    "st": {
+      "chars": 24,
+      "charsVisible": 19,
+      "firstCharOpacity": "1",
+      "videoPaused": false,
+      "videoReady": 4,
+      "videoTime": 1.01
+    }
+  },
+  {
+    "markMs": 1000,
+    "actualMs": 2144,
+    "name": "08-entrance-1000ms-1440-zh-light.png",
+    "st": {
+      "chars": 24,
+      "charsVisible": 24,
+      "firstCharOpacity": "1",
+      "videoPaused": false,
+      "videoReady": 4,
+      "videoTime": 1.67
+    }
+  },
+  {
+    "markMs": 1600,
+    "actualMs": 3106,
+    "name": "08-entrance-1600ms-1440-zh-light.png",
+    "st": {
+      "chars": 24,
+      "charsVisible": 24,
+      "firstCharOpacity": "1",
+      "videoPaused": false,
+      "videoReady": 4,
+      "videoTime": 2.67
+    }
+  },
+  {
+    "markMs": 2200,
+    "actualMs": 4108,
+    "name": "08-entrance-2200ms-1440-zh-light.png",
+    "st": {
+      "chars": 24,
+      "charsVisible": 24,
+      "firstCharOpacity": "1",
+      "videoPaused": false,
+      "videoReady": 4,
+      "videoTime": 3.64
+    }
+  },
+  {
+    "markMs": 3200,
+    "actualMs": 5480,
+    "name": "08-entrance-3200ms-1440-zh-light.png",
+    "st": {
+      "chars": 24,
+      "charsVisible": 24,
+      "firstCharOpacity": "1",
+      "videoPaused": false,
+      "videoReady": 4,
+      "videoTime": 4.96
+    }
+  },
+  {
+    "markMs": 4500,
+    "actualMs": 7101,
+    "name": "08-entrance-4500ms-1440-zh-light.png",
+    "st": {
+      "chars": 24,
+      "charsVisible": 24,
+      "firstCharOpacity": "1",
+      "videoPaused": false,
+      "videoReady": 4,
+      "videoTime": 6.57
+    }
+  }
+]

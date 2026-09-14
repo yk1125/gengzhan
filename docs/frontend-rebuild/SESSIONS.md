@@ -38,11 +38,13 @@
 
 | 用途 | 分支 |
 | --- | --- |
-| 集成 | `codex/frontend-rebuild` |
+| 集成 | `main`（实际集成分支；见下方「实际工作树位置」） |
 | A 基础 | `codex/rebuild-foundation` |
 | B 首页/公司联系 | `codex/rebuild-brand` |
 | C 服务 | `codex/rebuild-services` |
 | D 内容 | `codex/rebuild-content` |
+
+> **2026-09-14 更正（Session A）**：上表是规划期的**建议名**。**实际集成在 `main` 上做**（主仓 `D:\桌面\gengzhan`）。`codex/frontend-rebuild` 从未承载任何集成提交——它停在 `b484790`（= docsCommit 基线本身，`git log` 只有 1 个提交），**已作废，不要再基于它同步前置或比对 merge-base**。取集成基准一律用 `main`。详见 [handoffs/INTEGRATION.md](handoffs/INTEGRATION.md) 的「集成分支更正」与「T02-H 首页样板集成」。
 
 工作树放在项目旁的 `gengzhan-worktrees/` 下，不在同一个源码目录开四个修改session。根工作区由A做集成，A的实现也在独立工作树。不得删除用户未提交内容、用hard reset清冲突或重写他人历史。
 

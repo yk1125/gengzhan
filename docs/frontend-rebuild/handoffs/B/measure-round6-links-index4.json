@@ -1,0 +1,108 @@
+{
+  "index4": {
+    "geo": {
+      "top": 4134,
+      "height": 7900,
+      "clientH": 900
+    },
+    "rows": [
+      {
+        "ratio": 0,
+        "y": 4134,
+        "outerOpacity": 1,
+        "p1Opacity": 0,
+        "p1Transform": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+        "p2Opacity": 0,
+        "p2Transform": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+        "maskDelay": "-2.3936s",
+        "bgTransform": "matrix(1, 0, 0, 1, 0, -22.6537)"
+      },
+      {
+        "ratio": 0.3,
+        "y": 6234,
+        "outerOpacity": 1,
+        "p1Opacity": 0,
+        "p1Transform": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+        "p2Opacity": 0,
+        "p2Transform": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+        "maskDelay": "-4.7152s",
+        "bgTransform": "matrix(1, 0, 0, 1, 0, -44.626)"
+      },
+      {
+        "ratio": 0.5,
+        "y": 7634,
+        "outerOpacity": 0.653,
+        "p1Opacity": 1,
+        "p1Transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "p2Opacity": 0,
+        "p2Transform": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+        "maskDelay": "-6.9552s",
+        "bgTransform": "matrix(1, 0, 0, 1, 0, -65.826)"
+      },
+      {
+        "ratio": 0.7,
+        "y": 9034,
+        "outerOpacity": 0,
+        "p1Opacity": 1,
+        "p1Transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "p2Opacity": 0.747,
+        "p2Transform": "matrix(0.9747, 0, 0, 0.9747, 0, 0)",
+        "maskDelay": "-9.1952s",
+        "bgTransform": "matrix(1, 0, 0, 1, 0, -87.026)"
+      },
+      {
+        "ratio": 1,
+        "y": 11134,
+        "outerOpacity": 0,
+        "p1Opacity": 1,
+        "p1Transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "p2Opacity": 1,
+        "p2Transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "maskDelay": "-8s",
+        "bgTransform": "matrix(1, 0, 0, 1, 0, -106)"
+      }
+    ],
+    "errors": []
+  },
+  "cta-light": {
+    "theme": "(light)",
+    "ctaBg": "rgb(24, 77, 196)",
+    "pillBg": "rgb(255, 255, 255)",
+    "pillColor": "rgb(24, 77, 196)",
+    "titleColor": "rgb(255, 255, 255)",
+    "contactColor": "rgba(255, 255, 255, 0.82)",
+    "errors": []
+  },
+  "cta-dark": {
+    "theme": "dark",
+    "ctaBg": "rgb(47, 85, 168)",
+    "pillBg": "rgb(255, 255, 255)",
+    "pillColor": "rgb(47, 85, 168)",
+    "titleColor": "rgb(255, 255, 255)",
+    "contactColor": "rgba(255, 255, 255, 0.82)",
+    "errors": []
+  },
+  "link-index2": {
+    "hover": {
+      "cls": "fixed_cursor cut",
+      "blend": "normal",
+      "disc": "114x114",
+      "label": "探索更多"
+    },
+    "tagBeforeClick": "A /ai-development",
+    "urlAfterClick": "http://localhost:3001/ai-development",
+    "errors": []
+  },
+  "link-index5": {
+    "hover": {
+      "cls": "fixed_cursor cut",
+      "disc": "114x114"
+    },
+    "urlAfterClick": "http://localhost:3001/cases",
+    "errors": [
+      "CONSOLE Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "CONSOLE 响应错误: y",
+      "CONSOLE 加载案例失败: y"
+    ]
+  }
+}

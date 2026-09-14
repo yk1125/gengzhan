@@ -618,11 +618,36 @@ body {
 :is(.ai-development,.app-development,.web-development) .cta-section h2 { color: #111 !important; }
 :is(.ai-development,.app-development,.web-development) .cta-section p { color: rgba(0,0,0,.62) !important; }
 :is(.ai-development,.app-development,.web-development) .cta-section .el-button { color: #fff !important; background: #111 !important; border-color: #111 !important; border-radius: 0 !important; }
-.corporate-footer.footer { color: #bbb !important; background: #111 !important; border-top: 0 !important; }
-.corporate-footer .corporate-footer-container { padding-top: 80px !important; }
-.corporate-footer .corporate-footer-column h3,.corporate-footer .corporate-footer-logo strong { color: #fff !important; }
-.corporate-footer :is(.corporate-footer-brand > p,.corporate-footer-column a,.corporate-footer-column button,.corporate-footer-column p,.corporate-footer-entries span,.corporate-footer-entries a,.corporate-footer-legal span,.corporate-footer-legal a) { color: #888 !important; }
-.corporate-footer .corporate-footer-bottom { border-top-color: #333 !important; }
+/* Footer 调色板：全站唯一入口。默认值是内页**当前生效**值（逐字一致，内页零变化）。
+   注意：内页的有效声明历史上分散在本文件 1703 / 2130 两处叠加的 !important 里，
+   下面这张表是唯一入口，改色只改这里（那两处的消费点已改为 var()）。
+   首页浅色模式由 Footer.vue 挂的 .footer-home 切到参考站的米色系统：底色 #F2F1E4、
+   .footer .wrap { margin: 146px auto 111px }（参考站 sources/style.css:905-915）；
+   正文/链接沿用本组件原生的深蓝灰——那套色本来就是给浅底设计的。
+   暗色模式不挂米色（首页此处是深底，接米色反而更突兀），自动沿用上面的深色收尾。 */
+.corporate-footer {
+  --footer-bg: #111;
+  --footer-copy: #999;
+  --footer-heading: #fff;
+  --footer-body: #40546a;
+  --footer-brand: #4a5d72;
+  --footer-logo-sub: #65758a;
+  --footer-entries: #53677d;
+  --footer-legal: #5a6d82;
+  --footer-line: #e6ebf1;
+  --footer-icon: #315fba;
+  --footer-link-hover: #1f55bf;
+  --footer-pad-top: 68px;
+}
+html:not([data-theme='dark']) .corporate-footer.footer-home {
+  --footer-bg: #F2F1E4;
+  --footer-copy: #334155;
+  --footer-heading: #1e2f48;
+  --footer-line: #DDDCCE;
+  --footer-icon: #184DC4;
+  --footer-link-hover: #184DC4;
+  --footer-pad-top: 146px;
+}
 
 /* Detail, policy and AI consultation surfaces. */
 :is(.case-detail,.news-detail,.policy-page,.ai-consultation-page) { color: var(--yz-black) !important; background: var(--yz-offwhite) !important; }
@@ -1682,31 +1707,31 @@ button:disabled:hover,
 .corporate-footer.footer {
   margin-top: 0 !important;
   padding: 0 !important;
-  background: #fff !important;
-  color: #334155 !important;
-  border-top: 1px solid #e4e9ef !important;
+  background: var(--footer-bg, #fff) !important;
+  color: var(--footer-copy, #334155) !important;
+  border-top: 1px solid var(--footer-line, #e4e9ef) !important;
 }
 .corporate-footer .corporate-footer-container {
   width: min(100% - 64px, 1360px) !important;
   max-width: 1360px !important;
-  padding: 68px 0 26px !important;
+  padding: var(--footer-pad-top, 68px) 0 26px !important;
 }
 .corporate-footer .corporate-footer-main { border: 0 !important; }
 .corporate-footer .corporate-footer-brand,
 .corporate-footer .corporate-footer-column { background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
 .corporate-footer .corporate-footer-column h3,
-.corporate-footer .corporate-footer-logo strong { color: #1e2f48 !important; -webkit-text-fill-color: currentColor !important; }
+.corporate-footer .corporate-footer-logo strong { color: var(--footer-heading, #1e2f48) !important; -webkit-text-fill-color: currentColor !important; }
 .corporate-footer .corporate-footer-brand > p,
-.corporate-footer .corporate-footer-column :is(a, button, p) { color: #40546a !important; }
-.corporate-footer .corporate-footer-brand > p { color: #4a5d72 !important; }
-.corporate-footer .corporate-footer-logo span { color: #65758a !important; }
-.corporate-footer .corporate-footer-entries { color: #53677d !important; }
-.corporate-footer .corporate-footer-entries :is(span, a) { color: #4a5d72 !important; }
+.corporate-footer .corporate-footer-column :is(a, button, p) { color: var(--footer-body, #40546a) !important; }
+.corporate-footer .corporate-footer-brand > p { color: var(--footer-brand, #4a5d72) !important; }
+.corporate-footer .corporate-footer-logo span { color: var(--footer-logo-sub, #65758a) !important; }
+.corporate-footer .corporate-footer-entries { color: var(--footer-entries, #53677d) !important; }
+.corporate-footer .corporate-footer-entries :is(span, a) { color: var(--footer-brand, #4a5d72) !important; }
 .corporate-footer .corporate-footer-legal,
-.corporate-footer .corporate-footer-legal :is(span, a) { color: #5a6d82 !important; }
+.corporate-footer .corporate-footer-legal :is(span, a) { color: var(--footer-legal, #5a6d82) !important; }
 .corporate-footer .corporate-footer-column :is(a, button):hover,
-.corporate-footer .corporate-wechat:hover { color: #1f55bf !important; }
-.corporate-footer .corporate-footer-bottom { margin-top: 58px !important; padding: 22px 0 0 !important; background: transparent !important; border-top: 1px solid #e6ebf1 !important; }
+.corporate-footer .corporate-wechat:hover { color: var(--footer-link-hover, #1f55bf) !important; }
+.corporate-footer .corporate-footer-bottom { margin-top: 58px !important; padding: 22px 0 0 !important; background: transparent !important; border-top: 1px solid var(--footer-line, #e6ebf1) !important; }
 @media (max-width: 640px) {
   .corporate-footer .corporate-footer-container { width: min(100% - 40px, 1360px) !important; padding: 34px 0 22px !important; }
   .corporate-footer .corporate-footer-bottom { margin-top: 24px !important; padding-top: 18px !important; }
@@ -2105,8 +2130,8 @@ body :is(.cases,.news) :is(.category-item,.news-category-item).active { color: #
 body :is(.ai-development,.app-development,.web-development) .cta-section { color: #111 !important; background: #f06a21 !important; }
 body :is(.ai-development,.app-development,.web-development) .cta-section h2 { color: #111 !important; }
 body :is(.ai-development,.app-development,.web-development) .cta-section .el-button { color: #fff !important; background: #111 !important; border-color: #111 !important; border-radius: 0 !important; }
-body .corporate-footer.footer { color: #999 !important; background: #111 !important; border: 0 !important; }
-body .corporate-footer :is(.corporate-footer-column h3,.corporate-footer-logo strong) { color: #fff !important; }
+body .corporate-footer.footer { color: var(--footer-copy, #999) !important; background: var(--footer-bg, #111) !important; border: 0 !important; }
+body .corporate-footer :is(.corporate-footer-column h3,.corporate-footer-logo strong) { color: var(--footer-heading, #fff) !important; }
 
 @media (max-width: 768px) {
   body :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header { min-height: 390px !important; padding: 0 0 46px !important; }

@@ -1,0 +1,156 @@
+{
+  "combos": {
+    "09-1440-zh-light": {
+      "viewport": "1440x900",
+      "theme": "(light)",
+      "homeLocale": "zh-CN",
+      "header": "header header-home",
+      "headerBg": "rgba(0, 0, 0, 0)",
+      "footer": "footer corporate-footer footer-home",
+      "footerBg": "rgb(242, 241, 228)",
+      "footerPadTop": "146px",
+      "homeBg": "rgb(242, 241, 228)",
+      "aos": {
+        "on": 1,
+        "total": 21
+      },
+      "videos": 1,
+      "externalUrls": [],
+      "seniorwebUrls": [],
+      "consoleErrors": []
+    },
+    "09-1440-zh-dark": {
+      "viewport": "1440x900",
+      "theme": "dark",
+      "homeLocale": "zh-CN",
+      "header": "header header-home",
+      "headerBg": "rgba(0, 0, 0, 0)",
+      "footer": "footer corporate-footer footer-home",
+      "footerBg": "rgb(17, 17, 17)",
+      "footerPadTop": "68px",
+      "homeBg": "rgb(20, 20, 15)",
+      "aos": {
+        "on": 1,
+        "total": 21
+      },
+      "videos": 1,
+      "externalUrls": [],
+      "seniorwebUrls": [],
+      "consoleErrors": []
+    },
+    "09-1440-en-light": {
+      "viewport": "1440x900",
+      "theme": "(light)",
+      "homeLocale": "en",
+      "header": "header header-home",
+      "headerBg": "rgba(0, 0, 0, 0)",
+      "footer": "footer corporate-footer footer-home",
+      "footerBg": "rgb(242, 241, 228)",
+      "footerPadTop": "146px",
+      "homeBg": "rgb(242, 241, 228)",
+      "aos": {
+        "on": 1,
+        "total": 21
+      },
+      "videos": 1,
+      "externalUrls": [],
+      "seniorwebUrls": [],
+      "consoleErrors": []
+    },
+    "09-1440-en-dark": {
+      "viewport": "1440x900",
+      "theme": "dark",
+      "homeLocale": "en",
+      "header": "header header-home",
+      "headerBg": "rgba(0, 0, 0, 0)",
+      "footer": "footer corporate-footer footer-home",
+      "footerBg": "rgb(17, 17, 17)",
+      "footerPadTop": "68px",
+      "homeBg": "rgb(20, 20, 15)",
+      "aos": {
+        "on": 1,
+        "total": 21
+      },
+      "videos": 1,
+      "externalUrls": [],
+      "seniorwebUrls": [],
+      "consoleErrors": []
+    },
+    "09-390-zh-light": {
+      "viewport": "390x844",
+      "theme": "(light)",
+      "homeLocale": "zh-CN",
+      "header": "header header-home",
+      "headerBg": "rgba(0, 0, 0, 0)",
+      "footer": "footer corporate-footer footer-home",
+      "footerBg": "rgb(242, 241, 228)",
+      "footerPadTop": "34px",
+      "homeBg": "rgb(242, 241, 228)",
+      "aos": {
+        "on": 5,
+        "total": 21
+      },
+      "videos": 1,
+      "externalUrls": [],
+      "seniorwebUrls": [],
+      "consoleErrors": []
+    },
+    "09-390-zh-dark": {
+      "viewport": "390x844",
+      "theme": "dark",
+      "homeLocale": "zh-CN",
+      "header": "header header-home",
+      "headerBg": "rgba(0, 0, 0, 0)",
+      "footer": "footer corporate-footer footer-home",
+      "footerBg": "rgb(17, 17, 17)",
+      "footerPadTop": "34px",
+      "homeBg": "rgb(20, 20, 15)",
+      "aos": {
+        "on": 5,
+        "total": 21
+      },
+      "videos": 1,
+      "externalUrls": [],
+      "seniorwebUrls": [],
+      "consoleErrors": []
+    },
+    "09-390-en-light": {
+      "viewport": "390x844",
+      "theme": "(light)",
+      "homeLocale": "en",
+      "header": "header header-home",
+      "headerBg": "rgba(0, 0, 0, 0)",
+      "footer": "footer corporate-footer footer-home",
+      "footerBg": "rgb(242, 241, 228)",
+      "footerPadTop": "34px",
+      "homeBg": "rgb(242, 241, 228)",
+      "aos": {
+        "on": 5,
+        "total": 21
+      },
+      "videos": 1,
+      "externalUrls": [],
+      "seniorwebUrls": [],
+      "consoleErrors": []
+    },
+    "09-390-en-dark": {
+      "viewport": "390x844",
+      "theme": "dark",
+      "homeLocale": "en",
+      "header": "header header-home",
+      "headerBg": "rgba(0, 0, 0, 0)",
+      "footer": "footer corporate-footer footer-home",
+      "footerBg": "rgb(17, 17, 17)",
+      "footerPadTop": "34px",
+      "homeBg": "rgb(20, 20, 15)",
+      "aos": {
+        "on": 5,
+        "total": 21
+      },
+      "videos": 1,
+      "externalUrls": [],
+      "seniorwebUrls": [],
+      "consoleErrors": []
+    }
+  }
+}
