@@ -1,0 +1,667 @@
+{
+  "combos": {
+    "09-1440-zh-light": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "docHeight": 13613,
+      "limit": 12713,
+      "theme": null,
+      "locale": "zh-CN",
+      "sections": {
+        "banner": 0,
+        "index1": 900,
+        "index2": 1838,
+        "index3": 3223,
+        "index4": 4164,
+        "index5": 12064
+      },
+      "homeBg": "rgb(242, 241, 228)",
+      "heroChars": 24,
+      "heroOn": true,
+      "index3Items": 4,
+      "index3MoveDisplay": "block",
+      "videos": 12,
+      "darkGroupShown": "none",
+      "wallPc": {
+        "display": "grid",
+        "slots": 8,
+        "imgs": 24
+      },
+      "wallMobile": {
+        "display": "none",
+        "slots": 4,
+        "imgs": 24,
+        "heights": [
+          "28px",
+          "30px",
+          "23px",
+          "28px",
+          "22px",
+          "21px",
+          "32px",
+          "32px",
+          "28px",
+          "23px",
+          "14px",
+          "24.5px",
+          "20px",
+          "28px",
+          "30px",
+          "18px",
+          "16px",
+          "22px",
+          "28px",
+          "23px",
+          "23px",
+          "19px",
+          "33px",
+          "25.5px"
+        ]
+      },
+      "publicTextDisplay": "block",
+      "sjTextDisplay": "none",
+      "insightsCards": 4,
+      "insightsWrapper": "grid",
+      "paginationDisplay": "none",
+      "aos": {
+        "total": 21,
+        "on": 1
+      },
+      "externals": [],
+      "consoleErrors": []
+    },
+    "09-1440-zh-dark": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "docHeight": 13613,
+      "limit": 12713,
+      "theme": "dark",
+      "locale": "zh-CN",
+      "sections": {
+        "banner": 0,
+        "index1": 900,
+        "index2": 1838,
+        "index3": 3223,
+        "index4": 4164,
+        "index5": 12064
+      },
+      "homeBg": "rgb(20, 20, 15)",
+      "heroChars": 24,
+      "heroOn": true,
+      "index3Items": 4,
+      "index3MoveDisplay": "block",
+      "videos": 12,
+      "darkGroupShown": "block",
+      "wallPc": {
+        "display": "grid",
+        "slots": 8,
+        "imgs": 24
+      },
+      "wallMobile": {
+        "display": "none",
+        "slots": 4,
+        "imgs": 24,
+        "heights": [
+          "28px",
+          "30px",
+          "23px",
+          "28px",
+          "22px",
+          "21px",
+          "32px",
+          "32px",
+          "28px",
+          "23px",
+          "14px",
+          "24.5px",
+          "20px",
+          "28px",
+          "30px",
+          "18px",
+          "16px",
+          "22px",
+          "28px",
+          "23px",
+          "23px",
+          "19px",
+          "33px",
+          "25.5px"
+        ]
+      },
+      "publicTextDisplay": "block",
+      "sjTextDisplay": "none",
+      "insightsCards": 4,
+      "insightsWrapper": "grid",
+      "paginationDisplay": "none",
+      "aos": {
+        "total": 21,
+        "on": 1
+      },
+      "externals": [],
+      "consoleErrors": []
+    },
+    "09-1440-en-light": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "docHeight": 13755,
+      "limit": 12855,
+      "theme": null,
+      "locale": "en",
+      "sections": {
+        "banner": 0,
+        "index1": 900,
+        "index2": 1900,
+        "index3": 3339,
+        "index4": 4280,
+        "index5": 12180
+      },
+      "homeBg": "rgb(242, 241, 228)",
+      "heroChars": 79,
+      "heroOn": true,
+      "index3Items": 4,
+      "index3MoveDisplay": "block",
+      "videos": 12,
+      "darkGroupShown": "none",
+      "wallPc": {
+        "display": "grid",
+        "slots": 8,
+        "imgs": 24
+      },
+      "wallMobile": {
+        "display": "none",
+        "slots": 4,
+        "imgs": 24,
+        "heights": [
+          "28px",
+          "30px",
+          "23px",
+          "28px",
+          "22px",
+          "21px",
+          "32px",
+          "32px",
+          "28px",
+          "23px",
+          "14px",
+          "24.5px",
+          "20px",
+          "28px",
+          "30px",
+          "18px",
+          "16px",
+          "22px",
+          "28px",
+          "23px",
+          "23px",
+          "19px",
+          "33px",
+          "25.5px"
+        ]
+      },
+      "publicTextDisplay": "block",
+      "sjTextDisplay": "none",
+      "insightsCards": 4,
+      "insightsWrapper": "grid",
+      "paginationDisplay": "none",
+      "aos": {
+        "total": 21,
+        "on": 1
+      },
+      "externals": [],
+      "consoleErrors": []
+    },
+    "09-1440-en-dark": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "docHeight": 13755,
+      "limit": 12855,
+      "theme": "dark",
+      "locale": "en",
+      "sections": {
+        "banner": 0,
+        "index1": 900,
+        "index2": 1900,
+        "index3": 3339,
+        "index4": 4280,
+        "index5": 12180
+      },
+      "homeBg": "rgb(20, 20, 15)",
+      "heroChars": 79,
+      "heroOn": true,
+      "index3Items": 4,
+      "index3MoveDisplay": "block",
+      "videos": 12,
+      "darkGroupShown": "block",
+      "wallPc": {
+        "display": "grid",
+        "slots": 8,
+        "imgs": 24
+      },
+      "wallMobile": {
+        "display": "none",
+        "slots": 4,
+        "imgs": 24,
+        "heights": [
+          "28px",
+          "30px",
+          "23px",
+          "28px",
+          "22px",
+          "21px",
+          "32px",
+          "32px",
+          "28px",
+          "23px",
+          "14px",
+          "24.5px",
+          "20px",
+          "28px",
+          "30px",
+          "18px",
+          "16px",
+          "22px",
+          "28px",
+          "23px",
+          "23px",
+          "19px",
+          "33px",
+          "25.5px"
+        ]
+      },
+      "publicTextDisplay": "block",
+      "sjTextDisplay": "none",
+      "insightsCards": 4,
+      "insightsWrapper": "grid",
+      "paginationDisplay": "none",
+      "aos": {
+        "total": 21,
+        "on": 1
+      },
+      "externals": [],
+      "consoleErrors": []
+    },
+    "09-390-zh-light": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "docHeight": 5905,
+      "limit": 5061,
+      "theme": null,
+      "locale": "zh-CN",
+      "sections": {
+        "banner": 0,
+        "index1": 608,
+        "index2": 1330,
+        "index3": 2608,
+        "index4": 3391,
+        "index5": 3831
+      },
+      "homeBg": "rgb(242, 241, 228)",
+      "heroChars": 24,
+      "heroOn": true,
+      "index3Items": 4,
+      "index3MoveDisplay": "none",
+      "videos": 12,
+      "darkGroupShown": "none",
+      "wallPc": {
+        "display": "none",
+        "slots": 8,
+        "imgs": 24
+      },
+      "wallMobile": {
+        "display": "grid",
+        "slots": 4,
+        "imgs": 24,
+        "heights": [
+          "28px",
+          "30px",
+          "23px",
+          "28px",
+          "22px",
+          "21px",
+          "32px",
+          "32px",
+          "28px",
+          "23px",
+          "14px",
+          "24.5px",
+          "20px",
+          "28px",
+          "30px",
+          "18px",
+          "16px",
+          "22px",
+          "28px",
+          "23px",
+          "23px",
+          "19px",
+          "33px",
+          "25.5px"
+        ]
+      },
+      "publicTextDisplay": "none",
+      "sjTextDisplay": "block",
+      "insightsCards": 4,
+      "insightsWrapper": "flex",
+      "paginationDisplay": "block",
+      "aos": {
+        "total": 21,
+        "on": 5
+      },
+      "externals": [],
+      "consoleErrors": []
+    },
+    "09-390-zh-dark": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "docHeight": 5905,
+      "limit": 5061,
+      "theme": "dark",
+      "locale": "zh-CN",
+      "sections": {
+        "banner": 0,
+        "index1": 608,
+        "index2": 1330,
+        "index3": 2608,
+        "index4": 3391,
+        "index5": 3831
+      },
+      "homeBg": "rgb(20, 20, 15)",
+      "heroChars": 24,
+      "heroOn": true,
+      "index3Items": 4,
+      "index3MoveDisplay": "none",
+      "videos": 12,
+      "darkGroupShown": "block",
+      "wallPc": {
+        "display": "none",
+        "slots": 8,
+        "imgs": 24
+      },
+      "wallMobile": {
+        "display": "grid",
+        "slots": 4,
+        "imgs": 24,
+        "heights": [
+          "28px",
+          "30px",
+          "23px",
+          "28px",
+          "22px",
+          "21px",
+          "32px",
+          "32px",
+          "28px",
+          "23px",
+          "14px",
+          "24.5px",
+          "20px",
+          "28px",
+          "30px",
+          "18px",
+          "16px",
+          "22px",
+          "28px",
+          "23px",
+          "23px",
+          "19px",
+          "33px",
+          "25.5px"
+        ]
+      },
+      "publicTextDisplay": "none",
+      "sjTextDisplay": "block",
+      "insightsCards": 4,
+      "insightsWrapper": "flex",
+      "paginationDisplay": "block",
+      "aos": {
+        "total": 21,
+        "on": 5
+      },
+      "externals": [],
+      "consoleErrors": []
+    },
+    "09-390-en-light": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "docHeight": 6233,
+      "limit": 5389,
+      "theme": null,
+      "locale": "en",
+      "sections": {
+        "banner": 0,
+        "index1": 608,
+        "index2": 1432,
+        "index3": 2885,
+        "index4": 3667,
+        "index5": 4107
+      },
+      "homeBg": "rgb(242, 241, 228)",
+      "heroChars": 79,
+      "heroOn": true,
+      "index3Items": 4,
+      "index3MoveDisplay": "none",
+      "videos": 12,
+      "darkGroupShown": "none",
+      "wallPc": {
+        "display": "none",
+        "slots": 8,
+        "imgs": 24
+      },
+      "wallMobile": {
+        "display": "grid",
+        "slots": 4,
+        "imgs": 24,
+        "heights": [
+          "28px",
+          "30px",
+          "23px",
+          "28px",
+          "22px",
+          "21px",
+          "32px",
+          "32px",
+          "28px",
+          "23px",
+          "14px",
+          "24.5px",
+          "20px",
+          "28px",
+          "30px",
+          "18px",
+          "16px",
+          "22px",
+          "28px",
+          "23px",
+          "23px",
+          "19px",
+          "33px",
+          "25.5px"
+        ]
+      },
+      "publicTextDisplay": "none",
+      "sjTextDisplay": "block",
+      "insightsCards": 4,
+      "insightsWrapper": "flex",
+      "paginationDisplay": "block",
+      "aos": {
+        "total": 21,
+        "on": 5
+      },
+      "externals": [],
+      "consoleErrors": []
+    },
+    "09-390-en-dark": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "docHeight": 6233,
+      "limit": 5389,
+      "theme": "dark",
+      "locale": "en",
+      "sections": {
+        "banner": 0,
+        "index1": 608,
+        "index2": 1432,
+        "index3": 2885,
+        "index4": 3667,
+        "index5": 4107
+      },
+      "homeBg": "rgb(20, 20, 15)",
+      "heroChars": 79,
+      "heroOn": true,
+      "index3Items": 4,
+      "index3MoveDisplay": "none",
+      "videos": 12,
+      "darkGroupShown": "block",
+      "wallPc": {
+        "display": "none",
+        "slots": 8,
+        "imgs": 24
+      },
+      "wallMobile": {
+        "display": "grid",
+        "slots": 4,
+        "imgs": 24,
+        "heights": [
+          "28px",
+          "30px",
+          "23px",
+          "28px",
+          "22px",
+          "21px",
+          "32px",
+          "32px",
+          "28px",
+          "23px",
+          "14px",
+          "24.5px",
+          "20px",
+          "28px",
+          "30px",
+          "18px",
+          "16px",
+          "22px",
+          "28px",
+          "23px",
+          "23px",
+          "19px",
+          "33px",
+          "25.5px"
+        ]
+      },
+      "publicTextDisplay": "none",
+      "sjTextDisplay": "block",
+      "insightsCards": 4,
+      "insightsWrapper": "flex",
+      "paginationDisplay": "block",
+      "aos": {
+        "total": 21,
+        "on": 5
+      },
+      "externals": [],
+      "consoleErrors": []
+    }
+  },
+  "mobile390": {
+    "viewport": {
+      "w": 390,
+      "h": 844
+    },
+    "docHeight": 5905,
+    "limit": 5061,
+    "theme": null,
+    "locale": "zh-CN",
+    "sections": {
+      "banner": 0,
+      "index1": 608,
+      "index2": 1330,
+      "index3": 2608,
+      "index4": 3391,
+      "index5": 3831
+    },
+    "homeBg": "rgb(242, 241, 228)",
+    "heroChars": 24,
+    "heroOn": true,
+    "index3Items": 4,
+    "index3MoveDisplay": "none",
+    "videos": 12,
+    "darkGroupShown": "none",
+    "wallPc": {
+      "display": "none",
+      "slots": 8,
+      "imgs": 24
+    },
+    "wallMobile": {
+      "display": "grid",
+      "slots": 4,
+      "imgs": 24,
+      "heights": [
+        "28px",
+        "30px",
+        "23px",
+        "28px",
+        "22px",
+        "21px",
+        "32px",
+        "32px",
+        "28px",
+        "23px",
+        "14px",
+        "24.5px",
+        "20px",
+        "28px",
+        "30px",
+        "18px",
+        "16px",
+        "22px",
+        "28px",
+        "23px",
+        "23px",
+        "19px",
+        "33px",
+        "25.5px"
+      ]
+    },
+    "publicTextDisplay": "none",
+    "sjTextDisplay": "block",
+    "insightsCards": 4,
+    "insightsWrapper": "flex",
+    "paginationDisplay": "block",
+    "aos": {
+      "total": 21,
+      "on": 5
+    },
+    "externals": [],
+    "consoleErrors": []
+  },
+  "mobile390Swipers": {
+    "before": {
+      "realIndex": 0,
+      "slidesPerView": 2,
+      "speed": 1000,
+      "spaceBetween": 20,
+      "loop": true,
+      "bullets": 4
+    },
+    "after": {
+      "realIndex": 2,
+      "tf": "translate3d(-371px, 0px, 0px)"
+    },
+    "afterBulletClick": 3
+  }
+}

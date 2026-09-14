@@ -1,0 +1,154 @@
+{
+  "m24Progression": {
+    "anchors": {
+      "limit": 12713,
+      "index5": 12064
+    },
+    "rows": [
+      {
+        "y": 0,
+        "on": 1,
+        "total": 21
+      },
+      {
+        "y": 400,
+        "on": 2,
+        "total": 21
+      },
+      {
+        "y": 700,
+        "on": 4,
+        "total": 21
+      },
+      {
+        "y": 1200,
+        "on": 6,
+        "total": 21
+      },
+      {
+        "y": 1800,
+        "on": 12,
+        "total": 21
+      },
+      {
+        "y": 2600,
+        "on": 18,
+        "total": 21
+      },
+      {
+        "y": 12064,
+        "on": 21,
+        "total": 21
+      },
+      {
+        "y": 12713,
+        "on": 21,
+        "total": 21
+      }
+    ]
+  },
+  "m24JumpToEnd": {
+    "y": 12713,
+    "on": 21,
+    "total": 21,
+    "invisible": 0
+  },
+  "m26": {
+    "triggerY": 306,
+    "before": {
+      "aos": false,
+      "line": "matrix(0, 0, 0, 1, 0, 0)"
+    },
+    "seq": [
+      {
+        "at": 76,
+        "aos": false,
+        "line": "matrix(0, 0, 0, 1, 0, 0)"
+      },
+      {
+        "at": 107,
+        "aos": false,
+        "line": "matrix(0, 0, 0, 1, 0, 0)"
+      },
+      {
+        "at": 453,
+        "aos": false,
+        "line": "matrix(0, 0, 0, 1, 0, 0)"
+      },
+      {
+        "at": 1394,
+        "aos": false,
+        "line": "matrix(0, 0, 0, 1, 0, 0)"
+      },
+      {
+        "at": 3229,
+        "aos": false,
+        "line": "matrix(0, 0, 0, 1, 0, 0)"
+      }
+    ]
+  },
+  "m11Swiper": {
+    "ticks": [
+      [
+        "(none)",
+        "(none)",
+        "(none)"
+      ],
+      [
+        "(none)",
+        "(none)",
+        "(none)"
+      ],
+      [
+        "(none)",
+        "(none)",
+        "(none)"
+      ],
+      [
+        "(none)",
+        "(none)",
+        "(none)"
+      ],
+      [
+        "(none)",
+        "(none)",
+        "(none)"
+      ],
+      [
+        "(none)",
+        "(none)",
+        "(none)"
+      ],
+      [
+        "(none)",
+        "(none)",
+        "(none)"
+      ],
+      [
+        "(none)",
+        "(none)",
+        "(none)"
+      ],
+      [
+        "(none)",
+        "(none)",
+        "(none)"
+      ],
+      [
+        "(none)",
+        "(none)",
+        "(none)"
+      ],
+      [
+        "(none)",
+        "(none)",
+        "(none)"
+      ],
+      [
+        "(none)",
+        "(none)",
+        "(none)"
+      ]
+    ]
+  }
+}

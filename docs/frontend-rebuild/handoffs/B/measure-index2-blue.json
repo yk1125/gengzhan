@@ -1,0 +1,65 @@
+{
+  "start": 1208,
+  "samples": [
+    {
+      "name": "12-index2-blue-000-1440-zh-light.png",
+      "at": 1208,
+      "st": {
+        "clips": [
+          "inset(0px 100% 0px 0px)",
+          "inset(0px 100% 0px 0px)",
+          "inset(0px 100% 0px 0px)"
+        ],
+        "y": 1208
+      }
+    },
+    {
+      "name": "12-index2-blue-030-1440-zh-light.png",
+      "at": 1328,
+      "st": {
+        "clips": [
+          "inset(0px 40% 0px 0px)",
+          "inset(0px 100% 0px 0px)",
+          "inset(0px 100% 0px 0px)"
+        ],
+        "y": 1328
+      }
+    },
+    {
+      "name": "12-index2-blue-050-1440-zh-light.png",
+      "at": 1408,
+      "st": {
+        "clips": [
+          "inset(0px 0% 0px 0px)",
+          "inset(0px 100% 0px 0px)",
+          "inset(0px 100% 0px 0px)"
+        ],
+        "y": 1408
+      }
+    },
+    {
+      "name": "12-index2-blue-070-1440-zh-light.png",
+      "at": 1488,
+      "st": {
+        "clips": [
+          "inset(0px -40% 0px 0px)",
+          "inset(0px 91% 0px 0px)",
+          "inset(0px 100% 0px 0px)"
+        ],
+        "y": 1488
+      }
+    },
+    {
+      "name": "12-index2-blue-100-1440-zh-light.png",
+      "at": 1608,
+      "st": {
+        "clips": [
+          "inset(0px)",
+          "inset(0px 31% 0px 0px)",
+          "inset(0px 100% 0px 0px)"
+        ],
+        "y": 1608
+      }
+    }
+  ]
+}

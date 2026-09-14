@@ -1,0 +1,101 @@
+{
+  "geo": {
+    "top": 4134,
+    "height": 7900,
+    "clientH": 900
+  },
+  "rows": [
+    {
+      "ratio": 0,
+      "y": 4134,
+      "outer1": "1",
+      "outer2": null,
+      "p1": "0",
+      "p2": null,
+      "rect": {
+        "x": 130,
+        "y": 633,
+        "w": 1180,
+        "h": 102
+      },
+      "firstVisible": 0,
+      "subColor": "rgba(255, 255, 255, 0.72)",
+      "bgFilter": "brightness(0.55) saturate(0.9)"
+    },
+    {
+      "ratio": 0.3,
+      "y": 6234,
+      "outer1": "1",
+      "outer2": null,
+      "p1": "0",
+      "p2": null,
+      "rect": {
+        "x": 130,
+        "y": 633,
+        "w": 1180,
+        "h": 102
+      },
+      "firstVisible": 0,
+      "subColor": "rgba(255, 255, 255, 0.72)",
+      "bgFilter": "brightness(0.55) saturate(0.9)"
+    },
+    {
+      "ratio": 0.5,
+      "y": 7634,
+      "outer1": "0.653",
+      "outer2": null,
+      "p1": "1",
+      "p2": null,
+      "rect": {
+        "x": 130,
+        "y": 633,
+        "w": 1180,
+        "h": 102
+      },
+      "firstVisible": 0,
+      "subColor": "rgba(255, 255, 255, 0.72)",
+      "bgFilter": "brightness(0.55) saturate(0.9)"
+    },
+    {
+      "ratio": 0.7,
+      "y": 9034,
+      "outer1": "0",
+      "outer2": null,
+      "p1": "1",
+      "p2": null,
+      "rect": {
+        "x": 130,
+        "y": 633,
+        "w": 1180,
+        "h": 102
+      },
+      "firstVisible": -1,
+      "subColor": "rgba(255, 255, 255, 0.72)",
+      "bgFilter": "brightness(0.55) saturate(0.9)"
+    },
+    {
+      "ratio": 1,
+      "y": 11134,
+      "outer1": "0",
+      "outer2": null,
+      "p1": "1",
+      "p2": null,
+      "rect": {
+        "x": 130,
+        "y": 633,
+        "w": 1180,
+        "h": 102
+      },
+      "firstVisible": -1,
+      "subColor": "rgba(255, 255, 255, 0.72)",
+      "bgFilter": "brightness(0.55) saturate(0.9)"
+    }
+  ],
+  "perf": {
+    "frames": 163,
+    "p50": "6.1",
+    "p95": "6.3",
+    "max": "7.1",
+    "long32": 0
+  }
+}

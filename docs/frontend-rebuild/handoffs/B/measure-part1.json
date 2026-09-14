@@ -1,0 +1,518 @@
+{
+  "desktop1440": {
+    "viewport": {
+      "w": 1440,
+      "h": 900
+    },
+    "docHeight": 13613,
+    "limit": 12713,
+    "theme": null,
+    "locale": "zh-CN",
+    "sections": {
+      "banner": 0,
+      "index1": 900,
+      "index2": 1838,
+      "index3": 3223,
+      "index4": 4164,
+      "index5": 12064
+    },
+    "flex1": 1538,
+    "flex2": 2429,
+    "pt1Start": 355,
+    "index4Height": 7900,
+    "index4Scrub": 7000,
+    "logoHeights": [
+      "28px",
+      "30px",
+      "23px",
+      "28px",
+      "22px",
+      "21px",
+      "32px",
+      "32px"
+    ],
+    "logoSrcs": [
+      "/assets/customers/jun_7.svg",
+      "/assets/customers/jun_19.svg",
+      "/assets/customers/jun_2.svg",
+      "/assets/customers/jun_14.svg",
+      "/assets/customers/jun_23.svg",
+      "/assets/customers/jun_5.svg",
+      "/assets/customers/jun_11.svg",
+      "/assets/customers/jun_1.svg"
+    ],
+    "wallPcSlots": 8,
+    "wallMobileSlots": 4,
+    "videos": 12,
+    "itemHeight": 175,
+    "aos": {
+      "total": 21,
+      "on": 1
+    },
+    "externals": [],
+    "consoleErrors": []
+  },
+  "index2FlexTransforms": [
+    [
+      "translate3d(0px, -6px, 0px)",
+      "translate3d(0px, 30px, 0px)",
+      "",
+      ""
+    ],
+    [
+      "translate3d(0px, -14.32px, 0px)",
+      "translate3d(0px, 71.6px, 0px)",
+      "",
+      ""
+    ],
+    [
+      "translate3d(0px, -19.86px, 0px)",
+      "translate3d(0px, 99.3px, 0px)",
+      "translate3d(0px, -2.04px, 0px)",
+      "translate3d(0px, 10.2px, 0px)"
+    ],
+    [
+      "translate3d(0px, -25.4px, 0px)",
+      "translate3d(0px, 127px, 0px)",
+      "translate3d(0px, -7.58px, 0px)",
+      "translate3d(0px, 37.9px, 0px)"
+    ],
+    [
+      "translate3d(0px, -33.66px, 0px)",
+      "translate3d(0px, 168.3px, 0px)",
+      "translate3d(0px, -15.84px, 0px)",
+      "translate3d(0px, 79.2px, 0px)"
+    ]
+  ],
+  "index2Height": 1385,
+  "index3States": [
+    {
+      "moveTf": "matrix(1, 0, 0, 1, 0, 175)",
+      "onIndex": 1,
+      "videos": [
+        {
+          "t": "1-2",
+          "cls": "on",
+          "paused": false,
+          "ct": 0.9,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "2-1",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "1-3",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "3-1",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "2-3",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "3-2",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "1-2",
+          "cls": "on",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "2-1",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "1-3",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "3-1",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "2-3",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "3-2",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        }
+      ],
+      "note": null
+    },
+    {
+      "moveTf": "matrix(1, 0, 0, 1, 0, 350)",
+      "onIndex": 2,
+      "videos": [
+        {
+          "t": "1-2",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "2-1",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "1-3",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "3-1",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "2-3",
+          "cls": "on",
+          "paused": false,
+          "ct": 0.86,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "3-2",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "1-2",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "2-1",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "1-3",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "3-1",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "2-3",
+          "cls": "on",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "3-2",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        }
+      ],
+      "note": null
+    },
+    {
+      "moveTf": "matrix(1, 0, 0, 1, 0, 525)",
+      "onIndex": 3,
+      "videos": [
+        {
+          "t": "1-2",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "2-1",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "1-3",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "3-1",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "2-3",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "3-2",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "1-2",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "2-1",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "1-3",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "3-1",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "2-3",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        },
+        {
+          "t": "3-2",
+          "cls": "",
+          "paused": true,
+          "ct": 0,
+          "muted": true,
+          "loop": false,
+          "autoplay": false
+        }
+      ],
+      "note": "该方向的服务切换视频素材尚未取得，按素材缺口处理，不播放替代画面。"
+    }
+  ],
+  "index4States": [
+    {
+      "maskDelay": "0s",
+      "maskTf": "matrix(1.05, 0, 0, 1.05, 0, 0)",
+      "bgTf": "translateY(0px)",
+      "fixTf": "translate(0px, 0px)",
+      "index4Height": "7900px",
+      "views": [
+        "1",
+        "0",
+        "1",
+        "0"
+      ]
+    },
+    {
+      "maskDelay": "-3.36s",
+      "maskTf": "matrix(35.5824, 0, 0, 35.5824, 0, 0)",
+      "bgTf": "translateY(-31.8px)",
+      "fixTf": "translate(0px, 2100px)",
+      "index4Height": "7900px",
+      "views": [
+        "1",
+        "0",
+        "1",
+        "0"
+      ]
+    },
+    {
+      "maskDelay": "-5.6s",
+      "maskTf": "matrix(166.244, 0, 0, 166.244, 0, 0)",
+      "bgTf": "translateY(-53px)",
+      "fixTf": "translate(0px, 3500px)",
+      "index4Height": "7900px",
+      "views": [
+        "1",
+        "0.5",
+        "1",
+        "0"
+      ]
+    },
+    {
+      "maskDelay": "-7.84s",
+      "maskTf": "matrix(280.432, 0, 0, 280.432, 0, 0)",
+      "bgTf": "translateY(-74.2px)",
+      "fixTf": "translate(0px, 4900px)",
+      "index4Height": "7900px",
+      "views": [
+        "0.1",
+        "1",
+        "1",
+        "0"
+      ]
+    },
+    {
+      "maskDelay": "-8s",
+      "maskTf": "matrix(283.229, 0, 0, 283.229, 0, 0)",
+      "bgTf": "translateY(-106px)",
+      "fixTf": "translate(0px, 7000px)",
+      "index4Height": "7900px",
+      "views": [
+        "0",
+        "1",
+        "0",
+        "1"
+      ]
+    }
+  ],
+  "entranceShotMs": [
+    383,
+    750,
+    1798
+  ],
+  "entranceCharDelays": [
+    "0.3s",
+    "0.38s",
+    "0.46s",
+    "0.54s",
+    "0.62s",
+    "0.7s",
+    "0.78s",
+    "0.3s"
+  ],
+  "phase1": "done"
+}

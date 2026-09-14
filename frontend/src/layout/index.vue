@@ -9,6 +9,9 @@
       </router-view>
     </main>
     <Footer />
+
+    <!-- 全局自定义光标层（SPEC M-27/28/29 + M-30 磁吸）。由 B 临时接管，见 handoffs/B.md §9.4。 -->
+    <CustomCursor />
     
     <transition name="fade">
       <aside v-if="showFloatButton" class="studio-float" aria-label="快捷操作">
@@ -25,6 +28,7 @@ import { useRouter } from 'vue-router'
 import { ArrowUp, ChatDotRound } from '@element-plus/icons-vue'
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
+import CustomCursor from '@/components/CustomCursor.vue'
 
 const router = useRouter()
 const showFloatButton = true
