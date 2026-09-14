@@ -497,10 +497,44 @@ BACKEND-TODO / 缺译 / 素材缺口：真实API/表单未接入；T00移动真�
 # Session A · 收口 B / C 申请 + 主题机制（2026-09-15）
 
 基准commit：`96f561e`（main）
-本任务commit：**尚未提交**（与 2026-09-14 的「收编公共层」同在工作区，待指示）
+本任务commit：`fbdb333`（用户 2026-09-15 授权合成提交）
 目标与完成范围：逐条收口 `B.md` §6.6 / §9.14 登记 1·2 与 `C.md` §6.1—§6.3 / §13.1—§13.4 / §20.1—§20.5 / §29.1；实现 AGENTS 不变量里的「主题两态按钮 + 当地时间 19:00—07:00 暗 + 手动选择到下一个边界到期」；修掉合并 C 之后 main 上 `check:motion` 的 `FAIL 1`。
 修改文件：`frontend/src/{style.css, styles/responsive.css, layout/index.vue, layout/components/Header.vue, router/index.js, content/services.js, stores/theme.js, main.js, views/ServiceLanding.vue}`
 验证命令、实际结果与证据路径：build / check:motion / check:routes / 只读 eslint 的真实输出、68 格矩阵、主题机制的逐项实测，全部见 `INTEGRATION.md` 的「A 收口 B / C 的共享层申请」一节（§2 命令、§3 浏览器）；证据图 `handoffs/A/shots/theme/`（13 张）。
 BACKEND-TODO / 缺译 / 素材缺口：服务页暗色要等 C 把 `--svc-*` 换成 `--color-*`；`views/News/detail.vue` 的 6 条 unsplash 热链归 D（T04）。
 未完成事项与原因：见 `INTEGRATION.md` 第 5 节 7 条（其中 4 条在等用户裁定或等 C/B 先动自己那份文件）。
-下次恢复的第一步：① 等用户对「服务页透明页头口径 / ≤1024 留白能否偏离 SPEC / G5 入口方案 / motion token 映射表」的裁定；② 把工作区两批改动一起提交（或按指示回滚）。
+下次恢复的第一步：等用户对「服务页透明页头口径 / ≤1024 留白能否偏离 SPEC / G5 入口方案 / motion token 映射表」的裁定。
+
+---
+
+# Session A · 用户裁定落地（2026-09-15 续）
+
+状态：完成（代码与 SPEC 已提交；剩余 M-31 / G5 / motion token / M-16·M-17 仍需用户继续拍板）
+基准commit：`fbdb333`（main）
+本任务commit：`5857bd6`（code + SPEC）
+
+目标与完成范围：按用户 2026-09-15 答复直接完成 A 可执行的部分——
+
+1. 全站透明页头：Header 改为 `route.meta.headerTransparent !== false`（默认透明），新增 `route.meta.headerInk` 两档字色并写入全部路由。
+2. C 侧服务页暗色跟随：`ServiceLanding.vue` 的 `--svc-*` 从字面值改为引用 `:root` 的 `--color-*`（别名保留，使用点零改动）。
+3. B 侧 `.home` 背景：删除 `views/Home/index.vue` 的 `.home{background:var(--home-bg)}`，全局 `.home` 同步摘掉 `!important`。
+4. C §20.1 留白：≤1024 的 `.service-hero` 上留白从 `80px` 改为 `104px`（用户允许）。
+5. `specs/FRONTEND.md` §7 更新为「透明全站默认 + `headerInk` 两档」。
+
+修改文件：`frontend/src/{layout/components/Header.vue, router/index.js, style.css, views/Home/index.vue, views/ServiceLanding.vue}`、`docs/frontend-rebuild/specs/FRONTEND.md`
+
+验证命令、实际结果（均在 `5857bd6` 前工作区执行）：
+
+- `npm.cmd run build` → PASS（`✓ built in 13.74s`；主入口 gzip 366.23 kB，服务页懒加载 chunk 11.29 kB）
+- `npm.cmd run check:motion` → PASS 2 / FAIL 0 / BASELINE-STALE 0
+- `npm.cmd run check:routes` → PASS 34 / FAIL 0 / PENDING 2（contact，B·T05）
+- 只读 eslint → 7 errors / 798 warnings；error 与存量同一批，warning 数较上一轮 794 增加 4，未定位到本轮新增模板规则问题，仅记录不归因给新逻辑。
+- 浏览器实测（preview `http://127.0.0.1:4173/`）：首页 header class `header header-transparent header-ink-light`；`/ai-development` light/dark 均 `header-ink-dark`，页面底色暗色为 `rgb(20,20,15)`、亮色为 `rgb(242,241,228)`；390 档 hero 上留白 `104px`、图高 `250px`；`/about` 与 `/cases/1` 为 `header-ink-light`；`/ai-consultation` 与 404 为 `header-ink-dark`；抽查无横向溢出。
+
+未完成事项与原因：
+
+- M-31（footer 圆形按钮发光）、G5（IoT / 数字创意入口）、motion token 映射表、M-16 / M-17 是否纳入 1.0，仍等用户继续拍板。
+- G2—G4（`/en` 的 `lang`、导航中文、en 服务页中文卡片、h1 断词）按用户「按建议来」独立排 i18n 任务，不在本批实现。
+- 本批没有新增截图证据（视觉改动已在浏览器抽查记录，未落盘）。
+
+下次恢复的第一步：待用户就上述 4 个仍开放项继续答复；答复前可先排 G2—G4 的 i18n 任务。

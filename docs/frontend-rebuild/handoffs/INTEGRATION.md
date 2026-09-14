@@ -588,17 +588,19 @@ $ .\node_modules\.bin\eslint.cmd . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .
 
 证据图：`handoffs/A/shots/theme/`（13 张：`{1440|390}-{light|dark}-{home-top|service-top|service-footer}.png` + `390-dark-menu-open.png`）。
 
-### 4. 交给 C / B 的下一步（各自文件，A 不代改）
+### 4. 交给 C / B 的下一步（用户 2026-09-15 授权 A 直接完成）
 
-- **给 C**：① `ServiceLanding.vue` 把页内 `--svc-*` 改成引用 `:root` 的 `--color-*`（值已按你的现值取名，逐像素等价），暗色就会自动跟随；② §6.3 的 `transition: all` 不再需要白名单（已按收窄属性处理，门禁现在 PASS）；③ 若仍要「服务页透明页头」（§20.1 / §29.2），需要先推翻 `specs/FRONTEND.md` §7 的「透明只给首页」裁定。
-- **给 B**：§6.6 第 2 条要彻底摘掉 `.home` 的 `!important`，需要你先删 `views/Home/index.vue:538` 的 `.home{background:var(--home-bg)}`（它现在正靠这条全局 `!important` 压着），删完 A 再摘。
+- **已代 C 完成**：`ServiceLanding.vue` 的页内 `--svc-*` 已改为引用 `:root` 的 `--color-*`，暗色自动跟随；§6.3 的 `transition: all` 已在上一批收窄，门禁 PASS；「服务页透明页头」按用户最新裁定全站透明，与 SPEC 的冲突已同步改写。
+- **已代 B 完成**：`views/Home/index.vue` 不再给 `.home` 声明 `background`；全局 `.home` 的 `!important` 已摘除。
 
 ### 5. 未做 / 待用户决策（本批范围外）
 
-1. **服务页仍不是暗色**：`ServiceLanding.vue` 用的是 `--svc-*` 字面值，`--color-*` 的暗色覆盖不会自动跟（见 §4 给 C 的第 ① 条）。
-2. **C §20.1 / §29.2（服务页透明页头）**：与 `specs/FRONTEND.md` §7 已裁定的「透明只给首页」冲突，**未做**，需要先定口径。
-3. **C §20.1 留白（≤1024 的 80px → ~104px）**：属对 SPEC 断点表的偏离，**等用户允许**。
+1. ~~服务页仍不是暗色~~：**已解决**（`ServiceLanding.vue` 现在引用 `--color-*`，暗色跟随）。
+2. ~~C §20.1 / §29.2（服务页透明页头）~~：**已解决**（用户裁定全站透明，SPEC 与实现同步）。
+3. ~~C §20.1 留白（≤1024 的 80px → ~104px）~~：**已解决**（用户允许，已改 `104px`）。
 4. **M-31（footer 圆形按钮发光）**：仍判定 N/A（目标元素在本项目不存在），等用户定方向。
 5. **G5（IoT / 数字创意全站零入口）**：主导航只能列四类服务是硬不变量，入口方案（footer 服务列 / 服务概览页）需要用户裁定。
 6. **`src/styles/motion.js` 三组 token 仍是 `MOTION_TODO`**（B §6.1）：SPEC 有明确条目的档位可以填，但 `ease.exit` / `ease.inOut` 这类字段在 SPEC 里没有对应条目，直接编数值违反「拿到 SPEC 前不要编造数值」，需要先定映射表。
-7. **存量**：`views/News/detail.vue` 的 mock 数组里还有 6 条 `images.unsplash.com`（`/news/:id` 是活路由，归 D / T04）；移动菜单 768px 两侧不一致；`/cases` 需后端；`lint` 带 `--fix`；无 `test:unit/test:e2e`。
+7. **M-16 / M-17**：是否纳入 1.0 待用户裁定。
+8. **G2—G4（i18n）**：按用户「按建议来」独立排任务。
+9. **存量**：`views/News/detail.vue` 的 mock 数组里还有 6 条 `images.unsplash.com`（`/news/:id` 是活路由，归 D / T04）；移动菜单 768px 两侧不一致；`/cases` 需后端；`lint` 带 `--fix`；无 `test:unit/test:e2e`。
