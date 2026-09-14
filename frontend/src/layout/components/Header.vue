@@ -5,12 +5,12 @@
     :class="[{ 'header-transparent': headerTransparent, on: isOn, hide: isHidden }, headerInkClass]"
   >
     <div class="header-container">
-      <div class="logo" @click="$router.push('/')">
-        <span class="brand-simple">耘栈科技</span>
+      <div class="logo" @click="$router.push(homePath)">
+        <span class="brand-simple">{{ brandSimple }}</span>
         <span class="brand-en">YUNZHAN TECHNOLOGY</span>
       </div>
 
-      <span class="mobile-slogan">软件研发服务</span>
+      <span class="mobile-slogan">{{ mobileSlogan }}</span>
 
       <!-- 桌面端导航 -->
       <nav class="nav-menu desktop-nav">
@@ -36,24 +36,24 @@
           @click="themeStore.toggle()"
         >
           <el-icon :size="18"><Sunny v-if="themeStore.theme === 'light'" /><Moon v-else /></el-icon>
-          <span>{{ themeStore.theme === 'dark' ? '暗色' : '亮色' }}</span>
+          <span>{{ themeStateLabel }}</span>
         </button>
-        <button class="wechat-copy desktop-wechat-copy" type="button" @click="copyToClipboard('YunZhanKk', '微信号')" title="点击复制微信号">
+        <button class="wechat-copy desktop-wechat-copy" type="button" @click="copyToClipboard('YunZhanKk', wechatType)" :title="wechatCopyTitle">
           <el-icon :size="18"><ChatDotRound /></el-icon>
-          <span>微信：YunZhanKk</span>
+          <span>{{ wechatLabel }}</span>
         </button>
       </div>
 
-      <button class="wechat-copy mobile-wechat-copy" type="button" @click="copyToClipboard('YunZhanKk', '微信号')" title="点击复制微信号">
+      <button class="wechat-copy mobile-wechat-copy" type="button" @click="copyToClipboard('YunZhanKk', wechatType)" :title="wechatCopyTitle">
         <el-icon :size="17"><ChatDotRound /></el-icon>
-        <span>微信：YunZhanKk</span>
+        <span>{{ wechatLabel }}</span>
       </button>
 
       <!-- 移动端汉堡菜单按钮 -->
       <button
         class="mobile-menu-btn"
         type="button"
-        :aria-label="mobileMenuOpen ? '关闭导航菜单' : '打开导航菜单'"
+        :aria-label="mobileMenuLabel"
         :aria-expanded="mobileMenuOpen"
         @click="toggleMobileMenu"
         :class="{ 'active': mobileMenuOpen }"
@@ -87,12 +87,12 @@
             @click="themeStore.toggle()"
           >
             <el-icon :size="20"><Sunny v-if="themeStore.theme === 'light'" /><Moon v-else /></el-icon>
-            <span>{{ themeStore.theme === 'dark' ? '切换到亮色' : '切换到暗色' }}</span>
+            <span>{{ themeToggleLabel }}</span>
           </button>
 
-          <div class="mobile-contact" @click="copyToClipboard('YunZhanKk', '微信号')">
+          <div class="mobile-contact" @click="copyToClipboard('YunZhanKk', wechatType)">
             <el-icon :size="20" class="wechat-icon"><ChatDotRound /></el-icon>
-            <span>WX: YunZhanKk</span>
+            <span>{{ mobileWechatLabel }}</span>
           </div>
         </nav>
       </div>
@@ -109,9 +109,24 @@ import { ElMessage } from 'element-plus'
 import { useThemeStore } from '@/stores/theme'
 
 const route = useRoute()
+const isEn = computed(() => route.path === '/en' || route.path.startsWith('/en/'))
+const homePath = computed(() => (isEn.value ? '/en' : '/'))
+const brandSimple = computed(() => (isEn.value ? 'Yunzhan Technology' : '耘栈科技'))
 /** 主题（stores/theme.js）：19:00—07:00 按当地时间转暗，两态按钮手动切换、到下个边界到期。 */
 const themeStore = useThemeStore()
-const themeToggleLabel = computed(() => (themeStore.theme === 'dark' ? '切换到亮色' : '切换到暗色'))
+const themeToggleLabel = computed(() => {
+  if (isEn.value) return themeStore.theme === 'dark' ? 'Switch to light' : 'Switch to dark'
+  return themeStore.theme === 'dark' ? '切换到亮色' : '切换到暗色'
+})
+const themeStateLabel = computed(() => {
+  if (isEn.value) return themeStore.theme === 'dark' ? 'Dark' : 'Light'
+  return themeStore.theme === 'dark' ? '暗色' : '亮色'
+})
+const mobileSlogan = computed(() => (isEn.value ? 'Software R&D Services' : '软件研发服务'))
+const wechatLabel = computed(() => (isEn.value ? 'WeChat: YunZhanKk' : '微信：YunZhanKk'))
+const mobileWechatLabel = computed(() => (isEn.value ? 'WeChat: YunZhanKk' : 'WX: YunZhanKk'))
+const wechatType = computed(() => (isEn.value ? 'WeChat' : '微信号'))
+const wechatCopyTitle = computed(() => (isEn.value ? 'Copy WeChat ID' : '点击复制微信号'))
 /** 透明顶：2026-09-15 用户裁定「全站默认透明，导航栏都跟首页一样」。
     由 `route.meta.headerTransparent !== false` 得到；个别要实底的页面才显式关掉。
     M-04/M-05 与皮肤无关，继续全站生效；口径见 specs/FRONTEND.md §7。 */
@@ -127,17 +142,34 @@ const isOn = ref(false)
 /** SPEC M-05：`.hide` —— 滚轮向下收起、向上恢复（全站生效）。 */
 const isHidden = ref(false)
 const mobileMenuOpen = ref(false)
+const mobileMenuLabel = computed(() => {
+  if (isEn.value) return mobileMenuOpen.value ? 'Close navigation menu' : 'Open navigation menu'
+  return mobileMenuOpen.value ? '关闭导航菜单' : '打开导航菜单'
+})
 
-const menuList = [
-  { name: '首页', path: '/' },
-  { name: 'AI开发', path: '/ai-development' },
-  { name: '小程序开发', path: '/miniprogram-development' },
-  { name: 'App开发', path: '/app-development' },
-  { name: 'WEB网站开发', path: '/web-development' },
-  { name: '公司案例', path: '/cases' },
-  { name: '行业资讯', path: '/news' },
-  { name: '关于我们', path: '/about' }
-]
+const menuList = computed(() => {
+  return isEn.value
+    ? [
+        { name: 'Home', path: '/en' },
+        { name: 'AI Development', path: '/en/ai-development' },
+        { name: 'Mini Program', path: '/en/miniprogram-development' },
+        { name: 'App Development', path: '/en/app-development' },
+        { name: 'Web Development', path: '/en/web-development' },
+        { name: 'Cases', path: '/en/cases' },
+        { name: 'News', path: '/en/news' },
+        { name: 'About', path: '/en/about' }
+      ]
+    : [
+        { name: '首页', path: '/' },
+        { name: 'AI开发', path: '/ai-development' },
+        { name: '小程序开发', path: '/miniprogram-development' },
+        { name: 'App开发', path: '/app-development' },
+        { name: 'WEB网站开发', path: '/web-development' },
+        { name: '公司案例', path: '/cases' },
+        { name: '行业资讯', path: '/news' },
+        { name: '关于我们', path: '/about' }
+      ]
+})
 
 const headerHeight = () => {
   const el = headerRef.value
@@ -173,9 +205,9 @@ const closeMobileMenu = () => {
 const copyToClipboard = async (text, type) => {
   try {
     await navigator.clipboard.writeText(text)
-    ElMessage.success(`${type}已复制：${text}`)
+    ElMessage.success(isEn.value ? `${type} copied: ${text}` : `${type}已复制：${text}`)
   } catch (err) {
-    ElMessage.error('复制失败，请手动复制')
+    ElMessage.error(isEn.value ? 'Copy failed. Please copy manually.' : '复制失败，请手动复制')
   }
 }
 

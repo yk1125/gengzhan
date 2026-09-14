@@ -154,9 +154,11 @@ router.beforeEach((to, from, next) => {
     next({ path: to.path.replace(/\/+$/, ''), query: to.query, hash: to.hash, replace: true })
     return
   }
+  const isEnglish = to.path === '/en' || to.path.startsWith('/en/')
   if (to.meta.title) {
-    document.title = `${to.meta.title} - 北京耘栈科技`
+    document.title = `${to.meta.title} - ${isEnglish ? 'Beijing Yunzhan Technology' : '北京耘栈科技'}`
   }
+  document.documentElement.lang = isEnglish ? 'en' : 'zh-CN'
   next()
 })
 

@@ -18,7 +18,7 @@
         <h1
           ref="titleEl"
           class="each_animate"
-          :class="{ on: titleIn, reset: titleReset }"
+          :class="{ on: titleIn, reset: titleReset, 'is-en': locale === 'en' }"
         >
           <span
             v-for="(char, index) in titleChars"
@@ -51,10 +51,10 @@
         </p>
         <div>
           <h2 data-aos="fade-clip">
-            把企业已有资料，<br>变成随时可用的智能助手。
+            {{ section.headingA }}<br>{{ section.headingB }}
           </h2>
           <p>
-            不必从零开始。制度、产品资料、历史案例和业务流程，经过整理后就能成为 AI 的可靠依据。
+            {{ section.lead }}
           </p>
         </div>
       </div>
@@ -67,56 +67,56 @@
           <div class="service-card-media">
             <img
               :src="page.flowImages[0]"
-              alt="整理企业资料"
+              :alt="section.flow[0].alt"
               loading="lazy"
               decoding="async"
             >
           </div>
-          <span>第一步</span>
-          <h3>整理企业资料</h3>
-          <p>制度、文档、产品手册、历史工单</p>
+          <span>{{ section.flow[0].label }}</span>
+          <h3>{{ section.flow[0].title }}</h3>
+          <p>{{ section.flow[0].text }}</p>
         </article>
         <b>→</b>
         <article>
           <div class="service-card-media">
             <img
               :src="page.flowImages[1]"
-              alt="建立专属知识库"
+              :alt="section.flow[1].alt"
               loading="lazy"
               decoding="async"
             >
           </div>
-          <span>第二步</span>
-          <h3>建立专属知识库</h3>
-          <p>统一归档、持续更新、准确检索</p>
+          <span>{{ section.flow[1].label }}</span>
+          <h3>{{ section.flow[1].title }}</h3>
+          <p>{{ section.flow[1].text }}</p>
         </article>
         <b>→</b>
         <article>
           <div class="service-card-media">
             <img
               :src="page.flowImages[2]"
-              alt="接入 AI 助手"
+              :alt="section.flow[2].alt"
               loading="lazy"
               decoding="async"
             >
           </div>
-          <span>第三步</span>
-          <h3>接入 AI 助手</h3>
-          <p>问答、写作、分析与任务协同</p>
+          <span>{{ section.flow[2].label }}</span>
+          <h3>{{ section.flow[2].title }}</h3>
+          <p>{{ section.flow[2].text }}</p>
         </article>
         <b>→</b>
         <article>
           <div class="service-card-media">
             <img
               :src="page.flowImages[3]"
-              alt="服务真实岗位"
+              :alt="section.flow[3].alt"
               loading="lazy"
               decoding="async"
             >
           </div>
-          <span>实际使用</span>
-          <h3>服务真实岗位</h3>
-          <p>客服、销售、运营和内部员工</p>
+          <span>{{ section.flow[3].label }}</span>
+          <h3>{{ section.flow[3].title }}</h3>
+          <p>{{ section.flow[3].text }}</p>
         </article>
       </div>
     </section>
@@ -133,7 +133,7 @@
             01 / USER JOURNEY
           </p>
           <h2 data-aos="fade-clip">
-            把服务放进用户<br>最顺手的入口。
+            {{ section.headingA }}<br>{{ section.headingB }}
           </h2>
         </div>
         <div
@@ -141,7 +141,7 @@
           data-aos="fade-top"
           data-aos-delay="100"
         >
-          <span>品牌服务</span>
+          <span>{{ section.phoneLabel }}</span>
           <div class="mini-phone__screen">
             <img
               :src="page.mediaImage"
@@ -176,7 +176,7 @@
           01 / MOBILE PRODUCT
         </p>
         <h2 data-aos="fade-clip">
-          让每一次触达，<br>都有完整的产品体验。
+          {{ section.headingA }}<br>{{ section.headingB }}
         </h2>
       </div>
       <div
@@ -185,7 +185,7 @@
         data-aos-delay="100"
       >
         <div class="app-device app-device--back">
-          <span>数据总览</span>
+          <span>{{ section.dataLabel }}</span>
         </div>
         <div class="app-device">
           <span>YUNZHAN</span>
@@ -199,7 +199,7 @@
           </div>
         </div>
         <div class="app-device app-device--small">
-          <span>消息</span><b>01</b>
+          <span>{{ section.messageLabel }}</span><b>01</b>
         </div>
       </div>
     </section>
@@ -216,10 +216,10 @@
             01 / DIGITAL PRESENCE
           </p>
           <h2 data-aos="fade-clip">
-            让品牌第一眼，<br>就值得被相信。
+            {{ section.headingA }}<br>{{ section.headingB }}
           </h2>
           <p class="service-lead">
-            从内容逻辑到视觉系统，再到稳定、易维护的技术实现，品牌网站应是一项长期资产。
+            {{ section.lead }}
           </p>
         </div>
         <div
@@ -253,7 +253,7 @@
           01 / CONNECTED SYSTEM
         </p>
         <h2 data-aos="fade-clip">
-          设备有了语言，<br>现场才真正可见。
+          {{ section.headingA }}<br>{{ section.headingB }}
         </h2>
       </div>
       <div
@@ -262,22 +262,22 @@
         data-aos-delay="100"
       >
         <div class="iot-dashboard__main">
-          <span>设备运行总览</span><b>98.6<small>%</small></b>
-          <p>今日设备在线率</p>
+          <span>{{ section.mainLabel }}</span><b>98.6<small>%</small></b>
+          <p>{{ section.mainNote }}</p>
           <i />
         </div>
         <div class="iot-dashboard__side">
           <article>
-            <span>实时告警</span><b>03</b>
-            <p>待处理异常</p>
+            <span>{{ section.alertLabel }}</span><b>03</b>
+            <p>{{ section.alertNote }}</p>
           </article>
           <article>
-            <span>运维工单</span><b>12</b>
-            <p>今日任务</p>
+            <span>{{ section.ticketLabel }}</span><b>12</b>
+            <p>{{ section.ticketNote }}</p>
           </article>
           <article>
-            <span>数据趋势</span><b>稳定</b>
-            <p>近 24 小时</p>
+            <span>{{ section.trendLabel }}</span><b>{{ section.trendValue }}</b>
+            <p>{{ section.trendNote }}</p>
           </article>
         </div>
       </div>
@@ -294,7 +294,7 @@
           01 / BUILT FOR YOUR BUSINESS
         </p>
         <h2 data-aos="fade-clip">
-          不迁就软件，<br>让软件适配组织。
+          {{ section.headingA }}<br>{{ section.headingB }}
         </h2>
       </div>
       <div
@@ -332,7 +332,7 @@
           01 / CREATIVE TECHNOLOGY
         </p>
         <h2 data-aos="fade-clip">
-          让内容、空间和技术<br>成为一次完整体验。
+          {{ section.headingA }}<br>{{ section.headingB }}
         </h2>
       </div>
       <div
@@ -340,44 +340,21 @@
         data-aos="fade-top"
         data-aos-delay="100"
       >
-        <article>
-          <span>01 / BRAND</span>
+        <article
+          v-for="(panel, index) in section.panels"
+          :key="panel.title"
+        >
+          <span>{{ panel.label }}</span>
           <div class="service-card-media">
             <img
-              :src="page.panelImages[0]"
-              alt="品牌活动体验"
+              :src="page.panelImages[index]"
+              :alt="panel.alt"
               loading="lazy"
               decoding="async"
             >
           </div>
-          <h3>品牌活动体验</h3>
-          <p>让品牌故事不止被看见，也能被参与。</p>
-        </article>
-        <article>
-          <span>02 / SPACE</span>
-          <div class="service-card-media">
-            <img
-              :src="page.panelImages[1]"
-              alt="数字展陈现场"
-              loading="lazy"
-              decoding="async"
-            >
-          </div>
-          <h3>数字展陈现场</h3>
-          <p>把空间、屏幕与内容组织成一个现场。</p>
-        </article>
-        <article>
-          <span>03 / MOBILE</span>
-          <div class="service-card-media">
-            <img
-              :src="page.panelImages[2]"
-              alt="移动互动传播"
-              loading="lazy"
-              decoding="async"
-            >
-          </div>
-          <h3>移动互动传播</h3>
-          <p>为一次活动或传播，创造可分享的互动入口。</p>
+          <h3>{{ panel.title }}</h3>
+          <p>{{ panel.text }}</p>
         </article>
       </div>
     </section>
@@ -499,6 +476,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { serviceLandingEnByPath, serviceSectionZh, serviceSectionEn } from '../content/service-landing-i18n'
 const route = useRoute()
 const router = useRouter()
 /**
@@ -900,44 +878,25 @@ const pages = {
 const locale = computed(() => (route.path.startsWith('/en/') ? 'en' : 'zh-CN'))
 /** 咨询入口：与底部 CTA 按钮同一去向（英文走 /en 前缀）。 */
 const consultPath = computed(() => (locale.value === 'en' ? '/en/ai-consultation' : '/ai-consultation'))
-const translations = {
-  '/miniprogram-development': {
-    title: '小程序开发',
-    enTitle: 'Mini Program Development',
-    subtitle: '用更轻的产品形态，让服务更快抵达用户。',
-    enSubtitle: 'Reach users faster with a lighter product experience.',
-    capabilityTitle: '把服务，变成顺手的体验。',
-    enCapabilityTitle: 'Turn services into effortless experiences.',
-    statement: '从第一步触达，到一次服务完成，每个环节都应该轻、快、清楚。',
-    enStatement:
-      'From first touch to completed service, every step should feel light, fast and clear.',
-    description: '我们围绕微信生态、业务流程和运营需要，搭建可持续生长的小程序服务入口。',
-    enDescription:
-      'We build sustainable mini program touchpoints around WeChat, business workflows and operations.',
-  },
-}
 const servicePath = computed(() => route.path.replace(/^\/en/, '') || '/web-development')
 
 /** 服务数据按稳定 serviceId（kind）选取，不根据翻译后标题或 URL 包含关系判断。 */
 const resolveService = (path, source) => {
   if (locale.value === 'zh-CN') return { ...source, path }
-  const t = translations[path]
+  const t = serviceLandingEnByPath[path]
   return {
     ...source,
     path,
-    title: t?.enTitle || source.en,
-    subtitle:
-      t?.enSubtitle || `Build a reliable ${source.en.toLowerCase()} experience for your business.`,
-    capabilityTitle: t?.enCapabilityTitle || 'Capabilities that create lasting value.',
-    statement:
-      t?.enStatement || 'Thoughtful product design, stable engineering and a clear path to growth.',
+    title: t?.title || source.en,
+    subtitle: t?.subtitle || `Build a reliable ${source.en.toLowerCase()} experience for your business.`,
+    capabilityTitle: t?.capabilityTitle || 'Capabilities that create lasting value.',
+    statement: t?.statement || 'Thoughtful product design, stable engineering and a clear path to growth.',
     description:
-      t?.enDescription ||
-      'From strategy to delivery, we turn complex requirements into useful digital products.',
-    modules: source.modules.map(
-      (m, i) => ['Enter service', 'Complete booking', 'Pay online', 'Build loyalty'][i] || m,
-    ),
-    capabilities: source.capabilities.map((c) => ({ ...c, title: c.title, text: c.text })),
+      t?.description || 'From strategy to delivery, we turn complex requirements into useful digital products.',
+    modules: t?.modules || source.modules,
+    capabilities: t?.capabilities || source.capabilities,
+    process: t?.process || source.process,
+    ...(t?.moduleNotes ? { moduleNotes: t.moduleNotes } : {}),
   }
 }
 const services = computed(() =>
@@ -952,6 +911,10 @@ const page = computed(
     services.value.find((item) => item.path === servicePath.value) ||
     services.value.find((item) => item.path === '/web-development'),
 )
+const section = computed(() => {
+  const source = locale.value === 'en' ? serviceSectionEn : serviceSectionZh
+  return source[page.value.kind] || {}
+})
 const rootEl = ref(null)
 const parallaxHeadEl = ref(null)
 const statementEl = ref(null)
@@ -1211,6 +1174,9 @@ watch(
   font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 79px;
+}
+.service-hero h1.is-en {
+  overflow-wrap: anywhere;
 }
 .service-hero__lead {
   width: 650px;

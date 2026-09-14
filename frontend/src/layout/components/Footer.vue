@@ -7,61 +7,61 @@
       <div class="corporate-footer-main">
         <section class="corporate-footer-brand">
           <div class="corporate-footer-logo">
-            <img src="/logo-new.png" alt="北京耘栈科技" />
-            <div><strong>耘栈科技</strong><span>YUNZHAN TECHNOLOGY</span></div>
+            <img src="/logo-new.png" :alt="t.brandAlt" />
+            <div><strong>{{ t.brandName }}</strong><span>YUNZHAN TECHNOLOGY</span></div>
           </div>
-          <p>面向企业提供 AI 应用、数字化产品与软件研发服务，以工程化能力支持业务持续增长。</p>
-          <button type="button" class="corporate-wechat" @click="copyToClipboard('YunZhanKk', '微信号')">
-            <el-icon><ChatDotRound /></el-icon><span>微信咨询：YunZhanKk</span>
+          <p>{{ t.description }}</p>
+          <button type="button" class="corporate-wechat" @click="copyToClipboard('YunZhanKk', wechatType)">
+            <el-icon><ChatDotRound /></el-icon><span>{{ t.wechatConsult }}</span>
           </button>
         </section>
 
         <div class="corporate-footer-links">
-          <nav class="corporate-footer-column" aria-label="产品与服务">
-            <h3>产品与服务</h3>
-            <router-link to="/ai-development">AI 应用开发</router-link>
-            <router-link to="/custom-development">企业软件定制</router-link>
-            <router-link to="/miniprogram-development">小程序开发</router-link>
-            <router-link to="/app-development">App 开发</router-link>
-            <router-link to="/web-development">网站建设</router-link>
+          <nav class="corporate-footer-column" :aria-label="t.products">
+            <h3>{{ t.products }}</h3>
+            <router-link :to="href('/ai-development')">{{ t.aiApp }}</router-link>
+            <router-link :to="href('/custom-development')">{{ t.customSoftware }}</router-link>
+            <router-link :to="href('/miniprogram-development')">{{ t.miniProgram }}</router-link>
+            <router-link :to="href('/app-development')">{{ t.appDevelopment }}</router-link>
+            <router-link :to="href('/web-development')">{{ t.webDevelopment }}</router-link>
           </nav>
 
-          <nav class="corporate-footer-column" aria-label="解决方案">
-            <h3>解决方案</h3>
-            <router-link to="/ai-development">智能知识服务</router-link>
-            <router-link to="/custom-development">业务协同平台</router-link>
-            <router-link to="/app-development">移动服务产品</router-link>
-            <router-link to="/web-development">企业品牌门户</router-link>
+          <nav class="corporate-footer-column" :aria-label="t.solutions">
+            <h3>{{ t.solutions }}</h3>
+            <router-link :to="href('/ai-development')">{{ t.knowledgeService }}</router-link>
+            <router-link :to="href('/custom-development')">{{ t.collaborationPlatform }}</router-link>
+            <router-link :to="href('/app-development')">{{ t.mobileService }}</router-link>
+            <router-link :to="href('/web-development')">{{ t.brandPortal }}</router-link>
           </nav>
 
-          <nav class="corporate-footer-column corporate-footer-about" aria-label="了解耘栈">
-            <h3>了解耘栈</h3>
-            <router-link to="/cases">公司案例</router-link>
-            <router-link to="/news">行业资讯</router-link>
-            <router-link to="/about">关于我们</router-link>
-            <router-link to="/custom-development">合作咨询</router-link>
+          <nav class="corporate-footer-column corporate-footer-about" :aria-label="t.aboutYunzhan">
+            <h3>{{ t.aboutYunzhan }}</h3>
+            <router-link :to="href('/cases')">{{ t.cases }}</router-link>
+            <router-link :to="href('/news')">{{ t.news }}</router-link>
+            <router-link :to="href('/about')">{{ t.about }}</router-link>
+            <router-link :to="href('/custom-development')">{{ t.consult }}</router-link>
           </nav>
         </div>
 
         <section class="corporate-footer-column corporate-contact">
-          <h3>联系我们</h3>
-          <button type="button" @click="copyToClipboard('YunZhanKk', '微信号')"><el-icon><ChatDotRound /></el-icon>YunZhanKk</button>
-          <button type="button" @click="copyToClipboard('yunzhan1129@163.com', '邮箱')"><el-icon><Message /></el-icon>yunzhan1129@163.com</button>
-          <p><el-icon><Location /></el-icon>北京市昌平区</p>
+          <h3>{{ t.contact }}</h3>
+          <button type="button" @click="copyToClipboard('YunZhanKk', wechatType)"><el-icon><ChatDotRound /></el-icon>YunZhanKk</button>
+          <button type="button" @click="copyToClipboard('yunzhan1129@163.com', emailType)"><el-icon><Message /></el-icon>yunzhan1129@163.com</button>
+          <p><el-icon><Location /></el-icon>{{ t.location }}</p>
         </section>
       </div>
 
       <div class="corporate-footer-bottom">
         <div class="corporate-footer-entries">
-          <span>服务入口</span>
-          <router-link to="/ai-development">AI 开发</router-link>
-          <router-link to="/miniprogram-development">小程序</router-link>
-          <router-link to="/app-development">App 开发</router-link>
-          <router-link to="/web-development">网站开发</router-link>
+          <span>{{ t.serviceEntries }}</span>
+          <router-link :to="href('/ai-development')">{{ t.aiShort }}</router-link>
+          <router-link :to="href('/miniprogram-development')">{{ t.miniShort }}</router-link>
+          <router-link :to="href('/app-development')">{{ t.appShort }}</router-link>
+          <router-link :to="href('/web-development')">{{ t.webShort }}</router-link>
         </div>
         <div class="corporate-footer-legal">
-          <div class="legal-copyright"><span>版权所有 © 2026 北京耘栈科技</span><span>保留一切权利</span></div>
-          <div class="legal-links"><router-link to="/privacy-policy">隐私政策</router-link><router-link to="/legal-statement">法律声明</router-link></div>
+          <div class="legal-copyright"><span>{{ t.copyright }}</span><span>{{ t.rights }}</span></div>
+          <div class="legal-links"><router-link :to="href('/privacy-policy')">{{ t.privacy }}</router-link><router-link :to="href('/legal-statement')">{{ t.legal }}</router-link></div>
           <span class="legal-record">京ICP备2026012678号</span>
         </div>
       </div>
@@ -79,13 +79,85 @@ const route = useRoute()
 /** 首页（中英两个路由）走参考站的米色 footer；其余页面沿用深色收尾
     （调色板见 style.css 的 --footer-*）。英文站首页是独立路由 /en，必须一起命中。 */
 const isHome = computed(() => route.path === '/' || route.path === '/en')
+const isEn = computed(() => route.path === '/en' || route.path.startsWith('/en/'))
+const href = (path) => (isEn.value ? `/en${path}` : path)
+const wechatType = computed(() => (isEn.value ? 'WeChat' : '微信号'))
+const emailType = computed(() => (isEn.value ? 'Email' : '邮箱'))
+
+const t = computed(() => (isEn.value
+  ? {
+      brandAlt: 'Beijing Yunzhan Technology',
+      brandName: 'Yunzhan Technology',
+      description: 'We provide AI applications, digital products and software R&D services for enterprises, supporting sustainable business growth with engineering capability.',
+      wechatConsult: 'WeChat: YunZhanKk',
+      products: 'Products & Services',
+      aiApp: 'AI Application Development',
+      customSoftware: 'Enterprise Software Customization',
+      miniProgram: 'Mini Program Development',
+      appDevelopment: 'App Development',
+      webDevelopment: 'Web Development',
+      solutions: 'Solutions',
+      knowledgeService: 'Intelligent Knowledge Services',
+      collaborationPlatform: 'Business Collaboration Platform',
+      mobileService: 'Mobile Service Products',
+      brandPortal: 'Enterprise Brand Portal',
+      aboutYunzhan: 'About Yunzhan',
+      cases: 'Cases',
+      news: 'News',
+      about: 'About Us',
+      consult: 'Consultation',
+      contact: 'Contact Us',
+      location: 'Changping District, Beijing',
+      serviceEntries: 'Service Entries',
+      aiShort: 'AI Development',
+      miniShort: 'Mini Program',
+      appShort: 'App Development',
+      webShort: 'Web Development',
+      copyright: 'Copyright © 2026 Beijing Yunzhan Technology',
+      rights: 'All rights reserved',
+      privacy: 'Privacy Policy',
+      legal: 'Legal Statement'
+    }
+  : {
+      brandAlt: '北京耘栈科技',
+      brandName: '耘栈科技',
+      description: '面向企业提供 AI 应用、数字化产品与软件研发服务，以工程化能力支持业务持续增长。',
+      wechatConsult: '微信咨询：YunZhanKk',
+      products: '产品与服务',
+      aiApp: 'AI 应用开发',
+      customSoftware: '企业软件定制',
+      miniProgram: '小程序开发',
+      appDevelopment: 'App 开发',
+      webDevelopment: '网站建设',
+      solutions: '解决方案',
+      knowledgeService: '智能知识服务',
+      collaborationPlatform: '业务协同平台',
+      mobileService: '移动服务产品',
+      brandPortal: '企业品牌门户',
+      aboutYunzhan: '了解耘栈',
+      cases: '公司案例',
+      news: '行业资讯',
+      about: '关于我们',
+      consult: '合作咨询',
+      contact: '联系我们',
+      location: '北京市昌平区',
+      serviceEntries: '服务入口',
+      aiShort: 'AI 开发',
+      miniShort: '小程序',
+      appShort: 'App 开发',
+      webShort: '网站开发',
+      copyright: '版权所有 © 2026 北京耘栈科技',
+      rights: '保留一切权利',
+      privacy: '隐私政策',
+      legal: '法律声明'
+    }))
 
 const copyToClipboard = async (text, type) => {
   try {
     await navigator.clipboard.writeText(text)
-    ElMessage.success(`${type}已复制：${text}`)
+    ElMessage.success(isEn.value ? `${type} copied: ${text}` : `${type}已复制：${text}`)
   } catch (error) {
-    ElMessage.error(`复制失败，请手动添加：${text}`)
+    ElMessage.error(isEn.value ? `Copy failed. Please add manually: ${text}` : `复制失败，请手动添加：${text}`)
   }
 }
 </script>
