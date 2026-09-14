@@ -128,7 +128,14 @@
               data-aos="fade-top"
               data-aos-delay="100"
             >
-              <div class="img">
+              <router-link
+                v-if="item.path"
+                class="img"
+                :to="item.path"
+              >
+                <img :src="item.image" alt="" loading="lazy" decoding="async" />
+              </router-link>
+              <div v-else class="img">
                 <img :src="item.image" alt="" loading="lazy" decoding="async" />
               </div>
               <div class="text">
@@ -186,9 +193,12 @@
         <div class="swiper insights-swiper public_hover" data-aos="fade-top" data-aos-delay="100">
           <div class="swiper-wrapper">
             <article v-for="card in insightCards" :key="card.key" class="swiper-slide card">
-              <div class="card-img">
+              <router-link
+                class="card-img"
+                :to="card.path"
+              >
                 <img :src="card.image" alt="" loading="lazy" decoding="async" />
-              </div>
+              </router-link>
               <p class="card-kicker">
                 <span>{{ card.kicker }}</span>
                 <span v-if="card.demo" class="card-flag">{{ c.insights.demoLabel }}</span>
@@ -515,6 +525,7 @@ onBeforeUnmount(() => {
   --home-line: #ADADAD;
   --home-ghost: rgba(0, 0, 0, 0.2);
   --home-accent: #184DC4;
+  --home-cta-bg: var(--home-accent); /* CTA 卡片底色；亮色沿用主色 */
   --home-card: #DDDDCE;
   --home-box-border: rgba(193, 192, 180, 0.97);
   --home-mask: #201D1E;
@@ -535,6 +546,7 @@ html[data-theme='dark'] .home {
   --home-line: #45443C;
   --home-ghost: rgba(242, 241, 228, 0.22);
   --home-accent: #4D7CE8;
+  --home-cta-bg: #2F55A8; /* 暗色下调：整块铺 #4D7CE8 偏亮（用户反馈 3） */
   --home-card: #1E1E18;
   --home-box-border: rgba(120, 118, 106, 0.6);
   --home-mask: #0B0A09;
@@ -724,7 +736,7 @@ html[data-theme='dark'] .home {
 .index2 .item-meta { margin: 0; font-size: 13px; letter-spacing: 0.06em; color: var(--home-ink-soft); }
 /* 占位动图：`<img>` 内自动播放并循环；各自保持原始比例（参考站 index2 的图也是混比例）。
    来源与 SHA256 登记见 evidence/reference-assets/assets-manifest.json，上线前必须替换。 */
-.index2 .item .img { margin: 0 0 16px; }
+.index2 .item .img { display: block; margin: 0 0 16px; }
 .index2 .item .img img { display: block; width: 100%; height: auto; }
 
 /* ---- M-18 — M-23 index4 品牌宣言 ---- */
@@ -821,7 +833,7 @@ html[data-theme='dark'] .home {
   border-radius: 6px;
   background: var(--home-card);
 }
-.card-img { margin: -28px -28px 0; border-radius: 6px 6px 0 0; overflow: hidden; }
+.card-img { display: block; margin: -28px -28px 0; border-radius: 6px 6px 0 0; overflow: hidden; }
 .card-img img { display: block; width: 100%; height: auto; }
 .card-kicker {
   display: flex;
@@ -839,11 +851,11 @@ html[data-theme='dark'] .home {
 .insights-swiper .swiper-pagination-bullet { background: var(--home-ink-soft); opacity: 0.4; }
 .insights-swiper .swiper-pagination-bullet-active { background: var(--home-accent); opacity: 1; }
 
-.cta { margin-top: 96px; padding: 72px 64px; border-radius: 8px; background: var(--home-accent); }
+.cta { margin-top: 96px; padding: 72px 64px; border-radius: 8px; background: var(--home-cta-bg); }
 .cta .eyebrow { color: rgba(255, 255, 255, 0.72); }
 .cta-title { margin: 0 0 28px; font-size: clamp(24px, 2.8vw, 40px); line-height: 1.3; letter-spacing: -0.02em; color: #FFFFFF; }
 .cta-actions { display: flex; flex-wrap: wrap; gap: 16px; }
-.cta .pill { background: #FFFFFF; color: var(--home-accent); }
+.cta .pill { background: #FFFFFF; color: var(--home-cta-bg); }
 .cta .pill.ghost { background: transparent; color: #FFFFFF; border-color: rgba(255, 255, 255, 0.5); }
 .cta-contact { margin: 26px 0 0; font-size: 14px; color: rgba(255, 255, 255, 0.82); }
 

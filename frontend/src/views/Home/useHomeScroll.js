@@ -76,8 +76,7 @@ export function useHomeScroll (rootRef) {
   let pendingReveal = []
   const state = {
     anchors: null,
-    frame: 0,
-    delayed: 0
+    frame: 0
   }
 
   function collectPublicText (root, clientHeight) {
@@ -90,7 +89,7 @@ export function useHomeScroll (rootRef) {
       const rowAnchors = []
       rows.forEach((row, index) => {
         const start = layoutTop(row) - clientHeight / publicText.viewportDivisor
-        rowAnchors.push({ from: start + index * perLine, end: start + total })
+        rowAnchors.push({ el: row, from: start + index * perLine, end: start + total })
       })
       list.push({ node, rows: rowAnchors, ban: perLine })
     })
@@ -110,7 +109,8 @@ export function useHomeScroll (rootRef) {
       clientHeight,
       publicText: collectPublicText(root, clientHeight),
       columns: [],
-      index4: null
+      index4: null,
+      bannerParallax: root.querySelector('.banner .parallax')
     }
 
     if (index2 && fists.length) {
@@ -148,7 +148,8 @@ export function useHomeScroll (rootRef) {
     revealCheck(clientHeight)
 
     // M-08 首屏视差：translate3d(0, scrollTop*0.9, 0)，滚过一屏后整块隐藏。
-    const bannerParallax = root.querySelector('.banner .parallax')
+    // 节点引用在 measure() 里缓存，避免逐帧 querySelector（§9.18）。
+    const bannerParallax = a.bannerParallax
     if (bannerParallax) {
       bannerParallax.style.transform = `translate3d(0px, ${scrollTop * banner.parallaxFactor}px, 0px)`
       bannerParallax.style.display = scrollTop >= clientHeight ? 'none' : ''
@@ -165,8 +166,8 @@ export function useHomeScroll (rootRef) {
 
     // M-13 `.public_text` 逐行 clip-path 擦除。
     a.publicText.forEach((block) => {
-      block.rows.forEach((row, index) => {
-        const el = block.node.querySelectorAll('.p:first-child p')[index]
+      block.rows.forEach((row) => {
+        const el = row.el
         if (!el) return
         if (scrollTop <= row.from) {
           el.style.clipPath = 'inset(0 100% 0 0)'
@@ -209,13 +210,25 @@ export function useHomeScroll (rootRef) {
         }
       }
 
+      // M-22 / M-23：两组文案的 data-view 逐帧插值（见 applyIndex4Text 的注释）。
+      applyIndex4Text(scrollTop)
+
     }
   }
 
-  /** M-02：`setTimeout(…, 100)` 后才跑的 `AOS.init()` + `scrollTop_start()`。 */
-  function scrollDelayed (scrollTop) {
+  /**
+   * SPEC M-23：`[data-view]` 插值引擎，只在桌面跑（手机端由 CSS 兜底，不写内联位移）。
+   *
+   * 逐帧调用，与参考站一致：`sources/function.js:1480-1481` 在 smooth-scrollbar 的每帧回调里
+   * 同步调 `scroll_content()` + `scrollTop_start()`；`:4580-4585` 那个 `setTimeout(…, 100)`
+   * 只包 `AOS.init()`，**不包** `scrollTop_start`。
+   *
+   * 修前实现把它塞进 `onScroll` 的 100ms 去抖里（clearTimeout + setTimeout），于是 7000px 行程
+   * 中插值只在停手后跑一次：实测连续滚动 1440px 期间两组 opacity 冻结在 1.000 / 0.747 不动，
+   * 停手后直接跳到 0.000 / 1.000 —— 就是用户反馈的「一卡一卡」。
+   */
+  function applyIndex4Text (scrollTop) {
     const a = state.anchors
-    // SPEC M-23：data-view 引擎只在桌面跑，手机端由 CSS 兜底（不写内联位移）。
     if (!a || !a.index4 || !isDesktop.value) return
     const i4 = a.index4
     i4.copy.forEach((el) => {
@@ -223,6 +236,7 @@ export function useHomeScroll (rootRef) {
     })
   }
 
+  /** `scroll` 的每帧入口：滚动位置驱动的效果都在同一个 rAF 里同步写完（同参考站 M-02）。 */
   function onScroll () {
     const scrollTop = window.scrollY || document.documentElement.scrollTop || 0
     if (state.frame) cancelAnimationFrame(state.frame)
@@ -230,11 +244,6 @@ export function useHomeScroll (rootRef) {
       state.frame = 0
       scrollContent(scrollTop)
     })
-    if (state.delayed) clearTimeout(state.delayed)
-    state.delayed = setTimeout(() => {
-      state.delayed = 0
-      scrollDelayed(scrollTop)
-    }, 100)
   }
 
   function revealAll () {
@@ -302,9 +311,7 @@ export function useHomeScroll (rootRef) {
     window.removeEventListener('scroll', onScroll)
     window.removeEventListener('resize', onResize)
     if (state.frame) cancelAnimationFrame(state.frame)
-    if (state.delayed) clearTimeout(state.delayed)
     state.frame = 0
-    state.delayed = 0
   })
 
   return { isDesktop, reducedMotion, measure, revealAll }
