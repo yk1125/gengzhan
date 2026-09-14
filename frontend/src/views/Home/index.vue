@@ -142,71 +142,6 @@
       </div>
     </section>
 
-    <!-- index3：服务切换（SPEC M-14 跟随框 / M-15 文本翻动 + 过渡视频组） -->
-    <section id="services" class="index3">
-      <div class="wrap">
-        <div class="content">
-          <div class="l">
-            <div class="move" :style="moveStyle" aria-hidden="true" />
-            <div
-              v-for="(service, index) in services"
-              :key="service.id"
-              class="item"
-              :class="{ on: activeService === index }"
-            >
-              <div class="attr-row">
-                <span class="mark" aria-hidden="true" />
-                <div class="attr blue" :data-text="service.label">
-                  <p>{{ service.label }}</p>
-                </div>
-              </div>
-              <div class="attr h1" :data-text="service.name">
-                <p>{{ service.name }}</p>
-              </div>
-              <div class="text">
-                <p>{{ service.desc }}</p>
-              </div>
-              <button
-                class="item-hit"
-                type="button"
-                :aria-pressed="activeService === index"
-                :aria-label="service.name"
-                @click="selectService(index)"
-              />
-            </div>
-          </div>
-
-          <div class="picture">
-            <div class="group animate_video">
-              <video
-                v-for="key in transitionKeys"
-                :key="'light-' + key"
-                :src="transitionSrc(key, 'light')"
-                :data-transition="key"
-                :class="{ on: activeTransition === key }"
-                muted
-                playsinline
-                preload="none"
-              />
-            </div>
-            <div v-show="isDark" class="group animate_video group-dark">
-              <video
-                v-for="key in transitionKeys"
-                :key="'dark-' + key"
-                :src="transitionSrc(key, 'dark')"
-                :data-transition="key"
-                :class="{ on: activeTransition === key }"
-                muted
-                playsinline
-                preload="none"
-              />
-            </div>
-            <p v-if="transitionMissing" class="picture-note">{{ c.statement.transitionMissing }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- index4：品牌宣言整屏 scrub（SPEC M-18 高度注入 / M-19 mask / M-20 bg / M-21 fix / M-22 文案插值） -->
     <section id="statement" class="index4">
       <div class="fix">
@@ -291,8 +226,6 @@ import {
   HOME_BANNER_MEDIA,
   HOME_SERVICES,
   HOME_STATEMENT_BG,
-  SERVICE_TRANSITIONS,
-  TRANSITION_KEYS,
   customerSlots,
   homeContent
 } from '@/content/home'
@@ -461,70 +394,6 @@ const capabilityRows = computed(() => {
   ]
 })
 
-/* ----------------------------------------- M-14 / M-15 index3 服务切换 */
-const transitionKeys = TRANSITION_KEYS
-const activeService = ref(0)
-const activeTransition = ref('')
-const transitionMissing = ref(false)
-const serviceItemBox = ref({ width: 0, height: 0 })
-
-/** M-14：跟随框位移 `translateY(index * item.clientHeight)`，框尺寸等于一个 item。 */
-const moveStyle = computed(() => ({
-  width: `${serviceItemBox.value.width}px`,
-  height: `${serviceItemBox.value.height}px`,
-  transform: `translateY(${activeService.value * serviceItemBox.value.height}px)`
-}))
-
-function transitionSrc (key, tone) {
-  return SERVICE_TRANSITIONS[key][tone]
-}
-
-function measureServiceItems () {
-  const root = rootRef.value
-  if (!root) return
-  const item = root.querySelector('.index3 .content .l .item')
-  serviceItemBox.value = item
-    ? { width: item.offsetWidth, height: item.offsetHeight }
-    : { width: 0, height: 0 }
-}
-
-/** 只让当前主题那一组视频参与播放，另一组一律暂停归零（参考站两组同时存在）。 */
-function syncTransitionVideos () {
-  const root = rootRef.value
-  if (!root) return
-  const visibleGroup = isDark.value ? '.group-dark' : '.group:not(.group-dark)'
-  root.querySelectorAll('.index3 .picture .animate_video video').forEach((video) => {
-    const isTarget = !transitionMissing.value &&
-      video.dataset.transition === activeTransition.value &&
-      video.closest('.animate_video').matches(visibleGroup)
-    if (!isTarget) {
-      video.pause()
-      if (video.readyState > 0) video.currentTime = 0
-      return
-    }
-    if (video.readyState > 0) video.currentTime = 0
-    const played = video.play()
-    if (played && typeof played.catch === 'function') played.catch(() => {})
-  })
-}
-
-/**
- * M-14 + M-15：`old !== index` 才切换；有素材才播放，缺素材时只显示缺口文案，
- * 不播放替代画面（第 4 项服务与其余服务之间的方向未取得素材）。
- */
-function selectService (index) {
-  if (index === activeService.value) return
-  const from = services.value[activeService.value].transitionIndex
-  const to = services.value[index].transitionIndex
-  const key = `${from}-${to}`
-  activeService.value = index
-  activeTransition.value = SERVICE_TRANSITIONS[key] ? key : ''
-  transitionMissing.value = !SERVICE_TRANSITIONS[key]
-  syncTransitionVideos()
-}
-
-watch(isDark, syncTransitionVideos)
-
 /* ------------------------------------------------- M-18—M-23 index4 品牌宣言 */
 const statementBackground = computed(() => `url(${HOME_STATEMENT_BG})`)
 const statementGroups = computed(() => statementMotion.copyGroups.map((group) => ({
@@ -586,7 +455,6 @@ const insightCards = computed(() => {
 /* ------------------------------------------------------------------ 生命周期 */
 function onResize () {
   pickBannerSrc()
-  measureServiceItems()
 }
 
 onMounted(() => {
@@ -597,11 +465,6 @@ onMounted(() => {
   // A 的主题按钮写的是 <html data-theme>；本页只跟随，不自己建状态。
   themeObserver = new MutationObserver(readTheme)
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
-  measureServiceItems()
-  requestAnimationFrame(() => {
-    measureServiceItems()
-    syncTransitionVideos()
-  })
   // M-10：与滚动无关，加载后 10ms 直接播放逐字入场。
   titleTimer = window.setTimeout(() => { titleOn.value = true }, 10)
   window.addEventListener('resize', onResize)
@@ -761,7 +624,6 @@ html[data-theme='dark'] .home {
 .index1 { padding: 120px 0; background: var(--home-bg); }
 .index1 .wrap,
 .index2 .wrap,
-.index3 .wrap,
 .index5 .wrap {
   width: 100%;
   max-width: 1320px;
@@ -842,111 +704,13 @@ html[data-theme='dark'] .home {
 .index2 .item-link { font-size: 14px; color: var(--home-accent); text-decoration: none; }
 .index2 .item-meta { margin: 0; font-size: 13px; letter-spacing: 0.06em; color: var(--home-ink-soft); }
 
-/* ---- M-14 / M-15 index3 服务切换 ---- */
-.index3 { padding: 120px 0; background: var(--home-card); }
-.index3 .content { display: flex; align-items: center; gap: 64px; }
-.index3 .l { position: relative; flex: none; width: 800px; max-width: 56%; }
-.index3 .item { position: relative; padding: 22px 30px; cursor: pointer; transition: all 0.6s ease; }
-.index3 .attr-row { display: flex; align-items: center; gap: 10px; height: 24px; overflow: hidden; }
-.index3 .mark {
-  --mark-color: var(--home-ink-soft);
-  flex: none;
-  width: 16px;
-  height: 16px;
-  background:
-    linear-gradient(var(--mark-color), var(--mark-color)) 0 0 / 6px 6px no-repeat,
-    linear-gradient(var(--mark-color), var(--mark-color)) 10px 0 / 6px 6px no-repeat,
-    linear-gradient(var(--mark-color), var(--mark-color)) 0 10px / 6px 6px no-repeat,
-    linear-gradient(var(--mark-color), var(--mark-color)) 10px 10px / 6px 6px no-repeat;
-  transition: background 0.6s ease;
-}
-.index3 .item.on .mark { --mark-color: var(--home-accent); }
-/* M-15：`.attr p` 上翻 `translateY(-100%)`，`::after`（content: attr(data-text)）补位到 0 */
-.index3 .attr { position: relative; overflow: hidden; }
-.index3 .attr p { margin: 0; transform: translateY(0); transition: transform 0.6s ease, color 0.6s ease; }
-.index3 .attr::after {
-  content: attr(data-text);
-  position: absolute;
-  left: 0;
-  top: 0;
-  transform: translateY(100%);
-  transition: transform 0.6s ease, color 0.6s ease;
-}
-.index3 .item.on .attr p { transform: translateY(-100%); }
-.index3 .item.on .attr::after { transform: translateY(0); }
-.index3 .attr.blue { font-size: 15px; color: var(--home-ink-soft); }
-.index3 .attr.h1 { margin-top: 6px; font-size: 26px; font-weight: 600; color: var(--home-ink-soft); }
-.index3 .item.on .attr.blue::after { color: var(--home-accent); }
-.index3 .item.on .attr.h1::after { color: var(--home-ink); }
-.index3 .text { min-height: 3.4em; opacity: 0; transition: opacity 0.6s ease; }
-.index3 .item.on .text { opacity: 1; }
-.index3 .text p { margin: 8px 0 0; font-size: 15px; line-height: 1.8; color: var(--home-ink-soft); }
-/* M-14：跟随框 width/height 由 JS 按 item 实测写入，位移 translateY(index * itemHeight) */
-.index3 .move {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 2;
-  border: 1px solid var(--home-box-border);
-  border-radius: 5px;
-  pointer-events: none;
-  transition: all 0.4s ease;
-}
-/* 全局 style.css:944 的 button:hover:not(:disabled) 会给所有按钮加青色外发光 + translateY(-2px)；
-   .item-hit 是覆盖整个服务项的透明点击层，必须保持不可见，故在此显式中和。
-   已向 A 申请收窄该全局规则，见 handoffs/B.md 契约申请。 */
-.index3 .item-hit,
-.index3 .item-hit:hover {
-  box-shadow: none !important;
-  filter: none !important;
-  transform: none !important;
-}
-.index3 .move::after {
-  content: '';
-  position: absolute;
-  left: -5px;
-  top: 50%;
-  width: 5px;
-  height: 61px;
-  margin-top: -30px;
-  border-radius: 3px;
-  background: #184DC4;
-  box-shadow: 10px 0 17px 0 rgba(24, 77, 196, 0.8);
-  transition: all 0.6s ease;
-}
-.index3 .item-hit {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  padding: 0;
-  border: 0;
-  background: transparent;
-}
-.index3 .picture { position: relative; flex: 1; min-height: 420px; align-self: stretch; }
-.index3 .group { position: absolute; inset: 0; }
-.index3 .group video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-.index3 .group video.on { opacity: 1; }
-.index3 .picture-note {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--home-ink-soft);
-}
-
 /* ---- M-18 — M-23 index4 品牌宣言 ---- */
-.index4 { position: relative; height: 100vh; overflow: hidden; background: #000000; }
-.index4 .fix { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; overflow: hidden; will-change: transform; }
+/* M-21：参考站用 JS 逐帧写 `translate` 把整屏钉住；原生滚动跑在合成线程，主线程 rAF 写 transform
+   必然差一帧（实测滚轮每一步内容会先滑出 300px 再弹回）。这里改用 `position: sticky` 让合成线程
+   自己钉屏，数值行程与参考站一致（sectionHeight - clientHeight = 7000px）。
+   `overflow: clip` 不创建滚动容器，因此不会破坏 sticky。 */
+.index4 { position: relative; height: 100vh; overflow: clip; background: #000000; }
+.index4 .fix { position: sticky; top: 0; width: 100%; height: 100vh; overflow: clip; }
 /* G-08：`.fix:after` 亮色 rgba(0,0,0,.3) / 暗色 rgba(0,0,0,.5) */
 .index4 .fix::after {
   content: '';
@@ -1063,25 +827,22 @@ html[data-theme='dark'] .picture .swiper-slide img { filter: invert(1); }
 html[data-theme='dark'] .index4 .fix::after { background: rgba(0, 0, 0, 0.5); }
 
 /* ==========================================================================
-   ≤1024px 降级（SPEC「断点速查」）。与本项目不变量不同的两处已在 handoffs/B.md 登记：
-   1. 参考站首页在 ≤1024px 把整个 `.index3` 设为 display:none；本项目要求手机端保留服务入口，
-      因此改为纵向排列（`.move` 隐藏，用 `.item.on` 的配色表示选中）。
-   2. 参考站 `.index4` 手机用 `.sj_bg` 专用图（素材未抓取），本项目沿用同一张 `.bg` 静态铺底。
+   ≤1024px 降级（SPEC「断点速查」）。与本项目不变量不同的一处已在 handoffs/B.md 登记：
+   参考站 `.index4` 手机用 `.sj_bg` 专用图（素材未抓取），本项目沿用同一张 `.bg` 静态铺底。
    ========================================================================== */
 @media (max-width: 1024px) {
   .banner { height: 72vh; min-height: 420px; }
   /* 全局 styles/responsive.css:184 在 ≤768px 写了 `img, video, iframe { height: auto !important }`，
      会把首屏视频退回内在比例高度：390 宽实测只有 195px 高，banner 其余部分露出 #111 底。
      这里只对本页自己的两个 video 收回该声明（特异性高于全局选择器）；已请 A 收窄全局规则。 */
-  .banner .back,
-  .index3 .group video { height: 100% !important; }
+  .banner .back { height: 100% !important; }
   .banner-wrap { gap: 16px; padding: 0 5%; }
   .banner-wrap h1 { font-size: 24px; }
   .banner-wrap h1 .hero-line { white-space: normal; }
   .banner-desc { font-size: 14px; }
 
-  .index1, .index2, .index3, .index5 { padding: 72px 0; }
-  .index1 .wrap, .index2 .wrap, .index3 .wrap, .index5 .wrap { padding: 0 5%; }
+  .index1, .index2, .index5 { padding: 72px 0; }
+  .index1 .wrap, .index2 .wrap, .index5 .wrap { padding: 0 5%; }
 
   /* M-13 手机降级：`.public_text` 不擦除，整段改用 `.sj_text` */
   .public_text { display: none; }
@@ -1102,17 +863,6 @@ html[data-theme='dark'] .index4 .fix::after { background: rgba(0, 0, 0, 0.5); }
   .index2 .flex { width: 48%; }
   .index2 .fist + .fist { margin-top: 56px; }
   .index2 .item-name { font-size: 18px; }
-
-  .index3 .content { flex-direction: column; align-items: stretch; gap: 28px; }
-  .index3 .l { width: 100%; max-width: none; }
-  .index3 .item { padding: 16px 18px; }
-  .index3 .attr.h1 { font-size: 20px; }
-  .index3 .text { min-height: 0; }
-  /* 手机没有跟随框，非活动项的说明文字在桌面靠 opacity:0 隐藏但仍占高度，
-     会把列表撑出一段空白；手机上直接折叠，只保留当前项的说明。 */
-  .index3 .item:not(.on) .text { display: none; }
-  .index3 .move { display: none; }
-  .index3 .picture { flex: none; min-height: 220px; }
 
   /* M-18 — M-23 手机降级 */
   .index4 { height: auto !important; overflow: visible; }
@@ -1142,11 +892,6 @@ html[data-theme='dark'] .index4 .fix::after { background: rgba(0, 0, 0, 0.5); }
   .public_text .p:first-child p { clip-path: none !important; }
   .banner .parallax { transform: none !important; }
   .index2 .flex { transform: none !important; }
-  .index3 .item,
-  .index3 .attr p,
-  .index3 .attr::after,
-  .index3 .text,
-  .index3 .move { transition: none; }
   .index4 { height: auto !important; overflow: visible; }
   .index4 .fix { position: static; height: auto; min-height: 480px; transform: none !important; }
   .index4 .mask { display: none; }

@@ -126,7 +126,6 @@ export function useHomeScroll (rootRef) {
         node: index4,
         mask: index4.querySelector('.mask'),
         bg,
-        fix: index4.querySelector('.fix'),
         copy: Array.from(index4.querySelectorAll('.text [data-view]')),
         sectionTop,
         sectionHeight,
@@ -180,7 +179,9 @@ export function useHomeScroll (rootRef) {
       })
     })
 
-    // M-18 — M-21 index4 高度注入、mask 负 delay、bg 位移、fix 位移。
+    // M-18/M-19/M-20：index4 高度注入、mask 负 delay、bg 位移。
+    // M-21 的「整屏钉住」已改由 CSS `position: sticky` 承担（见 index.vue 的 .index4 .fix），
+    // 因为 JS 逐帧写 transform 会与合成线程的原生滚动差一帧，导致整屏抖动。
     const i4 = a.index4
     if (i4) {
       i4.node.style.height = `${i4.sectionHeight}px`
@@ -208,10 +209,6 @@ export function useHomeScroll (rootRef) {
         }
       }
 
-      if (i4.fix) {
-        const offset = Math.min(Math.max(scrollTop - i4.sectionTop, 0), i4.sectionHeight - clientHeight)
-        i4.fix.style.transform = `translate(0px, ${offset}px)`
-      }
     }
   }
 

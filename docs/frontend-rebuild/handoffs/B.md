@@ -296,3 +296,85 @@ $ .\node_modules\.bin\eslint.cmd . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .
 1. 把本分支交给 A 收口（B 不自行 merge）；同时提请 A 决策第 6 节的 8 条契约变更，尤其第 2 条（主题入口/19:00—07:00 规则）——它直接决定「亮/暗」这个验收维度能不能由界面走通。
 2. 向用户申请**首页样板验收**：入口 `/` 与 `/en`，按 1440/390 × 中/英 × 亮/暗 组合看 `shots/09-*`，按效果逐条看 `compare/` 的 43 张对照，重点确认第 5 节 16 条有意差异是否接受（尤其「手机端 index3 不隐藏」「首屏单素材」「过渡视频第 4 槽缺口」）。
 3. 用户批准样板后再并行定稿其余页面（B 的下一批是公司/联系/法律，含 T05 的 `contact`）；如需先补手机端 M-12/客户墙的实测与截帧，可在同一分支上继续。
+
+## 9. 验收反馈处理（2026-09-14，用户 6 条意见）
+
+### 9.0 用户本轮裁决与授权
+
+- 授权 B **临时接管公共层**（页头 / 全局自定义光标 / 磁吸 / 全局引入），完成后交 A 复核（见 9.4）。
+- 授权 B **抓取参考站素材**入库占位；执行仍按 T00A 纪律（登记来源 + SHA256，不做运行时热链）。
+- 对 B 的可改文件范围无额外限制。
+- 用户决定：**index5 保留 4 块**（四块可用同一张动图）；**index2 的「四项主服务」「交付能力」要有动图**；**index3 整块删除**。
+
+### 9.1 已做：删除 index3（用户决定，理由=与 index2 内容重复）
+
+- 复核依据：`index2`（`#capability`）已经列出「四项主服务 + 交付能力」，`index3`（`#services`）把同一批四项服务又列了一遍（`content/home.js:132-144` vs 服务切换文案）。
+- 改动文件：`frontend/src/views/Home/index.vue`（删 index3 模版、脚本段、样式段、≤1024px 分支、减少动效分支，以及只被它使用的 `SERVICE_TRANSITIONS`/`TRANSITION_KEYS` 导入）。
+- 实测：section 序列 = `banner / index1 / index2 / index4 / index5`；`document.querySelector('.index3')` → `false`；浏览器 `pageerror` 0 条、console error 0 条。
+- 连带影响（登记，不删素材）：SPEC M-14/M-15/M-16/M-17 从首页撤下；`frontend/public/assets/transitions/`（亮 6 + 暗 6）与 `content/home.js` 的 `SERVICE_TRANSITIONS`/`TRANSITION_KEYS` 首页不再引用，**保留供 C 的服务页复用**。
+- 踩坑记录：删导入时漏了 `HOME_SERVICES`（`capabilityRows` 仍在用），`npm.cmd run build` **不报错**，运行时 `ReferenceError: HOME_SERVICES is not defined` 直接把首页打成空白。→ 本轮起，凡改本页必须跑浏览器探针看 `pageerror`，不能只看 build 通过。
+
+### 9.2 已做：index4 钉屏抖动修复（用户第 5 条）
+
+- 根因（逐帧实测，非推测）：钉屏由 JS 在 rAF 写 `transform`，而原生滚动跑在合成线程 → 每步滚轮整屏内容先滑出再弹回；参考站没有这个问题是因为它用 M-01 自定义惯性滚动（主线程滚），本项目未实现 M-01。
+- 改前实测（真实滚轮 12×300，逐帧采样 `.fix` 的 `getBoundingClientRect().top`）：`向下 min=-299.6 max=0.4`、`向上 min=0.4 max=300.4`，**极差 300.0px**；样本可见 `[9964, 300.4] → [9964, 0.4]`。
+- 改法：`.index4 .fix` 由 `position:absolute` + JS 写位移改为 `position: sticky; top: 0`（交给合成线程钉屏），并删掉 JS 的 `.fix` 位移写入；`.index4` 的 `overflow: hidden` 改 `overflow: clip`（`hidden` 会变成滚动容器，会破坏 sticky）。行程不变：`sectionHeight - clientHeight = 7000px`。
+- 改后实测（同一探针）：`向下 fixTop min=0 max=0`、`向上 fixTop min=0 max=0`，**极差 0.0px**。
+- 数值侧未动：mask 负 delay、bg 位移、`[data-view]` 插值区间与钳制分支保持 SPEC 原值。补充实测：`-8s` 在 `sectionTop+5000` 即已达上限，因此本项目**本来就没有**参考站 `-11.1991s → -8s` 那次回跳；用户反馈的「反向很怪」由上面的 300px 撕裂解释。
+- 复现/验证脚本：`bx-verify.js`（仓库外 `C:\Users\yk\AppData\Local\Temp\t00r-browser\`，含 pageerror 断言 + 逐帧采样 + 5 张静帧）。静帧：同目录 `probe-index4/fixed-index4-000/030/050/070/100.png`。
+
+### 9.3 未做（已授权，下一批）
+
+- 需求 1：Header 顶部透明 + M-04 `.on` 阈值/配色反转 + M-05 wheel 方向收放（含 M-03 入场）。
+- 需求 2：全局自定义光标 M-27/28/29（含 `.cut` 蓝盘）+ 磁吸 M-30/31 + 侧边浮动 M-32。
+- 需求 4：index2 一图一文（动图）+ 蓝盘（蓝盘依赖上面的光标层，先落光标层）。
+- 需求 6：index5 四块加动图 + 蓝盘。
+- 动图素材：**等用户裁决转码策略**（见 9.5）。
+
+### 9.4 给 A 的告知：B 临时接管公共层（已获用户授权，A 请复核）
+
+| 文件 | 计划改动 | 依据 |
+| --- | --- | --- |
+| `frontend/src/layout/components/Header.vue` | M-04 `.on` 阈值 867.375px + 底色 `#F2F1E4`（暗色走 token）+ logo `invert(1)`、M-05 `wheel` 方向 `translateY(-100%)`、过渡 `.6s ease` | SPEC M-04/M-05，用户第 1 条 |
+| 新增 `frontend/src/components/CustomCursor.vue` | M-27 指数逼近跟随（首页 `data-speed=8` → 0.8）、M-28 点击波纹、M-29 `.cut` 134px 蓝盘 | SPEC M-27/28/29，用户第 2 条 |
+| 新增 `frontend/src/composables/useMagnetic.js` | M-30 磁吸 `((mouse-rect)/size-0.5)*strength` + `TweenMax` 1s `Power4.easeOut` 等价实现 | SPEC M-30，用户第 2 条 |
+| 新增 `frontend/src/styles/cursor.css` + `frontend/src/main.js` 一行 import | 光标层全局样式（`mix-blend-mode: exclusion`、≤1024px 隐藏） | 同上 |
+
+B 的原则：公共层只做「新增文件 + 一行引入 + Header 内部改动」，不改其它全局规则；主题色一律走 A 的既有 token / `html[data-theme]`，不新造状态。
+
+### 9.5 等用户裁决：动图素材的转码策略
+
+index2 的 8 张动图（动图 WebP，`<img>` 自动播放、`loopCount=65535` ≈ 无限循环）**原图合计 93.75MB**：
+
+| 图 | 尺寸 | 帧 | 体积 |
+| --- | --- | --- | --- |
+| `36b6cab0….webp` | 1080×1080 | 500 | 49.88 MB |
+| `ee92f48e….webp` | 720×405 | — | 11.60 MB |
+| `e42f54a2….webp` | 1400×488 | — | 9.35 MB |
+| `ec76207e….webp` | 630×630 | — | 7.47 MB |
+| `c032eff1….webp` | 720×405 | — | 7.18 MB |
+| `c61e07c8….webp` | 630×630 | 80 | 5.62 MB |
+| `019048b1….webp` | 960×540 | — | 1.59 MB |
+| `83db3640….webp` | 640×360 | 152 | 1.07 MB |
+
+`handoffs/T00A.md:14` 的抓取纪律是「保留原始文件名与原始格式（未重命名、未转码、未压缩）」。三个选项：(a) 原样入库（首页背 90+MB）；(b) 转码压缩入库并在 manifest 登记「派生自 X + 转码参数 + 源/派生各自 SHA256」（有意偏离 T00A 的未转码纪律）；(c) 只抓小体积的几张。**B 建议 (b)**，等用户点头后才抓。
+
+### 9.6 本轮验证（真实输出）
+
+```
+$ npm.cmd run build        # 在 frontend/ 下
+(!) Some chunks are larger than 500 kBs after minification. …（既有告警，非本轮引入）
+✓ built in 14.99s
+
+$ npm.cmd run check:routes
+尾斜杠规范化：match 31/31，router beforeEach 守卫 存在 → PASS
+routeManifest：3 条记录，PASS
+[PENDING] contact — Contact/index.vue 尚未创建（B / T05）
+结果：PASS 34 / FAIL 0 / PENDING 2
+
+$ .\node_modules\.bin\eslint.cmd src/views/Home/index.vue src/views/Home/useHomeScroll.js --ext .vue,.js
+✖ 114 problems (0 errors, 114 warnings)
+```
+
+- 浏览器探针（dev `http://localhost:3000/`，1440×900）：`pages error 无`、`fixPosition: "sticky"`、`index3Present: false`、`index4Top: 3223`、`index4H: 7900`、`pageH: 12671`。
+- 删 index3 后锚点前移：`.index4` 的布局 top 4164 → 3223（前移 941px = index3 原占位高度），改后 `pageH = 12671`；下游锚点全部由 `measure()` 在挂载时重算，无需手工改常量。
