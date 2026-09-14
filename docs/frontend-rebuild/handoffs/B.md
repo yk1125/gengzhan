@@ -817,7 +817,8 @@ state.delayed = setTimeout(() => { scrollDelayed(scrollTop) }, 100)   // 改前
 | 点击蓝盘（index2） | URL → `http://localhost:3000/ai-development` |
 | 点击蓝盘（index5） | URL → `http://localhost:3001/cases`（该页有存量 500，见 9.20 D1） |
 
-静帧：`compare/LINK-MINE-index2-hover-disc.jpg`、`compare/LINK-MINE-index5-hover-disc.jpg`。
+- 静帧：`compare/LINK-MINE-index2-hover-disc.jpg`、`compare/LINK-MINE-index5-hover-disc.jpg`。
+- **手机端不回归**（探针 `bx-mob5.js`，390×844 dpr2）：`.index2 .item .img` 与 `.index5 .card-img` 都是 `A`、`display: block`；Swiper `swiper-initialized` = true、4 slides、卡图 182×102；`.fixed_cursor` 该断点是 `display: none`（既不注册监听也不启动 ticker）；`pageerror` 0。静帧 `compare/LINK-MINE-index5-390.jpg`。
 
 #### 9.18.3 第 3 条 · 暗色 `.cta` 卡片偏亮
 
