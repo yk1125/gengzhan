@@ -57,6 +57,18 @@ function writeSaved (value) {
 /** 到边界时自动换挡用的定时器（模块级，避免塞进 store state）。 */
 let boundaryTimer = null
 
+/** 主题切换的临时过渡类：只挂很短时间，避免永久给整页元素加 transition 影响动效。 */
+let themeTransitionTimer = null
+function startThemeTransition () {
+  const root = document.documentElement
+  root.classList.add('theme-transition')
+  if (themeTransitionTimer) window.clearTimeout(themeTransitionTimer)
+  themeTransitionTimer = window.setTimeout(() => {
+    root.classList.remove('theme-transition')
+    themeTransitionTimer = null
+  }, 420)
+}
+
 export const useThemeStore = defineStore('theme', {
   state: () => ({
     theme: 'light',
@@ -68,6 +80,8 @@ export const useThemeStore = defineStore('theme', {
   }),
   actions: {
     apply (theme) {
+      const previous = this.theme
+      if (this.initialized && previous !== theme) startThemeTransition()
       this.theme = theme
       document.documentElement.dataset.theme = theme
     },
@@ -81,7 +95,11 @@ export const useThemeStore = defineStore('theme', {
     },
     /** 页头两态按钮：亮 ⇄ 暗，写存档，到下个边界到期。 */
     toggle () {
-      const theme = this.theme === 'light' ? 'dark' : 'light'
+      this.setTheme(this.theme === 'light' ? 'dark' : 'light')
+    },
+    /** 侧边栏亮/暗两个独立按钮：显式指定目标，其余规则与 toggle 相同。 */
+    setTheme (theme) {
+      if (!['light', 'dark'].includes(theme) || this.theme === theme) return
       this.apply(theme)
       this.source = 'manual'
       this.expiresAt = nextBoundary()

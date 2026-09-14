@@ -25,10 +25,10 @@
         </router-link>
       </nav>
 
-      <!-- 桌面端操作 -->
+      <!-- 桌面端操作：语言靠导航右端、主题只留小圆形图标、微信收成紧凑胶囊。 -->
       <div class="desktop-actions">
         <button
-          class="theme-toggle lang-toggle"
+          class="lang-toggle"
           type="button"
           :title="localeSwitchTitle"
           :aria-label="localeSwitchTitle"
@@ -37,19 +37,18 @@
           <span>{{ localeSwitchLabel }}</span>
         </button>
         <button
-          class="theme-toggle"
+          class="theme-toggle theme-toggle-icon"
           type="button"
           :title="themeToggleLabel"
           :aria-label="themeToggleLabel"
           :aria-pressed="themeStore.theme === 'dark'"
           @click="themeStore.toggle()"
         >
-          <el-icon :size="18"><Sunny v-if="themeStore.theme === 'light'" /><Moon v-else /></el-icon>
-          <span>{{ themeStateLabel }}</span>
+          <el-icon :size="16"><Sunny v-if="themeStore.theme === 'light'" /><Moon v-else /></el-icon>
         </button>
         <button class="wechat-copy desktop-wechat-copy" type="button" @click="copyToClipboard('YunZhanKk', wechatType)" :title="wechatCopyTitle">
-          <el-icon :size="18"><ChatDotRound /></el-icon>
-          <span>{{ wechatLabel }}</span>
+          <el-icon :size="16"><ChatDotRound /></el-icon>
+          <span>{{ desktopWechatLabel }}</span>
         </button>
       </div>
 
@@ -137,12 +136,10 @@ const themeToggleLabel = computed(() => {
   if (isEn.value) return themeStore.theme === 'dark' ? 'Switch to light' : 'Switch to dark'
   return themeStore.theme === 'dark' ? '切换到亮色' : '切换到暗色'
 })
-const themeStateLabel = computed(() => {
-  if (isEn.value) return themeStore.theme === 'dark' ? 'Dark' : 'Light'
-  return themeStore.theme === 'dark' ? '暗色' : '亮色'
-})
 const mobileSlogan = computed(() => (isEn.value ? 'Software R&D Services' : '软件研发服务'))
 const wechatLabel = computed(() => (isEn.value ? 'WeChat: YunZhanKk' : '微信：YunZhanKk'))
+/** 桌面按钮只放短文案，完整 ID 放在 title/点击后的 toast 里，给英文 8 项导航腾空间。 */
+const desktopWechatLabel = computed(() => (isEn.value ? 'WeChat' : '微信'))
 const mobileWechatLabel = computed(() => (isEn.value ? 'WeChat: YunZhanKk' : 'WX: YunZhanKk'))
 const wechatType = computed(() => (isEn.value ? 'WeChat' : '微信号'))
 const wechatCopyTitle = computed(() => (isEn.value ? 'Copy WeChat ID' : '点击复制微信号'))
@@ -232,7 +229,18 @@ const closeMobileMenu = () => {
 
 const switchLocale = () => {
   closeMobileMenu()
-  router.push(localeSwitchPath.value)
+  const applyLocale = () => router.push(localeSwitchPath.value)
+  // 语言切换是整页文案替换：支持 View Transitions 时做一次原生跨页淡入淡出，
+  // 不支持时回退到 layout 里 router-view 的 0.18s 淡入淡出。
+  if (typeof document.startViewTransition === 'function') {
+    try {
+      document.startViewTransition(applyLocale)
+      return
+    } catch (error) {
+      // 极少数实现会在异常状态下抛错，回退普通导航。
+    }
+  }
+  applyLocale()
 }
 
 const copyToClipboard = async (text, type) => {
@@ -379,8 +387,32 @@ onUnmounted(() => {
   transform: scale(1.05);
 }
 
-/* 主题两态按钮（桌面在 .desktop-actions 里，手机在汉堡菜单底部）。
-   颜色继承页头当前皮肤：透明顶是白字，.on 之后是黑字。 */
+/* 桌面操作区：语言按钮是贴近导航右端的简洁文本，主题按钮是小圆形图标。 */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 36px;
+  padding: 0 6px;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.82;
+  cursor: pointer;
+  transition: opacity 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.lang-toggle:hover {
+  opacity: 1;
+  background: rgba(127, 127, 127, 0.12);
+}
+
+/* 主题两态按钮：桌面只在 .desktop-actions 里放 icon-only 小圆钮，手机菜单仍走整行条目。 */
 .theme-toggle,
 .mobile-theme-toggle {
   display: inline-flex;
@@ -405,8 +437,11 @@ onUnmounted(() => {
   opacity: 1;
 }
 
-.desktop-actions .theme-toggle {
-  margin-right: 8px;
+.theme-toggle-icon {
+  width: 36px;
+  min-width: 36px;
+  padding: 0;
+  gap: 0;
 }
 
 .mobile-theme-toggle {

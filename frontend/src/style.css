@@ -379,6 +379,29 @@ html[data-theme='dark'] body {
   color: #f2f1e4;
 }
 
+/* 主题切换短过渡：stores/theme.js 会在真正换色时临时给 html 挂上 .theme-transition，
+   约 420ms 后摘掉。只过渡颜色相关属性，不碰 transform / opacity / filter，
+   因此不会污染 hover 动效，也不会被 check:motion 判成 transition: all。 */
+html.theme-transition,
+html.theme-transition body,
+html.theme-transition body *,
+html.theme-transition body *::before,
+html.theme-transition body *::after {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease,
+    fill 0.35s ease,
+    stroke 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+/* 语言切换走原生 View Transitions 时的默认根快照时长。 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+
 /* One brand and navigation treatment across the whole site. */
 /* Editorial hero shared by service, company, case and news pages. */
 :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) {
@@ -1581,8 +1604,8 @@ button:disabled:hover,
   display: flex;
   align-items: center;
   justify-self: end;
-  margin-left: 18px;
-  transform: translateX(10px);
+  gap: 10px;
+  min-width: 0;
 }
 .desktop-wechat-copy,
 .mobile-wechat-copy {
@@ -1642,10 +1665,6 @@ button:disabled:hover,
     padding: 0;
   }
   .mobile-wechat-copy span { display: none; }
-}
-
-@media (max-width: 1040px) {
-  .desktop-actions { margin-left: 0; transform: none; }
 }
 
 /* Corporate footer: a calm, formal information architecture. */
@@ -2134,31 +2153,12 @@ body :is(.ai-development,.app-development,.web-development) .cta-section .el-but
 /* M-05：滚轮向下收起、向上恢复（全站）。参考站 `sources/style.css:624-626`。 */
 .header.hide { transform: translateY(-100%); }
 
-/* 主题两态按钮（桌面那一份；手机那一份在 Header.vue 的移动菜单皮肤里）。
-   页头样式按规格只在「页头（Header）」段一处定义，所以皮肤写在这里。 */
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 36px;
-  margin-right: 8px;
-  padding: 0 12px;
-  color: inherit;
-  background: transparent;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
-  opacity: .82;
-  cursor: pointer;
-  transition: opacity .3s ease, border-color .3s ease, background-color .3s ease, color .3s ease;
-}
-.theme-toggle:hover { opacity: 1; }
-.header:not(.header-transparent) .theme-toggle,
-.header.header-ink-light .theme-toggle { color: #fff; }
-.header.header-ink-dark .theme-toggle { color: #111; }
-.header.header-transparent.on .theme-toggle { color: #000; }
+/* 页头主题/语言按钮的皮肤。几何交给 Header.vue scoped 层；这里只负责继承页头
+   当前皮肤的颜色，并保证透明顶滚过首屏后反成深字。 */
+.header:not(.header-transparent) :is(.theme-toggle, .lang-toggle),
+.header.header-ink-light :is(.theme-toggle, .lang-toggle) { color: #fff; }
+.header.header-ink-dark :is(.theme-toggle, .lang-toggle) { color: #111; }
+.header.header-transparent.on :is(.theme-toggle, .lang-toggle) { color: #000; }
 
 /* 透明顶皮肤：**全站默认**（2026-09-15 用户裁定：「透明不止给首页，要全局使用，即全局的
    导航栏都跟首页一样」）。要实底的页面用 `route.meta.headerTransparent === false` 显式关掉。
@@ -2185,26 +2185,27 @@ body :is(.ai-development,.app-development,.web-development) .cta-section .el-but
   background: transparent;
   border-radius: 0;
   cursor: pointer;
+  justify-self: start;
 }
 .brand-simple { font-size: 22px; font-weight: 800; letter-spacing: .06em; white-space: nowrap; }
 .brand-en { margin-left: 10px; font-size: 8px; font-weight: 700; letter-spacing: .18em; white-space: nowrap; }
-.nav-menu { display: flex; align-items: center; gap: 8px; height: 100%; }
+.nav-menu { display: flex; align-items: center; gap: 6px; height: 100%; min-width: 0; }
 .nav-item {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   position: relative;
   height: 78px;
-  padding: 10px 11px;
+  padding: 10px 8px;
   border: 0;
   border-radius: 0;
   background: transparent;
   font-size: 12px;
   font-weight: 600;
-  /* 12px 下 0.5px 的字距是 B 样板实测值：`.nav-item` 的每字 0.5px 让 8 个菜单项的
-     总宽停在 583.542px（nav 含 7×8px gap = 639.542px），与参考站尺度一致。
-     这是收编时唯一需要按字面恢复的几何量，见 handoffs/INTEGRATION.md 的对照表。 */
+  /* 中文 8 项在 1240px 容器内很宽裕；英文整组更长，收窄 padding/gap 后仍要
+     在 1025–1200px 档再压一级（见下方 html[lang='en'] 的断点），否则会顶到操作区。 */
   letter-spacing: .5px;
+  white-space: nowrap;
   box-shadow: none;
   text-shadow: none;
   transform: none;
@@ -2287,24 +2288,41 @@ body :is(.ai-development,.app-development,.web-development) .cta-section .el-but
 .header-transparent.on .mobile-menu-btn span { background: #000; }
 
 /* 桌面容器：三列栅格（字标 / 导航 / 操作）。宽度由上面的
-   `.container, .header-container, .footer-container` 统一给出。 */
+   `.container, .header-container, .footer-container` 统一给出。
+   字标与操作按内容收成 auto，中列拿剩余空间并把导航居中；这样中文、英文
+   都不会再出现“导航项被右侧操作区压住”的网格溢出。 */
 .header-container {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr);
-  gap: 28px;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto;
+  gap: 24px;
   margin: 0 auto;
   height: 100%;
   align-items: center;
   position: relative;
 }
+.nav-menu { justify-self: center; }
 
 /* 移动端微信按钮在全站都是隐藏的（桌面走 .desktop-actions，手机走汉堡菜单里的条目）。
    这条要盖过 `@media (max-width: 768px)` 里把 .mobile-wechat-copy 打开的那段 legacy。 */
 .header .mobile-wechat-copy { display: none; }
 
 @media (max-width: 1040px) {
-  .header-container { grid-template-columns: auto 1fr auto; gap: 8px; }
+  .header-container { grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto; gap: 8px; }
+  .nav-item { padding: 10px 6px; }
   .nav-item::after { right: 9px; left: 9px; }
+}
+
+/* 英文 8 项导航比中文长，桌面中档宽度进一步收窄，并让微信按钮只留图标。 */
+html[lang='en'] .brand-simple { font-size: 19px; letter-spacing: .03em; }
+html[lang='en'] .brand-en { display: none; }
+html[lang='en'] .nav-menu { gap: 4px; }
+html[lang='en'] .nav-item { font-size: 11px; letter-spacing: 0; padding: 10px 6px; }
+@media (max-width: 1200px) and (min-width: 993px) {
+  html[lang='en'] .desktop-wechat-copy { width: 38px; min-width: 38px; padding: 0; }
+  html[lang='en'] .desktop-wechat-copy span { display: none; }
+  /* 993–1200px 的英文导航比 1240px 档再收一级，配合 nowrap 不折行。 */
+  html[lang='en'] .nav-menu { gap: 3px; }
+  html[lang='en'] .nav-item { font-size: 10px; padding: 10px 4px; }
 }
 
 /* ≤992px：桌面导航收起，改汉堡 + 全屏深色菜单。两套皮肤共用同一套移动端外观
@@ -2316,9 +2334,9 @@ body :is(.ai-development,.app-development,.web-development) .cta-section .el-but
   .brand-en { display: none; }
   /* 桌面导航收起，改汉堡 + 全屏菜单。收编前这条在 Header.vue 的 scoped 层里
      （`.desktop-nav, .desktop-contact { display: none }`），漏掉它会让 8 个导航项
-     在手机上继续参与栅格 —— 实测 390px 下 `.header-container` 变成三列挤在 390 内。
-     右侧 `.desktop-actions`（微信按钮）在两套皮肤下都保留，与样板一致。 */
-  .desktop-nav { display: none; }
+     在手机上继续参与栅格 —— 实测 390px 下 `.header-container` 变成三列挤在 390 内。 */
+  .desktop-nav,
+  .desktop-actions { display: none !important; }
   /* `.mobile-menu-overlay` 的 display/top 不在这里：它的基类（display: none; top: 80px）
      在 Header.vue 的 scoped 层，只有同层同选择器才能按源码顺序压过去 —— 放到这里会被
      压死，实测汉堡点开后遮罩 display:none、菜单打不开。这一层只给遮罩的皮肤。 */

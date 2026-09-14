@@ -604,3 +604,72 @@ BACKEND-TODO / 缺译 / 素材缺口：B/T05 待翻译 About/Contact/Privacy/Leg
 未完成事项与原因：同上一批；About/Cases/News 英文内容仍归 B/D，G5 IoT 入口待定。
 
 下次恢复的第一步：等待用户确认本批交互；若继续，可处理 G5 IoT 入口。
+
+---
+
+# Session A · 页头布局 + 侧边栏主题/语言按钮（2026-09-15 五批）
+
+状态：完成（工作区未提交）
+基准commit：`4000b49`（main）
+本任务commit：待提交
+
+目标与完成范围：
+
+1. 修复英文导航与右侧操作区在 1440 / 1200 / 1025 / 993 档互相重叠的问题，中英文导航都不再横向溢出。
+2. 参考站点视觉（仅参考交互结构，不复刻素材/文案/URL）：
+   - 页头主题从「图标 + 文字 pill」收成 icon-only 小圆钮。
+   - 语言按钮移到导航右侧的 `.desktop-actions` 内，样式为无边框简洁文本。
+   - 桌面微信按钮文案从 `WeChat: YunZhanKk` 收成 `WeChat`，中档宽度下收成纯图标。
+   - 右侧 `.studio-float` 增加亮 / 暗两个独立主题按钮（当前态高亮）。
+3. 修复 ≤992px 时 `.desktop-actions` 仍显示并与汉堡按钮重叠的问题：收起桌面导航时一并隐藏桌面操作区。
+
+修改文件：
+
+- `frontend/src/layout/components/Header.vue`
+- `frontend/src/layout/index.vue`
+- `frontend/src/stores/theme.js`（新增 `setTheme(theme)`，供侧边栏亮/暗两个按钮显式选择）
+- `frontend/src/style.css`
+
+验证命令、实际结果：
+
+- `npm.cmd run build` → PASS；主入口 CSS gzip 68.45 kB。
+- `npm.cmd run check:motion` → PASS 2 / FAIL 0 / BASELINE-STALE 0。
+- `npm.cmd run check:routes` → PASS 34 / FAIL 0 / PENDING 2。
+- 只读 eslint（touched files）→ 0 errors / 42 warnings（既有格式规则）。
+- Playwright 实测（dev @ `http://localhost:3001`）：
+  - EN 1440：container 1240，logo 206 / nav 623 / actions 193，无重叠。
+  - EN 1200 / 1100 / 1025 / 993：微信按钮收成 38px 图标，横向溢出均为 false。
+  - ZH 1440 / 1200 / 993：无溢出。
+  - 992：桌面 nav 与 actions 均隐藏，汉堡按钮正常显示。
+  - 七条英文服务页在 dark 主题下 nav 均 `rgb(255,255,255)`，无黑字回退。
+  - 侧边栏 light/dark 按钮可点并写 `yz-theme`，语言按钮 `/en` ↔ `/` 保持当前路由。
+
+未完成事项与原因：本批未生成截图证据；About/Cases/News 英文内容仍归 B/D；G5 IoT 入口仍未解决。
+
+下次恢复的第一步：用户验收后决定是否与之前未提交批次合并提交。
+
+---
+
+# Session A · 主题/语言切换过渡（2026-09-15 五批续）
+
+状态：完成（工作区未提交）
+基准commit：`4000b49`（main）
+本任务commit：待提交
+
+目标与完成范围：
+
+1. 主题亮/暗切换时给 `html` 临时挂 `.theme-transition`（约 420ms），让全页颜色/背景/描边平滑过渡；不碰 `transform / opacity / filter`，避免污染动效与门禁。
+2. 语言切换在支持 View Transitions 的浏览器里用原生跨页淡入淡出，不支持时回退现有 router-view 淡入。
+
+修改文件：
+
+- `frontend/src/stores/theme.js`
+- `frontend/src/layout/components/Header.vue`
+- `frontend/src/style.css`
+
+验证命令、实际结果：
+
+- `npm.cmd run build` → PASS；主入口 CSS gzip 68.54 kB。
+- `npm.cmd run check:motion` → PASS 2 / FAIL 0 / BASELINE-STALE 0。
+- 只读 eslint（touched files）→ 0 errors / 42 warnings。
+- Playwright 实测：点主题按钮后 `html.theme-transition` 立即出现、800ms 后移除；语言按钮 `/en/ai-development` → `/ai-development`，`lang=zh-CN`、标题同步切换。

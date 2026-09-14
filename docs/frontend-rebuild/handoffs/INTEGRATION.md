@@ -652,3 +652,38 @@ npx eslint（只读，touched files）→ 0 errors / 83 warnings（warning 为�
 - `npm.cmd run build` PASS；`check:motion` PASS；`check:routes` PASS 34 / FAIL 0 / PENDING 2。
 - 只读 eslint `Header.vue`：0 errors / 28 warnings（既有格式规则）。
 - 浏览器实测：中文服务页暗色导航白字、亮色导航黑字；语言按钮从 `/ai-development` 跳 `/en/ai-development`，`lang=en`，页头品牌 `Yunzhan Technology`；390 汉堡菜单里语言与主题按钮并排可点。
+
+### 8. 页头布局 + 侧边栏主题/语言按钮（2026-09-15 五批 · 工作区未提交）
+
+用户新增要求：英文态导航显示糟糕；页头亮/暗改为小按钮；侧边栏增加亮/暗两个主题按钮；多语言按钮放导航右侧；中英文导航都要正常显示。
+
+落点与改动：
+
+- **导航不再被操作区压住**：`style.css` 的 `.header-container` 从 `minmax(220px,1fr) auto minmax(220px,1fr)` 改为 `minmax(0,auto) minmax(0,1fr) auto`，中列导航居中。旧的 `margin-left: 18px; transform: translateX(10px)` 造成操作区左移压住末项，已删除。
+- **英文态几何压缩**：`html[lang='en']` 下品牌名 19px、隐藏重复的 `YUNZHAN TECHNOLOGY` 副标、导航 `font-size: 11px` / `letter-spacing: 0` / `padding: 10px 6px`；≤1200px 微信按钮收成纯图标。中文态仍保持原有尺度。
+- **≤992px 收敛**：`.desktop-nav, .desktop-actions` 同时 `display: none !important`，避免 769–992px 档操作区与汉堡按钮重叠。
+- **页头主题小按钮**：`Header.vue` 桌面主题按钮改为 `.theme-toggle-icon`（36px，icon-only）；语言按钮改为无边框文本 `.lang-toggle`；微信文案缩短为 `WeChat / 微信`。
+- **侧边栏**：`layout/index.vue` 的 `.studio-float` 增加 `light / dark` 两个 `.theme-mode` 按钮，当前态用 `--color-accent` 高亮；咨询按钮按当前语言跳 `/ai-consultation` 或 `/en/ai-consultation`；`stores/theme.js` 新增 `setTheme(theme)`，其余手动到期规则不变。
+
+验证：
+
+```text
+npm.cmd run build        → PASS（主入口 CSS gzip 68.45 kB）
+npm.cmd run check:motion → PASS 2 / FAIL 0 / BASELINE-STALE 0
+npm.cmd run check:routes → PASS 34 / FAIL 0 / PENDING 2
+npx eslint（只读，touched files）→ 0 errors / 42 warnings
+```
+
+Playwright 实测（dev @ `http://localhost:3001`）：
+
+- EN：1440 / 1200 / 1100 / 1025 / 993 横向溢出 `false`；992 桌面导航与操作区隐藏、汉堡出现。
+- ZH：1440 / 1200 / 993 横向溢出 `false`。
+- 七条英文服务页 dark 下导航 `rgb(255,255,255)`，无黑字。
+- 侧边栏主题按钮、语言按钮、返回顶部/咨询按钮均可点。
+
+### 9. 主题/语言切换过渡（2026-09-15 五批续 · 工作区未提交）
+
+- **主题**：`stores/theme.js` 在真正换色时给 `html` 临时加 `.theme-transition`，420ms 后摘掉；`style.css` 对应规则只过渡 `background-color / color / border-color / fill / stroke / box-shadow`，不包含 `all`，也不碰 `transform / opacity / filter`。
+- **语言**：`Header.vue` 的 `switchLocale` 优先用 `document.startViewTransition`，否则回退 `router.push` 的普通路由淡入；`:view-transition-old/new(root)` 时长 0.3s。
+
+验证：build PASS（主 CSS gzip 68.54 kB）；check:motion PASS；touched eslint 0 errors / 42 warnings；Playwright 实测主题类按时挂/摘、语言切换正常。
