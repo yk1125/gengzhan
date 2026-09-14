@@ -1,0 +1,74 @@
+{
+  "box": {
+    "x": 130,
+    "y": 633,
+    "w": 1180,
+    "h": 102
+  },
+  "note": "mask(.index4 .mask) 关闭、文案隐藏，只测背景+scrim 贡献；白字 #FFFFFF vs 该区域像素",
+  "rows": [
+    {
+      "combo": "mine-filter055-scrim030",
+      "ratio": 30,
+      "worst": 9.44,
+      "p99": 9.58,
+      "mean": 11.76
+    },
+    {
+      "combo": "mine-filter055-scrim030",
+      "ratio": 50,
+      "worst": 9.54,
+      "p99": 9.7,
+      "mean": 11.97
+    },
+    {
+      "combo": "mine-filter055-scrim030",
+      "ratio": 70,
+      "worst": 9.58,
+      "p99": 9.85,
+      "mean": 12.18
+    },
+    {
+      "combo": "raw-scrim030",
+      "ratio": 30,
+      "worst": 4.04,
+      "p99": 4.06,
+      "mean": 5.73
+    },
+    {
+      "combo": "raw-scrim030",
+      "ratio": 50,
+      "worst": 4.06,
+      "p99": 4.11,
+      "mean": 5.91
+    },
+    {
+      "combo": "raw-scrim030",
+      "ratio": 70,
+      "worst": 4.06,
+      "p99": 4.26,
+      "mean": 6.1
+    },
+    {
+      "combo": "raw-noscrim",
+      "ratio": 30,
+      "worst": 2.05,
+      "p99": 2.07,
+      "mean": 3.08
+    },
+    {
+      "combo": "raw-noscrim",
+      "ratio": 50,
+      "worst": 2.06,
+      "p99": 2.09,
+      "mean": 3.2
+    },
+    {
+      "combo": "raw-noscrim",
+      "ratio": 70,
+      "worst": 2.07,
+      "p99": 2.18,
+      "mean": 3.33
+    }
+  ]
+}

@@ -915,7 +915,7 @@ $ npx.cmd eslint src/views/Home/index.vue src/views/Home/useHomeScroll.js --ext 
 
 **C. 素材/内容缺口（未变）**
 
-1. `HOME_STATEMENT_BG`（index4 背景）仍是占位素材，与参考站观感差距大（参考站是一张深色人物群像照，我方是一张 CMMI 证书）。这直接决定 index4 的观感，建议优先补一张合适的深色横图。
+1. `HOME_STATEMENT_BG`（index4 背景）仍是占位素材，与参考站观感差距大（参考站是一张深色人物群像照，我方是一张 CMMI 证书）。这直接决定 index4 的观感，建议优先补一张合适的深色横图。 → **已关闭（2026-09-14）：用户提供公司 logo 墙实拍替换，见 §9.21。**
 2. footer logo（9.17 A1）、index2/index5 占位动图（9.17 A2）均未变。
 
 **D. 存量问题（不是本批引入）**
@@ -930,3 +930,186 @@ $ npx.cmd eslint src/views/Home/index.vue src/views/Home/useHomeScroll.js --ext 
 3. 继续 §9.17 C1：M-03 页头入场、M-31 footer 圆形按钮 hover 发光。M-32 `.fixed_side` 与滚动惯性耦合，建议等 A 的 `lenis` 落地后一并做。
 4. 用户已批准的其余页面（公司/联系/法律，含 T05 `contact`）排在其后。
 
+
+### 9.21 本批已做：index4 背景素材替换（用户提供的公司 logo 墙实拍）
+
+用户本轮指令：「要不换成这张 `D:\桌面\微信图片_20260914014848.jpg`」。
+
+（路径更正：用户写的是 `D:\桌面\微信图片\_20260914014848.jpg`，本机没有 `微信图片` 这个子目录，真实文件是 `D:\桌面\微信图片_20260914014848.jpg`。已按真实文件复制；`home.js` 注释里记的也是这个真实路径。）
+
+#### 9.21.1 改动清单
+
+| 文件 | 改动 |
+| --- | --- |
+| `frontend/public/assets/home/statement-bg.jpg` | 新增。467,986 bytes，SHA256 `EAE77DB8B6908CDE59158ACFF791D524D71E78F75804BCF8A78C724C2869A071`，2048×1536 JPEG |
+| `frontend/src/content/home.js` | `HOME_STATEMENT_BG`：`/services-showcase.jpg` → `/assets/home/statement-bg.jpg`（+6 行注释） |
+| `frontend/src/views/Home/index.vue` | `.index4 .bg` 加 `filter: brightness(0.55) saturate(0.9)`（+4 行注释）；`.index4 .text` `top: 57%` → `76%`（+3 行注释） |
+| `docs/frontend-rebuild/evidence/project-assets/manifest.json` | 新增「本项目自有 / 用户提供素材」登记表 |
+
+- **字节级一致已复核**：`(Get-FileHash 'D:\桌面\微信图片_20260914014848.jpg').Hash` 与仓库副本逐位相同，未转码、未裁剪、未重压缩。
+- 登记表与 T00A 的 `reference-assets/assets-manifest.json` **分开**：那张表只登记从参考站抓的素材（含抓取时间、源 URL 等），本表登记不来自参考站的（来源、字节数、SHA256、尺寸、权利归属、运行时处理）。既有素材（hero 视频、旧 logo）挂在「未登记项」待归属方补。
+- `/services-showcase.jpg` 替换后**已无任何引用**：`rg services-showcase` 只剩 CSS 类名 `.about .services-showcase`（`style.css:1122` / `:1129` / `:1152` / `:1183`，与图片无关）与文档描述。原文件保留未删（属既有仓库内容，是否清理交由归属方）。
+- 本批**没有动** router / 全局样式 / 公共组件 / package（按 AGENTS 的分工），也没有改其它页面。
+
+#### 9.21.2 为什么必须压暗：不是审美偏好，是无障碍硬门禁
+
+新素材是**办公区 logo 墙实拍，画面接近纯白**，而 index4 的宣言是**白字**。这是本轮真正的技术约束 —— 不压暗就是白字白墙。
+
+同区域像素统计（关掉 `.index4 .mask`、隐藏 `.text`，只留背景 + scrim；区域 `x130–1310 / y633–735`，即文案盒实测位置；sRGB 相对亮度法，WCAG 2.1）：
+
+| 背景处理 | 最差（区域最亮像素） | p99 | 均值 | 判定 |
+| --- | --- | --- | --- | --- |
+| **本批实现** `brightness(.55) saturate(.9)` + scrim `.3` | **9.44 – 9.58 : 1** | 9.58 – 9.85 | 11.76 – 12.18 | 过 AAA（≥7:1） |
+| 原图 + SPEC 字面的 G-08 scrim `.3` | 4.04 – 4.06 : 1 | 4.06 – 4.26 | 5.73 – 6.10 | **不过 AA（<4.5:1）** |
+| 原图、不叠 scrim | 2.05 – 2.07 : 1 | 2.07 – 2.18 | 3.08 – 3.33 | 严重不过 |
+
+30% / 50% / 70% 三个滚动比例各测一遍，数值稳定；原始数据 `measure-i4bg-contrast-maskoff.json`。
+
+**结论**：如果照 SPEC 字面只叠 G-08 的 0.3 压暗层，这张素材上白字最亮处只有 **4.04:1，不达 AA**；连「不叠 scrim」的 2.05:1 在内，三种做法里只有压暗能过。所以压暗是「这张素材能不能用」的前提，不是可选美化。
+
+渲染态（`.mask` 开着）同区域 5 个比例的实测见 `measure-i4bg-contrast.json`：最差 9.44:1（30% 处）、均值 11.97–16.52:1。
+
+#### 9.21.3 取舍：为什么是「压暗」而不是「模糊」
+
+试过 10 个变体。压暗 + 模糊（blur 7/12px）文字最干净，但 `.text` 的 3D 翻转是**父 `.text` 与内层 `<div>`/`<p>` 同时插值**，过渡中两组文案本来就重叠，背景再一模糊就成了没法辨认的糊团；不模糊时背景仍有结构、可读性反而更好。故取「压暗 55% + 不模糊 + 文案下移到干净墙面」。
+
+未加文字阴影：本页其余白字（banner、index4 原副标题）都没有阴影，单独给这块加会不一致。
+
+#### 9.21.4 与 SPEC 的有意偏离：M-22 `top: 57% → 76%`
+
+SPEC M-22 实测文案位置是 `.fix` 内 `top: 57%`。新素材的**公司名字样**（「北京耘栈科技有限公司」/「BEIJING YUNZHAN TECHNOLOGY CO., LTD.」）正好落在画面上 33–49% 一带，57% 会把宣言直接压在中英文名上（首轮就是这么压的，截图里叠字很难看）。整块下移到 **76%** 的干净墙面。
+
+- 定位**模型没变**：仍是 `.fix` 内绝对定位 + `translate(-50%,-50%)` + `z-index:5`；只改数值。
+- 这是**素材驱动的偏离**，不是参考站实测值被改写 —— SPEC 里的 57% 仍是对参考站的正确记录，SPEC 不需要改。
+- 实测：滚动全程 `.text` 盒恒为 `x130 y633 w1180 h102`（1440×900），即中心落在 684/900 = 76%。
+
+#### 9.21.5 与 SPEC 的逐条对应表
+
+| SPEC 条目 | SPEC 值 | 本批实现 / 实测 | 是否一致 |
+| --- | --- | --- | --- |
+| M-18 高度注入 | `clientHeight + 7000` = 7900 | 未改。实测 `.index4` top=4134 height=7900（clientH 900，行程 7000） | 一致 |
+| M-19 mask scrub | `scale 1.05 → 300`，负 `animation-delay` 定位 | 未改。实测 30% 处 `scale 88.547`、`animation-play-state: paused` | 一致 |
+| M-20 `.bg` 几何 | 高 1006.36px、`px = 106.36` | 未改。实测 `.bg` rect `1440×1006` | 一致 |
+| M-20 `.bg` 位移 | 线性 `translateY` `0 → -106.36px`，区间 7000px | 未改。实测 30% 处内联 `translateY(-44.626px)` | 一致 |
+| M-20 背景图**内容** | 参考站是深色黑白人物群像 | 用户提供的 logo 墙实拍（同 `background-size: cover` 几何） | **素材不同，用户授权替换** |
+| G-08 `.fix::after` 压暗层 | 亮 `rgba(0,0,0,.3)` / 暗 `.5` | 未改。实测分别为 `rgba(0,0,0,0.3)` / `rgba(0,0,0,0.5)` | 一致 |
+| M-22 `.text` 位置 | `top: 57%` | **`top: 76%`** | **有意偏离，理由见 9.21.4** |
+| M-22 字号 / 居中 / 不换行 | `font-size:50px; text-align:center; white-space:nowrap` | `clamp(26px,3.4vw,50px)`（1440 下即 50px）+ `text-align:center`；未写 `nowrap`，但主文案实测单行（盒高 102 = 65 + 18 + 21），结果等效 | 等效（沿用既有实现，本批未动） |
+| M-22 手机降级 | `.text{position:static}` + `.text>div{opacity:1!important}` + `.sj_jump{position:absolute;top:55px}` | 逐条对齐（`index.vue:915–919`） | 一致，**但存在叠加层缺陷，见 9.21.7** |
+
+`filter: brightness(0.55) saturate(0.9)` 是 SPEC 里**没有**的一层，属本批新增的素材适配，单独登记在 9.21.2，不混进 SPEC 数值。
+
+#### 9.21.6 对照静帧（与参考站同一滚动位置）
+
+- 参考站：`docs/frontend-rebuild/evidence/reference-effects/frames/index4/index4-{000,030,050,070,100}.png`
+- 我方：`docs/frontend-rebuild/handoffs/B/compare/I4BG-MINE-{000,030,050,070,100}.jpg`（1440×900，preview `3001`，与参考站同比例的 0/30/50/70/100）
+- 暗色主题：`I4BG-MINE-1440-dark-{000,050,100}.jpg`
+- 被否掉的两种背景处理：`I4BG-REJECT-raw-withscrim-1440-050.png`（原图 + 0.3 scrim，白字糊掉）、`I4BG-REJECT-raw-noscrim-1440-050.png`
+
+| 比例 | 参考站 | 我方 | 说明 |
+| --- | --- | --- | --- |
+| 000 | 整屏近黑，只见 3 条细竖槽 | logo 墙，整屏被 mask 压住，中间一条竖槽透出云 logo | 擦除模型一致；素材明暗基调不同（参考站本身就是暗调群像，我方是亮墙靠压暗压下来） |
+| 030 | 中间竖槽撑开到 **302px**，槽内是群像 | 中间竖槽撑开到 **765px**，槽内是 logo 墙 | 展开速度对不上，见下 |
+| 050 | 全屏铺满，宣言压在中灰台阶上 | 全屏铺满，宣言压在干净墙面 | 文案位置 57% vs 76%（9.21.4） |
+| 070 | 同 050，外层 opacity 已开始掉 | 同 050 | 一致 |
+| 100 | 第一组已淡出 | 第一组已淡出 | 一致 |
+
+**顺带记录一条既有保真差距（不是本批引入）**：30% 处参考站竖槽 302px（`index4-030.png` 实测，SPEC M-19 记的就是这个值），我方是 765px。两边都是「负 `animation-delay` 定位 scale 1.05→300」，但展开速度对不上 —— 我方 30% 时 `scale 88.547`。这条**不属于本轮范围**（mask 本批未动），登记在此供后续轮次核对，不自行改数值。
+
+#### 9.21.7 新发现（存量缺陷，非本批引入）：390 端 index4 宣言文字被背景盖住
+
+证据：`compare/I4BG-MINE-390-light-050.jpg`、`compare/I4BG-MINE-390-dark-050.jpg`、`measure-i4bg-390-stack.json`。
+
+**现象**：390×844 下 index4 只剩一条 440px 高的照片带，宣言文字**完全看不见**。
+
+**根因**（实测 DOM，非推测）：
+
+| 元素 | 手机端 computed | 来源 |
+| --- | --- | --- |
+| `.index4` | `height: 440px`（`height:auto`） | `index.vue:911` |
+| `.index4 .bg` | `position: relative; z-index: 1` | `index.vue:914` 只覆盖了 position/height/transform，**`z-index:1` 从桌面规则 `:762` 残留** |
+| `.index4 .sj_jump` | `position: absolute; top: 55px; z-index: auto` | `index.vue:915` |
+| `.index4 .text`（在 `.sj_jump` 里） | `position: static; opacity: 1` | `index.vue:916`、`:918` |
+
+定位元素按 `z-index` 分层绘制：`z-index:1` 的 `.bg` 把 `z-index:auto` 的 `.sj_jump` **整块盖住**。实测文案盒 `x0 y55 w390 h63`、`opacity:1`（CSS 明确写了 `1!important`，说明本意就要显示），但同点位 `elementFromPoint` 命中的是 `.bg` —— 文字被照片严严实实压住。
+
+**这是存量缺陷，不是本批引入**：本批对 `index.vue` 的两处改动（`.bg` 的 `filter`、`.text` 的 `top`）都不在 `@media (max-width:1024px)` 块内（该块是 `:876–925`），且手机上 `top` 被 `position:static` 忽略。上一轮交付的 `shots/10-mobile390-index4.png`（改动前）同样看不到宣言文字。
+
+**SPEC 依据**：SPEC M-22 手机降级（`:498`）明确要求文案静态可见（`.text>div{opacity:1!important}`），M-23（`:523`）也写明手机不跑 `data-view`、必须靠 CSS 兜底。参考站之所以不出这个问题，是因为它手机端用的是**另一个元素** `.sj_bg`（M-20 `:449`：`.sj_bg{display:block}`、`.bg{display:none}`），而 `.sj_bg` 没有 `z-index`，DOM 顺序自然让 `.sj_jump` 在上。我方手机端复用了同一个 `.bg`（`:873-875` 有登记），于是把桌面的 `z-index:1` 一起带了过来。
+
+**本批未修**：修法涉及设计取舍（文案压在照片上沿的云 logo 上 / 下移到下半部干净墙面 / 手机端干脆不显示），属需求决策，已列入 §9.23 A1 待用户裁决。给出根因与最小修法，不擅自替用户定。
+
+### 9.22 本批验证（真实输出）
+
+```text
+$ npm.cmd run build            # frontend/
+dist/assets/index-304c5695.js            1,139.35 kB │ gzip: 364.39 kB
+dist/assets/index-b728fc9b.css              25.46 kB │ gzip:   6.61 kB
+(!) Some chunks are larger than 500 kBs after minification. …
+✓ built in 17.67s
+=== EXIT: 0 ===
+
+$ npm.cmd run check:routes     # frontend/
+结果：PASS 34 / FAIL 0 / PENDING 2
+=== EXIT: 0 ===
+（PENDING 仍是 T05 contact 未实现，与上批相同）
+
+$ npx.cmd eslint src/views/Home/index.vue src/content/home.js --ext .vue,.js      # 只读
+✖ 127 problems (0 errors, 127 warnings)
+
+$ npx.cmd eslint _base_index.vue _base_home.js --ext .vue,.js                     # 基线（git show HEAD:）
+✖ 127 problems (0 errors, 127 warnings)
+=== 增量：0 ===
+```
+
+- eslint 增量 **0**：基线 127 逐位相同，本批只加注释与一行 CSS，没有新增告警。
+- 基线对照法照旧（`git show HEAD:<file>` → `Out-File -Encoding utf8` 导出临时文件实测后 `[IO.File]::Delete` 删除）。
+  **踩坑记录**：第一次用 `Set-Content -NoNewline` 导出，把整个文件拼成了一行 → eslint 报 `Parsing error: Unexpected token import`（2 errors）。基线导出**必须**用 `Out-File` 或写行数组，不能用 `-NoNewline`。
+- 8 张组合截图（`shots/09-*.png`，preview `3001`，dist = 本批工作树构建结果）：
+
+| 组合 | header | footer | footer bg | pad-top | console error | seniorweb 外链 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1440 zh 亮 | `header header-home` | `…footer-home` | rgb(242,241,228) | 146px | 0 | 0 |
+| 1440 zh 暗 | 同上 | 同上 | rgb(17,17,17) | 68px | 0 | 0 |
+| 1440 en 亮 | 同上 | 同上 | rgb(242,241,228) | 146px | 0 | 0 |
+| 1440 en 暗 | 同上 | 同上 | rgb(17,17,17) | 68px | 0 | 0 |
+| 390 zh 亮 | 同上 | 同上 | rgb(242,241,228) | 34px | 0 | 0 |
+| 390 zh 暗 | 同上 | 同上 | rgb(17,17,17) | 34px | 0 | 0 |
+| 390 en 亮 | 同上 | 同上 | rgb(242,241,228) | 34px | 0 | 0 |
+| 390 en 暗 | 同上 | 同上 | rgb(17,17,17) | 34px | 0 | 0 |
+
+`EXTERNAL URLS: none`（8 张全扫 `[src]/[href]/[style]`，seniorweb 域名 0 命中）；`measure-combos-batch.json` 已刷新。
+
+- index4 逐帧回归（探针 `bx-bg6.js`，preview `3001`，1440×900）：**163 帧，p50 6.1ms / p95 6.3ms / max 7.1ms / 长帧(>32ms) 0**，`pageerror` 0，数据在 `measure-i4bg.json`。
+- 本批新增探针：`bx-bg7.js`（390 端 5 比例 × 亮暗）、`bx-bg8.js`（390 端叠层根因）、`bx-bg9.js`（1440 亮/暗对位）、`bx-bg11.js`（覆盖前后几何对照）、`bx-contrast.js` / `bx-contrast2.js` / `bx-contrast3.js`（对比度）。均在 `C:\Users\yk\AppData\Local\Temp\t00r-browser\`。
+
+### 9.23 缺口、申请与下次第一步（本轮更新）
+
+**A. 需用户裁决（新增 1 条）**
+
+1. **390 端 index4 宣言文字不可见**（存量缺陷，见 9.21.7）。三种修法请择一，B 推荐 ①：
+   - ① **最小修法**：在 `≤1024px` 块里把 `.index4 .bg` 的 `z-index` 从残留下来的 `1` 改成 `auto`，DOM 顺序即让 `.sj_jump` 压在上面。与 SPEC M-22 手机降级一致（参考站就是靠 `.sj_bg` 无 z-index 自然分层）。副作用：文案会落在照片上沿，压到云 logo 上。
+   - ② **下移版**：在 ① 基础上把手机端文案移到照片下半部（与桌面 76% 同思路），视觉更干净，代价是偏离参考站的 `top:55px`。
+   - ③ **不显示**：如果手机端本就不该出现这段宣言，B 改为显式隐藏并登记，不再算缺陷。
+   - （若你想要「照片 + 文案」两段式堆叠，也可明示，那是第 4 种改法。）
+2. 手机端 index4 照片带的构图：现在 390 宽下 `cover` 会横向裁掉约 2/3，只剩中间云 logo 与公司名。是否接受？（若要换构图，需要一张竖版素材，见 C1。）
+
+**B. 给 A 的申请（未变）**：9.14 三项 + 9.20 A4（M-01 lenis）。本批无新增。
+
+**C. 素材/内容缺口（更新）**
+
+1. ~~index4 背景是占位素材~~ → **本批已替换**（9.21）。**新缺口**：如果 9.23 A 选 ②，手机端最好用**竖构图**版本（参考站手机端本来就有一套专用 `.sj_bg`，素材未抓取）。
+2. footer logo（白底方图无 alpha）、index2/index5 占位动图 —— 未变。
+3. 新素材是 4:3 横图（2048×1536）：桌面 1440×1006 用 `cover` 刚好。
+
+**D. 存量问题（不是本批引入）**
+
+1. `/cases` 直连 500（后端未起），页面有失败态。
+2. `npm.cmd run lint` 带 `--fix`，不是只读检查。
+3. M-19 mask 展开速度与参考站对不上（30% 处 765px vs 302px），见 9.21.6 末段。
+
+**E. 下次第一步**
+
+1. 等用户对 9.23 A1/A2（390 端 index4）的裁决，再动 `index.vue` 的手机端块。
+2. 继续 §9.17 C1：M-03 页头入场、M-31 footer 圆形按钮 hover 发光。M-32 `.fixed_side` 与滚动惯性耦合，等 A 的 lenis。
+3. A 的 `lenis` 合入后：复跑 `bx-r6b2.js` 确认页内逐帧口径未被全局滚动改变；复跑 `bx-hdr.js` / `bx-combo.js` 确认 M-04/M-05 的 wheel 判定仍成立。
