@@ -760,3 +760,213 @@ C 把 `--svc-*` 改成引用全局即可，页面无需其他改动；请求 A �
    ② 量 `hero` 上留白与页头高度的间隙（≤1024 现在只剩 4px）；③ 复核 M-04（`.on`）与 M-05（`.hide`）在服务页也生效（滚轮向下应收起 76px）。
 3. 把 20.4（`≤768` 的 `img{height:auto!important}`）与 20.2（footer 米色）一起向用户汇报进展。
 4. 用户若提供正式图片，按 `evidence/service-pages/service-images.md` 第 5 节两步替换：A / D 组覆盖 `frontend/public/assets/services/`，B / C 组覆盖 `frontend/public/assets/services/cards/`，多数情况不用改代码。
+
+---
+
+# 第 5 轮：用户两条新反馈（2026-09-15）
+
+## 24. 本轮两条反馈 → 结果
+
+| # | 反馈（用户原话摘要） | 结果 | 证据 |
+|---|---|---|---|
+| 1 | 打开服务页 → 点导航栏别的页面 → 再点回这个服务页，顶部 hero 文字没有渐显 | **已复现、已定位、已修复**（`playTitleEntrance` 改成"先关过渡 → 强制结算出 0 状态 → 再挂 `.on`"） | 27.1 的 `transitionrun/start/end` 时间轴（修复前后对比） |
+| 2 | 对照原公司官网（`yunzhankeji.top`）各服务页，审**当前项目**服务页各模块文案是否要调整/增加 | **已完成对照并落地**：7 页能力卡对齐公司真实服务线 + 新增关键词标签行；7 页 03 区新增「交付流程」六步；定制页描述补一句 | 第 25/26 节；明细表 `evidence/service-pages/copy-review-round5.md` |
+
+本轮**只改** `frontend/src/views/ServiceLanding.vue` + 本文件 + `evidence/service-pages/round5/`（14 张截图）+ `evidence/service-pages/copy-review-round5.md`。
+`Header.vue` / `Footer.vue` / `style.css` / router / lockfile **一个字节都没动**（要改的都写成第 29 节的申请）。
+
+## 25. 反馈 1：hero 逐字入场为什么丢了
+
+### 25.1 根因（实测，不是猜的）
+
+7 条服务路由在 `router/index.js` 里指向**同一个** `ServiceLanding.vue`，所以服务页 → 服务页切换时**组件实例被复用**（`onMounted` 不再跑，只走 `watch(() => route.path)`）。
+
+修复前实测（dev 5180，1420×900，rAF 采样）：点 `/app-development` 后 `h1` 一直是 `class="each_animate on"`，首个 span 的 `opacity` **从 t=37ms 起就是 `1.000`，全程 1.000**：
+
+```
+37|each_animate off|1.000 , 61|each_animate on|1.000 , 91|on|1.000 ... 2044|on|1.000
+```
+
+即：`.on` 被摘掉 10ms 又挂回去，而 `.each_animate span` 基础样式带 `transition: 1s`，
+这一次"摘—挂"被浏览器当成 **1 → 1 的过渡**（没有任何可动画的差值）→ 逐字入场等于没播。
+（首次加载/从别的页面进入时元素是新挂载的，第一次渲染就是 0，所以那两种情况是好的。）
+
+### 25.2 修法（`ServiceLanding.vue`）
+
+- 模板：`h1` 加 `ref="titleEl"`，`:class="{ on: titleIn, reset: titleReset }"`。
+- 脚本：新增 `titleReset` / `titleEl`；`playTitleEntrance()` 改为 async：
+  `titleReset=true, titleIn=false` → `await nextTick()` → 读一次 `titleEl.offsetWidth` 强制结算样式（让"未入场"的 0 状态真正落地）
+  → `titleReset=false` → `await nextTick()` → `setTimeout(…, 10)` 挂回 `.on`（SPEC M-10 的 10ms 保持不变）。
+- 样式：`.each_animate.reset span { transition: none !important; }` —— 只在重置窗口内关过渡，`.on` 规则与逐字 `transition-delay`（inline `index*0.08+0.3s`）原样不动。
+
+### 25.3 修复后实测（`transitionrun → transitionstart → transitionend`，都是浏览器真实事件）
+
+| 场景 | 环境 | 时间轴（ms） | 结论 |
+|---|---|---|---|
+| 首次加载 | dev 5180 | start 26/105/183 → end 948/1027/1106/1185 | 保留 M-10 的 0.3s 延迟 + 1s 逐字 |
+| **服务页 → 服务页** | dev 5180 | **run 58 → start 355 → end 1356** | 过渡被重新创建 ✅（修复前：无 run、无 start、无 end） |
+| 服务页 → 服务页 | prod 4182 | run 63 → start 360 → end 1362 | 同上 ✅ |
+| /cases → 服务页 | prod 4182 | run 351 → start 648 → end 1649 | 跨组件进入同样完整播放 ✅ |
+| 首次加载 | prod 4182 | start 38/117/196 → end 961…1197；opacity 0.029→1 约 950ms | ✅ |
+
+### 25.4 顺手查清的一件事：从别的页面点进服务页时，那 ~350ms 的"空白"不是本页的 bug
+
+用户描述里的"文字没**直接**出现"，有一部分来自**全局换页过渡**：
+`frontend/src/layout/index.vue:6` 是 `<transition name="fade" mode="out-in">`，`style.css` 之外该文件 53-60 行写死 `0.3s`。
+`mode="out-in"` 意味着**旧页面先淡出 0.3s，新页面才挂载**。
+
+实测（prod 4182，rAF 逐帧读 `main > *` 的类名切换时刻）：
+`/cases→/web-development` 373ms、`→/about` 355ms、`→/news` 337ms、`→/cases` 330ms。
+**所有 SPA 跳转一致**，与服务页本身无关，属 A 的公共层（见 29.1 申请）。
+服务页 → 服务页因为组件复用、`<component :is>` 不换 key，**不触发**这个过渡（所以那边只受 25.1 影响）。
+
+## 26. 反馈 2：文案对照与改动（明细见 `copy-review-round5.md`）
+
+抓取方式：Playwright 打开旧官网 7 条服务路由，`innerText` 全文（SPA，静态 HTML 只有 `<div id="app">`）。
+旧官网内容量：AI / 小程序 / App / WEB / 定制 **5 页完整**（含 6 步流程与带技术栈标签的服务类型卡）；**物联网与数字文创只有骨架页**（各 4 条一句话能力）。
+
+### 26.1 每个页面都做的两件事
+
+1. **02 能力卡对齐公司真实服务线**：标题/说明改成旧官网写明的服务类型（AI 的 4 类、WEB 的"企业管理系统"、IoT 的"智能硬件与采集"、定制的 4 类…），并**新增关键词标签行**（`ul.service-card-tags`，药丸样式），标签逐条取自旧官网各卡自带的技术栈/场景词。
+2. **03 区新增「交付流程」六步**（`ol.service-process`，桌面 3 列 × 2 行 / ≤1024 两列 / ≤560 单列，`data-aos="fade-top"` delay 100/200）：
+   AI / App / WEB / 定制四页**照抄旧官网流程标题**；小程序 / IoT / 数字创意三页旧官网没有流程，按同一套公司节奏按业务改写（小程序的"提审上线"、IoT 的"现场联调"、创意的"概念设计/内容制作"）。
+
+### 26.2 逐页卡片集（改动后）
+
+| 路由 | 02 四张卡（新） | 03 六步（新） |
+|---|---|---|
+| `/ai-development` | 大语言模型应用 / 企业知识智能体 / 智能客服系统 / AI 图像识别 | 需求分析·方案设计·模型开发·系统集成·测试上线·持续优化 |
+| `/miniprogram-development` | 全平台小程序 / 电商交易闭环 / 行业场景应用 / 微信生态集成 | 需求梳理·原型与视觉·开发实现·联调测试·提审上线·运营迭代 |
+| `/app-development` | 原生应用研发 / 跨平台方案 / 移动体验设计 / 上架与持续运营 | 需求分析·UI 设计·功能开发·测试优化·上线发布·维护升级 |
+| `/web-development` | 品牌官网建设 / 电商与业务平台 / 企业管理系统 / 多语言与长期维护 | 需求沟通·方案设计·UI 设计·前端开发·后端开发·测试上线 |
+| `/iot-development` | 智能硬件与采集 / 云平台搭建 / 实时监控与告警 / 数据分析与可视化 | 现场调研·方案设计·设备接入·平台开发·联调上线·运维优化 |
+| `/custom-development` | 企业管理系统 / 行业解决方案 / 数据分析平台 / 创新产品研发 | 需求调研·方案设计·原型确认·开发实施·测试验收·上线运维 |
+| `/digital-creativity` | 互动品牌体验 / 数字展陈设计 / 3D 与 VR / AR / 信息可视化 | 创意沟通·概念设计·原型验证·内容制作·开发联调·上线运营 |
+
+另外两处小改：数字创意 **01 三面板去重**（原「互动品牌体验 / 数字展陈 / 创意 H5」与 02 卡同名 → 改为体验形式口径「品牌活动体验 / 数字展陈现场 / 移动互动传播」）；
+定制页 `description` 句尾补「兼顾既有遗留系统的平滑演进」（承接被移除的"遗留系统升级"卡语义）。
+
+### 26.3 明确没采纳的（写给用户看，避免"看起来对齐了"）
+
+- 旧官网小程序页的平台数据（微信 12亿+/450万+、支付宝 10亿+/300万+…）：**平台口径、非公司业绩**，AGENTS 也禁止自行增加业绩数字。
+- "数字藏品 / NFT"：旧官网该页是骨架页只有一句话，且品类与本项目主线关系无从证实 → 未做成卡片，待用户裁决。
+- 服务名「数字文创」（旧官网）vs「数字创意」（本项目）：改名牵动导航/路由/词典（A 的共享层）→ 待用户裁决（见 30）。
+- 公司数字（10年+ / 200+ 客户 / 98% / CMMI3 / 24/7）：`REQUIREMENTS.md Q18` 已确认可用，但本轮**没有**加进服务页（避免与首页重复且未经用户点头）。
+- hero 下方"四条卖点"这种旧站排版：会动到第 3 轮按参考站逐值移植、用户已确认的 hero 排版 → 未改。
+
+## 27. 真实验证输出（本轮全部真跑）
+
+### 27.1 hero 逐字入场（见 25.3 表；下面是 prod 预览 4182 的原始采样片段）
+
+```
+fresh      : start 38/117/196 → end 961/1040/1118/1197 ；opacity 0.029→0.125→0.276→…→0.999→1（约 950ms）
+svc→svc    : run 63 → start 360 → end 1362 ；opacity 0→0.007→0.035→0.136→…→0.999→1
+/cases→svc : run 351 → start 648 → end 1649
+```
+
+### 27.2 构建（`frontend/`）
+
+```
+> npm.cmd run build
+dist/assets/ServiceLanding-9ec27f2d.css     18.23 kB │ gzip:   3.40 kB
+dist/assets/ServiceLanding-5d5fcda3.js      23.10 kB │ gzip:  11.29 kB
+(!) Some chunks are larger than 500 kBs after minification.  ← 存量警告，同前几轮
+✓ built in 16.63s
+```
+
+### 27.3 路由检查
+
+```
+> npm.cmd run check:routes
+结果：PASS 34 / FAIL 0 / PENDING 2      ← 与第 4 轮一致（contact 未实现、routeManifest 待 T01）
+```
+
+### 27.4 eslint（只读，未加 `--fix`；必须带 `--ignore-path .gitignore`）
+
+```
+> npx.cmd eslint src/views/ServiceLanding.vue                      → 无输出（0 error / 0 warning）
+> npx.cmd eslint . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore
+✖ 802 problems (7 errors, 795 warnings)                            ← 与仓库基线完全一致（7/795），本轮新增 0
+```
+
+### 27.5 7 条路由 × 滚动显影 × 破图 × 横溢（Chromium，滚到页底再取数）
+
+| 路由 | 1440×900 `[data-aos]` | 390×844 `[data-aos]` | 破图 | 横向溢出 | ≤390 流程列数 |
+|---|---|---|---|---|---|
+| `/ai-development` | 18 / 18 | 18 / 18 | 0 | 无 | 1 |
+| `/miniprogram-development` | 19 / 19 | 19 / 19 | 0 | 无 | 1 |
+| `/app-development` | 18 / 18 | 18 / 18 | 0 | 无 | 1 |
+| `/web-development` | 18 / 18 | 18 / 18 | 0 | 无 | 1 |
+| `/iot-development` | 18 / 18 | 18 / 18 | 0 | 无 | 1 |
+| `/custom-development` | 18 / 18 | 18 / 18 | 0 | 无 | 1 |
+| `/digital-creativity` | 18 / 18 | 18 / 18 | 0 | 无 | 1 |
+
+（首轮 390 采样里 `ai/web/custom/creative` 出现 16-17/18，是把采样等待从 500ms 加到 900ms 后的**采样竞态**，不是未显影；单独复测 `custom-development` 390：`missing: []`。）
+
+### 27.6 SPA 点导航（第 4 轮修好的那条，本轮回归；新增内容后仍成立）
+
+```
+/ai-development          18/18  missing []
+→ /web-development       18/18  missing []
+→ /cases                 （0 个 data-aos，正常）
+→ /miniprogram-development 19/19 missing []
+→ /app-development       18/18  missing []
+goBack() → /miniprogram-development 19/19 missing []
+```
+
+### 27.7 英文路由（`/en/web-development`）
+
+```
+h1 = WEB DESIGN ；lead/capabilityTitle 为英文兜底 ；卡片标题/流程标题仍是中文（既有缺口，见 30）
+tags 渲染正常（首个标签 "Vue 3"）；18/18 显影；无横向溢出
+```
+
+### 27.8 控制台
+
+服务页自身 0 error / 0 warning / 0 pageerror；
+`/cases` 页在 dev 与 preview 下各有 `/api/cases 500`（D 的页面 + mock 接口，非本轮改动，未处理）。
+
+## 28. 截图证据（`docs/frontend-rebuild/evidence/service-pages/round5/`）
+
+- `{ai,mini,app,web,iot,custom,creative}-desktop.png`（7 张）：1440×900 整页，**先逐档滚到页底触发全部显影再拍**。
+- `{…}-mobile.png`（7 张）：390×844 整页，同上。
+- `web-en-desktop.png`：`/en/web-development` 整页。
+- `web-round5-full.png` / `web-current-full.png`：改动前 / 改动后的 `/web-development` 对照整页图。
+- 拍摄特性提醒（同第 21 节）：整页图里**固定页头会按当前滚动位置被画在图中部**；02 大标题带横向视差，整页图里可能贴边 —— 真实位置以 DOM 实测为准（本轮实测 02 标题右边缘 = 1375px，视口 1430px，无溢出）。
+
+## 29. 申请 A 处理的共享层事项（本轮新增 1 条；C 一律没自己动手）
+
+### 29.1 【新增·本轮实测】`layout/index.vue` 的 `<transition mode="out-in">` 让每次 SPA 跳转都要等 330-375ms 才换页
+
+- 位置：`frontend/src/layout/index.vue:6` `<transition name="fade" mode="out-in">`；过渡时长 0.3s（同文件 53-60 行）。
+- 实测（prod preview 4182，rAF 逐帧读 `main > *` 换类名的时刻）：`→/web-development` 373ms、`→/about` 355ms、`→/news` 337ms、`→/cases` 330ms —— **与服务页无关，全站一致**。
+- 用户观感就是"点了以后页面先空一下（旧页正在淡出），新页文字才出现"。
+- 建议（A 定夺）：`mode` 去掉（默认同时进出）或把 0.3s 降到 ~0.18s；服务页 hero 的逐字入场不受影响（25.3 已实测与全局过渡叠加后仍完整播放）。
+
+### 29.2 【沿用 20.1，仍成立】服务页页头是深色固定条 + `.hide` 在服务页无样式
+
+用户第 4 轮反馈 1 要求"服务页导航栏和首页一样透明、上下丝滑"；根因在 A 的 `Header.vue` / `style.css`，本轮**未动**，预览里服务页页头仍是黑色固定条。
+
+### 29.3 【沿用 20.2，仍成立】footer 米色只挂 `.footer-home`
+
+### 29.4 【沿用 20.4，仍成立】`@media (max-width:768px){ img,video,iframe{ height:auto !important } }` 压过服务页 ≤1024 的 hero 图高
+
+### 29.5 【沿用 20.3 / 20.5，仍成立】`button:hover{transform:translateY(-2px)!important}` 现只剩 CTA 命中；`:root` 仍无语义色 token（本页继续用页内 `--svc-*` 副本）
+
+## 30. 未完成 / 未运行 / 待裁决（本轮结束后仍成立）
+
+- **未在真实手机 / Safari / 微信内置浏览器运行**：只有 Chromium 1440×900 与 390×844 视口；触摸、iOS 视口单位、微信 webview **一律未运行**（不是"已通过"）。
+- `test:unit` / `test:e2e` 脚本**不存在**，未运行、未声称通过。
+- **暗色态**不存在（无 token 层），服务页暗色视觉未评估；服务页亮/暗渲染一致。
+- **en 文案缺译仍在**，且本轮新增内容（能力卡标题/说明、关键词标签、六步流程）**只有中文**：`/en/*` 服务页会出现"英文标题 + 中文卡片/标签/流程"的混排（既有缺口的延续，非本轮引入）。需要 A/D 的译文管线，或用户点头后我做一轮 en 翻译。
+- **待用户裁决**：① 服务名用「数字创意」还是旧官网的「数字文创」；② 旧官网"数字藏品/NFT"是否作为真实服务保留；③ 是否要把旧站 hero 下的"四条卖点"也搬进 hero；④ 是否在服务页展示公司数字（10年+ / 200+ 客户 / 98% / CMMI3 / 24/7）。
+- **等 A**：29.1（全局换页过渡时长）、29.2（透明页头）、29.3（footer 米色）、29.4（≤768 图高）。
+- 未做：`.iot-dashboard__side` 三张看板示意卡仍未配照片（第 4 轮记录的遗留）。
+
+## 31. 下次第一步
+
+1. 读本节 + `handoffs/INTEGRATION.md`，确认 A 是否已把 `codex/rebuild-services` 收敛进 main。
+2. **拿用户的 4 个裁决**（30 节 ①②③④），按裁决改：`数字文创` 改名要走 A 的导航/routeManifest；数字藏品/卖点条/公司数字都只改 `ServiceLanding.vue`。
+3. **等 A 的 29.1 结论**：全局过渡时长一改，重拍 1440/390 首屏，确认 hero 从"整块空白 350ms"变成"直接进场 + 逐字渐显"。
+4. 用户给正式图片后按 `evidence/service-pages/service-images.md` 第 5 节两步替换（本轮**素材零新增**，53 张图清单不变）。
+5. 若用户要 en 文案，先确认 A/D 译文管线是否就绪，再统一翻（卡片标题/说明、标签、六步流程）。

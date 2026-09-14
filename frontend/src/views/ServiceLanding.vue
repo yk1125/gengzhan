@@ -16,8 +16,9 @@
       </div>
       <div class="service-shell service-hero__title">
         <h1
+          ref="titleEl"
           class="each_animate"
-          :class="{ on: titleIn }"
+          :class="{ on: titleIn, reset: titleReset }"
         >
           <span
             v-for="(char, index) in titleChars"
@@ -344,12 +345,12 @@
           <div class="service-card-media">
             <img
               :src="page.panelImages[0]"
-              alt="互动品牌体验"
+              alt="品牌活动体验"
               loading="lazy"
               decoding="async"
             >
           </div>
-          <h3>互动品牌体验</h3>
+          <h3>品牌活动体验</h3>
           <p>让品牌故事不止被看见，也能被参与。</p>
         </article>
         <article>
@@ -357,12 +358,12 @@
           <div class="service-card-media">
             <img
               :src="page.panelImages[1]"
-              alt="数字展陈"
+              alt="数字展陈现场"
               loading="lazy"
               decoding="async"
             >
           </div>
-          <h3>数字展陈</h3>
+          <h3>数字展陈现场</h3>
           <p>把空间、屏幕与内容组织成一个现场。</p>
         </article>
         <article>
@@ -370,12 +371,12 @@
           <div class="service-card-media">
             <img
               :src="page.panelImages[2]"
-              alt="创意 H5"
+              alt="移动互动传播"
               loading="lazy"
               decoding="async"
             >
           </div>
-          <h3>创意 H5</h3>
+          <h3>移动互动传播</h3>
           <p>为一次活动或传播，创造可分享的互动入口。</p>
         </article>
       </div>
@@ -411,6 +412,17 @@
           <span>0{{ index + 1 }}</span>
           <h3>{{ item.title }}</h3>
           <p>{{ item.text }}</p>
+          <ul
+            v-if="item.tags"
+            class="service-card-tags"
+          >
+            <li
+              v-for="tag in item.tags"
+              :key="tag"
+            >
+              {{ tag }}
+            </li>
+          </ul>
         </article>
       </div>
     </section>
@@ -445,6 +457,18 @@
           {{ page.description }}
         </p>
       </div>
+      <ol class="service-shell service-process">
+        <li
+          v-for="(step, index) in page.process"
+          :key="step[0]"
+          data-aos="fade-top"
+          :data-aos-delay="index % 3 === 0 ? 100 : 200"
+        >
+          <span>0{{ index + 1 }} / DELIVERY STEP</span>
+          <h3>{{ step[0] }}</h3>
+          <p>{{ step[1] }}</p>
+        </li>
+      </ol>
     </section>
     <section class="service-cta">
       <div
@@ -477,7 +501,11 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
-const base = (capabilities) => capabilities.map(([title, text]) => ({ title, text }))
+/**
+ * 能力卡：`[标题, 说明, 关键词标签]`。标签取自公司旧官网各服务页写明的技术栈/场景词
+ * （2026-09-15 用户要求「文案与公司实际贴合」，对照表见 handoffs/C.md 第 5 轮）。
+ */
+const base = (capabilities) => capabilities.map(([title, text, tags]) => ({ title, text, tags }))
 /**
  * 卡片配图（用户 2026-09-15 反馈 3）：`capabilityImages` 是 02 分区四张能力卡的图，与
  * `capabilities` 同序；`flowImages` / `stepImages` / `panelImages` 是各服务 01 分区卡片图。
@@ -510,11 +538,36 @@ const pages = {
     description: '从场景判断、知识治理到智能体设计与上线迭代，我们让 AI 在真实流程中产生价值。',
     modules: ['企业知识库', '智能体编排', '模型接入', '业务工作流'],
     capabilities: base([
-      ['企业知识智能体', '让制度、文档与经验可被准确检索和调用。'],
-      ['智能对话产品', '面向客服、销售、运营与内部协作的智能入口。'],
-      ['视觉识别应用', '围绕 OCR、检测与分类建立可落地的业务能力。'],
-      ['私有化部署', '兼顾安全、性能、成本与长期的可维护性。'],
+      [
+        '大语言模型应用',
+        '接入主流大模型，开发对话、写作、问答与内容生成应用。',
+        ['ChatGPT', '文心一言', '通义千问', 'Claude'],
+      ],
+      [
+        '企业知识智能体',
+        '让制度、文档与经验可被准确检索、引用并持续运营。',
+        ['RAG 检索增强', '文档解析', '权限体系', '知识运营'],
+      ],
+      [
+        '智能客服系统',
+        '面向售前售后与内部服务，提供 7×24 小时的智能应答。',
+        ['智能问答', '意图识别', '多轮对话', '知识库'],
+      ],
+      [
+        'AI 图像识别',
+        '围绕 OCR、图像分类与目标检测落地可用的识别能力。',
+        ['计算机视觉', 'OCR', '人脸识别', '目标检测'],
+      ],
     ]),
+    /** 交付流程：来自公司旧官网 AI 开发页「开发流程」六步。 */
+    process: [
+      ['需求分析', '深入了解业务场景，确定 AI 应用方向与验收口径。'],
+      ['方案设计', '制定技术方案，选择合适的模型、知识源与集成方式。'],
+      ['模型开发', '完成提示词与工作流开发，进行训练、微调与效果调优。'],
+      ['系统集成', '把 AI 能力接入现有业务系统与数据流程。'],
+      ['测试上线', '全面评估效果与稳定性，确保安全可控地上线。'],
+      ['持续优化', '监控运行效果，结合业务反馈持续迭代。'],
+    ],
   },
   '/miniprogram-development': {
     kind: 'mini',
@@ -536,11 +589,36 @@ const pages = {
     description: '我们围绕微信生态、业务流程和运营需要，搭建可持续生长的小程序服务入口。',
     modules: ['进入服务', '完成预约', '在线交易', '沉淀会员'],
     capabilities: base([
-      ['品牌服务小程序', '展示、预约、咨询与会员服务的一体化触点。'],
-      ['电商交易闭环', '商品、订单、支付、营销与售后完整衔接。'],
-      ['企业业务工具', '巡检、填报、审批与现场协作等轻量应用。'],
-      ['微信生态集成', '企微、公众号、支付与订阅消息深度接入。'],
+      [
+        '全平台小程序',
+        '覆盖主流平台，一套业务在多端触达用户。',
+        ['微信小程序', '支付宝小程序', '抖音小程序', '百度小程序'],
+      ],
+      [
+        '电商交易闭环',
+        '商品、订单、支付、营销与售后完整衔接。',
+        ['商品管理', '支付系统', '订单跟踪', '营销工具'],
+      ],
+      [
+        '行业场景应用',
+        '面向零售、餐饮、教育与本地生活的成熟场景方案。',
+        ['电商零售', '餐饮外卖', '教育培训', '本地生活'],
+      ],
+      [
+        '微信生态集成',
+        '与公众号、企业微信、支付和消息能力深度打通。',
+        ['公众号', '企业微信', '微信支付', '订阅消息'],
+      ],
     ]),
+    /** 交付流程：沿用公司统一六步交付节奏，按小程序业务（审核、发布、运营）改写。 */
+    process: [
+      ['需求梳理', '明确业务目标、用户角色与首期功能范围。'],
+      ['原型与视觉', '设计页面结构与交互原型，确认品牌视觉风格。'],
+      ['开发实现', '前后端并行开发，按里程碑交付可体验版本。'],
+      ['联调测试', '完成真机测试、支付与消息链路的联调。'],
+      ['提审上线', '准备资质与素材，协助完成平台审核发布。'],
+      ['运营迭代', '结合访问与转化数据持续优化功能与内容。'],
+    ],
   },
   '/app-development': {
     kind: 'app',
@@ -562,11 +640,36 @@ const pages = {
     description: '我们从用户旅程、交互设计到研发上线，交付体验完整、性能可靠且可持续迭代的应用。',
     modules: ['实时服务', '任务中心', '多端协同'],
     capabilities: base([
-      ['原生应用研发', '面向高性能与深度系统能力的 iOS、Android 产品。'],
-      ['跨平台方案', '在统一体验与开发效率之间取得合适平衡。'],
-      ['移动体验设计', '建立清晰、顺畅并符合品牌气质的交互界面。'],
-      ['持续运营支持', '覆盖上架、监控、迭代、性能优化与版本维护。'],
+      [
+        '原生应用研发',
+        '面向高性能与深度系统能力的 iOS、Android 产品。',
+        ['iOS', 'Android', 'Swift', 'Kotlin'],
+      ],
+      [
+        '跨平台方案',
+        '一套代码多端运行，在体验与成本之间取得平衡。',
+        ['Flutter', 'React Native', 'Uni-app'],
+      ],
+      [
+        '移动体验设计',
+        '建立清晰、顺畅并符合品牌气质的交互界面。',
+        ['交互设计', '视觉规范', '原型验证'],
+      ],
+      [
+        '上架与持续运营',
+        '覆盖应用商店上架、监控、迭代与版本维护。',
+        ['应用上架', '版本迭代', '性能监控', '崩溃分析'],
+      ],
     ]),
+    /** 交付流程：来自公司旧官网 App 开发页「开发流程」六步。 */
+    process: [
+      ['需求分析', '深入了解客户需求，制定产品规划与版本节奏。'],
+      ['UI 设计', '设计界面与交互，输出可开发的设计规范。'],
+      ['功能开发', '按设计稿与接口约定推进研发，保证代码质量。'],
+      ['测试优化', '全面测试功能与性能，优化体验与稳定性。'],
+      ['上线发布', '协助完成应用商店上架与发布材料准备。'],
+      ['维护升级', '持续提供技术支持与功能迭代。'],
+    ],
   },
   '/web-development': {
     kind: 'web',
@@ -589,11 +692,36 @@ const pages = {
       '我们将品牌策略、内容结构、视觉体验与工程能力整合，让网站成为真实支持业务的长期数字资产。',
     modules: ['品牌故事', '产品价值'],
     capabilities: base([
-      ['品牌官网建设', '从定位、内容到视觉与互动的一体化表达。'],
-      ['产品与业务平台', '兼顾复杂信息、业务能力与用户转化。'],
-      ['多语言全球化', '适配不同地区用户、搜索与内容运营场景。'],
-      ['长期技术维护', '性能、安全、内容更新与业务迭代持续支持。'],
+      [
+        '品牌官网建设',
+        '从定位、内容到视觉与互动的一体化表达。',
+        ['Vue 3', 'React', 'TailwindCSS', 'SEO 优化'],
+      ],
+      [
+        '电商与业务平台',
+        '兼顾复杂信息、交易能力与用户转化。',
+        ['Next.js', 'Node.js', 'MySQL', '支付集成'],
+      ],
+      [
+        '企业管理系统',
+        '内部管理后台与业务系统，兼顾权限与数据看板。',
+        ['Element Plus', 'Spring Boot', '权限体系', '数据看板'],
+      ],
+      [
+        '多语言与长期维护',
+        '适配多地区内容与搜索，长期保障性能与安全。',
+        ['多语言站点', 'CDN 加速', '安全防护', '内容更新'],
+      ],
     ]),
+    /** 交付流程：来自公司旧官网 WEB 网站开发页「开发流程」六步。 */
+    process: [
+      ['需求沟通', '明确网站定位、栏目结构与功能需求。'],
+      ['方案设计', '制定技术方案，设计信息架构与页面原型。'],
+      ['UI 设计', '设计符合品牌形象的视觉界面与组件规范。'],
+      ['前端开发', '采用现代框架实现页面、动效与响应式适配。'],
+      ['后端开发', '开发稳定的内容与业务后台，保障数据安全。'],
+      ['测试上线', '全面测试后部署上线，并交付使用说明。'],
+    ],
   },
   '/iot-development': {
     kind: 'iot',
@@ -616,11 +744,36 @@ const pages = {
       '我们覆盖设备接入、数据采集、实时监控、预警分析与业务平台建设，形成完整物联网闭环。',
     modules: ['现场设备', '边缘网关', '数据看板', '预警中心'],
     capabilities: base([
-      ['设备接入管理', '适配多种协议、网关和终端的稳定连接。'],
-      ['实时监控平台', '设备状态、运行数据、告警与运维统一管理。'],
-      ['数据分析应用', '从现场数据中识别趋势、异常与优化机会。'],
-      ['边缘云端协同', '兼顾实时响应、网络环境与集中化管理。'],
+      [
+        '智能硬件与采集',
+        '支持各类传感器、控制器的方案设计与现场数据采集。',
+        ['传感器接入', '控制器', '边缘网关', '多协议适配'],
+      ],
+      [
+        '云平台搭建',
+        '构建设备管理与数据存储平台，统一纳管各类终端。',
+        ['设备管理', '数据存储', '权限体系', '开放接口'],
+      ],
+      [
+        '实时监控与告警',
+        '设备状态、运行数据与告警工单统一管理。',
+        ['状态监控', '告警中心', '运维工单', '远程配置'],
+      ],
+      [
+        '数据分析与可视化',
+        '从现场数据中识别趋势与异常，并做可视化呈现。',
+        ['趋势分析', '异常识别', '可视化大屏', '经营报表'],
+      ],
     ]),
+    /** 交付流程：沿用公司统一六步交付节奏，按物联网业务（接入、现场联调）改写。 */
+    process: [
+      ['现场调研', '梳理设备、网络与业务现状，明确接入范围。'],
+      ['方案设计', '确定硬件选型、通信协议与平台架构。'],
+      ['设备接入', '完成网关配置、协议对接与数据采集调试。'],
+      ['平台开发', '开发设备管理、监控告警与数据看板。'],
+      ['联调上线', '现场联调与压力验证，分批完成设备上线。'],
+      ['运维优化', '持续监控设备在线率与数据质量，迭代优化。'],
+    ],
   },
   '/custom-development': {
     kind: 'custom',
@@ -646,7 +799,7 @@ const pages = {
     capabilityTitle: '为真实的组织方式而建。',
     statement: '把分散的流程、数据与协作，整理成一套真正好用的系统。',
     description:
-      '我们深入业务现场，完成需求拆解、产品设计、研发交付和系统集成，并为持续演进留出空间。',
+      '我们深入业务现场，完成需求拆解、产品设计、研发交付和系统集成，兼顾既有遗留系统的平滑演进。',
     modules: ['业务梳理', '产品蓝图', '研发交付', '持续迭代'],
     moduleNotes: [
       '先理解组织如何运作。',
@@ -655,11 +808,36 @@ const pages = {
       '随着业务变化持续优化。',
     ],
     capabilities: base([
-      ['业务管理系统', '客户、项目、订单、采购与服务流程数字化。'],
-      ['数据决策平台', '统一数据口径，建立清晰可见的经营视图。'],
-      ['系统集成服务', '打通已有系统、第三方平台与内部数据资产。'],
-      ['遗留系统升级', '保障业务连续性的前提下完成架构与体验更新。'],
+      [
+        '企业管理系统',
+        'ERP、CRM、OA 等内部系统的定制开发。',
+        ['流程自动化', '数据集成', '权限管理'],
+      ],
+      [
+        '行业解决方案',
+        '面向特定行业的业务系统与流程化解决方案。',
+        ['行业深耕', '专业团队', '成功案例'],
+      ],
+      [
+        '数据分析平台',
+        '数据采集、治理、分析与可视化的一体化平台。',
+        ['数据治理', '智能分析', '可视化'],
+      ],
+      [
+        '创新产品研发',
+        '从 0 到 1 完成产品设计与技术实现。',
+        ['技术创新', '快速验证', 'MVP 开发'],
+      ],
     ]),
+    /** 交付流程：来自公司旧官网定制开发页「定制开发流程」六步。 */
+    process: [
+      ['需求调研', '深入了解业务场景，梳理功能需求，明确项目目标。'],
+      ['方案设计', '制定技术方案，设计系统架构，规划开发路线。'],
+      ['原型确认', '设计交互原型，确认业务流程，验证需求理解。'],
+      ['开发实施', '敏捷迭代开发，定期汇报进度，及时调整优化。'],
+      ['测试验收', '严格质量把控，全面功能测试，确保交付质量。'],
+      ['上线运维', '协助系统上线，提供技术支持，持续优化迭代。'],
+    ],
   },
   '/digital-creativity': {
     kind: 'creative',
@@ -687,11 +865,36 @@ const pages = {
       '面向品牌传播、展览展示与文化内容，提供互动网站、数字展陈、创意 H5 与视觉化体验设计。',
     modules: ['互动体验', '数字展陈', '创意 H5', '数据可视化'],
     capabilities: base([
-      ['互动品牌体验', '通过动效与交互增强内容的参与感和传播力。'],
-      ['数字展陈设计', '连接空间、屏幕、内容与观众的展示体验。'],
-      ['创意 H5 开发', '适合活动、传播与叙事的移动互动页面。'],
-      ['信息可视化', '将复杂数据转化为清晰、有说服力的视觉表达。'],
+      [
+        '互动品牌体验',
+        '通过动效与交互增强内容的参与感和传播力。',
+        ['创意 H5', '动效设计', '品牌叙事', '互动装置'],
+      ],
+      [
+        '数字展陈设计',
+        '连接空间、屏幕、内容与观众的展示体验。',
+        ['沉浸式展厅', '虚拟展厅', '内容编排', '互动屏幕'],
+      ],
+      [
+        '3D 与 VR / AR',
+        '三维建模、虚拟现实与增强现实应用开发。',
+        ['三维建模', 'VR 应用', 'AR 互动', '数字沙盘'],
+      ],
+      [
+        '信息可视化',
+        '将复杂数据转化为清晰、有说服力的视觉表达。',
+        ['数据可视化', '动态图形', '大屏设计', '信息图表'],
+      ],
     ]),
+    /** 交付流程：沿用公司统一六步交付节奏，按创意业务（概念、内容制作、现场联调）改写。 */
+    process: [
+      ['创意沟通', '明确传播目标、受众与内容主题。'],
+      ['概念设计', '输出创意概念、视觉风格与体验脚本。'],
+      ['原型验证', '用原型或 Demo 验证交互与关键技术可行性。'],
+      ['内容制作', '完成视觉、动效、三维与内容素材制作。'],
+      ['开发联调', '完成交互开发与多端适配，配合现场联调。'],
+      ['上线运营', '支持活动上线与现场运维，复盘并沉淀内容。'],
+    ],
   },
 }
 const locale = computed(() => (route.path.startsWith('/en/') ? 'en' : 'zh-CN'))
@@ -759,6 +962,9 @@ const isMobile = ref(mobileQuery.matches)
 const prefersReducedMotion = ref(reducedQuery.matches)
 
 const titleIn = ref(false)
+/** 换页重置期间临时关掉 spans 的过渡（见 playTitleEntrance 注释）。 */
+const titleReset = ref(false)
+const titleEl = ref(null)
 const titleChars = computed(() => [...(page.value?.title || '')])
 /** SPEC M-10：逐字入场，每字延迟 index*0.08+0.3s，空格字符 min-width: 10px。 */
 const titleCharStyle = (index, char) => ({
@@ -877,10 +1083,23 @@ const revealEverything = () => {
   }
 }
 
-/** SPEC M-10：加载后 setTimeout(…, 10) 播放逐字入场。 */
-const playTitleEntrance = () => {
+/**
+ * SPEC M-10：加载后 setTimeout(…, 10) 播放逐字入场。
+ *
+ * 7 条服务路由共用本组件、实例被复用：换页时 `.on` 摘下 10ms 又挂回去，而
+ * `.each_animate span` 基础样式带 `transition: 1s`，这一摘一挂被当成一次 1 → 1 的过渡
+ * （没有任何可动画的差值）——用户实测：点导航栏换服务页，hero 文字直接出现、没有渐显。
+ * 修法：先加 `.reset` 关掉 spans 的过渡并强制结算样式，让「未入场」的 0 状态真正落地，
+ * 再恢复过渡、10ms 后挂回 `.on`。
+ */
+const playTitleEntrance = async () => {
   window.clearTimeout(timers.title)
+  titleReset.value = true
   titleIn.value = false
+  await nextTick()
+  if (titleEl.value) void titleEl.value.offsetWidth
+  titleReset.value = false
+  await nextTick()
   timers.title = window.setTimeout(() => {
     titleIn.value = true
   }, 10)
@@ -1287,6 +1506,24 @@ watch(
   font-size: 14px;
   line-height: 1.8;
 }
+/* 能力卡关键词标签（技术栈/场景词，取自公司旧官网各服务页） */
+.service-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.service-card-tags li {
+  padding: 4px 9px;
+  border: 1px solid var(--svc-line-soft);
+  border-radius: 999px;
+  color: var(--svc-ink-soft);
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
 .service-approach {
   padding: 125px 0;
   background: var(--svc-bg);
@@ -1312,6 +1549,33 @@ watch(
   margin: 6px 0 0;
   color: var(--svc-ink-body);
   line-height: 1.9;
+}
+/* 交付流程六步（沿用公司统一交付节奏，逐页按业务改写） */
+.service-process {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 42px 40px;
+  margin: 92px auto 0;
+  padding: 46px 0 0;
+  border-top: 1px solid var(--svc-line-soft);
+  list-style: none;
+}
+.service-process span {
+  color: var(--svc-accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.service-process h3 {
+  margin: 14px 0 10px;
+  font-size: 19px;
+}
+.service-process p {
+  max-width: 300px;
+  margin: 0;
+  color: var(--svc-ink-soft);
+  font-size: 13px;
+  line-height: 1.8;
 }
 .service-cta {
   padding: 130px 0;
@@ -1662,6 +1926,10 @@ watch(
   opacity: 1 !important;
   transform: translateX(0) !important;
 }
+/* 换页时先关掉过渡，让「未入场」状态落地，再由 playTitleEntrance 恢复（见该函数注释） */
+.each_animate.reset span {
+  transition: none !important;
+}
 /* SPEC M-24 / M-25：进入视口一次入场；触发阈值（150 / 0）由 JS 逐帧计算 */
 [data-aos] {
   transition-duration: 1.5s;
@@ -1805,6 +2073,15 @@ watch(
     grid-template-columns: 1fr;
     gap: 26px;
   }
+  .service-process {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px 26px;
+    margin-top: 62px;
+    padding-top: 34px;
+  }
+  .service-process p {
+    max-width: none;
+  }
   .public_text {
     display: none !important;
   }
@@ -1813,6 +2090,12 @@ watch(
   }
   .service-card-media {
     margin-bottom: 18px;
+  }
+}
+@media (max-width: 560px) {
+  .service-process {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
