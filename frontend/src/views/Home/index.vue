@@ -205,7 +205,7 @@
           <small class="eyebrow">{{ c.cta.eyebrow }}</small>
           <p class="cta-title">{{ c.cta.title }}</p>
           <div class="cta-actions">
-            <router-link class="pill" :to="aiConsultationPath">{{ c.cta.primary }} ↗</router-link>
+            <router-link class="pill hover_button" :to="aiConsultationPath">{{ c.cta.primary }} ↗</router-link>
             <router-link class="pill ghost" :to="aboutPath">{{ c.cta.secondary }}</router-link>
           </div>
           <p class="cta-contact">{{ c.cta.contact }}</p>

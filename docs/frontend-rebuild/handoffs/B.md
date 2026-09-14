@@ -393,5 +393,27 @@ $ .\node_modules\.bin\eslint.cmd src/views/Home/index.vue src/views/Home/useHome
 - 复用：`content/home.js` 新增 `HOME_CASE_PLACEHOLDERS`；index2 的 8 个图文条目按槽位循环复用（0,1,2,0,1,2,0,1），index5 四张卡统一用最小那张（用户：「四个都一样」）。
 - 实现：index2 的 `.item` 改成「一图一文」（图在上、文在下，图各自保持原始比例，照参考站 `.item > .img + .text`）；index5 每张卡顶部加图；两处容器加 `public_hover` 类，作为 SPEC M-29 蓝盘的钩子（等光标层落地即生效）。
 - 实测（1440×900，dev `http://localhost:3000/`）：index2 进入视口即 **8/8** 张加载完成（`i.complete && i.naturalWidth > 0`）；index5 **4/4** 张加载完成；`pageerror` / console error / 请求失败 **0 条**；`npm.cmd run build` ✓ 16.02s。静帧：`probe-index4/imgs-index2.png`、`probe-index4/imgs-index5-fixed.png`（仓库外采集目录）。
-- ⚠️ **上线阻断项**：占位画面里是参考站客户（海天集团 `HAITIAN LASER MACHINERY`、旭升集团 `XUSHENG`）的品牌案例动画，**上线前必须替换成耘栈自有素材**；已同时写进 manifest 的 `备注`。
 - 仍未做：自定义光标 M-27/28/29 + 磁吸 M-30/31（`public_hover` 已就位，落地后蓝盘立即生效）、Header M-04/05。
+
+### 9.8 已做：全局自定义光标层 + 磁吸（用户第 2 条；B 临时接管）
+
+- 新增 `frontend/src/components/CustomCursor.vue`：M-27 跟随 / M-28 点击波纹 / M-29 `.cut` 蓝盘；样式用该组件自己的非 scoped `<style>` 随组件加载 —— **没有**单独建 `styles/cursor.css`，也**没有**改 `main.js`，比 §9.4 预告的少碰两个文件。
+- 新增 `frontend/src/composables/useMagnetic.js`：M-30 磁吸，公式、时长、缓动照抄参考站（strength 50、1s、`Power4.easeOut`）。在光标层里统一绑定 `.hover_button`，路由切换后自动重绑；首页 index5 的 CTA 主按钮已挂 `hover_button` 类。
+- `frontend/src/layout/index.vue`：`<Footer />` 之后挂 `<CustomCursor />`（A 的文件，请复核）。
+
+实测（1440×900，dev `http://localhost:3000/`，探针 `bx-cursorcheck.js`）：
+
+| 项 | 实测结果 |
+| --- | --- |
+| M-27 层样式 | `position: fixed` / `mix-blend-mode: exclusion` / `z-index: 99999` / `pointer-events: none` |
+| M-27 收敛 | 鼠标到 (1100,700) → 1.3s 后 `matrix(1, 0, 0, 1, 1090, 690)`，即 `translate(-50%,-50%) translate(1100px,700px)`，与 SPEC 实测值逐位一致 |
+| M-29 悬停 `.index2 .item .img` | `cut` 类 = true、blend 切 `normal`、蓝盘 `opacity 1`、尺寸 **114×114**、底色 **rgb(24, 77, 196) = #184DC4**、文案「探索更多 ↗」 |
+| M-29 移开 | `cut` 类 = false |
+| M-28 `mousedown` | `.whole` 加 `.on`、`.bor` 生成；+400ms 后 `.bor` 已被 `remove()` |
+| M-30 磁吸 | `.hover_button`（133×51）指针推到 95% 位置时，1.2s 后偏到 `translate(22.37px, 21.47px)`（理论值 (0.95−0.5)×50 = 22.5） |
+| ≤1024px | `.fixed_cursor` computed `display: none` |
+| 运行时报错 | `pageerror` / console error 0 条 |
+
+- 静帧：`probe-cursor/cut-on-image.png`（蓝盘悬停在 index2 动图上）。
+- ⚠️ **环境缺口（需 A 处理）**：`package.json` 与 `package-lock.json` 都登记了 `gsap@3.15.0` 与 `lenis@1.3.26`，但 `frontend/node_modules` 里**两者都不存在**——本轮 `vite build` 直接报 `Rollup failed to resolve import "gsap" from src/components/CustomCursor.vue`。B 不改 package/lock，因此光标层改用等价 rAF 实现（`deltaRatio = dt/(1000/60)`、`Power4.easeOut(t) = 1-(1-t)^5`），行为与参考站一致；A 若 `npm ci` 补齐依赖后可自行决定是否换回 gsap 写法（无必要）。
+- 仍未做：Header M-04/M-05（顶部透明 + 滚向收放）、M-03 入场、M-31 footer 圆形按钮 hover 发光、M-32 `.fixed_side`（项目现有 `.studio-float` 属 A，且没有 `scrollTop >= 300 加 .on` 的逻辑）。
