@@ -1,3 +1,40 @@
+# Session A · T02-S 服务页样板集成与样板验收矩阵（2026-09-15）
+
+状态：完成（样板待用户确认；下游 B·T05 / D·T04 / C·T03 未启动）
+基准commit：`1a9aa2a`（合并提交；合并前 main = `b6a2c72`）；`pilotCommit` 候选 = `1a9aa2a`
+本任务commit：`1a9aa2a`（merge）、`dfaa265`（验收记录 + 20 张截图 + PLAN 同步）
+
+目标与完成范围：按用户指令把 C 的 `codex/rebuild-services` 合并进 main，出样板验收。
+
+修改文件（说明归属）：
+
+- `docs/frontend-rebuild/handoffs/INTEGRATION.md`（A 维护）：新增「T02-S 服务页样板集成与样板验收矩阵」全节
+- `docs/frontend-rebuild/PLAN.md`（A 维护）：跟踪表 T00 / T01 / T02-H / T02-S → 完成，样板验收 → 待用户确认
+- `docs/frontend-rebuild/handoffs/A/shots/pilot/*.png`：新增 20 张（A 产出）
+- 代码：**无**。`1a9aa2a` 只把 C 的 `ServiceLanding.vue` 与素材并进来，未动公共层
+
+验证命令、实际结果与证据路径（全部在 `1a9aa2a` 的干净检出上执行，口径见 INTEGRATION §2）：
+
+- `npm.cmd run build` → PASS（`✓ built in 23.63s`）；主入口 gzip 364.39 kB、服务页懒加载 chunk 11.29 kB
+- 只读 eslint → exit 1，**7 errors / 795 warnings**（与存量 7 项逐条相同，无新增）
+- `npm.cmd run check:routes` → PASS 34 / FAIL 0 / PENDING 2（contact，B·T05）
+- 矩阵 64 格（16 路由 × 1440 / 390 × light / dark）：0 console error、0 pageerror、0 外部请求、0 横向溢出、0 破图
+
+参考截图 / 有意差异：`handoffs/A/shots/pilot/`（20 张，1440 / 390 × light / dark × 首页 / 小程序 / 数字创意 / 英文小程序 / 英文 AI）；有意差异表见 INTEGRATION §8。除首页外，每个页面的 light / dark 截图**逐字节相同**。
+
+BACKEND-TODO / 缺译 / 素材缺口：见 INTEGRATION §7 的 G1—G8（主题无 UI 与时间边界、`/en` 外壳无英文且 `html lang` 仍 zh-CN、en 服务页中文卡片、IoT 与数字创意无任何入口、`content/services.js` 残留参考站 URL 等）。
+
+共享契约变更申请：无（本轮不改公共层）。
+
+未完成事项与原因：G1—G8 按 §7 归属处理；工作区里 A 的「收编 B 公共层」仍未提交，等用户对该项的裁决。
+
+下次恢复的第一步：
+
+1. 等用户对样板的确认（预览 `http://127.0.0.1:3021/` ＝ pilotCommit 的干净检出）；确认后发 B·T05 / D·T04 / C·T03 通知（备稿见 INTEGRATION §10）。
+2. 确认前可先做 G1（主题 UI + 07:00 / 19:00 边界）与 G2—G4（i18n 与 en 文案）。
+
+---
+
 # Session A · 路由可达性修复 + Git 收敛 + 动效依赖骨架（2026-09-14）
 状态：完成（Step 3.11 已由用户裁定为「保持现状」，无未决项）
 基准commit：`45ef250`（main，工作区 clean）
