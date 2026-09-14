@@ -732,7 +732,7 @@ $ npx.cmd eslint src/layout/components/Footer.vue src/layout/components/Header.v
 
 **B. 待裁决（B 未擅自改）**
 
-1. **暗色模式下 Header `.on` 仍是米色**（`#F2F1E4`，与参考站 `.header.on` 一致）。首页暗色模式其它区块是深底，这个米色条会比较跳；要不要在 `html[data-theme='dark']` 下改成深色底 + 白字，请用户裁决（改法 1 行，但会偏离参考站字面值）。
+1. **暗色模式下 Header `.on` 仍是米色**（`#F2F1E4`，与参考站 `.header.on` 一致）。首页暗色模式其它区块是深底，这个米色条会比较跳；要不要在 `html[data-theme='dark']` 下改成深色底 + 白字，请用户裁决（改法 1 行，但会偏离参考站字面值）。 **（2026-09-14 用户裁决「不需要」→ 关闭，保持参考站字面值；见 9.20 B2。）**
 
 **C. 仍未做（已授权，下一批）**
 
@@ -907,10 +907,11 @@ $ npx.cmd eslint src/views/Home/index.vue src/views/Home/useHomeScroll.js --ext 
    - 落地位置：`src/styles/motion.js` + A 的 composables（A 的 `specs/FRONTEND.md` 第 10 行已定的归属）。
    - 需要一起定的口径：M-04/M-05 的 wheel 收放判定、M-32 `.fixed_side`、以及 `[data-view]`/`[data-aos]` 触发点是否改用 lenis 的 `scroll` 事件（参考站是挂在 smooth-scrollbar 的每帧回调上）。B 这边接口很窄：只要仍按「每帧拿到一个 scrollTop」的形态暴露，`useHomeScroll` 不用改。
 
-**B. 待裁决（B 未擅自改）**
+**B. 已裁决（2026-09-14，用户原话「够了；不需要；那就等A吧」）**
 
-1. 暗色 CTA 取色 `#2F55A8` 是否够深（见 9.18.3；用户原话「稍作调整」，B 取了中间值）。
-2. 暗色模式下 Header `.on` 仍是米色 —— 沿用 9.17 B1，用户本轮未答（已看过深色，未提及）。
+1. 暗色 CTA 取色 `#2F55A8` —— **够了，不再调**（保持 9.18.3 现状，`index.vue:549`）。
+2. 暗色模式下 Header `.on` 仍是米色 —— **不需要改**，保持与参考站 `.header.on` 字面值一致（`#F2F1E4`）；9.17 B1 关闭。
+3. M-01 全局滚动惯性 —— **等 A**，B 不做临时接管；9.20 A4 保持待发状态。
 
 **C. 素材/内容缺口（未变）**
 
@@ -924,6 +925,8 @@ $ npx.cmd eslint src/views/Home/index.vue src/views/Home/useHomeScroll.js --ext 
 
 **E. 下次第一步**
 
-1. 等用户裁决 9.20 B1/B2；若 B2 选「暗色改深底白字」，改 `Header.vue` 的 `html[data-theme='dark'] .header-home.on` 一处（1 行）。
-2. 把 9.14 的三项 + 9.20 A4 一并发给 A；等在 A 的 lenis 落地后合并，再复跑 `bx-r6b2.js` 确认「逐帧口径」没被全局滚动改变。
-3. 之后继续 §9.17 C1 的 M-03 / M-31 / M-32。
+1. 把 9.14 的三项申请 + 9.20 A4 一并发给 A（本批已无待用户裁决项，可直接发）。
+2. A 的 `lenis` 合入后：复跑 `bx-r6b2.js` 确认页内逐帧口径未被全局滚动改变；复跑 `bx-hdr.js` / `bx-combo.js` 确认 M-04/M-05 的 wheel 判定仍成立。
+3. 继续 §9.17 C1：M-03 页头入场、M-31 footer 圆形按钮 hover 发光。M-32 `.fixed_side` 与滚动惯性耦合，建议等 A 的 `lenis` 落地后一并做。
+4. 用户已批准的其余页面（公司/联系/法律，含 T05 `contact`）排在其后。
+
