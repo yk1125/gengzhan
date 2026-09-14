@@ -68,8 +68,14 @@ export const HOME_BANNER_MEDIA = {
   mobile: '/yunzhan-hero-mobile-v3.mp4'
 }
 
-/** index4 品牌宣言区块的背景图（项目自有素材）。 */
-export const HOME_STATEMENT_BG = '/services-showcase.jpg'
+/**
+ * index4 品牌宣言区块的背景图。
+ *
+ * 2026-09-14 由用户提供（原文件 `D:\桌面\微信图片_20260914014848.jpg`），字节级复制；
+ * 来源与 SHA256 登记见 docs/frontend-rebuild/evidence/project-assets/manifest.json。
+ * 画面是公司 logo 墙实拍（2048×1536，接近纯白），白字压不住 —— 压制参数见 index.vue 的 `.index4 .bg`。
+ */
+export const HOME_STATEMENT_BG = '/assets/home/statement-bg.jpg'
 
 /**
  * index2「四项主服务 / 交付能力」图文条目与 index5 四张卡的**占位动图**。

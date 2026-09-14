@@ -765,6 +765,10 @@ html[data-theme='dark'] .home {
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+  /* 本素材是公司 logo 墙实拍（2048×1536，画面接近纯白），按原始亮度白色宣言文字读不出来。
+     统一压暗到 55% + 略降饱和：白字对比度实测见 handoffs/B.md §9.21。属素材驱动的偏离，
+     不是参考站实测值（G-08 的 ::after 0.3 压暗层照旧）。 */
+  filter: brightness(0.55) saturate(0.9);
 }
 /*
   M-19：参考站用未抓取到的 mask.svg（G-06）。这里用等效的 SVG data URI 复现实测几何：
@@ -794,7 +798,9 @@ html[data-theme='dark'] .home {
 .index4 .text {
   position: absolute;
   left: 50%;
-  top: 57%;
+  /* SPEC M-22 实测位置是 57%；本素材的公司名字样正好在 37–60% 一带，文案压上去会叠字，
+     因此整块下移到 76% 的干净墙面。属素材驱动的偏离，见 handoffs/B.md §9.21。 */
+  top: 76%;
   z-index: 5;
   width: min(92%, 1180px);
   transform: translate(-50%, -50%);
