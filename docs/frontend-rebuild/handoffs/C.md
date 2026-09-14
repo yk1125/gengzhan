@@ -239,3 +239,121 @@ routesChecked: 14, failures: 0
    ```
 3. 待 A 反馈第 1—4 项决策后，按结论做：替换 muted token、接入 en 文案模块、把 `pages/translations` 外拆到 `content/services.js`。
 4. 若用户要看样板：按 `.service-cta` 的共享咨询入口 + 「导航＋首页＋服务样板」一起提交验收。
+
+---
+
+# 追加记录（2026-09-14 · 合并公共层后的回归与遗留收口）
+
+## 1. 合并公共层
+
+- 合并前：`codex/rebuild-services` HEAD = `5e2651c`，与 main 的 merge-base = `6312c90`（落后 20 个提交）。
+- 命令：`git merge main --no-edit`。结果：**无冲突**，生成合并提交 `aea702a`（Merge branch 'main' into codex/rebuild-services）。
+- 为什么无冲突：main 侧**没有**改过 `frontend/src/views/ServiceLanding.vue` 与本文件 —— `git diff 6312c90 main -- frontend/src/views/ServiceLanding.vue` 与 `-- docs/frontend-rebuild/handoffs/C.md` 均为**空输出**，所以这两个文件只保留 C 的版本。
+- 本次并入、**未改写也未从 B 分支复制**的公共层（页面只按语义使用）：
+  - `frontend/src/components/CustomCursor.vue`、`frontend/src/composables/useMagnetic.js`
+  - `frontend/src/layout/components/Header.vue`（透明 + M-04/M-05 收放）、`Footer.vue`、`layout/index.vue`
+  - `frontend/src/style.css`、`frontend/src/views/Home/*`、`frontend/src/content/home.js`
+  - 素材：`frontend/public/assets/home/statement-bg.jpg`、`frontend/public/assets/cases/*.webp`
+- 依赖：main 上 `frontend/package.json` / `package-lock.json` **无变化** → 合并后不需要重新 `npm ci`。
+- 公共层在本页生效的实测：`.fixed_cursor`（`position:fixed; mix-blend-mode:exclusion; z-index:99999`）已挂载；`.header` 1440 高 76px、390 高 64px；footer 在每个服务路由都存在。
+
+## 2. 合并后门禁（真实输出）
+
+```powershell
+cd frontend
+npm.cmd run build          # ✓ built in 17.86s（首轮）/ 14.15s（修 hover 后）
+                           # dist/assets/ServiceLanding-43ff216a.css 22.98 kB │ gzip 4.44 kB
+                           # dist/assets/ServiceLanding-2867a606.js  19.23 kB │ gzip 9.25 kB
+npm.cmd run check:routes   # 结果：PASS 34 / FAIL 0 / PENDING 2（两条 PENDING 仍是 B/T05 的 /contact）
+npx.cmd eslint src/views/ServiceLanding.vue --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore
+                           # ✖ 131 problems (0 errors, 131 warnings)
+npx.cmd eslint . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore
+                           # ✖ 933 problems (7 errors, 926 warnings)
+```
+
+- 基线口径对比：AGENTS 记录的基线是 `7 errors / 846 warnings`。合并后**错误仍是 7（未增）**；警告升到 **926**，增量 80 来自本次并入的公共层文件（`Home/*.js`、`CustomCursor.vue`、`useMagnetic.js`、`content/home.js`），**不是**服务页引入。本文件自身仍是 **0 errors / 131 warnings**，与合并前逐字相同。
+
+## 3. 双端 × 双语 × 双主题截图回归
+
+- 目录：`docs/frontend-rebuild/evidence/service-pages/regression/`，共 **8** 张：`1440|390-zh|en-light|dark.jpg`，路由 `/web-development` 与 `/en/web-development`。
+- 8 个组合的实测（每个组合都检查）：`h1` 正确、`04 / 07` 正确、`.header` 存在、footer 存在、`.capability-list` 4 条、hero 序号与副标题**无重叠**、header 与副标题**无重叠**、`[data-aos]` 16 个且按滚动进度显影（1440 视口首屏 0/16；390 首屏 4/16）。
+- 14 路由数据隔离复测（1440，zh/en）：**14/14 全部通过，0 失败**。逐条断言 `h1`、`0X / 07`、4 条 capability 与该服务自身集合完全相等、无外来 kicker、`h1` 数量 = 1、header/footer 存在、切换列表 7 项。
+- 结论：**服务页没有被公共层改坏**。
+
+### 主题说明（重要，非本页缺陷）
+
+实测亮/暗两种 `data-theme` 下服务页渲染**完全一致**。原因：合并后的 main 里**没有暗色 token 层** —— `frontend/src/style.css` 全文件只有 **1** 处 `[data-theme='dark']`，且是 `html:not([data-theme='dark']) .corporate-footer.footer-home`（只影响首页 footer 变体）；`--yz-*` / `--ink-*` token 都是静态值，没有暗色覆盖。并且 `useThemeStore.toggle()`（`frontend/src/stores/theme.js`）**当前没有任何调用方**，即：**主题两态按钮与 19:00—07:00 边界逻辑尚未实现**（属 A 的全局主题管理）。
+本页的暗色就绪度：品牌三色已全部走 `var(--yz-*)`，只要 A 定义 `[data-theme='dark']` 下的 token 覆盖，本页会自动跟随；尚未 token 化的是 `#fff` 页面/分区底色与约 59 处设备 mock 插画配色。
+
+## 4. 遗留项逐条收口
+
+### 4.1 「`ServiceLanding.vue` 第 59 行行首字面量 `\n` 使 `.reveal{...}` 失效」——已在 C 的 Step 2/3 中消除
+
+- **属实（复核）**：`git show 6312c90:frontend/src/views/ServiceLanding.vue` 第 59 行确实以两个字面字符 `\` `n` 开头，后面紧跟 `.reveal{opacity:0;transform:translateY(35px);...}`。CSS 会把 `\n` 当转义读成标识符，选择器变成 `n.reveal`，匹配不到任何元素 → `.reveal` 初始隐藏态失效（同行的 `.text-reveal` / `.mask-reveal` 等后续规则不受影响）。
+- **现状**：该机制在 C 的 Step 3 已被 SPEC 的 AOS 引擎整体替换。`rg -n 'text-reveal|mask-reveal|\.reveal\b|is-visible' frontend/src/views/ServiceLanding.vue` → **无匹配**；`rg -n '\\n'` 只剩 4 处 **JS 字符串**里的换行转义（CTA 与切换标题的文案），CSS 中**没有**字面量 `\n`。
+- 判定：**遗留已消除**，无需再改。
+
+### 4.2 「`/services/mini-program`」——按 D2 作废（此处正式更正）
+
+- 按 `handoffs/INTEGRATION.md` 的 **D2（2026-09-14 用户裁定）**：`/services/:slug` 形状是文档笔误，**作废**；英文统一 `/en/<slug>`，**不实现** `/services/*` 别名。原「验收入口」里的 `/services/mini-program`、`/en/services/mini-program` 一并作废。
+- 服务路由的**唯一正解**（`frontend/src/router/index.js` 实测）：`/ai-development`、`/miniprogram-development`、`/app-development`、`/web-development`、`/iot-development`、`/custom-development`、`/digital-creativity`，英文加 `/en` 前缀。
+- 说明：C 在本轮之前重写的 `C.md` 里已**没有** `/services/mini-program` 字样（`rg -n '/services/' docs/frontend-rebuild/handoffs/C.md` → 无匹配）。此处按 INTEGRATION 的要求补上明确更正记录，避免后续再被引用。
+
+### 4.3 「`style.css` 8 处 hover transform 中的 `views/ServiceLanding.vue:59` 那处」——已定位、已测得具体行为，需 A 收口
+
+- 该处即 `.service-cta button:hover`（见 `handoffs/B.md` 影响面表第 8 条）。
+- **B.md 的判定在合并后仍成立的一半**：该规则**自身曾没有** `transition`。C 侧现状（`ServiceLanding.vue`）：`.service-cta button` 已显式声明 `transition: transform 0.25s ease, border-color 0.25s ease`，`.service-cta button:hover { transform: translateX(8px) }` —— C 侧**已补齐**。
+- **但实测仍然失效**（1440，hover 后读 computed）：
+  - `.service-cta button:hover` → `transform: matrix(1, 0, 0, 1, 0, -2)`，即 **`translateY(-2px)`**，不是 C 声明的 `translateX(8px)`；
+  - 同时 `box-shadow` 变成青色霓虹 `rgba(0, 212, 255, 0.7) 0 0 30px, rgba(0, 212, 255, 0.4) 0 0 60px, rgba(0,0,0,0.3) 0 8px 30px`。
+  - 根因：`frontend/src/style.css:282-286` 的 `button:hover:not(:disabled){ transform: translateY(-2px) !important; box-shadow: ... !important }`（霓虹来自 `style.css:966-971`）。`!important` 压过任何非 `!important` 声明，**与选择器特异性无关**，因此 C 在自己的 scoped 样式里无论怎么写都赢不了。
+- **同一全局规则还命中本页 7 个 `.service-switch__item`**（它们是 `<button>`）：hover 时被抬 `-2px` 并套上青色霓虹光晕（实测 `transition-property: all`、`0.3s`，来自全局 `style.css:938-944` 的 `a, button, .el-button, [role="button"], .clickable { cursor: pointer; transition: all 0.3s cubic-bezier(0.4,0,0.2,1) }` —— 注意裸 `button` 就在该选择器列表里）。另外 `style.css:1038-1045` 的 `@media (max-width:768px) or (hover:none)` 还给 `a:hover, button:hover` 套同一族青色 `box-shadow`，因此移动端下本页的 CTA、7 个切换按钮与 7 条移动列表链接都会被加上青色光晕。。在浅色 studio 风格的服务页上，青色霓虹与 `--yz-*` 体系不一致。
+- C 未自行加 `!important` 去对抗（AGENTS 明确「不得继续叠加全局 `!important` 覆盖来掩盖结构错误」，且全局 CSS 归 A）。**申请见第 6 节**。
+
+### 4.4 C 自己修掉的 hover 缺陷（`.capability-list article:hover`）
+
+- 现象：`.capability-list article` 只声明 `transition: background .28s, color .28s`，而:hover 规则写 `transform: translateY(-5px)` → **transform 没有过渡，hover 时位移是瞬跳**（实测 `transition-property: background, color`，无 transform）。
+- 修法（本文件内）：在 `.capability-list article` 的 `transition` 列表补 `transform 0.28s ease`。
+- 说明：该选择器主体不是 `a/button`，所以 B 的机械扫描不覆盖它；属 B.md §9.10 同一类问题的漏网项。
+
+### 4.5 M-10 / M-12 / M-13 / M-14 / M-15 / M-24 / M-25 / M-26 逐条对照 SPEC —— 合并后**全部仍然成立**
+
+合并后重新实测（1440×900，`/web-development`；M-10 用 `/en/ai-development` 以覆盖空格字符）：
+
+| 条目 | 合并后实测 | SPEC 要求 | 判定 |
+| --- | --- | --- | --- |
+| M-10 | 14 字符；`transitionDelay` = `0.3s / 0.38s / 0.46s / 0.54s`（= `index*0.08+0.3`），末位 `1.34s`；空格 `min-width: 10px`；挂载后 `.on` 已加 | `index*0.08+0.3s`、空格 `min-width:10px`、`setTimeout(...,10)` | 成立 |
+| M-12 | y=1200 → `-2.28 / 11.4`；y=2400 → `-26.28 / 131.4`；y=3600 → `-50.28 / 251.4`；比值恒为 **-5.0** | 系数 `-0.02 / +0.1` | 成立 |
+| M-13 | `T = offsetTop - clientHeight/1.2 = 2131 - 750 = 1381`；y=1281→`100%`、1381→`99.9896%`、1481→`49.9896%`、1581(=end)→`inset(0px)` | `data-speed=200`、`ban=all_dis/len=200`、每 100px 走 50% | 成立 |
+| M-14 | item 高 **95px**；web(index 3) → `translateY(285px)`；点 index 5 → `translateY(475px)` = 5×95；`.move` transition `0.4s`；指示条 `::after` `0.6s` | `translateY(index*item.clientHeight)`、`.4s`、指示条 `.6s` | 成立 |
+| M-15 | `.attr__line` `0.6s`、`.attr::after` `0.6s`；`.on` 时 line `-100%`、after `0`（上一轮实测 0→-24px 收敛） | `all .6s` + `content:attr(data-text)` 上翻 | 成立 |
+| M-24 / M-25 | `fade-top` 未触发时 `matrix(1,0,0,1,0,50)`（=`translate(0,50px)`）、`1.5s`、`cubic-bezier(0.175, 0.885, 0.32, 1.275)`；`fade-clip` `inset(0px 100% 0px 0px)`、`2s`；阈值校验 6 个滚动位置（y=0/700/1400/2100/2800/3500）**违规数全为 0**（凡 `rect.top - clientHeight + 150 < 0` 的元素都已加 `.aos-animate`）；显影数 0→4→8→12→14→16；**滚回顶部后仍为 16（once 不回退）** | `all_num` 桌面 150、`once`、上列时长与缓动 | 成立 |
+| M-26 | `.headline__line` `transition-duration: 2s`、`transform-origin: 0px 0.5px`（= left）；`scaleX(0)→scaleX(1)` | `2s`、`transform-origin: left` | 成立 |
+
+## 5. 本轮改动文件
+
+- `frontend/src/views/ServiceLanding.vue`：仅 4.4 的 `transition` 补 `transform 0.28s ease`（+1 行）。其余为合并带入，未改他人文件。
+- `docs/frontend-rebuild/evidence/service-pages/regression/`：8 张回归截图（新增）。
+- `docs/frontend-rebuild/handoffs/C.md`：本节。
+
+## 6. 申请 A 处理的共享层事项（C 未自行改动）
+
+1. **`style.css:282-286` 的 `button:hover:not(:disabled){ transform: ... !important }`（及其霓虹 `box-shadow`）需要收窄作用域。**
+   - 影响：服务页 `.service-cta button:hover` 被强制成 `translateY(-2px)`（C 声明的 `translateX(8px)` 失效）；7 个 `.service-switch__item` 也被抬 `-2px` + 套青色霓虹。
+   - 建议方向（择一，由 A 定）：把该规则改成显式类（如 `.yz-btn` / `.el-button` 族）而不要用裸 `button:hover`；或加本页排除，例如 `button:hover:not(:disabled):not(.service-page button)`；或用 `:where()` 降权后再由页面覆盖。
+   - C 侧已就绪（`.service-cta button` 自带 `transition: transform .25s, border-color .25s`），A 一旦收窄作用域，`translateX(8px)` 立即生效，无需 C 再改。
+2. **主题层缺失**：目前无暗色 token 覆盖、无两态按钮、无 19:00—07:00 边界逻辑（见第 3 节实测）。请 A 明确 1.0 是否要做暗色；若要，建议在 `[data-theme='dark']` 下覆盖 `--yz-*`，本页会自动跟随。
+3. **`check:motion` 只读门禁（B.md 申请 3）若落地，请给 SPEC 豁免**：本页有 4 处 `transition: all`（`.service-switch__move` 的 `all 0.4s`、`.attr` 家族 3 处 `all .6s`），均为 **SPEC M-14/M-15 逐字照抄**，不是新引入的坏味道；如门禁一刀切禁止 `transition: all`，需要按 SPEC 条目加白名单。
+
+## 7. 未完成 / 未运行（本次追加后仍成立）
+
+- 未在真实手机 / Safari / 微信内置浏览器实测（仍为「未验证」）；本次只有 Chromium 1440×900 与 390×844 视口。
+- `test:unit` / `test:e2e` 仍不存在，未运行、也未声称通过。
+- 未做暗色设计的视觉评估（因为暗色层尚不存在，见第 6 节第 2 条）。
+- en 路由文案缺译（`capabilityTitle` / `statement` / `description` 及各 kind 固有 section 文案仍为中文）**仍然存在**，等待第 6 节的归属决策。
+
+## 8. 下次第一步
+
+1. 读本节 + `handoffs/INTEGRATION.md`，确认 `aea702a`（以及后续 C 的提交）是否已被 A 收敛进 main。
+2. 复现（约 3 分钟）：`cd frontend && npm.cmd run build && npm.cmd run preview -- --port 4181 --strictPort`，浏览器开 `http://localhost:4181/web-development`，滚到底看视差/擦除/横线/切换。
+3. 等 A 对第 6 节三条给出结论后：收窄全局按钮规则 → 复核 `.service-cta button:hover` 是否变成 `translateX(8px)`；主题层若落地 → 重跑本节的 8 组合截图回归；en 文案归属确定 → 接入双语模块。

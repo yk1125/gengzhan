@@ -1163,7 +1163,8 @@ watch(
   border-right: 1px solid #bbb;
   transition:
     background 0.28s ease,
-    color 0.28s ease;
+    color 0.28s ease,
+    transform 0.28s ease;
 }
 .capability-list article:last-child {
   border: 0;
