@@ -2287,6 +2287,26 @@ body :is(.ai-development,.app-development,.web-development) .cta-section .el-but
 .header-transparent.on .desktop-wechat-copy:hover { color: #fff; background: #111; }
 .header-transparent.on .mobile-menu-btn span { background: #000; }
 
+/* 暗色主题：透明顶滚过首屏后不应再回米底黑字，而应回到深色实底 + 白字，
+   与页面暗色背景保持一致。选择器带 html[data-theme='dark']，特异度高于上面的
+   米色分支，且源码顺序靠后，因此只在暗色主题下覆盖。 */
+html[data-theme='dark'] .header.header-transparent.on {
+  background: rgba(17, 17, 17, .98);
+  border-bottom-color: rgba(255, 255, 255, .14);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .28);
+}
+html[data-theme='dark'] .header.header-transparent.on :is(.brand-simple, .nav-item, .nav-item:hover, .nav-item.active) {
+  color: #fff;
+}
+html[data-theme='dark'] .header.header-transparent.on .brand-en { color: rgba(255, 255, 255, .58); }
+html[data-theme='dark'] .header.header-transparent.on .nav-item { color: rgba(255, 255, 255, .88); }
+html[data-theme='dark'] .header.header-transparent.on :is(.theme-toggle, .lang-toggle) { color: #fff; }
+html[data-theme='dark'] .header.header-transparent.on .desktop-wechat-copy {
+  color: #fff;
+  border-color: rgba(255, 255, 255, .45);
+}
+html[data-theme='dark'] .header.header-transparent.on .mobile-menu-btn span { background: #fff; }
+
 /* 桌面容器：三列栅格（字标 / 导航 / 操作）。宽度由上面的
    `.container, .header-container, .footer-container` 统一给出。
    字标与操作按内容收成 auto，中列拿剩余空间并把导航居中；这样中文、英文
