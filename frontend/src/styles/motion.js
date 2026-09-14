@@ -1,8 +1,8 @@
 /**
  * 动效 token 骨架（归属 Session A）
  *
- * 状态：字段已建好，数值全部是 `MOTION_TODO`。数值由 T00R 的动效 SPEC.md 定稿后填入，
- * 在拿到 SPEC.md 之前不要在项目里编造具体数值，也不要在页面里临时写裸数值绕过这里。
+ * 状态：SPEC 已有明确条目的字段已填入；没有直接对应条目的字段保持 `MOTION_TODO`。
+ * 数值来源全部标注 T00R `docs/frontend-rebuild/evidence/reference-effects/SPEC.md`。
  *
  * 约定：
  * - 只用语义名（duration/ease/distance）引用，页面与组件不直接写 `0.8s`、`cubic-bezier(...)`、`40px`。
@@ -14,31 +14,31 @@
 export const MOTION_TODO = 'TODO'
 
 export const motion = {
-  /** 时长档位；单位与写法（ms 还是 s、CSS 还是 gsap 时间轴）随 SPEC.md 定稿 */
+  /** 时长档位；单位：秒。来源见各字段注释。 */
   duration: {
-    instant: MOTION_TODO,   // 微反馈：hover、按钮按压、焦点提示
-    fast: MOTION_TODO,      // 小范围位移、遮罩收起、菜单开合
-    base: MOTION_TODO,      // 常规入场、卡片显影
-    slow: MOTION_TODO,      // 首屏标题、整屏转场
-    scroll: MOTION_TODO     // 滚动驱动（lenis + gsap）进度的时间尺度
+    instant: MOTION_TODO,   // 微反馈：SPEC 未提供单一对应值，保持未定稿
+    fast: 0.6,              // M-04 / M-05 / M-06 / M-14 指示条 / M-15 / M-32
+    base: 1,                // M-03 / M-10 / M-30 / M-34
+    slow: 2,                // M-25 / M-26（首屏标题与整屏转场级）
+    scroll: 1.83            // M-01：60Hz 屏等效 ≈1.83s 收敛
   },
 
-  /** 缓动曲线；具体是 cubic-bezier、关键字还是 gsap ease 字符串随 SPEC.md 定稿 */
+  /** 缓动曲线；统一为 CSS 关键字或 gsap 字符串。 */
   ease: {
-    standard: MOTION_TODO,  // 默认过渡
-    enter: MOTION_TODO,     // 入场
-    exit: MOTION_TODO,      // 离场
-    inOut: MOTION_TODO,     // 需要往返对称的位移
-    scroll: MOTION_TODO     // 滚动联动
+    standard: 'ease',       // M-03 / M-04 / M-05 / M-06 / M-10 / M-14 / M-15 等
+    enter: 'ease',          // M-03 / M-10 / M-14 / M-15
+    exit: MOTION_TODO,      // SPEC 无直接对应条目
+    inOut: MOTION_TODO,     // SPEC 无直接对应条目（用户确认暂不臆造）
+    scroll: 'linear'        // M-08 / M-12 / M-13 / M-20—M-23 逐帧线性
   },
 
-  /** 位移与缩放幅度；单位随 SPEC.md 定稿（px / rem / vh / 百分比） */
+  /** 位移与缩放幅度；单位随字段语义而定（px / %）。 */
   distance: {
-    reveal: MOTION_TODO,    // 常规显影位移
-    hero: MOTION_TODO,      // 首屏大位移
-    micro: MOTION_TODO,     // hover/按压级位移
-    scaleIn: MOTION_TODO,   // 缩放入场
-    maskOverflow: MOTION_TODO // clip-path/遮罩溢出量
+    reveal: 50,             // M-24 fade-top 实际位移（px）
+    hero: -100,             // M-03 / M-05 页头整段移出（%）
+    micro: MOTION_TODO,     // SPEC 无直接对应条目
+    scaleIn: MOTION_TODO,   // SPEC 无直接对应条目
+    maskOverflow: 100       // M-13 clip-path 起始 `inset(0 100% 0 0)`（%）
   }
 }
 
