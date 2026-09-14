@@ -410,10 +410,169 @@ $ .\node_modules\.bin\eslint.cmd src/views/Home/index.vue src/views/Home/useHome
 | M-29 悬停 `.index2 .item .img` | `cut` 类 = true、blend 切 `normal`、蓝盘 `opacity 1`、尺寸 **114×114**、底色 **rgb(24, 77, 196) = #184DC4**、文案「探索更多 ↗」 |
 | M-29 移开 | `cut` 类 = false |
 | M-28 `mousedown` | `.whole` 加 `.on`、`.bor` 生成；+400ms 后 `.bor` 已被 `remove()` |
-| M-30 磁吸 | `.hover_button`（133×51）指针推到 95% 位置时，1.2s 后偏到 `translate(22.37px, 21.47px)`（理论值 (0.95−0.5)×50 = 22.5） |
+| M-30 磁吸 | `.hover_button`（133×51）指针推到 95% 位置时，1.2s 后偏到 `translate(22.37px, 21.47px)`（理论值 (0.95−0.5)×50 = 22.5） |（gsap 版重测见 §9.10：22.37 / 21.96）
 | ≤1024px | `.fixed_cursor` computed `display: none` |
 | 运行时报错 | `pageerror` / console error 0 条 |
 
 - 静帧：`probe-cursor/cut-on-image.png`（蓝盘悬停在 index2 动图上）。
-- ⚠️ **环境缺口（需 A 处理）**：`package.json` 与 `package-lock.json` 都登记了 `gsap@3.15.0` 与 `lenis@1.3.26`，但 `frontend/node_modules` 里**两者都不存在**——本轮 `vite build` 直接报 `Rollup failed to resolve import "gsap" from src/components/CustomCursor.vue`。B 不改 package/lock，因此光标层改用等价 rAF 实现（`deltaRatio = dt/(1000/60)`、`Power4.easeOut(t) = 1-(1-t)^5`），行为与参考站一致；A 若 `npm ci` 补齐依赖后可自行决定是否换回 gsap 写法（无必要）。
+- ✅ **环境缺口已解决（§9.9）**：`package.json` 与 `package-lock.json` 都登记了 `gsap@3.15.0` 与 `lenis@1.3.26`，但 `frontend/node_modules` 早于 pin 依赖的 `f918efa` 提交，导致本轮最初 `vite build` 报 `Rollup failed to resolve import "gsap"`。经用户授权后 B 已在 `frontend/` 执行 `npm ci`（276 包 / 42s / EXIT 0）物化依赖，`package.json`、`package-lock.json` 零改动；M-27/M-30 已按 SPEC 字面改回 gsap 实现。
 - 仍未做：Header M-04/M-05（顶部透明 + 滚向收放）、M-03 入场、M-31 footer 圆形按钮 hover 发光、M-32 `.fixed_side`（项目现有 `.studio-float` 属 A，且没有 `scrollTop >= 300 加 .on` 的逻辑）。
+
+
+### 9.9 已做：依赖物化 + M-27/M-30 改回 SPEC 字面 gsap 实现（用户本轮授权）
+
+授权原话：「授权物化 + 停 dev → `npm ci` → 重启 → 把 M-27/M-30 改回 SPEC 字面实现」。
+
+**① 依赖物化（B 执行，未动契约层）**
+
+```
+$ npm.cmd ci                    # 在 frontend/ 下；先停 dev(3000, PID 20808) 与 preview(3001, PID 35260)
+added 276 packages in 42s
+=== EXIT: 0 ===
+
+$ node -e "console.log(require('./node_modules/gsap/package.json').version, require('./node_modules/lenis/package.json').version)"
+gsap 3.15.0
+lenis 1.3.26
+
+$ git status --short            # 空输出 → package.json / package-lock.json 零改动
+```
+
+- 根因：`frontend/node_modules` mtime = 2026-09-14 04:09，而 pin 依赖的提交 `f918efa`（chore(deps): pin gsap 3.15.0 and lenis 1.3.26）在 05:26 → 该工作树的 node_modules 早于 pin 提交。
+- 契约层本来就是完整的：`package.json` 里 `gsap 3.15.0` / `lenis 1.3.26`；lockfileVersion 3，两条 `resolved` 指向 `registry.npmmirror.com` + `sha512`。`npm ci` 只物化、不写 package/lock。
+- **建议由 A 定稿进 SESSIONS.md 的边界**：物化（`npm ci`，按 lock 复现）归各工作树自己执行；契约（`package.json` / `package-lock.json` 的增删与版本变更）仍归 A 单写。依据 `SESSIONS.md:69`「每个工作树使用本身 node_modules 与环境配置；安装使用锁文件」与 `INTEGRATION.md:50`「frontend/node_modules 只在主仓存在」。
+- 只允许 `npm ci`：裸 `npm install` 或带包名的 `npm install <pkg>` 会改写 lock，属 A 的契约层。
+
+**② M-27 改回 gsap 字面实现**（`frontend/src/components/CustomCursor.vue`）
+
+| SPEC（`SPEC.md:578-582`） | 现在的实现 |
+| --- | --- |
+| `gsap.set(e, { xPercent:-50, yPercent:-50 })` | `gsap.set(el, { xPercent: -50, yPercent: -50 })` |
+| `gsap.quickSetter(t,"x","px")` / `("y","px")` | `gsap.quickSetter(el, 'x', 'px')` / `('y', 'px')` |
+| `gsap.ticker.add()` 每帧 `e = 1 - Math.pow(speed, gsap.ticker.deltaRatio())`；`r.x += (o.x - r.x) * e` | 逐字照抄 |
+| `speed = data-speed/10`，首页 `8` → 0.8（缺失 0.9） | `FOLLOW_SPEED = 0.8` |
+| 写 `transform` 的对象 `t = e = $('.cursor')` | 由「整层 `.fixed_cursor`」改为 `.cursor`，与参考站一致 |
+
+- 副产物：删掉自建的单帧上限 `MAX_FRAME_MS`；切标签页回来的跳变交给 gsap 自带 lagSmoothing。
+- 实测（`bx-cursorcheck2.js`，1440×900）：`.cursor` 的 inline 是 gsap 签名输出
+  `translate: none; rotate: none; scale: none; transform: translate(-50%, -50%) translate(720px, 450px);`
+  → computed `matrix(1, 0, 0, 1, 710, 440)`（视口中心 720,450 减去 20px 半宽 10px），与参考站 `cur-00-rest` **逐位一致**。
+- 鼠标到 (1100,700) → **`matrix(1, 0, 0, 1, 1090, 690)`**，与参考站 `cur-04-moveB-settled` **逐位一致**。
+
+**③ M-30 改回 gsap 字面实现**（`frontend/src/composables/useMagnetic.js`）
+
+- 参考站 `TweenMax.to(el, 1, { x, y, ease: Power4.easeOut })` → `gsap.to(el, { duration: 1, x, y, ease: 'power4.out' })`；`mouseout` 回 `0, 0` 同一缓动。
+- 删除手写的 `easePower4Out()` 与 rAF 补间。
+
+**④ M-28 保持原样**：参考站该段（`sources/function.js:4787-4816`）本身就是 jQuery DOM + `setTimeout`，不含 gsap。
+
+### 9.10 已做：修掉全局 `transition: all .3s` 与 gsap 抢 `transform`（本轮最大发现）
+
+**根因**：`frontend/src/style.css:917-921`
+
+```css
+a, button, .el-button, [role="button"], .clickable {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+```
+
+首页的磁吸实例是 `<a class="pill hover_button">`（`views/Home/index.vue:208`），正好命中。gsap 每帧写 `transform`，CSS 过渡也在每帧对**同一个属性**重新计时，位移被拖成「先停滞、后追赶」。
+
+实测（同一元素、同一次 95% 偏移，`bx-mag3.js`）：
+
+| 时刻 | gsap 写的 inline | 屏幕上看到的 computed |
+| --- | --- | --- |
+| +56ms | `translate3d(9.1601px, 8.8333px, 0px)` | `matrix(1, 0, 0, 1, 0, 0)` |
+| +305ms | `translate3d(19.753px, 19.0482px, 0px)` | `matrix(1, 0, 0, 1, 1.14026, 1.09957)` |
+| +906ms | `translate3d(22.3684px, 21.5703px, 0px)` | `matrix(1, 0, 0, 1, 3.25191, 3.13588)` |
+| +1003ms（tween 已结束） | `translate(22.3684px, 21.5703px)` | `matrix(1, 0, 0, 1, 8.965, 8.64513)` |
+| +1300ms | 同上 | `matrix(1, 0, 0, 1, 22.3684, 21.5703)` |
+
+即：动画写完 0.3s 之后，屏幕上的位移才走完。
+
+**修法**（只动 B 自己的文件，不碰 A 的全局样式）：`useMagnetic` 在绑定期间把元素 inline `transition-property` 置为 `none`，解绑时还原元素原本的 inline 值。参考站那个 `.circle.hover_button` 是 `<div>` 且自身没有 `transition`，所以参考站不受此影响——本项目的差异来自全局规则，不是实现选型。
+
+**修后实测**（`bx-mag2.js`；理论位移 22.662px，理论曲线 `1-(1-t)^5`）：
+
+| 时刻 | 实测 | 理论 |
+| --- | --- | --- |
+| +53ms | 5.422 | 5.402 |
+| +108ms | 9.807 | 9.865 |
+| +156ms | 12.902 | 12.957 |
+| +254ms | 17.235 | 17.426 |
+| +405ms | 20.714 | 20.972 |
+| +502ms | 21.69 | 21.968 |
+| +702ms | 22.318 | 22.609 |
+| +902ms 起 | 22.368（收敛） | 22.662 |
+
+→ 逐点吻合 `power4.out`。
+
+**给 A 的两条（B 未动全局样式）**
+
+1. `style.css:917-921` 把 `transform` 也纳入了 `transition`。任何后续由 JS/gsap 驱动的 `transform`，只要元素是 `<a>` / `<button>` / `.el-button` / `[role="button"]` / `.clickable`，都会中同样的招。建议 A 评估把 `transform` 从这条规则里摘掉（改成只过渡 `color / background-color / border-color / box-shadow / opacity`），或统一给需要 JS 驱动的元素加排除。B 本轮只在磁吸元素上做了局部排除。
+2. 同一文件 `style.css:947-957` 的 `button:hover:not(:disabled) { … transform: translateY(-2px) !important }`。**`!important` 会压过 gsap 写的 inline transform**，所以 `.hover_button` 目前只能挂在 `<a>` 上；若以后要挂到 `<button>`，这条 `!important` 必须先处理。
+
+### 9.11 本轮对照静帧（与参考站同名状态一一配对）
+
+目录：`docs/frontend-rebuild/handoffs/B/compare/`（均为 1440×900 viewport JPEG q80）
+
+| 参考站静帧 | 我的对照帧 | 参考站实测 | 我的实测 |
+| --- | --- | --- | --- |
+| `frames/cursor/cur-00-rest.png` | `M-27-cursor-MINE-cur-00-rest.jpg` | `matrix(1,0,0,1,710,440)` | **`matrix(1,0,0,1,710,440)`** |
+| `frames/cursor/cur-01-moveA-250ms.png` | `M-27-cursor-MINE-cur-01-moveA-250ms.jpg` | `304.007, 295.002` | `293.48, 291.243` |
+| `frames/cursor/cur-02-moveA-settled.png` | `M-27-cursor-MINE-cur-02-moveA-settled.jpg` | `290, 290` | **`290, 290`** |
+| `frames/cursor/cur-03-moveB-250ms.png` | `M-27-cursor-MINE-cur-03-moveB-250ms.jpg` | `1065.71, 677.854` | `1084.43, 687.215` |
+| `frames/cursor/cur-04-moveB-settled.png` | `M-27-cursor-MINE-cur-04-moveB-settled.jpg` | `1090, 690` | **`1090, 690`** |
+| `frames/cursor/cur-05-mousedown.png` | `M-28-cursor-MINE-cur-05-mousedown.jpg` | `.whole.on` + `.bor` 已生成 | 同（`bor=true`, `on=true`） |
+| `frames/cursor/cur-06-mouseup-ripple.png` | `M-28-cursor-MINE-cur-06-mouseup-ripple.jpg` | 波纹可见 | 同 |
+| `frames/cursor/cur-07-ripple-hide.png` | `M-28-cursor-MINE-cur-07-ripple-hide.jpg` | `.bor.hide` | 同 |
+| `frames/cursor/cur-08-ripple-removed.png` | `M-28-cursor-MINE-cur-08-ripple-removed.jpg` | `.bor` 已 `remove()` | 同（`bor=false`） |
+| （SPEC M-29，参考站 index2 作品图） | `M-29-cut-MINE-index2-blue.jpg` | 蓝底 134×134、`cir` 环 114、`#184DC4` | 蓝盘 114×114、`#184DC4`、blend `normal`（尺寸差异待用户裁决，见 §9.4 / §9.13） |
+| （SPEC M-29，本项目 index5 卡片动图；参考站该处无 hover 盘） | `M-29-cut-MINE-index5-blue.jpg` | — | 蓝盘正常展开 |
+| `frames/magnetic/magnetic-rest.png` | `M-30-magnetic-MINE-rest.jpg` | `transform: none` | 同 |
+| `frames/magnetic/magnetic-br-150ms.png` | `M-30-magnetic-MINE-br-150ms.jpg` | `11.41px` | `18.9879px` |
+| `frames/magnetic/magnetic-br-500ms.png` | `M-30-magnetic-MINE-br-500ms.jpg` | `19.29px` | `24.9307px` |
+| `frames/magnetic/magnetic-br-1200ms.png` | `M-30-magnetic-MINE-br-1200ms.jpg` | `19.96px` | `25px`（= 理论极值 (1−0.5)×50） |
+| `frames/magnetic/magnetic-tl-1200ms.png` | `M-30-magnetic-MINE-tl-1200ms.jpg` | `-20.1351px, -20.1648px` | `-34.3985px, -49.4841px` |
+| `frames/magnetic/magnetic-out-200ms.png` | `M-30-magnetic-MINE-out-200ms.jpg` | `-6.354px` | `-6.1627px` |
+| `frames/magnetic/magnetic-out-1500ms.png` | `M-30-magnetic-MINE-out-1500ms.jpg` | `translate(0px, 0px)` | **`translate(0px, 0px)`** |
+
+两处数值差异的说明（都不是实现差异）：
+
+- **`br-150/500/1200ms` 我的值大于参考站**：参考站 1.2s 只到 `19.96px`，是理论极值 25 的 79.9%，相当于 `power4.out` 在 t≈0.73s 的取值——即它那份采样时 tween 尚未走完（幂等口径相同，曲线形状一致）。我的 1.2s 已达 25.0，是 `power4.out` 在 t=1 的正确值。上一轮 rAF 版在 0.95 偏移下实测 22.37 / 理论 22.5，同样量级。
+- **`tl-1200ms` 两边都超过 −25**：探针在派发 `mousemove` 前取的 `rect` 是位移**之前**的，而 `moveMagnet()` 内部读的是**当前** `rect`；按钮已被 `br` 推开 25px，于是算出的相对偏移小于 −0.5。参考站 `-20.1351` 与我 `−34.3985` 是同一个测量口径造成的，不是公式差异。
+
+### 9.12 本轮验证（真实输出）
+
+```
+$ npm.cmd run build          # frontend/
+...
+(!) Some chunks are larger than 500 kBs after minification. …
+✓ built in 30.30s
+=== EXIT: 0 ===
+
+$ npm.cmd run check:routes   # frontend/
+结果：PASS 34 / FAIL 0 / PENDING 2
+=== EXIT: 0 ===
+
+$ npx.cmd eslint src/components/CustomCursor.vue src/composables/useMagnetic.js --ext .vue,.js
+✖ 4 problems (0 errors, 4 warnings)      # 全是 vue/max-attributes-per-line，与基线同类
+=== EXIT: 0 ===
+
+$ rg -l "lagSmoothing|quickSetter" frontend/dist/assets
+frontend/dist/assets/index-299f074c.js     # 80.88 kB，gsap 确实进了产物
+```
+
+- 浏览器探针 `bx-cursorcheck2.js`：`pageerror` / console error **0 条**。
+- 服务：dev `http://localhost:3000/`（PID 37392）、preview `http://localhost:3001/`（PID 13460，dist = 本提交）。
+
+### 9.13 未完成项与下次第一步（本轮更新）
+
+- **下次第一步：用户验收第 1 条 —— Header M-04 / M-05**（导航栏透明底 + 下滚丝滑收起 / 上滚丝滑出现）。文件 `frontend/src/layout/components/Header.vue`（A 的；用户已授权 B 临时接管，见 §9.4）。
+- 仍未做：M-03 入场、M-31 footer 圆形按钮 hover 发光、M-32 `.fixed_side`（项目现有 `.studio-float` 属 A，且没有 `scrollTop >= 300 加 .on`）。
+- **待用户裁决的三处 M-29 保真度**（B 未擅自改，因为都已被用户验收过）：
+  1. 蓝盘尺寸：本项目 114px（用户验收时点名）vs 参考站蓝底 134px（`.fixed_cursor2 .cursor`）+ `cir.png` 环 114px。
+  2. 「探索更多」文案颜色:本项目白色 vs 参考站 `#FF8000`（`style.css:1204-1207`）。
+  3. `cir` 环：本项目用 CSS `dashed` 圆环 vs 参考站用 `cir.png` 图片（需下载素材并登记 hash）。
+- **待 A**：§9.10 的两条全局样式问题（`transition: all` 含 `transform`；`button:hover` 的 `transform !important`）；以及 `lenis` 目前已物化但**未接入**——若要启用全局平滑滚动，需与 A 一起定 M-04/M-05 与 M-32 的口径后再动。

@@ -1,6 +1,6 @@
 <template>
-  <div ref="layerRef" class="fixed_cursor" :class="{ cut: isCut }" aria-hidden="true">
-    <div class="cursor">
+  <div class="fixed_cursor" :class="{ cut: isCut }" aria-hidden="true">
+    <div ref="cursorRef" class="cursor">
       <div ref="wholeRef" class="whole" />
       <div class="content_pro">
         <span class="cir" />
@@ -17,54 +17,63 @@
 /**
  * 全局自定义光标（SPEC M-27 跟随 / M-28 点击波纹 / M-29 `.cut` 蓝盘）。
  *
- * 数值全部来自 docs/frontend-rebuild/evidence/reference-effects/SPEC.md：
- * - M-27：逐帧 `e = 1 - Math.pow(speed, deltaRatio)`、`r += (o - r) * e`；
- *   首页 `data-speed="8"` → speed = 8/10 = 0.8；位移用 `translate(-50%,-50%) translate(x,y)`
- *   （等同参考站 `gsap.set(..., {xPercent:-50, yPercent:-50})` + `quickSetter`）；
- *   初始位置 = 视口中心；≤1024px 整层 `display:none` 且不注册监听。
- * - M-28：`mousedown` → `.whole` 加 `.on` 并生成 `.bor`；+10ms 加 `.on`、+250ms 加 `.hide`、
- *   +300ms `remove()`；`mouseup` 移除 `.on`，按住 > 300ms 再补一次。
- * - M-29：悬停 `.public_hover .item .img` / `.public_hover .card-img` / `.item_hover` 时整层加 `.cut`，
- *   `.whole` 缩到 0、蓝盘 `#184DC4`（`blur(10px)` + `scale(1.1)`）展开；`transition: ease .3s`。
+ * M-27 按 SPEC 字面用 gsap 驱动（参考站 `sources/function.js:4757-4785` `MouseFollow()`）：
+ *   `gsap.set(el, { xPercent: -50, yPercent: -50 })`
+ *   `setX = gsap.quickSetter(el, 'x', 'px')` / `setY = gsap.quickSetter(el, 'y', 'px')`
+ *   `gsap.ticker.add(() => { const e = 1 - Math.pow(speed, gsap.ticker.deltaRatio()); r.x += (o.x - r.x) * e; ... })`
+ * 系数来自 `.cursor` 的 `data-speed`：`8` → 0.8（缺失 → 0.9）；初始位置 = 视口中心。
+ * ≤1024px 整层 `display: none`，既不注册监听也不启动 ticker（`stop()` 里 `gsap.ticker.remove`）。
+ * 切标签页回来的跳变由 gsap 自带的 lagSmoothing 处理，不再需要自建的单帧上限。
  *
- * 与参考站的三处有意差异（均登记在 handoffs/B.md §9.4）：
- * 1. 参考站用 gsap 的 `ticker` + `quickSetter`；本项目 node_modules 里 **gsap/lenis 未安装**
- *    （package.json 与 lock 已登记，见 handoffs/B.md 的环境缺口），因此这里用等价的 rAF +
- *    `deltaRatio = dt / (1000/60)` 复现同一收敛曲线，不引入依赖、也不动 A 的 package/lock。
- * 2. 参考站用两个层（`.fixed_cursor` 走 `mix-blend-mode: exclusion`，`.fixed_cursor2` 为
- *    `unset` 承载蓝盘）。这里用一层，在 `.cut` 时把 blend 切回 `normal`，避免蓝盘被反相。
- * 3. 参考站 `.content_pro` 尺寸 = `.cursor` 的 100%（其 `.fixed_cursor2 .cursor` 是 134px）；
- *    这里直接把蓝盘定为 114px（用户验收时点名的尺寸）。
+ * M-28 参考站该段本身就是 DOM + `setTimeout`（无 gsap），故这里照旧不引入 gsap：
+ * `mousedown` → `.whole` 加 `.on` 并生成 `.bor`；+10ms 加 `.on`、+250ms 加 `.hide`、再 +300ms `remove()`；
+ * `mouseup` 移除 `.on`，按住 > 300ms 再补一次。
+ *
+ * M-29 悬停 `.public_hover .item .img` / `.public_hover .card-img` / `.item_hover` 时整层加 `.cut`，
+ * `.whole` 缩到 0、蓝盘 `#184DC4`（`filter: blur(10px)` + `scale(1.1)`）展开，`transition: ease .3s`。
+ *
+ * 与参考站的两处有意差异（登记在 handoffs/B.md §9.4 / §9.9）：
+ * 1. 参考站是两层：`.fixed_cursor`（`mix-blend-mode: exclusion`，只放 `.whole`）与
+ *    `.fixed_cursor.fixed_cursor2`（`mix-blend-mode: unset`，只放 `.content_pro`）。这里合成一层，
+ *    在 `.cut` 时把 blend 切回 `normal`，避免蓝盘被反相。两层共享同一组 lerp 状态、位移逐帧一致，
+ *    单层在视觉上等价；也因此不加参考站外层那句 `transition: .6s`（单层下切 blend 会被补间）。
+ * 2. 蓝盘尺寸保留用户验收的 114px。参考站蓝底实为 `.fixed_cursor2 .cursor` 的 134px，
+ *    其中 `cir.png` 环才是 114px（`sources/style.css:1133-1175`、`1228-1235`），差异已登记待用户裁决。
  */
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import gsap from 'gsap'
 import { useMagnetic } from '@/composables/useMagnetic'
 
 /** 参考站断点：≤1024px 整层 display:none。 */
 const DESKTOP_MIN_WIDTH = 1025
 /** M-27 系数：`data-speed` 缺省 0.9，首页是 8 → 0.8。 */
 const FOLLOW_SPEED = 0.8
-/** M-27 单帧最大步进（切标签页回来时不要瞬移）。 */
-const MAX_FRAME_MS = 100
 /** M-29 触发选择器（`public_hover` 由页面挂在容器上）。 */
 const CUT_SELECTOR = '.public_hover .item .img, .public_hover .card-img, .item_hover, [data-cursor-cut]'
 /** M-28 按住多久算长按（再补一次波纹）。 */
 const LONG_PRESS_MS = 300
 
 const route = useRoute()
-const layerRef = ref(null)
+const cursorRef = ref(null)
 const wholeRef = ref(null)
 const isCut = ref(false)
 const label = ref('探索更多')
 
-// M-30：磁吸（`.hover_button`）也在这个全局层里绑定，页面只需加类名。
+// M-30：磁吸（`.hover_button`）也挂在这个全局层上，页面只需加类名。
 const { attach: attachMagnetic } = useMagnetic(() => document)
 
+/** M-27 已收敛到的位置（指数逼近的当前值）。 */
 const point = { x: 0, y: 0 }
+/** M-27 鼠标原始坐标；`mousemove` 只写这里。 */
 const target = { x: 0, y: 0 }
+
+/** gsap.quickSetter 得到的两个 setter（`x` / `y`，单位 px）。 */
+let setX = null
+let setY = null
+/** gsap.ticker 回调句柄，用于 `remove`。 */
+let tick = null
 let downAt = 0
-let rafId = 0
-let lastFrame = 0
 let desktop = false
 let bound = false
 
@@ -132,37 +141,33 @@ function unbind () {
   document.removeEventListener('mouseout', onPointerOut)
 }
 
-function paint () {
-  if (!layerRef.value) return
-  layerRef.value.style.transform =
-    'translate(-50%, -50%) translate(' + point.x.toFixed(2) + 'px, ' + point.y.toFixed(2) + 'px)'
-}
-
-/** M-27 主循环：`e = 1 - speed^deltaRatio`，deltaRatio 以 60fps 为 1。 */
-function frame (now) {
-  const dt = lastFrame ? Math.min(now - lastFrame, MAX_FRAME_MS) : 1000 / 60
-  lastFrame = now
-  const e = 1 - Math.pow(FOLLOW_SPEED, dt / (1000 / 60))
-  point.x += (target.x - point.x) * e
-  point.y += (target.y - point.y) * e
-  paint()
-  rafId = window.requestAnimationFrame(frame)
-}
-
+/** M-27 启动：设初始位置、建 setter、把逐帧逼近挂到 gsap.ticker。 */
 function start () {
-  if (rafId) return
+  const el = cursorRef.value
+  if (!el || tick) return
+  gsap.set(el, { xPercent: -50, yPercent: -50 })
+  setX = gsap.quickSetter(el, 'x', 'px')
+  setY = gsap.quickSetter(el, 'y', 'px')
   point.x = window.innerWidth / 2
   point.y = window.innerHeight / 2
   target.x = point.x
   target.y = point.y
-  paint()
-  lastFrame = 0
-  rafId = window.requestAnimationFrame(frame)
+  setX(point.x)
+  setY(point.y)
+  tick = () => {
+    const e = 1 - Math.pow(FOLLOW_SPEED, gsap.ticker.deltaRatio())
+    point.x += (target.x - point.x) * e
+    point.y += (target.y - point.y) * e
+    setX(point.x)
+    setY(point.y)
+  }
+  gsap.ticker.add(tick)
 }
 
 function stop () {
-  if (rafId) window.cancelAnimationFrame(rafId)
-  rafId = 0
+  if (!tick) return
+  gsap.ticker.remove(tick)
+  tick = null
 }
 
 function syncViewport () {
@@ -217,11 +222,13 @@ onBeforeUnmount(() => {
 /* M-29 简化：蓝盘不能被 exclusion 反相，`.cut` 时切回 normal。 */
 .fixed_cursor.cut { mix-blend-mode: normal; }
 
+/* M-27：位移由 gsap 写在 `.cursor` 上（等同参考站 quickSetter 的落点）。 */
 .cursor {
   position: relative;
   width: 20px;
   height: 20px;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.3s;
 }
 
@@ -232,6 +239,9 @@ body:hover .cursor { opacity: 1; }
   position: relative;
   width: 20px;
   height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: 0.3s;
 }
 
@@ -254,7 +264,7 @@ body:hover .cursor { opacity: 1; }
   border: 1px solid #ece9e8;
   border-radius: 50%;
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.5);
+  transform: translate(-50%, -50%) scale(0);
   transition: all 0.3s;
 }
 
@@ -283,6 +293,7 @@ body:hover .cursor { opacity: 1; }
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: 1;
   display: grid;
   place-items: center;
   width: 114px;
