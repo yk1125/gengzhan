@@ -569,10 +569,182 @@ frontend/dist/assets/index-299f074c.js     # 80.88 kB，gsap 确实进了产物
 
 ### 9.13 未完成项与下次第一步（本轮更新）
 
-- **下次第一步：用户验收第 1 条 —— Header M-04 / M-05**（导航栏透明底 + 下滚丝滑收起 / 上滚丝滑出现）。文件 `frontend/src/layout/components/Header.vue`（A 的；用户已授权 B 临时接管，见 §9.4）。
-- 仍未做：M-03 入场、M-31 footer 圆形按钮 hover 发光、M-32 `.fixed_side`（项目现有 `.studio-float` 属 A，且没有 `scrollTop >= 300 加 .on`）。
-- **待用户裁决的三处 M-29 保真度**（B 未擅自改，因为都已被用户验收过）：
-  1. 蓝盘尺寸：本项目 114px（用户验收时点名）vs 参考站蓝底 134px（`.fixed_cursor2 .cursor`）+ `cir.png` 环 114px。
-  2. 「探索更多」文案颜色:本项目白色 vs 参考站 `#FF8000`（`style.css:1204-1207`）。
-  3. `cir` 环：本项目用 CSS `dashed` 圆环 vs 参考站用 `cir.png` 图片（需下载素材并登记 hash）。
-- **待 A**：§9.10 的两条全局样式问题（`transition: all` 含 `transform`；`button:hover` 的 `transform !important`）；以及 `lenis` 目前已物化但**未接入**——若要启用全局平滑滚动，需与 A 一起定 M-04/M-05 与 M-32 的口径后再动。
+- **下次第一步：请用户验收本批两件**（入口 `/` 与 `/en`）：
+  1. 需求 1 —— Header 透明顶 + M-04 `.on` / M-05 wheel 收放（§9.15.1）；
+  2. 需求「footer 黑底突兀」—— 首页 footer 米色排版（§9.15.2）。
+  两者在同一批提交里；看 `compare/HDR-MINE-*.jpg`、`compare/FTR-MINE-*.jpg`、`shots/09-*.png`。
+- 仍未做：M-03 页头入场、M-31 footer 圆形按钮 hover 发光、M-32 `.fixed_side`。
+- 用户本轮已裁决（B 未改）：M-29 的三处保真度差异**全部接受** —— 114px 蓝盘、白色「探索更多」文案、CSS `dashed` 环。
+- **待 A**：见 §9.14（三项申请 + 两项登记）。素材/结构缺口：见 §9.17。
+
+### 9.14 给 A 的变更申请（三项 + 两项登记；用户已认可该方案）
+
+> 渠道：IM 先发「占用声明 + 三项申请」，A 回一句「收到」即可；正式版即本节。
+
+**申请 1（必须）：把 `transform` 从全局 `transition: all` 里摘掉**
+
+- 位置：`frontend/src/style.css:938-946`
+
+```css
+a,
+button,
+.el-button,
+[role="button"],
+.clickable {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+```
+
+- 理由与逐帧实测见 §9.10：gsap 每帧写 `transform`，CSS 过渡对同一属性每帧重新计时 → 位移被拖成「先停滞、后追赶」（实测：动画写完 0.3s 之后屏幕上的位移才走完）。
+- 改法：这行展开成显式属性、**不含 `transform`**（`color / background-color / border-color / box-shadow / opacity / filter`）；确实需要过渡 `transform` 的元素各自补 `transition: transform .3s …`。
+- **影响面**（机械扫描口径：`:hover` 里写 `transform:`、该规则自身没有 `transition:`、选择器命中 `a / button / .el-button / [role=button] / .clickable`，共 **8** 处）：
+
+| # | 文件:行 | 选择器 |
+| --- | --- | --- |
+| 1 | `style.css:280` | `.el-button--primary:hover, button:hover:not(:disabled), .el-button:hover:not(.is-disabled)` |
+| 2 | `style.css:957` | `button:hover:not(:disabled), .el-button:hover:not(.is-disabled), .el-button--primary:hover` |
+| 3 | `style.css:977` | `.el-button--primary:hover, button.primary:hover` |
+| 4 | `style.css:1023` | `button:disabled:hover, .el-button.is-disabled:hover` |
+| 5 | `style.css:2078` | `:is(.ai-development,.app-development,.web-development) .cta-section .el-button:hover` |
+| 6 | `layout/index.vue:90` | `.studio-float button:hover` |
+| 7 | `views/AiDevelopment/index.vue:968` | `.cta-section :deep(.el-button:hover)` |
+| 8 | `views/ServiceLanding.vue:59` | `.service-cta button:hover` |
+
+  第 1–5 条（`.el-button`）可能还有 Element Plus 自带的 transition 兜着，请 A 逐条确认；B 没动它们，只做了扫描。
+- B 已做的局部兜底：`useMagnetic` 在绑定期间把元素 inline `transition-property` 置 `none`，解绑时还原（§9.10）。
+
+**申请 2（建议）：抽一个 JS transform guard**
+
+- 约定：凡「逐帧写 `transform`」的元素（gsap / rAF / 惯性）统一过同一个 guard —— 例如 `useJsTransformGuard(el, on)`：进入时把 inline `transition-property` 置 `none`，退出时还原。
+- 收益：后续 C/D 加动效不必各自再踩一遍 §9.10；B 现在这段实现可以直接从 `useMagnetic` 里搬出来复用。
+- 归属：`frontend/src/composables/` 是 A 的目录，请 A 落地；B 到时不改其它页。
+
+**申请 3（建议）：加一条只读门禁**
+
+- 照 `frontend/scripts/check-routes.mjs` 的先例加脚本（例：`npm.cmd run check:motion`），只读扫描：
+  1. 新增 `transition: all`；
+  2. `:hover` 改 `transform`、选择器主体命中 `a / button / .el-button / [role=button] / .clickable`、且该规则自身没有 `transition` 的地方（即上表 8 处的规则）。
+- 现状没有这条门禁，同类问题只能人肉发现（§9.10 是靠逐帧比对才挖出来的）。
+
+**登记 1：动效元素不要挂 `<button>`**
+
+- `style.css:282-286`：`button:hover:not(:disabled){ transform: translateY(-2px) !important }` 会压掉 JS 写的 inline `transform`。当前 `.hover_button` 挂在 `<a class="pill hover_button">` 上所以没事（`views/Home/index.vue`）；要挂 `<button>` 必须先处理这条 `!important`。
+- （更正：§9.10 里写的 `style.css:947-957` 是旧行号，规则实际在 `282-286`。）
+
+**登记 2：footer 的样式是三段叠加的**
+
+- 内页 footer 的**有效**声明分布在 `style.css` 的 `1703-1736`（原浅色板）与 `2130-2131`（深色覆盖），`615` 段那一组早已被压死。
+- B 本轮已把两处消费点改成 `var(--footer-*)`（默认值 = 改前生效值），删掉 `615` 段的 5 条死规则，调色板收敛成一张表（`style.css:621-650`）。
+- 但「同一组件两套叠加 `!important`」的结构还在（正是 AGENTS「不得继续叠加全局 `!important` 掩盖结构错误」说的成因）。建议 A 后续合并成一处；B 本轮不动，一动就要重测所有内页。
+
+### 9.15 本批已做（Header M-04/M-05 + 首页 Footer 米色）
+
+- 本批代码提交：`f726c50` `feat(header,footer): 首页页头 M-04/M-05 + 首页 footer 米色排版，并修掉 /en 首页不生效`（3 files, 173+/82−）；本文件与截图随下一条 `docs` 提交。
+
+#### 9.15.1 Header：透明顶 + M-04 `.on` + M-05 wheel 收放
+
+文件：`frontend/src/layout/components/Header.vue`（A 的；用户授权 B 临时接管，见 §9.4）。
+
+- 模板：`ref="headerRef"`、`:class="{ 'header-fixed': !isHome && isFixed, 'header-home': isHome, on: isOn, hide: isHidden }"`。
+- `isOn` 阈值照 SPEC：`window.scrollY > document.documentElement.clientHeight - headerHeight()/2`；`isHidden` 由 `wheel` 驱动（`deltaY>0` 收起、`<0` 恢复），监听 passive。
+- 样式：`.header.header-home` 双类前缀（为压过 `style.css` 里那几条 `.header { … !important }`）—— 基线 `background: transparent !important`、`transition: all .6s ease !important`；`.on` → `#F2F1E4` + logo `invert(1)` + 文字转黑；`.hide` → `transform: translateY(-100%) !important`。参考站：`sources/style.css:213-228 / 586-607 / 624-626`。
+- **本轮修掉一个缺陷**：`isHome` 原来只判 `route.path === '/'`，而英文站首页是独立路由 `/en`（router: `Home` / `HomeEn`）→ `/en` 拿不到 `.header-home`，M-04/M-05 在英文站根本没生效。改为 `'/' || '/en'`（口径同 `Home/index.vue:250` 的 locale 判断）。
+
+实测（`bx-hdr.js`、`bx-enhdr.js`；preview `3001` = 本批 dist）：
+
+| 场景 | 结果 |
+| --- | --- |
+| `/` y=0 | `header header-home`、`position: fixed`、`bg: rgba(0,0,0,0)`、`transition: 0.6s ease`、nav 白、headerH 76、阈值 862.5 |
+| `/` y=900（过阈） | `header header-home on`、`bg: rgb(242,241,228)` = **#F2F1E4**、nav `rgb(0,0,0)` |
+| `/` y=400（回退） | `.on` 移除、bg 回透明 |
+| `/` wheel 向下 | `header header-home on hide`、`transform: matrix(1,0,0,1,0,-76)` |
+| `/` wheel 向上 | `.hide` 移除、`transform: none` |
+| `/en` y=0 / y=900 / wheel↓ / wheel↑ | 与 `/` 逐项一致（修缺陷后） |
+| `/ai-development`、`/en/about` | `header`、`header header-fixed on`、`rgba(17,17,17,0.98)`（内页零变化） |
+| `pageerror` / console error | 0 条 |
+
+#### 9.15.2 Footer：首页米色排版
+
+文件：`frontend/src/layout/components/Footer.vue`、`frontend/src/style.css`。
+
+- 用户方案 A：**内页保持深色现状，只有首页切参考站的米色排版**（用户裁决「1.可以 2.标语 3.授权」；锚点用标语）。
+- `Footer.vue`：根元素挂 `:class="{ 'footer-home': isHome }"`（`isHome` 同 Header，含 `/en`）；`.footer-home` 的硬编码色改 `var(--footer-icon / --footer-link-hover / --footer-line, 原值)`；新增首页排版块（≥981px）与 logo `multiply`。
+- `style.css`：调色板收敛成一张表（`621-650`，默认值 = 内页**生效**值，逐字一致）；`1703-1736` / `2130-2131` 两处消费点改 `var()`。
+- 参考站依据：`sources/style.css:905-915`（`background:#F2F1E4`、`.wrap { margin:146px auto 111px; max-width:90% }`）、`931-938`（正文 18/32、tel 19/45）、`977-988`（链接 14/28）。
+- 正文/链接**沿用本项目组件原生的深蓝灰**（`#1e2f48 / #40546a / #4a5d72` 本来就是给浅底设计的，在米底上对比度 6.8:1），不照抄参考站的 `#7B7B7B`（在 `#F2F1E4` 上只有 3.7:1）。这是**有意差异**，理由 = 可读性。
+- **主题感知**：米色只在浅色模式生效（选择器 `html:not([data-theme='dark'])`）。暗色模式下首页其它区块是深底，接米色 footer 会造出新的硬接缝，所以暗色回落全站深色收尾（前后对比：`compare/FTR-MINE-home-1440-dark-ctx.jpg`）。
+- logo：`logo-new.png` 是无 alpha 的**白底方图**（1254×1254，且内嵌了公司名与微信号），在内页深底上一直显示为一个白方块；首页米底上用 `mix-blend-mode: multiply` 让白底融进底色（只作用于首页浅色）。
+- 桌面排版块：`gap 56 / brand max-width 330 / logo 56 / 标题 30px / 副标 9px(.3em) / 正文 15px(1.9) / 栏目标题 13px(.14em) / 链接 15px(1.6) / bottom margin-top 74 / entries 13px / legal 12px`。
+
+实测（`bx-ftr5.js`；preview `3001`）：
+
+| 场景 | footer class | bg | padding-top | h3 | 栏目链接 | legal |
+| --- | --- | --- | --- | --- | --- | --- |
+| `/` 1440 亮 | `footer corporate-footer footer-home` | **rgb(242,241,228)** | **146px** | rgb(30,47,72) `#1e2f48` | rgb(64,84,106) `#40546a` | rgb(90,109,130) `#5a6d82` |
+| `/` 1440 暗 | 同上 | rgb(17,17,17) | 68px | rgb(255,255,255) | 同 | 同 |
+| `/` 390 亮 | 同上 | rgb(242,241,228) | 34px（移动断点未被污染） | `#1e2f48` | 同 | 同 |
+| `/` 390 暗 | 同上 | rgb(17,17,17) | 34px | 白 | 同 | 同 |
+| `/ai-development` 1440 亮 | `footer corporate-footer` | rgb(17,17,17) | 68px | rgb(255,255,255) | `#40546a` | `#5a6d82` |
+
+- **内页零变化**：`/ai-development` 与 `/cases` 的 9 项测量（bg / padding-top / h3 字号+行高+颜色 / 栏目链接 / brand 段落 / entries / legal / bottom border 色 / 整块高度）在改动前后**逐位相同**。
+- **踩坑（值得 A 知道）**：B 第一版把 `style.css:615-625` 的 footer 硬编码色换成变量，看起来「默认值逐字未变」，实测却**毫无效果** —— 内页真正生效的是后面 `1703` / `2130` 两块（`body` 前缀 + 更晚 + `!important`），只改前面的等于改死代码。**教训：改这种叠加 `!important` 的全局样式，必须先实测「哪条规则在赢」，不能只看 diff。**
+
+### 9.16 本批验证（真实输出）
+
+```text
+$ npm.cmd run build            # frontend/
+dist/assets/index-f9412415.js            1,139.35 kB │ gzip: 364.39 kB
+(!) Some chunks are larger than 500 kBs after minification. …
+✓ built in 13.87s
+=== EXIT: 0 ===
+
+$ npm.cmd run check:routes     # frontend/
+结果：PASS 34 / FAIL 0 / PENDING 2      （tail：contact 未实现 = B/T05，存量）
+=== EXIT: 0 ===
+
+$ npx.cmd eslint src/layout/components/Footer.vue src/layout/components/Header.vue --ext .vue
+✖ 80 problems (0 errors, 80 warnings)
+=== EXIT: 0 ===
+```
+
+- eslint 与基线对齐：`Footer.vue` 56 vs 基线 55、`Header.vue` 25 vs 基线 25 → 合计 80 vs 基线 80（**零增量**）。基线用 `git show HEAD:<file>` 拷到 `frontend/` 下临时文件实测后已删除；告警全部是 `vue/max-attributes-per-line` / `attributes-order` / `singleline-html-element-content-newline` / `html-self-closing` 这类格式族。
+- 8 张组合截图（`shots/09-*.png`，preview 3001、本批 dist）：`bx-combo.js` 复跑，**每张 console error 0 条**，且 `[src]/[href]/[style]` 扫描 **external URLs: none**（无参考站热链）。
+
+| 组合 | header | footer | bg | padding-top |
+| --- | --- | --- | --- | --- |
+| 1440 zh 亮 | `header header-home` | `…footer-home` | rgb(242,241,228) | 146px |
+| 1440 zh 暗 | `header header-home` | `…footer-home` | rgb(17,17,17) | 68px |
+| 1440 en 亮 | `header header-home` | `…footer-home` | rgb(242,241,228) | 146px |
+| 1440 en 暗 | `header header-home` | `…footer-home` | rgb(17,17,17) | 68px |
+| 390 zh 亮 | `header header-home` | `…footer-home` | rgb(242,241,228) | 34px |
+| 390 zh 暗 | `header header-home` | `…footer-home` | rgb(17,17,17) | 34px |
+| 390 en 亮 | `header header-home` | `…footer-home` | rgb(242,241,228) | 34px |
+| 390 en 暗 | `header header-home` | `…footer-home` | rgb(17,17,17) | 34px |
+
+### 9.17 缺口、未完成项与下次第一步
+
+**A. 素材缺口（需要用户/A 决定，B 没有自行造素材）**
+
+1. **footer logo**：`frontend/public/logo-new.png` 是 1254×1254 的**白底方图、无 alpha**，还内嵌了「北京耘栈科技有限公司」与「微信号 yunzhankk」两行字。放到 46/56px 的槽里，图形只占约 1/4、两行字糊成一团；内页深底上白方块尤其突兀。B 只做了 `mix-blend-mode: multiply` 兜住首页浅色底。**建议要一张透明底（或横向 lockup）的 footer 专用 logo**，落盘后 B 替换并登记 hash。
+2. 首页占位动图：仍按用户「先占位」的裁决，来源与 SHA256 见 `evidence/reference-assets/`（§9.7）。
+
+**B. 待裁决（B 未擅自改）**
+
+1. **暗色模式下 Header `.on` 仍是米色**（`#F2F1E4`，与参考站 `.header.on` 一致）。首页暗色模式其它区块是深底，这个米色条会比较跳；要不要在 `html[data-theme='dark']` 下改成深色底 + 白字，请用户裁决（改法 1 行，但会偏离参考站字面值）。
+
+**C. 仍未做（已授权，下一批）**
+
+1. M-03 页头入场；M-31 footer 圆形按钮 hover 发光（参考站 `sources/style.css:819-903`，截帧 `frames/magnetic/footer-hover-*.png`）；M-32 `.fixed_side`。
+2. `lenis` 已物化但**未接入** —— 若要全局平滑滚动，需与 A 一起定 M-04/M-05 与 M-32 的口径后再动。
+
+**D. 存量问题（不是本批引入）**
+
+1. `/cases` 直连返回 500（`AxiosError`，后端未起），页面有失败态；本批探针里只在 `/cases` 命中过这条 console error。
+2. `npm.cmd run lint` 带 `--fix`，不是只读检查（AGENTS 已记）。
+
+**E. 下次第一步**
+
+1. 等用户验收 §9.13 的两件（Header M-04/M-05、首页 footer 米色排版）；同时把 §9.14 的三项申请发给 A。
+2. 验收通过后：接 §9.14 的门禁脚本（若 A 已落地），然后继续 M-03 / M-31 / M-32；用户已批准的其余页面（公司/联系/法律，含 T05 `contact`）排在其后。
