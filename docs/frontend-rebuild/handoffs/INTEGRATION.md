@@ -187,3 +187,137 @@ eslint 与基线逐 commit 对比（同一条只读命令，`-f json` 逐文件�
 3. `B` 的 §9.14 三项申请 + §9.20 A4（M-01 lenis）**仍未落地**，本次只合并、未代做。其中申请 1（把 `transform` 从 `style.css` 全局 `transition: all` 里摘掉）与本合并的 Header/磁吸强相关，建议紧接着做。
 4. 存量（非本次引入，未处理）：`/cases` 直连 500（后端未起，有失败态）；`npm.cmd run lint` 带 `--fix` 不是只读检查；M-19 mask 展开速度与参考站不符（§9.23 D3）；`package.json` 无 `test:unit/test:e2e` 脚本（T01 未做，本次未声称可运行）。
 5. 首页仍是大 chunk（1,139.35 kB / gzip 364.40 kB）+ 90MB 级占位动图，属已登记的素材/构建缺口，本次未动。
+## T02-S 服务页样板集成与样板验收矩阵（2026-09-15 · Session A）
+
+### 1. 合并
+
+| 项 | 值 |
+| --- | --- |
+| 命令 | `git merge --no-ff codex/rebuild-services`（ort 策略，无冲突） |
+| 结果 | `1a9aa2a`；父 `b6a2c72`（合并前 main）+ `822af9a`（源分支 HEAD，main 之上 9 个提交） |
+| 源码改动面 | 只有 `frontend/src/views/ServiceLanding.vue`（55 → 2092 行）；另新增 `frontend/public/assets/services/**`（53 张）、`docs/frontend-rebuild/evidence/service-pages/**`，更新 `handoffs/C.md` |
+| 公共层判定 | `Header.vue` / `style.css` / `router/index.js` / `layout/index.vue` / `package.json` / `useMagnetic.js` 在 main 与源分支上**逐字节相同**（`git show <ref>:<path>` 取内容再 `git hash-object --stdin`，六对哈希一致）→ C 未改公共层，本合并不含公共层变更 |
+| 未纳入 | 工作区里 A 的「收编 B 公共层」未提交改动（Header / style.css / router / layout / package.json / useMagnetic + 新增 composables、scripts）**没有**被这次合并或本记录提交吸收，仍原样留在工作区 |
+
+### 2. 验证环境（可归因性）
+
+本轮全部数字都在 `1a9aa2a` 的**干净检出**上取得：`git archive 1a9aa2a | tar -x -C %TEMP%\yz-pilot-1a9aa2a-v1`，`frontend/node_modules` 用 junction 指向主仓（不复制、不安装、不动工作区）。工作区那批未提交公共层改动没有参与任何一格；因此下面结果只归因于样板本身。
+
+### 3. 命令与结果
+
+| 检查 | 命令 | 结果 |
+| --- | --- | --- |
+| 构建 | `npm.cmd run build` | PASS，`✓ built in 23.63s` |
+| 主入口 chunk | — | `index-814da520.js` 1,139.35 kB / gzip **364.39 kB**（原基线 363.95；`84b7929` 时已 364.40） |
+| 服务页 chunk | — | `ServiceLanding-4d5308ef.js` 23.10 kB / gzip 11.29 kB（懒加载，未进主入口） |
+| 主入口 CSS | — | `index-dc32aa68.css` 530.78 kB / gzip **69.44 kB**（原基线 69.14） |
+| 只读 eslint | `eslint . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore` | exit 1，**7 errors / 795 warnings**（baseline 7/846）；7 个 error 与本文档 §1 列出的 7 项存量逐条相同，**无新增** |
+| 路由契约 | `npm.cmd run check:routes` | PASS 34 / FAIL 0 / PENDING 2（两条都是 `contact`，B·T05）；尾斜杠 31/31 |
+
+性能口径：主入口 gzip 与主入口 CSS 都**略超** ACCEPTANCE §6「不高于原基线」的字面值（+0.44 kB、+0.30 kB）。量级来自 T02-H 首页（`84b7929` 时已是 364.40 kB）；C 的服务页走独立懒加载 chunk，没有加重主入口。属已登记缺口，本轮未动。
+
+### 4. 全站矩阵（64 格）
+
+口径：16 条路由（8 条 × 中文 / 英文）× 2 视口（1440×900、390×844）× 2 主题（light / dark）。
+
+| 观测项 | 结果 |
+| --- | --- |
+| console error / pageerror | **0 / 0**（64 格全量） |
+| 外部网络请求 | **0**（只出现 `127.0.0.1:3021` 与 `data:` / `blob:`） |
+| 水平溢出 | 全部 0（390 亦无横向滚动） |
+| 破图 | 0 |
+| `html lang` | 全部 `zh-CN`，**含全部 `/en` 路由** |
+| 桌面导航 | 所有路由同一组 8 项 |
+
+14 条服务路由的「序号 + 标题」逐条对照（无串页）：
+
+| 路由 | 序号 | h1 | 路由 | 序号 | h1 |
+| --- | --- | --- | --- | --- | --- |
+| `/ai-development` | 01 / 07 | AI 开发 | `/en/ai-development` | 01 / 07 | AI DEVELOPMENT |
+| `/miniprogram-development` | 02 / 07 | 小程序开发 | `/en/miniprogram-development` | 02 / 07 | Mini Program Development |
+| `/app-development` | 03 / 07 | App 开发 | `/en/app-development` | 03 / 07 | APP DEVELOPMENT |
+| `/web-development` | 04 / 07 | 网站建设 | `/en/web-development` | 04 / 07 | WEB DESIGN |
+| `/iot-development` | 05 / 07 | 物联网开发 | `/en/iot-development` | 05 / 07 | IOT SOLUTIONS |
+| `/custom-development` | 06 / 07 | 定制开发 | `/en/custom-development` | 06 / 07 | CUSTOM SOFTWARE |
+| `/digital-creativity` | 07 / 07 | 数字创意 | `/en/digital-creativity` | 07 / 07 | DIGITAL CREATIVE |
+
+主题实测（1440，注入 `html[data-theme]`）：`/` 与 `/en` 的 footer `#F2F1E4 → #111`、文字 `#334155 → #999`；其余（body `#071014`、header 透明、h1 `#fff`、服务页 `.service-hero` 透明）**两态完全相同**。即现在只有首页 footer 真正响应主题。
+
+界面入口实测：桌面无主题按钮、无语言切换链接（`Header.vue` 里的 `menuList` 是硬编码中文，全站 `a[href]` 无一条 `/en`）；因此主题用 `data-theme` 注入、语言用 `/en` 直达验证。390 汉堡菜单：可开（`.mobile-menu-btn.active`）、`body.overflow=hidden` 锁滚动、8 项菜单、可关。
+
+截图证据（20 张；1440 / 390 × light / dark × 首页 / 小程序 / 数字创意 / 英文小程序 / 英文 AI）在 `docs/frontend-rebuild/handoffs/A/shots/pilot/`。
+
+### 5. 三项确认
+
+1. **七类服务共享同一模板 ✓**：`src/views/ServiceLanding.vue` 是唯一服务页组件，中文 7 条 + 英文 7 条共 14 条路由全部指向它；旧的 `views/AiDevelopment|AppDevelopment|WebDevelopment|IotDevelopment|CustomDevelopment|DigitalCreativity|MiniprogramDevelopment` 目录已**无人 import**。运行时 14 条路由收敛为 7 组 DOM 骨架，每组中英骨架相同，只有「01」分区按 `kind` 不同，`service-capabilities` / `service-approach` / `service-cta` 三段完全一致。
+2. **主导航只列四类服务 ✓**：8 项 = 首页、AI开发、小程序开发、App开发、WEB网站开发、公司案例、行业资讯、关于我们；服务项恰好 4 个。移动菜单同一组 8 项。
+3. **路由映射不串页 ✓**：14 条服务路由的序号与标题逐条对上（上表），中英同一服务同序号；能力卡 4 张且标题与服务一一对应（`capTitles` 逐条比对无跨页残留）。
+
+### 6. 素材检查
+
+| 项 | 结果 |
+| --- | --- |
+| 本地化 | 53 张服务图全部落在 `frontend/public/assets/services/`，页面只引用 `/assets/services/...` 本地路径 ✓ |
+| 登记 hash | `evidence/service-pages/service-images.md` 逐条登记来源与 sha256；本轮独立复算 **53/53** 命中登记表 ✓ |
+| 引用完整性 | `ServiceLanding.vue` 引用 53 条 ↔ 磁盘 53 个文件，**双向无缺口**（无死链、无孤儿）✓ |
+| 运行时 | 64 格外部请求 0；构建产物内 `seniorweb` 命中 **0** ✓ |
+| ✗ 配置内残留参考站 URL | `frontend/src/content/services.js:3` 仍写着 `https://www.seniorweb.cn/solution/34.html`。实测该文件**无人 import**（dead code，不进 bundle、不影响运行时），但按 AGENTS「页面、样式、配置里都不得出现参考站 URL」仍应删或改；文件属 C，建议随 T03 处理 |
+
+### 7. 结论
+
+**通过**：合并本身；`export`/构建；只读 eslint 无新增 error；路由契约（含尾斜杠）；14 条服务路由的模板 / 导航 / 映射；53 张资产本地化与 hash 登记；390 无横向溢出；64 格零 console error、零外部请求；移动菜单开合与锁滚动。
+
+**未通过 / 缺口**（除注明外均非本次合并引入）：
+
+| # | 缺口 | 影响 | 归属 |
+| --- | --- | --- | --- |
+| G1 | 主题只有首页 footer 有反应；无 UI 入口；无 19:00—07:00 时间边界逻辑（`stores/theme.js` 的 `toggle()` 全仓无人 import，`main.js` 不初始化主题） | AC05 / AC06 不成立；服务页与首页主体亮暗无差异 | A（T01 遗留 / T06） |
+| G2 | `/en/**` 的 `documentElement.lang` 仍是 `zh-CN`，桌面导航 8 项仍是中文 | AC04 / AC16 不成立 | A（共享 i18n） |
+| G3 | `/en` 服务页是「英文标题 + 中文卡片 / 标签 / 流程」 | 用户 2026-09-15 裁决 ⑤：该事项归 A | A |
+| G4 | `/en/miniprogram-development` 的 h1 在 1440 断词换行（`Developme` / `nt`） | 英文排版缺陷 | A（随 G3 一起） |
+| G5 | IoT（`/iot-development`）与数字创意（`/digital-creativity`）**全站没有任何入口**（导航、首页、footer 的 `a[href]` 里都没有），只能直达 URL | AC01 / AC09 的「三次级入口可用」只兑现了定制开发（首页「合作咨询」CTA） | A（导航 / routeManifest） |
+| G6 | 主入口 gzip 364.39 kB（基线 363.95）、主入口 CSS 69.44 kB（基线 69.14） | ACCEPTANCE §6 字面未达标，量级来自 T02-H | B / T07 |
+| G7 | `content/services.js` 含参考站 URL（见 §6） | 不变量字面违规（dead code） | C（T03） |
+| G8 | `/cases` 直连需后端（否则失败态）；`lint` 带 `--fix`；`test:unit` / `test:e2e` 不存在 | 存量，未声称可运行 | A / T07 |
+
+### 8. 有意差异表（相对参考站）
+
+| 项 | 有意差异 | 依据 |
+| --- | --- | --- |
+| 内容 | 参考站 seniorweb 的文案 / 案例 / 客服换成耘栈内容，不做逐像素对照 | ACCEPTANCE §5 |
+| 图片 | 53 张 Pexels 占位图（非参考站素材、非正式图），替换方法见 `service-images.md` §5 | 用户 D1 |
+| 主题 | 参考站是两态按钮 + 08:00 / 19:00；本项目应为 07:00 / 19:00，**当前两者都未实现**（G1） | AGENTS 不变量 |
+| 数字创意 | 保留该服务名（旧官网「数字文创」不作为改名依据） | 用户裁决 ① |
+| IoT 看板数字 | 保留 `98.6% / 03 / 12 / 稳定`，不加「界面示意」字样 | 用户裁决 ③ |
+| 公司数字 | 服务页不展示 10年+ / 200+ / 98% / CMMI3 / 24-7 | 用户裁决 ④ |
+| en 服务页 | 维持「英文标题 + 中文卡片 / 标签 / 流程」 | 用户裁决 ⑤（归 A） |
+| 数字藏品 / NFT | 不作为卡片加入 | 用户裁决 ② |
+
+### 9. pilotCommit
+
+- **pilotCommit = `1a9aa2a`**（即上面的合并提交；本记录提交在其之上，只含文档与截图证据）。
+- 语义提醒：按 SESSIONS §1，`pilotCommit` 指「用户批准导航 ＋ 首页 ＋ 小程序样板后的实际提交」。**当前用户尚未确认**，因此这个 hash 现在只是候选基准，不得对外称「样板已批准」。
+- 不包含：工作区里 A 未提交的公共层收编。
+- 预览：主仓工作区 `npm.cmd run dev`（会带上 A 未提交的公共层，与 pilotCommit 不完全一致）；要与 pilotCommit 完全一致，用 §2 那个干净检出。
+
+### 10. 下一步（用户验收通过前不启动）
+
+样板验收门见 PLAN「样板验收门」：需要用户确认，之后才发下面两条通知。
+
+- **B → T05**：从 `pilotCommit` 起实现 About / Contact / Privacy / Legal 与中英文本（表单字段 / 状态按 DATA）。
+- **D → T04**：从 `pilotCommit` 起实现 Cases / News 列表、分类 / 分页、详情与返回。
+- **C → T03**：其余六服务内容与双语（含 G7）；与 A 的 i18n 管线（G2 / G3）排期。
+- **A**：G1（主题 UI + 时间边界）、G2 / G3 / G4（i18n 与 en 文案）、G5（导航入口）、以及工作区那批公共层收编的处置。
+
+通知文本（**验收通过后**再发，此处只备稿）：
+
+```text
+[给 B] 样板已由用户验收通过，pilotCommit = 1a9aa2a。从该提交启动 T05：About / Contact / Privacy / Legal + 中英文；表单字段、国际号码 / 邮箱、必填选填、隐私勾选、received / demo / unavailable 按 DATA.md；后台未接通走已批准退路，不伪造电话 / 二维码 / 提交成功。只改 B 所属文件。
+[给 D] 样板已由用户验收通过，pilotCommit = 1a9aa2a。从该提交启动 T04：Cases / News 列表、基础分类 / 分页、详情、返回与咨询；只消费既定 repository，修未知 ID 与数据不一致；不做搜索 / 相关推荐 / 浏览量。
+```
+
+### 11. 下次第一步
+
+1. 把本轮结论交给用户确认（预览命令见 §9；截图见 §4 路径）。
+2. 用户确认后：记录批准日期，向 B 发 T05、向 D 发 T04、向 C 发 T03。
+3. 未确认前不启动下游页面定稿；A 可先做 G1 / G2 / G3 / G4 / G5 与工作区公共层收编的处置。
