@@ -912,7 +912,14 @@ html[data-theme='dark'] .index4 .fix::after { background: rgba(0, 0, 0, 0.5); }
   .index4 .fix { position: static; height: auto; transform: none !important; }
   .index4 .mask { display: none; }
   .index4 .bg { position: relative; height: 440px; transform: none !important; }
-  .index4 .sj_jump { position: absolute; top: 55px; left: 50%; width: 100%; transform: translateX(-50%); }
+  /* M-22 手机降级：参考站是 `.sj_jump { position:absolute; top:55px }`，但本页手机端复用同一张桌面照片，
+     照片带内 33–49% 是「北京耘栈科技有限公司」字样、55–58% 是英文名，top:55px 会把宣言压在名字上。
+     改为贴住照片带底部：440px 带内文案落在 y292–418，即下半部干净墙面（与桌面 76% 同思路）。
+     `z-index:5` 是为复刻桌面的层序（文案 5 > G-08 压暗层 4 > mask 3 > bg 1）——手机端 .bg 是
+     position:relative 且从桌面规则残留 z-index:1，.sj_jump 原本 z-index:auto，文案被照片整块盖住
+     （实测 390 端完全不可见）。放 5 而不是只把 bg 改 auto，是为了同时避开 .fix::after 的 0.3 压暗层，
+     否则白字会被再压一层、对比度掉到 2.85:1。 */
+  .index4 .sj_jump { position: absolute; bottom: 22px; left: 50%; width: 100%; transform: translateX(-50%); z-index: 5; }
   .index4 .text { position: static; width: 100%; transform: none !important; }
   .index4 .text p { font-size: 22px; opacity: 1 !important; transform: none !important; }
   .index4 .text > div { opacity: 1 !important; }
