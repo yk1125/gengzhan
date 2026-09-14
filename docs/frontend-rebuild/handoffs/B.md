@@ -748,3 +748,181 @@ $ npx.cmd eslint src/layout/components/Footer.vue src/layout/components/Header.v
 
 1. 等用户验收 §9.13 的两件（Header M-04/M-05、首页 footer 米色排版）；同时把 §9.14 的三项申请发给 A。
 2. 验收通过后：接 §9.14 的门禁脚本（若 A 已落地），然后继续 M-03 / M-31 / M-32；用户已批准的其余页面（公司/联系/法律，含 T05 `contact`）排在其后。
+
+### 9.18 本批已做（用户第 3 轮验收反馈的 4 条）
+
+- 代码提交：`0fc035e` `fix(home): index4 文案改逐帧插值、图片本体改为可点击链接、暗色 CTA 取色下调`（2 files, 44+/25−）。本文件、截图与 measure JSON 随下一条 `docs` 提交。
+- 本批起点 `8fe51df`；仍未 merge main（`main` = `6312c90`，且已是本分支祖先）。
+
+#### 9.18.1 第 2 条 · index4（`section#statement`）文案「一卡一卡」——真 bug，本轮主修
+
+**根因**（探针钉死，非推测）：`frontend/src/views/Home/useHomeScroll.js` 的 `onScroll()` 把 `data-view` 插值塞进了 100ms 去抖：
+
+```js
+if (state.delayed) clearTimeout(state.delayed)
+state.delayed = setTimeout(() => { scrollDelayed(scrollTop) }, 100)   // 改前
+```
+
+于是整段 7000px 行程里插值只在**停手后**跑一次。
+
+**参考站不是这样**：`sources/function.js:1480-1481` 在 smooth-scrollbar 每帧回调里同步调 `scroll_content()` + `scrollTop_start()`；`:4580-4585` 那个 `setTimeout(…, 100)` 只包 `AOS.init()`，**不包** `scrollTop_start`。
+
+**改法**：删掉去抖（`state.delayed` 一并移除），把 index4 文案插值抽成 `applyIndex4Text()`（`useHomeScroll.js:230`），在 `scrollContent()` 里逐帧调（`:213-214`）。AOS 等价物 `revealCheck()` 本来就是逐帧，未动。
+
+**实测（同一会话内「改前 / 改后」各跑一次，探针 `bx-i4text2.js`，preview `3001`）**
+
+几何：`index4 top=4134 height=7900 clientH=900` → 行程 7000px；连续滚 `y 7034 → 8474`（1440px）。
+
+| 滚动期间指标 | 改前 | 改后 |
+| --- | --- | --- |
+| 外层（`.text > div`）opacity 不同值 | **1** | **18** |
+| 内层（`.text p`）opacity 不同值 | **1** | **6** |
+| 内层 transform 不同值 | **1** | **6** |
+| 期间实际取值 | 全程冻结 `1.000 / 0.747` | `0.747→0.807→0.867→0.927→0.987→…→0.000` |
+| 停手瞬间 | 直接跳到 `0.000 / 1.000` | 已是 `0.000 / 1.000`，无跳变 |
+
+改前可复现：`git checkout -- frontend/src/views/Home/useHomeScroll.js` 后跑同一条探针即得 1/1/1。
+
+对照静帧（比例与参考站 `frames/index4/index4-0{00,30,50,70,100}.png` 一致，即同一滚动位置）：
+
+- `compare/I4FIX-MINE-index4-0{00,30,50,70,100}.jpg`
+- 逐比例数值见 `measure-round6-links-index4.json` → `index4.rows`：
+
+| 比例 | y | 外层 opacity | p1 opacity / transform | p2 opacity / transform | mask delay | bg translateY |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0 | 4134 | 1 | 0 / `scale(.9)` | 0 / `scale(.9)` | -2.3936s | -22.65px |
+| 0.3 | 6234 | 1 | 0 / `scale(.9)` | 0 / `scale(.9)` | -4.7152s | -44.63px |
+| 0.5 | 7634 | 0.653 | 1 / `scale(1)` | 0 / `scale(.9)` | -6.9552s | -65.83px |
+| 0.7 | 9034 | 0 | 1 / `scale(1)` | 0.747 / `scale(.9747)` | -9.1952s | -87.03px |
+| 1 | 11134 | 0 | 1 / `scale(1)` | 1 / `scale(1)` | -8s（钳位） | -106px |
+
+与上一轮 `compare/M-19-M-23-index4-050.jpg` 的 MINE 侧逐像素目视一致 → 本批只把插值变连续，**没有改视觉**。
+
+#### 9.18.2 第 4 条 · 图片上的「探索更多」蓝盘点击无反应
+
+- 参考站 `sources/home.html`（`fist public_hover` 段）里 `.item` 内是 **`<a class="img" href=".../caseInfo_xxx.html">`** —— 图片本体就是链接。
+- 我方原来是 `<div class="img">`，链接另挂在下方 `.item-link` 文本上；蓝盘出现在图片上，所以点图片当然没反应。
+- 改法（`index.vue:131-138`、`:196-201`）：`.index2 .item .img` 与 `.index5 .card-img` 改 `router-link`。index2 里 4 张「事实」卡由 `asFact()` 生成、**没有 `path`**，保留 `<div v-else>`。
+- `.img` / `.card-img` 加 `display: block`（原来是 div，改成 `<a>` 后是 inline，会丢盒模型）：`index.vue:739`、`:836`。
+- **光标层不拦点击**：`CustomCursor.vue:218` 是 `pointer-events: none`，已实测确认。
+
+实测（探针 `bx-fix4.js` / `bx-r6.js`，preview `3001`）：
+
+| 场景 | 结果 |
+| --- | --- |
+| `.index2 .item .img` | `A` `href="/ai-development"` `display: block` |
+| index2 8 个 item 的 `.img` 标签 | `["/ai-development","/miniprogram-development","/app-development","/web-development", null, null, null, null]`（后 4 个是事实卡，按设计无链接） |
+| `.index5 .card-img` × 4 | `["/cases","/news","/ai-development","/web-development"]` |
+| hover 图片 | `.fixed_cursor cut`、blend 切 `normal`、蓝盘 **114×114**、文案「探索更多 ↗」 |
+| 点击蓝盘（index2） | URL → `http://localhost:3000/ai-development` |
+| 点击蓝盘（index5） | URL → `http://localhost:3001/cases`（该页有存量 500，见 9.20 D1） |
+
+静帧：`compare/LINK-MINE-index2-hover-disc.jpg`、`compare/LINK-MINE-index5-hover-disc.jpg`。
+
+#### 9.18.3 第 3 条 · 暗色 `.cta` 卡片偏亮
+
+- 新增 token `--home-cta-bg`：亮色 `var(--home-accent)`（`index.vue:528`）、暗色 `#2F55A8`（`:549`）；`.cta`（`:854`）与 `.cta .pill`（`:858`）改用它。
+- **刻意不动 `--home-accent`**：它还被 `.blue.public_text`、`.index2 .item-link`、`.card-flag`、`.card-link`、`.swiper-pagination-bullet-active` 共用，改它会连带改这些地方。
+- 相对亮度：#4D7CE8 ≈ 0.218 → #2F55A8 ≈ 0.100（白字对比度 3.9:1 → 7.0:1）。
+
+| 组合 | `.cta` 底色 | `.pill` 底色 / 字色 | `.cta-title` |
+| --- | --- | --- | --- |
+| 亮色 | `rgb(24, 77, 196)` = `#184DC4`（未变） | `#FFFFFF` / `#184DC4` | `#FFFFFF` |
+| 暗色 | `rgb(47, 85, 168)` = **`#2F55A8`** | `#FFFFFF` / `#2F55A8` | `#FFFFFF` |
+
+截图：`compare/CTA-MINE-dark-1440.jpg`（卡片）、`compare/CTA-MINE-dark-1440-context.jpg`（暗色页面上下文，便于判断「是否够深」）、`compare/CTA-MINE-light-1440.jpg`。
+`#2F55A8` 是 B 按「稍作调整」取的中间值，用户若仍嫌亮，改 `index.vue:549` 一行即可（例如 `#1B3573`）。
+
+#### 9.18.4 第 1 条 ·「页面其他地方的交互也要渐变过渡 / 很丝滑」
+
+这条分两半，B 只能做其中一半，另一半是全局层（见 9.20 申请 4）：
+
+**B 已做（页内）**
+
+1. index4 文案逐帧插值（9.18.1）—— 这是本页最明显的「不丝滑」。
+2. `scrollContent()` 里**每帧**的 `querySelector` / `querySelectorAll` 全部去掉，改成 `measure()` 时缓存：
+   - `.banner .parallax` → `anchors.bannerParallax`（`useHomeScroll.js:113`）
+   - `.public_text` 的每一行 `<p>` → `rowAnchors.push({ el: row, … })`（`:92`）后逐帧直取 `row.el`（`:170`）
+
+**逐帧实测（探针 `bx-r6b2.js`，preview `3001`，1440×900，全页扫描 45px/帧）**
+
+| 效果 | 指标 | 实测 |
+| --- | --- | --- |
+| M-08 首屏视差 | `.parallax` 内联 transform 不同值 | **303**（帧帧不同） |
+| M-12 index2 双列 | `.flex` 内联 transform 不同值 | **1033** |
+| M-13 `.public_text` 擦除 | 每块 `clipPath` 不同值 | **11 / 11 / 7** |
+| M-22/M-23 index4 内层 | `p` 的 `opacity+transform` 不同值 | **24 / 24**（改前 1） |
+| M-22/M-23 index4 外层 | `div` 的 opacity 不同值 | **25 / 24**（改前 1） |
+| M-24 通用入场 | 已显影节点推进 | `1→2→3→4→5→6→8→9→10→11→12→14→15→16→17→18→19→20→21` |
+| 帧间隔 | 302 帧 | p50 **6.1ms** / p95 **8.5ms** / max 24.2ms / 长帧(>32ms) **0** |
+
+（注：`display: none` 时 `getComputedStyle().transform` 恒为 `none`，第一版探针据此误报 M-08/M-13 只有 1 个值；上表已改用**内联样式**口径。探针误报而非页面问题，记录以免下次重复踩。）
+
+**B 不做（全局）**：滚动**惯性**本身。SPEC M-01 是 smooth-scrollbar 的桌面全局惯性（`damping 0.08`，60Hz 等效 ≈1.83s），属 `src/styles/motion.js` + A 的 composables。A 的 `specs/FRONTEND.md` 第 10 行已定：滚动/显影基础能力归 A，页面只按语义名引用；`lenis@1.3.26` 已 pin 未接入。B 不在本页私接：那会与 A 的全局滚动容器抢 `scrollTop`，也会和 M-04/M-05 的 wheel 判定打架。
+
+### 9.19 本批验证（真实输出）
+
+```text
+$ npm.cmd run build            # frontend/
+dist/assets/index-f498e96f.js            1,139.35 kB │ gzip: 364.40 kB
+(!) Some chunks are larger than 500 kBs after minification. …
+✓ built in 13.93s
+=== EXIT: 0 ===
+
+$ npm.cmd run check:routes     # frontend/
+结果：PASS 34 / FAIL 0 / PENDING 2
+=== EXIT: 0 ===
+
+$ npx.cmd eslint src/views/Home/index.vue src/views/Home/useHomeScroll.js --ext .vue,.js
+✖ 127 problems (0 errors, 127 warnings)      # 基线（git show HEAD: 同名文件）122 → +5
+=== EXIT: 0 ===
+```
+
+- **+5 告警全部来自模板里被迫重复的那一个 `<img>`**：`.img` 既要能是 `<a>`（有链接）又要能是 `<div>`（事实卡），`v-if/v-else` 各写一份媒体节点，于是多出 1×`vue/html-self-closing` + 4×`vue/max-attributes-per-line`。规则族与既有 122 条完全同类（`vue/max-attributes-per-line` / `vue/singleline-html-element-content-newline` / `vue/html-self-closing`），**0 errors**。想消掉它只能换成 `<component :is>` 这类可读性更差的写法，B 选择保留。
+- 基线对照法照旧：`git show HEAD:<file>` 导出到 `frontend/` 下临时文件实测后删除（`_base_index.vue` / `_base_useHomeScroll.js` / `_base.json` / `_cur.json` 均已清理，`git status` 已核对）。
+
+8 张组合截图（`shots/09-*.png`，preview `3001`，dist = `0fc035e`）：
+
+| 组合 | header | footer | footer bg | pad-top | console error | seniorweb 外链 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1440 zh 亮 | `header header-home` | `…footer-home` | rgb(242,241,228) | 146px | 0 | 0 |
+| 1440 zh 暗 | 同上 | 同上 | rgb(17,17,17) | 68px | 0 | 0 |
+| 1440 en 亮 | 同上 | 同上 | rgb(242,241,228) | 146px | 0 | 0 |
+| 1440 en 暗 | 同上 | 同上 | rgb(17,17,17) | 68px | 0 | 0 |
+| 390 zh 亮 | 同上 | 同上 | rgb(242,241,228) | 34px | 0 | 0 |
+| 390 zh 暗 | 同上 | 同上 | rgb(17,17,17) | 34px | 0 | 0 |
+| 390 en 亮 | 同上 | 同上 | rgb(242,241,228) | 34px | 0 | 0 |
+| 390 en 暗 | 同上 | 同上 | rgb(17,17,17) | 34px | 0 | 0 |
+
+`EXTERNAL URLS: none`（8 张全扫 `[src]/[href]/[style]`）；`measure-combos-batch.json` 已刷新。
+本批全部探针 `pageerror` / console error 均为 0（`link-index5` 的 500 来自 `/cases` 后端未起，见 9.20 D1）。
+
+### 9.20 缺口、申请与下次第一步
+
+**A. 给 A 的申请（新增 1 条，前 3 条见 9.14）**
+
+4. **M-01 全局滚动惯性（lenis）** —— 这是用户第 1 条「体验很丝滑」的最后一格，也是 B 唯一做不了的部分。
+   - 规格：SPEC M-01（`damping 0.08`、`clientWidth > 1024` 才启用、逐帧指数衰减、`|momentum| ≤ 0.1` 归零、行程 Σ = 初始 momentum）。参考站证据 `sources/function.js:1475`、`:5-8`、`:4290-4291`。
+   - 落地位置：`src/styles/motion.js` + A 的 composables（A 的 `specs/FRONTEND.md` 第 10 行已定的归属）。
+   - 需要一起定的口径：M-04/M-05 的 wheel 收放判定、M-32 `.fixed_side`、以及 `[data-view]`/`[data-aos]` 触发点是否改用 lenis 的 `scroll` 事件（参考站是挂在 smooth-scrollbar 的每帧回调上）。B 这边接口很窄：只要仍按「每帧拿到一个 scrollTop」的形态暴露，`useHomeScroll` 不用改。
+
+**B. 待裁决（B 未擅自改）**
+
+1. 暗色 CTA 取色 `#2F55A8` 是否够深（见 9.18.3；用户原话「稍作调整」，B 取了中间值）。
+2. 暗色模式下 Header `.on` 仍是米色 —— 沿用 9.17 B1，用户本轮未答（已看过深色，未提及）。
+
+**C. 素材/内容缺口（未变）**
+
+1. `HOME_STATEMENT_BG`（index4 背景）仍是占位素材，与参考站观感差距大（参考站是一张深色人物群像照，我方是一张 CMMI 证书）。这直接决定 index4 的观感，建议优先补一张合适的深色横图。
+2. footer logo（9.17 A1）、index2/index5 占位动图（9.17 A2）均未变。
+
+**D. 存量问题（不是本批引入）**
+
+1. `/cases` 直连 500（后端未起），页面有失败态。
+2. `npm.cmd run lint` 带 `--fix`，不是只读检查。
+
+**E. 下次第一步**
+
+1. 等用户裁决 9.20 B1/B2；若 B2 选「暗色改深底白字」，改 `Header.vue` 的 `html[data-theme='dark'] .header-home.on` 一处（1 行）。
+2. 把 9.14 的三项 + 9.20 A4 一并发给 A；等在 A 的 lenis 落地后合并，再复跑 `bx-r6b2.js` 确认「逐帧口径」没被全局滚动改变。
+3. 之后继续 §9.17 C1 的 M-03 / M-31 / M-32。
