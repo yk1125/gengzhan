@@ -504,3 +504,259 @@ npx.cmd eslint . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore
 2. **看 A 对 13.1 的结论**：footer 米色一放开，立刻在 1440/390 × zh/en 重拍整页截图，确认亮色态 footer 由黑转米色，并复核 13.2 的按钮 hover（收窄后 `translateX(8px)` 应生效）。
 3. 就"切换区初始帧"（第 14 节最后一条）向用户取一次裁决：给初始静帧 or 保持空白。
 4. 用户若提供正式图片，按 `evidence/service-pages/service-images.md` 第 4 节两步替换（覆盖同名文件即可，不需改代码）。
+
+---
+
+# 第 4 轮：用户 4 条新反馈（2026-09-15）
+
+基准：本轮开工时 `codex/rebuild-services` HEAD = `dabd0f6`，`main`（`b6a2c72`）已是 HEAD 的祖先
+（`git rev-list --count HEAD..main` = 0，无需再 merge）。
+**本轮提交**：`codex/rebuild-services` 上 `dabd0f6` 之后的那个提交（`git log -1`），
+提交信息 `feat(services): 第 4 轮反馈落地（删服务切换器 / 删分区大图 / 卡片配图 / 去蓝盘跳转）`，65 个文件。
+本轮改动文件：`frontend/src/views/ServiceLanding.vue`、`frontend/public/assets/services/cards/**`（39 张新图）、
+`docs/frontend-rebuild/evidence/service-pages/round4/**`（23 张截图）、
+`docs/frontend-rebuild/evidence/service-pages/service-images.md`、`docs/frontend-rebuild/handoffs/C.md`。
+**未改**：`Header.vue` / `Footer.vue` / `style.css` / `CustomCursor.vue` / router / package.json / lockfile（全归 A）。
+
+## 16. 四条反馈 → 逐条结果
+
+| # | 用户原话（要点） | 归属 | 结果 |
+| --- | --- | --- | --- |
+| 1 | 服务页导航栏要和首页一样：背景透明 + 上下丝滑滚动 | **A 的共享层** | **本轮未落地**：只写申请（第 20.1 节），C 未改 `Header.vue` / `style.css`。已把根因与实测值取证齐全 |
+| 2 | 删掉每个服务页的 `<div class='service-switch service-section'>` 整块 | C | ✅ 已删：模板区块 + 相关 JS（`switching` / `pendingIndex` / `moveOffset` / `TRANSITION_SLOTS` / `transitionClips` / `clipFor` / `syncMoveFrame` / `playTransition` / `switchService` / `activeIndex` / `switchListEl` / `pictureEl` / `switchCopy` / `isDarkTheme` / `themeObserver`）+ 全部 `.service-switch*` / `.attr*` CSS + 两处断点规则 + 注释；`router` 已不再被切服务使用（仅 CTA 用） |
+| 3 | 删掉「`service-shell` 大图」；每个 article 配图；article 不要 hover | C | ✅ 删了 4 处 `.service-media` 大图（ai / iot / custom / creative）；B/C 组共 39 张卡片图入库并接线；`.capability-list article:hover`（蓝底白字 + 上浮 5px）、`:hover p`、`transition` 全部移除 |
+| 4 | 去掉鼠标移上去的蓝色圆盘与对应跳转 | C | ✅ 已归零：14 条路由实测 `.item_hover` = 0、`<router-link>` 图片包裹 = 0；hero 图、设备外壳图改回 `<div>` |
+
+## 17. 逐条实施记录
+
+### 17.1 反馈 2：删除 `.service-switch` 整块
+
+- 模板：删掉 `<section class="service-switch service-section">…</section>`（含 `04 / EXPLORE SERVICES`、切换按钮列表、跟随框、6 个过渡 `<video>`、移动端 `<ul>`）。
+- JS：删掉 13 个只服务该区块的变量/函数（清单见 16 节第 2 行）；`services` 计算属性保留（`page` 依赖它）。
+  连带清理：`consultPath` 由「hero 图的跳转目标」改为底部 CTA 复用（`@click="router.push(consultPath)"`），避免出现未使用变量。
+- CSS：`.service-switch` / `__head` / `__body` / `__list` / `__item` / `__en` / `__move` / `__picture` / `__caption` / `__mobile`、`.attr` / `.attr__line` / `.attr::after`，以及 `@media ≤1024` 里的两处 `.service-switch` 规则全部删除。
+- 影响：页面分区从 6 段变 5 段（hero → 01 → 02 → 03 → CTA），`04 / EXPLORE SERVICES` 不再出现；
+  `frontend/public/assets/transitions/` 的过渡视频**目前没有任何页面引用**（未删文件，见第 21 节截图与 `service-images.md` 第 6 节）。
+- 验证：14 条路由 `document.querySelectorAll('.service-switch').length === 0`；控制台 0 error / 0 warning / 0 pageerror（删代码后无 Vue 警告）。
+
+### 17.2 反馈 3：删大图 → article 配图 → 去 hover
+
+- 删掉的 4 处大图（原 `.service-media` + `item_hover` + 跳转）：`/ai-development`（`.ai-flow` 之后）、`/iot-development`（`.iot-dashboard` 之后）、`/custom-development`（`.custom-system__steps` 之后）、`/digital-creativity`（`.creative-panels` 之后）；`.service-media` CSS 一并删除。
+- 保留：小程序 / App / 网站 三条路由设备外壳里的界面图（`.mini-phone__screen` / `.app-device__screen` / `.web-browser__screen`），用户只点名了 `.service-shell` 大图。
+- 新增配图（`page.capabilityImages[i]` 等，数据在 `pages` 常量里，命名规则写在 `const pages` 上方的注释）：
+  - 能力卡（B 组）：**7 条路由 × 4 张**，与 `capabilities` 同序 → `/assets/services/cards/{kind}-{1..4}.jpg`
+  - AI「01」四步卡（C 组）：`ai-flow-1..4.jpg`
+  - 定制「01」四步卡（C 组）：`custom-step-1..4.jpg`
+  - 数字创意「01」三块面板（C 组）：`creative-panel-1..3.jpg`
+- 样式：新增 `.service-card-media`（`margin: 0 0 22px`，`img { width:100%; aspect-ratio: 4/3; object-fit: cover }`），≤1024 时 `margin-bottom: 18px`；
+  卡片 `h3` 上外边距相应从 114px / 88px / 72px 收到 26px / 26px / 24px（图片已占掉视觉重量，避免卡片过高）。
+- 去 hover：删除 `.capability-list article:hover { background: var(--svc-accent); color: var(--svc-on-accent) }`、`.capability-list article:hover p {…}`、`.capability-list article { transition: … }`、后置的 `.capability-list article:hover { transform: translateY(-5px) }`。
+  卡片现在**完全没有 hover 效果**，只有 `data-aos="fade-top"` 的滚动显影（M-24 / M-25，数值未动）。
+- 顺带（**需用户确认，可回退**）：能力卡右下角那个没有点击目标的 `↗`（`.capability-list b`）已移除 —— 它原来的语义是配合 hover 的「可点」暗示，hover 与跳转都去掉后就成了假按钮；如要保留请说，一行即可加回。
+- 未加图并说明：`/iot-development` 的 `.iot-dashboard__side` 三张是**数据看板示意卡**（实时告警 / 运维工单 / 数据趋势，卡里是大字号数字），不是内容卡，加照片会破坏看板隐喻；
+  另外「数字创意」的 `.creative-panels` 实际只有 **3 块** `<article>`（不是 4 块），已按 3 块配图。
+
+### 17.3 反馈 4：去掉蓝色圆盘与跳转
+
+- `<router-link class="… item_hover" :to="consultPath">` 全部改为 `<div>`：hero 通栏图、小程序手机屏、App 设备屏、网站浏览器屏（4 处大图随 17.2 一起删除）。
+- `item_hover` 是 A 的 `CustomCursor.vue:53` `CUT_SELECTOR` 里的类名 —— 去掉类名即无蓝色圆盘；同时不再有 `<a>`，也就没有跳转与手型光标。
+- 实测：14 条路由 `.item_hover` = 0；底部 CTA 按钮仍按用户之前的裁决工作（`/custom-development` 点击 → `/ai-consultation`，`/en/digital-creativity` → `/en/ai-consultation`）。
+
+### 17.4 反馈 1：透明导航栏 —— 属 A 的共享层，本轮只写申请
+
+详见第 20.1 节（有实测值、根因文件行号与建议改法）。**C 本轮没有改 `Header.vue` / `style.css` / 全局样式**，因此预览里服务页导航栏仍是深色固定条。
+
+## 18. SPEC 条目对照（本轮后重新逐条核对）
+
+| 条目 | 位置 | 本轮实测（`/web-development`，1440×900） | 结论 |
+| --- | --- | --- | --- |
+| M-10 主标题逐字入场 | SPEC:215 | h1 内 3 个 span 的 `transitionDelay` = `0.3s / 0.38s / 0.46s`（= index×0.08+0.3）；en（`/en/web-development`，h1 = `WEB DESIGN`）空格字符 `min-width: 10px` | 仍然成立 |
+| M-12 双列视差 | SPEC:253 | 触发后两列 `translate3d(0,-30.5442px,0)` / `translate3d(0,152.721px,0)`，比值 = 5.000 = 0.1/0.02 | 仍然成立 |
+| M-13 逐行 clip-path 擦除 | SPEC:273 | 起始 `inset(0px 100% 0px 0px)` → 滚过 `.line` 结束点 `inset(0px)`；`transition-duration: 2s` | 仍然成立 |
+| M-24 / M-25 AOS 显影 | SPEC:526 / 544 | `transition-duration: 1.5s`、`cubic-bezier(0.175, 0.885, 0.32, 1.275)`、未触发 `transform: matrix(1,0,0,1,0,50)` + `opacity: 0`、触发后 `matrix(1,0,0,1,0,0)` + `opacity: 1`；`data-aos-delay=100/200` 的 `transition-delay` 由 `0s` 变 `0.1s / 0.2s` | 仍然成立 |
+| M-26 标题横线展开 | SPEC:559 | `.headline__line` 起始 `matrix(0,0,0,1,0,0)`（scaleX 0）→ 滚过后 `matrix(0.995781,…)`（2s 进行中），`transition-duration: 2s` | 仍然成立 |
+| M-14 服务切换跟随框 | SPEC:303 | 切换器整块按用户指令删除 | **随指令作废，对本页不再适用** |
+| M-15 切换文本上翻 / 过渡视频 | SPEC:323 | 同上（`.attr*`、`.service-switch__picture`、6 个 `<video>` 全部移除） | **随指令作废，对本页不再适用** |
+| ≤1024 断点表（hero 上留白 80px / h1 23px / 导语 14px / 图高 250px） | SPEC 断点速查 | 1024 / 900 / 800 / 769 逐档实测 = 80px / 23px / 14px / 250px，全部命中 | 仍然成立（但 ≤768 被 A 的全局规则压过，见 20.4） |
+
+## 19. 真实验证输出（本轮全部真跑，命令与结果原文）
+
+### 19.1 构建（`frontend/`）
+
+```
+PS> npm.cmd run build
+dist/assets/ServiceLanding-09685ef2.css     17.10 kB │ gzip:   3.22 kB
+dist/assets/ServiceLanding-2890cfee.js      20.16 kB │ gzip:   9.04 kB
+(!) Some chunks are larger than 500 kBs after minification. …
+✓ built in 19.91s
+```
+
+（上面是**最后一处改动之后**重跑的结果；>500 kB 的告警来自 `index-2521603b.js 1,139.35 kB`，是仓库存量，不是本页。）
+
+### 19.2 路由检查
+
+```
+PS> npm.cmd run check:routes
+结果：PASS 34 / FAIL 0 / PENDING 2
+```
+
+`PENDING 2` = B / T05 的 `/contact` `/en/contact` 未实现，与上轮一致。
+
+### 19.3 eslint（只读，未加 `--fix`）
+
+```
+PS> npx.cmd eslint . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore
+✖ 802 problems (7 errors, 795 warnings)
+
+PS> npx.cmd eslint src/views/ServiceLanding.vue          # 退出码 0，无任何输出
+```
+
+全仓 7 errors / 795 warnings = **与上轮基线完全一致**（未新增、未减少），7 个 error 都是存量；
+本文件 0 error / 0 warning。
+**注意**：`npx eslint .` 若不加 `--ignore-path .gitignore`，会把 `dist/` 一起 lint（本次实测 1501 errors），
+必须照 `package.json` 的 `lint` 脚本带该参数才可比。
+
+### 19.4 14 条路由 × 滚动显影 × 数据不串（Chromium 1440×900，`reducedMotion: no-preference`）
+
+每页都「逐档滚到页底 → 等 1.7s → 读取」：
+
+| 路由 | h1 | 首张能力卡图 | 能力卡图 | 01 分区卡图 | 未显影 `[data-aos]` | `.service-switch` | `.item_hover` | `.service-media` | 破图 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `/ai-development` | AI 开发 | `cards/ai-1.jpg` | 4 | 4（flow） | 0 | 0 | 0 | 0 | 0 |
+| `/miniprogram-development` | 小程序开发 | `cards/mini-1.jpg` | 4 | — | 0 | 0 | 0 | 0 | 0 |
+| `/app-development` | App 开发 | `cards/app-1.jpg` | 4 | — | 0 | 0 | 0 | 0 | 0 |
+| `/web-development` | 网站建设 | `cards/web-1.jpg` | 4 | — | 0 | 0 | 0 | 0 | 0 |
+| `/iot-development` | 物联网开发 | `cards/iot-1.jpg` | 4 | — | 0 | 0 | 0 | 0 | 0 |
+| `/custom-development` | 定制开发 | `cards/custom-1.jpg` | 4 | 4（step） | 0 | 0 | 0 | 0 | 0 |
+| `/digital-creativity` | 数字创意 | `cards/creative-1.jpg` | 4 | 3（panel） | 0 | 0 | 0 | 0 | 0 |
+| `/en/ai-development` | AIDEVELOPMENT | `cards/ai-1.jpg` | 4 | 4（flow） | 0 | 0 | 0 | 0 | 0 |
+| `/en/miniprogram-development` | MiniProgramDevelopment | `cards/mini-1.jpg` | 4 | — | 0 | 0 | 0 | 0 | 0 |
+| `/en/app-development` | APPDEVELOPMENT | `cards/app-1.jpg` | 4 | — | 0 | 0 | 0 | 0 | 0 |
+| `/en/web-development` | WEBDESIGN | `cards/web-1.jpg` | 4 | — | 0 | 0 | 0 | 0 | 0 |
+| `/en/iot-development` | IOTSOLUTIONS | `cards/iot-1.jpg` | 4 | — | 0 | 0 | 0 | 0 | 0 |
+| `/en/custom-development` | CUSTOMSOFTWARE | `cards/custom-1.jpg` | 4 | 4（step） | 0 | 0 | 0 | 0 | 0 |
+| `/en/digital-creativity` | DIGITALCREATIVE | `cards/creative-1.jpg` | 4 | 3（panel） | 0 | 0 | 0 | 0 | 0 |
+
+结论：**14 条路由零串页**（首张能力卡的 `/cards/<kind>-` 前缀 14/14 与路由一致，hero 图也逐条不同）、
+**零破图**、**滚到页底后没有任何残留未显影节点**。
+h1 列是按模板里逐字 `<span>` 拼接后 `textContent` 得到的（en 的字符 span 之间不带空格，故显示为 `WEBDESIGN`）。
+
+### 19.5 SPA 点导航跳转（上一轮修好的那条，本轮回归）
+
+在 `/ai-development` 起，用 A 的页头导航连点 4 跳（小程序开发 → App开发 → WEB网站开发 → AI开发）：
+
+| 跳转 | 落地路由 | h1 | hero 图 | 首张能力卡图 | 未显影 | 有内容的 section |
+| --- | --- | --- | --- | --- | --- | --- |
+| 小程序开发 | `/miniprogram-development` | 小程序开发 | `mini-hero.jpg` | `cards/mini-1.jpg` | 0 | 5 |
+| App开发 | `/app-development` | App 开发 | `app-hero.jpg` | `cards/app-1.jpg` | 0 | 5 |
+| WEB网站开发 | `/web-development` | 网站建设 | `web-hero.jpg` | `cards/web-1.jpg` | 0 | 5 |
+| AI开发 | `/ai-development` | AI 开发 | `ai-hero.jpg` | `cards/ai-1.jpg` | 0 | 5 |
+
+**SPA 切换后内容正常出现、且没有出现 A 服务显示 B 服务内容**（上一轮的空白缺陷没有回归）。
+
+### 19.6 移动端与减动效
+
+390×844 抽测 4 条路由（滚到页底后读取）：
+
+| 路由 | `scrollWidth` / `clientWidth` | 卡片图 | 卡片图显示尺寸 | hero 图高 | h1 | 导语 | 未显影 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `/ai-development` | 380 / 380（无横向溢出） | 8 | 279×209 | 106 | 23px | 14px | 0 |
+| `/custom-development` | 380 / 380 | 8 | 276×207 | 106 | 23px | 14px | 0 |
+| `/digital-creativity` | 380 / 380 | 7 | 272×204 | 106 | 23px | 14px | 0 |
+| `/web-development` | 380 / 380 | 4 | 332×249 | 106 | 23px | 14px | 0 |
+
+（hero 图高 106px 的原因见 20.4，不是本页笔误。）
+
+`prefers-reduced-motion: reduce`（`/custom-development`，1440×900，不滚动直接读）：
+12 个 `[data-aos]` **全部** `opacity: 1` + `transform: none` + `clip-path: none`（不满足的 = 0），
+`.headline__line` = `matrix(1,0,0,1,0,0)` 且 `transition-duration: 0s` —— 减动效降级仍然成立。
+
+### 19.7 控制台 / 运行时报错
+
+`/custom-development` + `/en/digital-creativity` + `/ai-development`（滚到页底）：
+`console` 里 error = 0、warning = 0；`pageerror` = 0。删掉 `.service-switch` 相关代码后没有留下悬空引用。
+
+## 20. 申请 A 处理的共享层事项（本轮新增 2 条，C 均未自行改动）
+
+### 20.1 【新增·就是反馈 1】服务页页头仍是固定深色条，且 `.hide` 在服务页没有任何样式
+
+实测（1440×900，同类对比）：
+
+| 场景 | `header` 的 class | `background` | `position` | `transition` | 滚轮向下 |
+| --- | --- | --- | --- | --- | --- |
+| 首页 `/` 顶部 | `header header-home` | `rgba(0,0,0,0)`（透明） | fixed | `0.6s` | —— |
+| 首页滚过 hero | `header header-home on` | `rgb(242,241,228)` 米色，文字转黑 | fixed | `0.6s` | 加 `.hide` → `transform: matrix(1,0,0,1,0,-76)`（丝滑收起，向上恢复） |
+| 服务页 `/web-development` 顶部 | `header`（**无 `header-home`**） | `rgba(17,17,17,0.98)` + `backdrop-filter: blur(14px)` | fixed | `0.3s` | —— |
+| 服务页滚动后 | `header header-fixed on` | 仍是 `rgba(17,17,17,0.98)` | fixed | `0.3s` | **`.hide` 已经加上了，但 `transform: none`** —— 没有任何 CSS 响应 |
+
+根因（全部在 A 的文件里）：
+
+1. `frontend/src/layout/components/Header.vue:88` —— `const isHome = computed(() => route.path === '/' || route.path === '/en')`；
+   模板 `:5` 用 `'header-home': isHome` 决定是否走透明那套样式，服务页因此拿不到。
+2. `frontend/src/style.css:2154-2167` —— `body .header, body .header.header-fixed, body .header:not(.header-home) { position: fixed !important; height: 76px !important; background: rgba(17,17,17,.98) !important; border-bottom: 1px solid rgba(255,255,255,.14) !important; box-shadow: … !important; backdrop-filter: blur(14px) !important; }`
+   —— 用 `!important` 把非首页页头钉成深色固定条；服务页的**页内 scoped 样式无论如何都压不过它**，所以这件事只能由 A 收口。
+3. `Header.vue:693` —— `.header.header-home.hide { transform: translateY(-100%) !important }` 是唯一一条 `.hide` 规则，服务页没有对应规则，于是 `isHidden` 加了类但没有视觉效果。
+
+申请内容（三个点，可由 A 一次做完）：
+
+- **放开透明态**：让服务页（`/ai-development` … `/digital-creativity` 及其 `/en` 版本）在「未滚过首屏」时也走透明底 + `transition: .6s ease`，并保留 M-04（`.on` 换米色底）与 M-05（`.hide` 收起）两态。实现方式 A 自选（`route.meta` / 页面根类名 / 扩展 `isHome`），C 只需「页面按语义名引用」。
+- **配色必须反过来**：服务页整页底色就是米色 `#F2F1E4`（亮），所以透明态的 logo / 导航文字要用**深色**（`#111111`，`--svc-ink`）+ accent `#184DC4` 圆点，**不能照抄首页的白色字**（那是在首页深色 hero 上才成立的）。
+- **留白联动**：透明态下页头会压在首屏上。服务页 hero 的上留白是桌面 `208px`（> 页头 76px，安全）、≤1024 只有 `80px`（页头 76px → 只剩 4px 间隙，桌面/平板窄档会贴住）。
+  把这处补到 ~`104px` 属于对 SPEC 断点表（80px）的偏离，**C 等用户允许后再改**（见第 22 节），请 A 也一并确认。
+
+### 20.2 【沿用 13.1，仍成立】服务页 footer 仍是黑色
+
+本轮未变：亮色态下 7 条服务路由 footer（含底部链接区）仍是黑底，因为米色只挂在 `style.css:642` 的 `.corporate-footer.footer-home`，而 `Footer.vue:81` 的 `isHome` 只认 `/` 与 `/en`。整页截图见 `round4/*-zh-1440.png` 底部。
+
+### 20.3 【沿用 13.2，命中面已缩小】`style.css` 的 `button:hover:not(:disabled){ transform: translateY(-2px) !important }`
+
+本轮删掉 `.service-switch` 后，这条全局规则在本页的命中目标从「CTA 按钮 + 7 个切换按钮」变成**只剩 1 个**：`.service-cta button:hover`（C 声明的 `translateX(8px)` 仍被 `translateY(-2px)` 压过，并套上青色霓虹 `box-shadow`）。收窄作用域后立即生效，C 侧无需再改。
+
+### 20.4 【新增·本轮测得】`style.css` 的 `@media (max-width:768px){ img,video,iframe{ height:auto !important } }` 压过服务页 ≤1024 的 hero 图高
+
+实测 hero 通栏图高度（`/web-development`，逐档改视口）：
+
+| 视口宽 | 1440 | 1100 | 1024 | 900 | 800 | 769 | 768 | 500 | 390 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| hero 图高 | 398 | 304 | **250** | **250** | **250** | **250** | 212 | 137 | 106 |
+
+- 1024–769 命中 SPEC 断点值 `250px`（`.service-hero__media img { height: 250px }`）。
+- ≤768 起被 A 的全局 `height: auto !important` 接管，图片按自身比例（2400×670）落回 212 / 137 / 106px。
+  结果是「窄屏首屏图偏矮」，不是破图（`object-fit: cover` + 同比例 ⇒ 不裁切、不拉伸），但**与 SPEC 断点表不一致**。
+- 处理建议：A 把该全局规则排除图像容器（或允许 C 用一个具体的选择器覆盖），否则 ≤768 的三档永远拿不到 250px。
+- C 本轮**没有**动这条，也没用 `!important` 去硬压（AGENTS.md 明确不许再叠 `!important` 掩盖结构问题）。
+
+### 20.5 【沿用 13.4，仍成立】语义色 token 缺失
+
+本轮配图新增的 `.service-card-media` 用的仍是页内 `--svc-surface-soft`。若 A 把米色系提到 `:root`
+（`--color-bg / --color-ink / --color-ink-soft / --color-line / --color-accent / --color-on-accent`），
+C 把 `--svc-*` 改成引用全局即可，页面无需其他改动；请求 A 确认命名。
+
+## 21. 截图证据（`docs/frontend-rebuild/evidence/service-pages/round4/`，23 张）
+
+- `{slug}-{zh,en}-1440.png`（14 张）：7 条路由 × zh/en，1440×900 **整页**（先逐档滚到页底触发全部显影再拍）。
+  注意两点拍摄特性：① 整页拼接时**固定页头会按当前滚动位置被画在图中部**（不是页面里多了个条）；
+   ② 整页图是 1440px 缩到 ~712px，别用它量间距 —— 间距以 DOM 实测为准（第 19 节）。
+- `{slug}-zh-390.png`（4 张）：`ai-development` / `custom-development` / `digital-creativity` / `web-development` 的小屏整页。
+- `_viewport-creative-caps.png`、`_viewport-iot-caps.png`（2 张）：1440×900 **视口**截图，专门用来证明
+  「02 / WHAT WE DELIVER」大标题与下面四张能力卡**没有重叠**（DOM 实测：标题盒底到卡片列表顶 = `66px`，7 条路由一致，无任何分段重叠）。
+- `_smoke-web-top.png`、`_smoke-web-caps.png`、`_smoke-ai-flow.png`（3 张）：开头的冒烟图（首屏、能力卡、AI 四步卡）。
+
+## 22. 未完成 / 未运行（本轮结束后仍成立）
+
+- **反馈 1（透明导航栏）本轮没有落地** —— 属 A 的共享层，申请见 20.1；预览里服务页页头仍是深色固定条。
+- **未在真实手机 / Safari / 微信内置浏览器运行**：只有 Chromium 1440×900 与 390×844 视口，触摸、iOS 视口单位、微信 webview 一律**未运行**。
+- `test:unit` / `test:e2e` 脚本**不存在**，未运行、未声称通过。
+- **暗色态**不存在（无 token 层），服务页暗色视觉**未评估**；`/web-development` 的暗色截图无意义，故本轮未拍。
+- en 文案缺译仍在：`capabilityTitle` / `statement` / `description` 与各 kind 固有分区文案（如「把企业已有资料…」）仍是中文；本轮新增的卡片图 `alt` 也是中文（有意的占位说明）。
+- **未做**：`.iot-dashboard__side` 三张看板卡未配图（见 17.2 末）；能力卡的 `↗` 已移除（待用户确认是否保留）。
+- **待用户裁决**：≤1024 的 hero 上留白是否允许从 `80px` 提到 ~`104px`（配合透明页头；现状见 20.1 第 3 点）。
+- **待用户裁决**：过渡视频（`frontend/public/assets/transitions/`，6 个方向 + black/ 变体）随 `.service-switch` 删除后已无引用，是否删除文件或另找用途。
+
+## 23. 下次第一步
+
+1. 读本节 + `handoffs/INTEGRATION.md`，确认 `codex/rebuild-services` 本轮提交是否已被 A 收敛进 main。
+2. **等 A 对 20.1 的结论**：透明页头一旦落地，立刻做三件事 —— ① 在 1440 / 1024 / 390 三档重拍首屏，确认页头透明、文字为深色且在米色底上可读；
+   ② 量 `hero` 上留白与页头高度的间隙（≤1024 现在只剩 4px）；③ 复核 M-04（`.on`）与 M-05（`.hide`）在服务页也生效（滚轮向下应收起 76px）。
+3. 把 20.4（`≤768` 的 `img{height:auto!important}`）与 20.2（footer 米色）一起向用户汇报进展。
+4. 用户若提供正式图片，按 `evidence/service-pages/service-images.md` 第 5 节两步替换：A / D 组覆盖 `frontend/public/assets/services/`，B / C 组覆盖 `frontend/public/assets/services/cards/`，多数情况不用改代码。

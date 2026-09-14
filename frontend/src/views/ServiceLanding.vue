@@ -29,15 +29,12 @@
           {{ page.subtitle }}
         </p>
       </div>
-      <router-link
-        class="service-hero__media item_hover"
-        :to="consultPath"
-      >
+      <div class="service-hero__media">
         <img
           :src="page.heroImage"
           :alt="page.mediaAlt"
         >
-      </router-link>
+      </div>
     </section>
 
     <section
@@ -66,45 +63,60 @@
         data-aos-delay="100"
       >
         <article>
+          <div class="service-card-media">
+            <img
+              :src="page.flowImages[0]"
+              alt="整理企业资料"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
           <span>第一步</span>
           <h3>整理企业资料</h3>
           <p>制度、文档、产品手册、历史工单</p>
         </article>
         <b>→</b>
         <article>
+          <div class="service-card-media">
+            <img
+              :src="page.flowImages[1]"
+              alt="建立专属知识库"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
           <span>第二步</span>
           <h3>建立专属知识库</h3>
           <p>统一归档、持续更新、准确检索</p>
         </article>
         <b>→</b>
         <article>
+          <div class="service-card-media">
+            <img
+              :src="page.flowImages[2]"
+              alt="接入 AI 助手"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
           <span>第三步</span>
           <h3>接入 AI 助手</h3>
           <p>问答、写作、分析与任务协同</p>
         </article>
         <b>→</b>
         <article>
+          <div class="service-card-media">
+            <img
+              :src="page.flowImages[3]"
+              alt="服务真实岗位"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
           <span>实际使用</span>
           <h3>服务真实岗位</h3>
           <p>客服、销售、运营和内部员工</p>
         </article>
-      </div>
-      <div
-        class="service-shell"
-        data-aos="fade-top"
-        data-aos-delay="200"
-      >
-        <router-link
-          class="service-media item_hover"
-          :to="consultPath"
-        >
-          <img
-            :src="page.mediaImage"
-            :alt="page.mediaAlt"
-            loading="lazy"
-            decoding="async"
-          >
-        </router-link>
       </div>
     </section>
     <section
@@ -129,17 +141,14 @@
           data-aos-delay="100"
         >
           <span>品牌服务</span>
-          <router-link
-            class="mini-phone__screen item_hover"
-            :to="consultPath"
-          >
+          <div class="mini-phone__screen">
             <img
               :src="page.mediaImage"
               :alt="page.mediaAlt"
               loading="lazy"
               decoding="async"
             >
-          </router-link>
+          </div>
         </div>
         <ol
           data-aos="fade-top"
@@ -179,17 +188,14 @@
         </div>
         <div class="app-device">
           <span>YUNZHAN</span>
-          <router-link
-            class="app-device__screen item_hover"
-            :to="consultPath"
-          >
+          <div class="app-device__screen">
             <img
               :src="page.mediaImage"
               :alt="page.mediaAlt"
               loading="lazy"
               decoding="async"
             >
-          </router-link>
+          </div>
         </div>
         <div class="app-device app-device--small">
           <span>消息</span><b>01</b>
@@ -223,17 +229,14 @@
           <div class="web-browser__bar">
             <i /><i /><i />
           </div>
-          <router-link
-            class="web-browser__screen item_hover"
-            :to="consultPath"
-          >
+          <div class="web-browser__screen">
             <img
               :src="page.mediaImage"
               :alt="page.mediaAlt"
               loading="lazy"
               decoding="async"
             >
-          </router-link>
+          </div>
         </div>
       </div>
     </section>
@@ -277,23 +280,6 @@
           </article>
         </div>
       </div>
-      <div
-        class="service-shell"
-        data-aos="fade-top"
-        data-aos-delay="200"
-      >
-        <router-link
-          class="service-media item_hover"
-          :to="consultPath"
-        >
-          <img
-            :src="page.mediaImage"
-            :alt="page.mediaAlt"
-            loading="lazy"
-            decoding="async"
-          >
-        </router-link>
-      </div>
     </section>
     <section
       v-else-if="page.kind === 'custom'"
@@ -319,27 +305,18 @@
           v-for="(item, index) in page.modules"
           :key="item"
         >
+          <div class="service-card-media">
+            <img
+              :src="page.stepImages[index]"
+              :alt="item"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
           <span>0{{ index + 1 }}</span>
           <h3>{{ item }}</h3>
           <p>{{ page.moduleNotes[index] }}</p>
         </article>
-      </div>
-      <div
-        class="service-shell"
-        data-aos="fade-top"
-        data-aos-delay="200"
-      >
-        <router-link
-          class="service-media item_hover"
-          :to="consultPath"
-        >
-          <img
-            :src="page.mediaImage"
-            :alt="page.mediaAlt"
-            loading="lazy"
-            decoding="async"
-          >
-        </router-link>
       </div>
     </section>
     <section
@@ -364,36 +341,43 @@
       >
         <article>
           <span>01 / BRAND</span>
+          <div class="service-card-media">
+            <img
+              :src="page.panelImages[0]"
+              alt="互动品牌体验"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
           <h3>互动品牌体验</h3>
           <p>让品牌故事不止被看见，也能被参与。</p>
         </article>
         <article>
           <span>02 / SPACE</span>
+          <div class="service-card-media">
+            <img
+              :src="page.panelImages[1]"
+              alt="数字展陈"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
           <h3>数字展陈</h3>
           <p>把空间、屏幕与内容组织成一个现场。</p>
         </article>
         <article>
           <span>03 / MOBILE</span>
+          <div class="service-card-media">
+            <img
+              :src="page.panelImages[2]"
+              alt="创意 H5"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
           <h3>创意 H5</h3>
           <p>为一次活动或传播，创造可分享的互动入口。</p>
         </article>
-      </div>
-      <div
-        class="service-shell"
-        data-aos="fade-top"
-        data-aos-delay="200"
-      >
-        <router-link
-          class="service-media item_hover"
-          :to="consultPath"
-        >
-          <img
-            :src="page.mediaImage"
-            :alt="page.mediaAlt"
-            loading="lazy"
-            decoding="async"
-          >
-        </router-link>
       </div>
     </section>
 
@@ -416,10 +400,17 @@
           data-aos="fade-top"
           :data-aos-delay="index % 2 === 0 ? 100 : 200"
         >
+          <div class="service-card-media">
+            <img
+              :src="page.capabilityImages[index]"
+              :alt="item.title"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
           <span>0{{ index + 1 }}</span>
           <h3>{{ item.title }}</h3>
           <p>{{ item.text }}</p>
-          <b>↗</b>
         </article>
       </div>
     </section>
@@ -455,81 +446,6 @@
         </p>
       </div>
     </section>
-    <section class="service-switch service-section">
-      <div class="service-shell service-switch__head">
-        <div
-          class="headline"
-          data-aos="fade-top"
-        >
-          <p class="service-kicker">
-            04 / EXPLORE SERVICES
-          </p>
-          <span class="headline__line" />
-        </div>
-        <h2 data-aos="fade-clip">
-          {{ switchCopy.title }}
-        </h2>
-      </div>
-      <div class="service-shell service-switch__body">
-        <div
-          ref="switchListEl"
-          class="service-switch__list"
-          data-aos="fade-top"
-        >
-          <button
-            v-for="(item, index) in services"
-            :key="item.id"
-            type="button"
-            class="service-switch__item"
-            :class="{ on: item.path === page.path || index === pendingIndex }"
-            :aria-current="item.path === page.path ? 'true' : undefined"
-            :disabled="switching"
-            @click="switchService(item, index)"
-          >
-            <span
-              class="attr"
-              :data-text="item.title"
-            >
-              <span class="attr__line">{{ item.title }}</span>
-            </span>
-            <span class="service-switch__en">{{ item.en }}</span>
-          </button>
-          <span
-            class="service-switch__move"
-            :style="{ transform: `translateY(${moveOffset}px)` }"
-          />
-        </div>
-        <div
-          ref="pictureEl"
-          class="service-switch__picture"
-          data-aos="fade-top"
-          data-aos-delay="100"
-        >
-          <video
-            v-for="clip in transitionClips"
-            :key="clip.key"
-            :class="clip.key"
-            :src="clip.src"
-            preload="none"
-            muted
-            playsinline
-          />
-          <p class="service-switch__caption">
-            {{ page.title }} / {{ page.en }}
-          </p>
-        </div>
-        <ul class="service-switch__mobile">
-          <li
-            v-for="item in services"
-            :key="item.id"
-          >
-            <RouterLink :to="item.href">
-              {{ item.title }}
-            </RouterLink>
-          </li>
-        </ul>
-      </div>
-    </section>
     <section class="service-cta">
       <div
         class="service-shell"
@@ -547,7 +463,7 @@
         </h2>
         <button
           type="button"
-          @click="router.push(locale === 'en' ? '/en/ai-consultation' : '/ai-consultation')"
+          @click="router.push(consultPath)"
         >
           {{ locale === 'en' ? 'Start a conversation' : '开始沟通' }} <span>↗</span>
         </button>
@@ -562,6 +478,11 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 const base = (capabilities) => capabilities.map(([title, text]) => ({ title, text }))
+/**
+ * 卡片配图（用户 2026-09-15 反馈 3）：`capabilityImages` 是 02 分区四张能力卡的图，与
+ * `capabilities` 同序；`flowImages` / `stepImages` / `panelImages` 是各服务 01 分区卡片图。
+ * 规格统一 800×600（4:3），来源与替换清单见 evidence/service-pages/service-images.md。
+ */
 const pages = {
   '/ai-development': {
     kind: 'ai',
@@ -571,6 +492,18 @@ const pages = {
     heroImage: '/assets/services/ai-hero.jpg',
     mediaImage: '/assets/services/ai-media.jpg',
     mediaAlt: '团队在数据与代码前工作',
+    capabilityImages: [
+      '/assets/services/cards/ai-1.jpg',
+      '/assets/services/cards/ai-2.jpg',
+      '/assets/services/cards/ai-3.jpg',
+      '/assets/services/cards/ai-4.jpg',
+    ],
+    flowImages: [
+      '/assets/services/cards/ai-flow-1.jpg',
+      '/assets/services/cards/ai-flow-2.jpg',
+      '/assets/services/cards/ai-flow-3.jpg',
+      '/assets/services/cards/ai-flow-4.jpg',
+    ],
     subtitle: '让智能能力进入真实业务，而不是停留在演示里。',
     capabilityTitle: '从模型能力，到业务结果。',
     statement: '把大模型、知识与流程，转化为组织可持续使用的产品能力。',
@@ -591,6 +524,12 @@ const pages = {
     heroImage: '/assets/services/mini-hero.jpg',
     mediaImage: '/assets/services/mini-media.jpg',
     mediaAlt: '用户在门店用手机与平板办理服务',
+    capabilityImages: [
+      '/assets/services/cards/mini-1.jpg',
+      '/assets/services/cards/mini-2.jpg',
+      '/assets/services/cards/mini-3.jpg',
+      '/assets/services/cards/mini-4.jpg',
+    ],
     subtitle: '用更轻的产品形态，让服务更快抵达用户。',
     capabilityTitle: '把服务，变成顺手的体验。',
     statement: '从第一步触达，到一次服务完成，每个环节都应该轻、快、清楚。',
@@ -611,6 +550,12 @@ const pages = {
     heroImage: '/assets/services/app-hero.jpg',
     mediaImage: '/assets/services/app-media.jpg',
     mediaAlt: '移动应用的界面草图与设计稿',
+    capabilityImages: [
+      '/assets/services/cards/app-1.jpg',
+      '/assets/services/cards/app-2.jpg',
+      '/assets/services/cards/app-3.jpg',
+      '/assets/services/cards/app-4.jpg',
+    ],
     subtitle: '构建兼具体验品质与工程稳定性的移动产品。',
     capabilityTitle: '从第一屏，到长期使用。',
     statement: '移动产品的价值，不只是装进手机，而是融入用户每天的动作。',
@@ -631,6 +576,12 @@ const pages = {
     heroImage: '/assets/services/web-hero.jpg',
     mediaImage: '/assets/services/web-media.jpg',
     mediaAlt: '桌面上的网站设计与前端实现',
+    capabilityImages: [
+      '/assets/services/cards/web-1.jpg',
+      '/assets/services/cards/web-2.jpg',
+      '/assets/services/cards/web-3.jpg',
+      '/assets/services/cards/web-4.jpg',
+    ],
     subtitle: '让网站成为品牌在数字世界最有分量的表达。',
     capabilityTitle: '不止被看见，更值得被记住。',
     statement: '好的品牌网站，应该同时完成表达、理解与信任。',
@@ -652,6 +603,12 @@ const pages = {
     heroImage: '/assets/services/iot-hero.jpg',
     mediaImage: '/assets/services/iot-media.jpg',
     mediaAlt: '现场设备与自动化终端',
+    capabilityImages: [
+      '/assets/services/cards/iot-1.jpg',
+      '/assets/services/cards/iot-2.jpg',
+      '/assets/services/cards/iot-3.jpg',
+      '/assets/services/cards/iot-4.jpg',
+    ],
     subtitle: '连接设备、数据与决策，让现场持续可见。',
     capabilityTitle: '让现场数据，成为经营依据。',
     statement: '从一台设备到一个园区，数据链路都应稳定、清楚、可追溯。',
@@ -673,6 +630,18 @@ const pages = {
     heroImage: '/assets/services/custom-hero.jpg',
     mediaImage: '/assets/services/custom-media.jpg',
     mediaAlt: '业务团队围绕系统需求讨论',
+    capabilityImages: [
+      '/assets/services/cards/custom-1.jpg',
+      '/assets/services/cards/custom-2.jpg',
+      '/assets/services/cards/custom-3.jpg',
+      '/assets/services/cards/custom-4.jpg',
+    ],
+    stepImages: [
+      '/assets/services/cards/custom-step-1.jpg',
+      '/assets/services/cards/custom-step-2.jpg',
+      '/assets/services/cards/custom-step-3.jpg',
+      '/assets/services/cards/custom-step-4.jpg',
+    ],
     subtitle: '让系统适配业务，而不是让组织迁就软件。',
     capabilityTitle: '为真实的组织方式而建。',
     statement: '把分散的流程、数据与协作，整理成一套真正好用的系统。',
@@ -700,6 +669,17 @@ const pages = {
     heroImage: '/assets/services/creative-hero.jpg',
     mediaImage: '/assets/services/creative-media.jpg',
     mediaAlt: '展览空间中的光影装置',
+    capabilityImages: [
+      '/assets/services/cards/creative-1.jpg',
+      '/assets/services/cards/creative-2.jpg',
+      '/assets/services/cards/creative-3.jpg',
+      '/assets/services/cards/creative-4.jpg',
+    ],
+    panelImages: [
+      '/assets/services/cards/creative-panel-1.jpg',
+      '/assets/services/cards/creative-panel-2.jpg',
+      '/assets/services/cards/creative-panel-3.jpg',
+    ],
     subtitle: '让技术成为内容表达与品牌体验的一部分。',
     capabilityTitle: '创造值得参与的品牌时刻。',
     statement: '当技术真正服务于内容，体验才会留下记忆。',
@@ -769,22 +749,14 @@ const page = computed(
     services.value.find((item) => item.path === servicePath.value) ||
     services.value.find((item) => item.path === '/web-development'),
 )
-const activeIndex = computed(() => {
-  const index = services.value.findIndex((item) => item.path === page.value?.path)
-  return index < 0 ? 0 : index
-})
-
 const rootEl = ref(null)
 const parallaxHeadEl = ref(null)
 const statementEl = ref(null)
-const switchListEl = ref(null)
-const pictureEl = ref(null)
 
 const mobileQuery = window.matchMedia('(max-width: 1024px)')
 const reducedQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 const isMobile = ref(mobileQuery.matches)
 const prefersReducedMotion = ref(reducedQuery.matches)
-const isDarkTheme = ref(false)
 
 const titleIn = ref(false)
 const titleChars = computed(() => [...(page.value?.title || '')])
@@ -794,37 +766,8 @@ const titleCharStyle = (index, char) => ({
   ...(char === ' ' ? { minWidth: '10px' } : {}),
 })
 
-const switchCopy = computed(() => ({
-  title:
-    locale.value === 'en'
-      ? 'Switch services,\nand see how we solve adjacent problems.'
-      : '切换服务，\n看我们如何解决相近的问题。',
-}))
-
-const switching = ref(false)
-const pendingIndex = ref(-1)
-const moveOffset = ref(0)
-
-/** 过渡视频用共享素材路径；素材只覆盖服务 1—3 的六个方向（T00A 登记）。 */
-const TRANSITION_SLOTS = [1, 2, 3]
-const transitionClips = computed(() =>
-  TRANSITION_SLOTS.flatMap((from) =>
-    TRANSITION_SLOTS.filter((to) => to !== from).map((to) => ({
-      key: `${from}_${to}`,
-      src: isDarkTheme.value
-        ? `/assets/transitions/black/${from}-${to}.mp4`
-        : `/assets/transitions/w${from}-${to}.mp4`,
-    })),
-  ),
-)
-const clipFor = (from, to) =>
-  TRANSITION_SLOTS.includes(from) && TRANSITION_SLOTS.includes(to) && from !== to
-    ? `${from}_${to}`
-    : ''
-
 let frame = 0
-let themeObserver
-const timers = { title: 0, transition: 0 }
+const timers = { title: 0 }
 let aosPending = []
 /** `once` 语义下已显影的节点。换页要整体重来，WeakSet 不能 clear，所以这里是可变引用。 */
 let aosDone = new WeakSet()
@@ -943,75 +886,15 @@ const playTitleEntrance = () => {
   }, 10)
 }
 
-/** SPEC M-14：跟随框位移 = index * item.clientHeight，实测高度而非常量。 */
-const syncMoveFrame = (index) => {
-  const firstItem = switchListEl.value?.querySelector('.service-switch__item')
-  moveOffset.value = firstItem ? index * firstItem.clientHeight : 0
-}
-
-/** SPEC M-15：旧片去 .on 并暂停；目标片 currentTime=0 → 加 .on → play()。 */
-const playTransition = (key, onDone) => {
-  const videos = pictureEl.value ? [...pictureEl.value.querySelectorAll('video')] : []
-  const video = videos.find((el) => el.classList.contains(key))
-  if (!video) {
-    onDone()
-    return
-  }
-  videos.forEach((el) => {
-    el.classList.remove('on')
-    el.pause()
-  })
-  let settled = false
-  const settle = () => {
-    if (settled) return
-    settled = true
-    video.removeEventListener('ended', settle)
-    video.removeEventListener('error', settle)
-    window.clearTimeout(timers.transition)
-    onDone()
-  }
-  video.addEventListener('ended', settle)
-  video.addEventListener('error', settle)
-  timers.transition = window.setTimeout(settle, 2500)
-  video.classList.add('on')
-  const played = video.play()
-  if (played?.catch) played.catch(settle)
-}
-
-const switchService = (item, index) => {
-  syncMoveFrame(index)
-  if (switching.value || item.path === page.value?.path) return
-  const key = clipFor(page.value.order, item.order)
-  pendingIndex.value = index
-  if (!key || isMobile.value || prefersReducedMotion.value) {
-    router.push(item.href)
-    return
-  }
-  switching.value = true
-  playTransition(key, () => {
-    switching.value = false
-    router.push(item.href)
-  })
-}
-
 const onViewportChange = () => {
   isMobile.value = mobileQuery.matches
   prefersReducedMotion.value = reducedQuery.matches
   if (prefersReducedMotion.value) revealEverything()
   collectAosTargets()
-  syncMoveFrame(activeIndex.value)
   scheduleFrame()
 }
 
 onMounted(() => {
-  isDarkTheme.value = document.documentElement.dataset.theme === 'dark'
-  themeObserver = new MutationObserver(() => {
-    isDarkTheme.value = document.documentElement.dataset.theme === 'dark'
-  })
-  themeObserver.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme'],
-  })
   mobileQuery.addEventListener('change', onViewportChange)
   reducedQuery.addEventListener('change', onViewportChange)
   window.addEventListener('scroll', scheduleFrame, { passive: true })
@@ -1020,7 +903,6 @@ onMounted(() => {
 
   collectAosTargets()
   if (prefersReducedMotion.value) revealEverything()
-  syncMoveFrame(activeIndex.value)
   scheduleFrame()
   playTitleEntrance()
 })
@@ -1031,23 +913,18 @@ onBeforeUnmount(() => {
   window.removeEventListener('scroll', scheduleFrame)
   window.removeEventListener('resize', onViewportChange)
   document.removeEventListener('visibilitychange', scheduleFrame)
-  themeObserver?.disconnect()
   if (frame) window.cancelAnimationFrame(frame)
   window.clearTimeout(timers.title)
-  window.clearTimeout(timers.transition)
-  pictureEl.value?.querySelectorAll('video').forEach((el) => el.pause())
 })
 
 watch(
   () => route.path,
   async () => {
-    pendingIndex.value = -1
     /** DOM 更新之后再收集：见 resetReveal() 注释。 */
     await nextTick()
     resetReveal()
     collectAosTargets()
     if (prefersReducedMotion.value) revealEverything()
-    syncMoveFrame(activeIndex.value)
     playTitleEntrance()
     scheduleFrame()
   },
@@ -1147,16 +1024,18 @@ watch(
   aspect-ratio: 3840 / 1070;
   object-fit: cover;
 }
-/* 分区内的可点击配图（问题 3）：与 hero 同一套圆盘交互。 */
-.service-media {
+/* 卡片配图（用户 2026-09-15 反馈 3）：每个 article 一张图，无 hover、无跳转，
+   只跟随所在分区的滚动显影（M-24 / M-25）。 */
+.service-card-media {
   display: block;
-  margin-top: 86px;
+  margin: 0 0 22px;
   overflow: hidden;
+  background: var(--svc-surface-soft);
 }
-.service-media img {
+.service-card-media img {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
 }
 .service-section {
@@ -1354,7 +1233,7 @@ watch(
   font-weight: 700;
 }
 .custom-system__steps h3 {
-  margin: 88px 0 10px;
+  margin: 26px 0 10px;
   font-size: 21px;
 }
 .custom-system__steps p {
@@ -1388,17 +1267,9 @@ watch(
   min-height: 340px;
   padding: 28px;
   border-right: 1px solid var(--svc-line-soft);
-  transition:
-    background 0.28s ease,
-    color 0.28s ease,
-    transform 0.28s ease;
 }
 .capability-list article:last-child {
   border: 0;
-}
-.capability-list article:hover {
-  background: var(--svc-accent);
-  color: var(--svc-on-accent);
 }
 .capability-list span {
   color: var(--svc-accent);
@@ -1406,7 +1277,7 @@ watch(
   font-weight: 700;
 }
 .capability-list h3 {
-  margin: 114px 0 14px;
+  margin: 26px 0 14px;
   font-size: 23px;
 }
 .capability-list p {
@@ -1415,15 +1286,6 @@ watch(
   color: var(--svc-ink-soft);
   font-size: 14px;
   line-height: 1.8;
-}
-.capability-list article:hover p {
-  color: rgba(255, 255, 255, 0.82);
-}
-.capability-list b {
-  position: absolute;
-  right: 28px;
-  bottom: 25px;
-  font-size: 20px;
 }
 .service-approach {
   padding: 125px 0;
@@ -1606,7 +1468,7 @@ watch(
   color: rgba(255, 255, 255, 0.85);
 }
 .ai-flow h3 {
-  margin: 72px 0 13px;
+  margin: 24px 0 13px;
   font-size: 22px;
   letter-spacing: -0.03em;
 }
@@ -1872,9 +1734,6 @@ watch(
   color: rgba(0, 0, 0, 0.2);
   z-index: 5;
 }
-.capability-list article:hover {
-  transform: translateY(-5px);
-}
 .service-cta button {
   cursor: pointer;
   transition:
@@ -1885,144 +1744,7 @@ watch(
   transform: translateX(8px);
   border-color: var(--svc-accent);
 }
-/* SPEC M-14：服务切换跟随框；位移 = index * item.clientHeight（实测高度），transition all .4s */
-.service-switch {
-  background: var(--svc-bg);
-}
-.service-switch__head {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  gap: 40px;
-  margin-bottom: 66px;
-}
-.service-switch__head h2 {
-  margin: 0;
-  white-space: pre-line;
-}
-.service-switch__body {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 7vw;
-  align-items: start;
-}
-.service-switch__list {
-  position: relative;
-}
-.service-switch__item {
-  width: 100%;
-  height: 96px;
-  padding: 0 34px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 8px;
-  text-align: left;
-  color: inherit;
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--svc-line);
-  font: inherit;
-  cursor: pointer;
-}
-.service-switch__item:disabled {
-  cursor: default;
-}
-.service-switch__en {
-  color: var(--svc-ink-soft);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-}
-.service-switch__move {
-  width: 100%;
-  height: 96px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  border: 1px solid var(--svc-line);
-  border-radius: 5px;
-  pointer-events: none;
-  transition: all 0.4s;
-  z-index: 2;
-}
-.service-switch__move::after {
-  content: '';
-  width: 5px;
-  height: 61px;
-  position: absolute;
-  left: -5px;
-  top: 50%;
-  background: var(--svc-accent);
-  border-radius: 5px 0 0 5px;
-  transform: translateY(-50%);
-  transition: all 0.6s;
-}
-/* SPEC M-15：文本上翻与 :after 用 data-text 接过下一行（transition all .6s） */
-.attr {
-  position: relative;
-  overflow: hidden;
-}
-.attr__line {
-  display: block;
-  transition: all 0.6s;
-}
-.attr::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translateY(100%);
-  transition: all 0.6s;
-}
-.service-switch__item.on .attr__line {
-  transform: translateY(-100%);
-}
-.service-switch__item.on .attr::after {
-  transform: translateY(0);
-}
-.service-switch__picture {
-  position: relative;
-}
-.service-switch__picture video {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: contain;
-  opacity: 0;
-}
-.service-switch__picture video.on {
-  opacity: 1;
-}
-.service-switch__picture video:not(:last-of-type) {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-}
-.service-switch__caption {
-  margin: 14px 0 0;
-  color: var(--svc-ink-soft);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-}
-.service-switch__mobile {
-  display: none;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--svc-line);
-}
-.service-switch__mobile li {
-  border-bottom: 1px solid var(--svc-line);
-}
-.service-switch__mobile a {
-  display: block;
-  padding: 20px 0;
-  color: inherit;
-  text-decoration: none;
-}
-/* SPEC 断点速查 ≤1024px：不擦除整段文案、隐藏 PC 专用过渡视频与桌面切换列表 */
+/* SPEC 断点速查 ≤1024px：不擦除整段文案，改用静态段落（`.sj_text`）展示 */
 @media (max-width: 1024px) {
   .service-shell {
     width: min(calc(100% - 48px), 1320px);
@@ -2058,8 +1780,7 @@ watch(
     aspect-ratio: auto;
     height: 250px;
   }
-  .service-capabilities__head,
-  .service-switch__head {
+  .service-capabilities__head {
     flex-direction: column;
     align-items: start;
     gap: 18px;
@@ -2090,12 +1811,8 @@ watch(
   .public_text.sj_text {
     display: block !important;
   }
-  .service-switch__list,
-  .service-switch__picture {
-    display: none !important;
-  }
-  .service-switch__mobile {
-    display: block;
+  .service-card-media {
+    margin-bottom: 18px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
