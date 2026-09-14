@@ -639,3 +639,16 @@ npx eslint（只读，touched files）→ 0 errors / 83 warnings（warning 为�
 - G5（IoT / 数字创意入口）、M-31、M-16/M-17 已按用户 2026-09-15 裁定：数字创意页面不管；M-16/M-17 不纳入；`/services` 不建；M-31 不需要。G5 中「数字创意」按用户裁决不再处理，IoT 入口仍未解决。
 - B/T05：About / Contact / Privacy / Legal 的英文页面内容。
 - D/T04：Cases / News 英文内容与 `News/detail.vue` 的 6 条 unsplash 存量。
+
+### 7. 暗色导航字色 + 语言切换按钮（2026-09-15 再补）
+
+用户反馈两点，已在共享外壳统一收口：
+
+1. **暗色服务页导航黑字**：`Header.vue` 的 `headerInkClass` 从「只看 route meta」改为「暗色主题强制白字档」。实测 `/ai-development` 暗色 `nav-item color = rgba(255,255,255,.88)`；切到亮色后回到 `rgba(17,17,17,.78)`。
+2. **多语言切换按钮**：桌面右侧操作区新增 `EN / 中文` pill 按钮，移动端汉堡菜单底部同样新增；切换时保留当前路由（`/` ↔ `/en`、`/<slug>` ↔ `/en/<slug>`），并同步更新 `html lang`、标题与外壳文案。
+
+验证：
+
+- `npm.cmd run build` PASS；`check:motion` PASS；`check:routes` PASS 34 / FAIL 0 / PENDING 2。
+- 只读 eslint `Header.vue`：0 errors / 28 warnings（既有格式规则）。
+- 浏览器实测：中文服务页暗色导航白字、亮色导航黑字；语言按钮从 `/ai-development` 跳 `/en/ai-development`，`lang=en`，页头品牌 `Yunzhan Technology`；390 汉堡菜单里语言与主题按钮并排可点。

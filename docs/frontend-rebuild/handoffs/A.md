@@ -579,3 +579,28 @@ BACKEND-TODO / 缺译 / 素材缺口：B/T05 待翻译 About/Contact/Privacy/Leg
 - About/Cases/News 等英文页面内容不在本批 A 的授权范围。
 
 下次恢复的第一步：视用户验收；若继续 G5，需用户指定 IoT 的入口落点（footer 服务列 / 服务概览页等）。
+
+---
+
+# Session A · 暗色导航字色 + 多语言切换按钮（2026-09-15 四批）
+
+状态：完成（共享外壳交互收口；未提交新路由/内容）
+基准commit：`0a2406a`（main）
+本任务commit：待提交（代码 `Header.vue`）
+
+目标与完成范围：
+
+1. 修复暗色模式下服务页透明导航仍走 `header-ink-dark` 黑字的问题：`headerInkClass` 增加主题判断，暗色统一走白字档，亮色仍按 `route.meta.headerInk` 分档。
+2. 新增多语言切换按钮：桌面右侧操作区与移动端汉堡菜单均加入 `EN / 中文` 按钮，保持当前路由切换语言，复用主题按钮的 pill 样式。
+
+修改文件：`frontend/src/layout/components/Header.vue`
+
+验证命令、实际结果与证据路径：
+
+- `npm.cmd run build` PASS；`check:motion` PASS；`check:routes` PASS 34 / FAIL 0 / PENDING 2。
+- 只读 eslint `Header.vue` 0 errors / 28 warnings（既有格式规则）。
+- 浏览器实测：`/ai-development` 暗色导航 `rgba(255,255,255,.88)`、亮色 `rgba(17,17,17,.78)`；语言按钮从 `/ai-development` 跳到 `/en/ai-development`，`lang=en`、品牌名 `Yunzhan Technology`；390 汉堡菜单语言与主题按钮可点。
+
+未完成事项与原因：同上一批；About/Cases/News 英文内容仍归 B/D，G5 IoT 入口待定。
+
+下次恢复的第一步：等待用户确认本批交互；若继续，可处理 G5 IoT 入口。

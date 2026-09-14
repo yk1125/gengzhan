@@ -28,6 +28,15 @@
       <!-- 桌面端操作 -->
       <div class="desktop-actions">
         <button
+          class="theme-toggle lang-toggle"
+          type="button"
+          :title="localeSwitchTitle"
+          :aria-label="localeSwitchTitle"
+          @click="switchLocale"
+        >
+          <span>{{ localeSwitchLabel }}</span>
+        </button>
+        <button
           class="theme-toggle"
           type="button"
           :title="themeToggleLabel"
@@ -80,6 +89,15 @@
           </router-link>
 
           <button
+            class="mobile-theme-toggle mobile-lang-toggle"
+            type="button"
+            :aria-label="localeSwitchTitle"
+            @click="switchLocale"
+          >
+            <span>{{ localeSwitchLabel }}</span>
+          </button>
+
+          <button
             class="mobile-theme-toggle"
             type="button"
             :aria-label="themeToggleLabel"
@@ -102,13 +120,14 @@
 
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ChatDotRound, Moon, Sunny } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 import { useThemeStore } from '@/stores/theme'
 
 const route = useRoute()
+const router = useRouter()
 const isEn = computed(() => route.path === '/en' || route.path.startsWith('/en/'))
 const homePath = computed(() => (isEn.value ? '/en' : '/'))
 const brandSimple = computed(() => (isEn.value ? 'Yunzhan Technology' : '耘栈科技'))
@@ -127,6 +146,12 @@ const wechatLabel = computed(() => (isEn.value ? 'WeChat: YunZhanKk' : '微信�
 const mobileWechatLabel = computed(() => (isEn.value ? 'WeChat: YunZhanKk' : 'WX: YunZhanKk'))
 const wechatType = computed(() => (isEn.value ? 'WeChat' : '微信号'))
 const wechatCopyTitle = computed(() => (isEn.value ? 'Copy WeChat ID' : '点击复制微信号'))
+const localeSwitchLabel = computed(() => (isEn.value ? '中文' : 'EN'))
+const localeSwitchTitle = computed(() => (isEn.value ? '切换中文' : 'Switch to English'))
+const localeSwitchPath = computed(() => {
+  if (isEn.value) return route.path.replace(/^\/en/, '') || '/'
+  return route.path === '/' ? '/en' : `/en${route.path}`
+})
 /** 透明顶：2026-09-15 用户裁定「全站默认透明，导航栏都跟首页一样」。
     由 `route.meta.headerTransparent !== false` 得到；个别要实底的页面才显式关掉。
     M-04/M-05 与皮肤无关，继续全站生效；口径见 specs/FRONTEND.md §7。 */
@@ -134,7 +159,10 @@ const headerTransparent = computed(() => route.meta.headerTransparent !== false)
 /** 透明顶字色档：`route.meta.headerInk` 显式声明，Header 只负责映射成 CSS 类。
     light = 深色首屏上的白字（首页 / 关于 / 案例详情 / 资讯详情）；
     dark = 浅色首屏上的深字（米色服务页 / 案例列表 / 资讯列表 / 法律 / 404 等）。 */
-const headerInkClass = computed(() => (route.meta.headerInk === 'light' ? 'header-ink-light' : 'header-ink-dark'))
+const headerInkClass = computed(() => {
+  if (themeStore.theme === 'dark') return 'header-ink-light'
+  return route.meta.headerInk === 'light' ? 'header-ink-light' : 'header-ink-dark'
+})
 
 const headerRef = ref(null)
 /** SPEC M-04：`.on` —— 滚过 `clientHeight - headerHeight / 2` 后页头底色反转（全站生效）。 */
@@ -200,6 +228,11 @@ const toggleMobileMenu = () => {
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false
   document.body.style.overflow = ''
+}
+
+const switchLocale = () => {
+  closeMobileMenu()
+  router.push(localeSwitchPath.value)
 }
 
 const copyToClipboard = async (text, type) => {
