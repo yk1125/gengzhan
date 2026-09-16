@@ -1,37 +1,445 @@
 <template>
-  <main class="about-page">
-    <section class="about-hero">
-      <video autoplay muted loop playsinline preload="auto"><source src="/yunzhan-hero.mp4" type="video/mp4" /></video><div class="shade"></div>
-      <div class="shell hero-copy"><span>ABOUT YUNZHAN</span><h1>技术有尺度，<br>合作有温度。</h1><p>我们是耘栈科技，一支专注数字产品设计与研发的长期主义团队。</p></div>
+  <div
+    ref="root"
+    class="company-page"
+    :style="motionStyle"
+  >
+    <section
+      class="company-hero"
+      aria-labelledby="company-title"
+    >
+      <img
+        class="company-hero__photo"
+        :src="companyMedia.office"
+        :alt="copy.photoAlt"
+        width="2048"
+        height="1536"
+        fetchpriority="high"
+      >
+      <div
+        class="company-hero__top"
+        aria-hidden="true"
+      />
+      <div class="company-hero__copy">
+        <div class="company-shell company-hero__inner">
+          <div data-company-reveal>
+            <p class="company-eyebrow">
+              {{ copy.since }}
+            </p>
+            <h1 id="company-title">
+              {{ copy.name }}
+            </h1>
+            <p class="company-hero__lead">
+              {{ copy.tagline }}
+            </p>
+          </div>
+          <a
+            class="company-explore"
+            href="#company-intro"
+            @click.prevent="explore"
+          >
+            <span>{{ copy.explore }}</span><Bottom aria-hidden="true" />
+          </a>
+        </div>
+      </div>
     </section>
-    <section class="manifesto shell">
-      <div class="label">01 / WHO WE ARE</div>
-      <div><h2>不追逐短暂的热闹，<br>只打造真正经得起使用的产品。</h2><p>北京耘栈科技成立于 2015 年，为企业提供 AI 应用、小程序、App、品牌官网与业务系统建设。我们从业务本身出发，把策略、设计与工程放在同一张桌上，让每一次交付都清晰、可靠并能够持续生长。</p></div>
+
+    <section
+      id="company-intro"
+      class="company-shell company-section company-overview"
+      aria-labelledby="company-intro-title"
+    >
+      <div
+        class="company-section-heading"
+        data-company-reveal
+      >
+        <p class="company-eyebrow">
+          {{ copy.intro.eyebrow }}
+        </p>
+        <h2 id="company-intro-title">
+          {{ copy.intro.title }}
+        </h2>
+        <p class="company-note">
+          {{ copy.fullName }}
+        </p>
+      </div>
+      <div>
+        <div
+          class="company-prose"
+          data-company-reveal
+        >
+          <p
+            v-for="paragraph in copy.intro.paragraphs"
+            :key="paragraph"
+          >
+            {{ paragraph }}
+          </p>
+        </div>
+        <dl class="company-facts">
+          <div
+            v-for="fact in copy.facts"
+            :key="fact.label"
+            data-company-reveal
+          >
+            <dt>{{ fact.label }}</dt><dd>{{ fact.value }}</dd>
+          </div>
+        </dl>
+      </div>
     </section>
-    <section class="stats"><div class="shell stats-grid"><div v-for="item in stats" :key="item.label"><strong>{{ item.value }}</strong><span>{{ item.label }}</span></div></div></section>
-    <section class="beliefs shell">
-      <div class="section-head"><span>02 / OUR BELIEFS</span><h2>我们相信的事</h2></div>
-      <div class="belief-grid"><article v-for="(item,index) in beliefs" :key="item.title"><b>0{{ index + 1 }}</b><h3>{{ item.title }}</h3><p>{{ item.text }}</p></article></div>
+
+    <section
+      class="company-capabilities company-section"
+      aria-labelledby="company-services-title"
+    >
+      <div class="company-shell">
+        <div
+          class="company-section-heading company-wide-heading"
+          data-company-reveal
+        >
+          <p class="company-eyebrow">
+            {{ copy.services.eyebrow }}
+          </p>
+          <h2 id="company-services-title">
+            {{ copy.services.title }}
+          </h2>
+          <p class="company-note">
+            {{ copy.services.description }}
+          </p>
+        </div>
+        <div class="company-service-list">
+          <router-link
+            v-for="(service, index) in copy.services.items"
+            :key="service.routeKey"
+            :to="localized(service.routeKey)"
+            class="company-service"
+            data-company-reveal
+          >
+            <span class="company-service__number">0{{ index + 1 }}</span>
+            <h3>{{ service.title }}</h3><p>{{ service.description }}</p>
+            <TopRight
+              class="company-service__arrow"
+              aria-hidden="true"
+            />
+          </router-link>
+        </div>
+      </div>
     </section>
-    <section class="quality">
-      <div class="shell quality-grid"><div class="quality-copy"><span>03 / QUALITY</span><h2>专业，不止体现在最终画面。</h2><p>从需求定义、原型验证到研发、测试和上线维护，每个阶段都有明确标准。CMMI 3 级认证，是成熟研发管理能力的一项证明，也是我们对交付质量的长期要求。</p><div><b>CMMI 3</b><small>软件研发成熟度认证</small></div></div></div>
+
+    <section
+      class="company-shell company-section company-quality"
+      aria-labelledby="company-quality-title"
+    >
+      <div
+        class="company-section-heading"
+        data-company-reveal
+      >
+        <p class="company-eyebrow">
+          {{ copy.quality.eyebrow }}
+        </p>
+        <h2 id="company-quality-title">
+          {{ copy.quality.title }}
+        </h2>
+        <p class="company-prose">
+          {{ copy.quality.description }}
+        </p>
+        <p class="company-credential">
+          CMMI <span>3</span>
+        </p>
+        <p class="company-note">
+          {{ copy.quality.label }}
+        </p>
+      </div>
+      <figure
+        class="company-certificate"
+        data-company-reveal
+      >
+        <button
+          ref="certificateButton"
+          type="button"
+          :aria-label="copy.quality.open"
+          aria-haspopup="dialog"
+          @click="certificateDialog.showModal()"
+        >
+          <img
+            :src="companyMedia.certificate"
+            :alt="copy.quality.alt"
+            width="1280"
+            height="914"
+            loading="lazy"
+          >
+          <span class="company-certificate__zoom"><ZoomIn aria-hidden="true" /></span>
+        </button>
+        <figcaption>{{ copy.quality.caption }}</figcaption>
+      </figure>
     </section>
-    <section class="contact"><div class="shell"><span>CONTACT US</span><h2>一起做一些<br>值得长期使用的事。</h2><div class="contact-row"><a href="mailto:yunzhan1129@163.com">yunzhan1129@163.com ↗</a><p>微信 YunzhanKk<br>北京市昌平区</p></div></div></section>
-  </main>
+
+    <section
+      class="company-customers company-section"
+      aria-labelledby="company-customers-title"
+    >
+      <div class="company-shell">
+        <div
+          class="company-section-heading company-wide-heading"
+          data-company-reveal
+        >
+          <p class="company-eyebrow">
+            {{ copy.customers.eyebrow }}
+          </p>
+          <h2 id="company-customers-title">
+            {{ copy.customers.title }}
+          </h2>
+        </div>
+        <ul
+          class="company-logo-grid"
+          :aria-label="copy.customers.label"
+        >
+          <li
+            v-for="logo in logos"
+            :key="logo.key"
+          >
+            <img
+              :src="`${CUSTOMER_ASSET_BASE}/${logo.file}`"
+              alt=""
+              :style="{ height: `${logo.height}px` }"
+              loading="lazy"
+            >
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section
+      class="company-shell company-section company-values"
+      aria-labelledby="company-values-title"
+    >
+      <div
+        class="company-section-heading"
+        data-company-reveal
+      >
+        <p class="company-eyebrow">
+          {{ copy.values.eyebrow }}
+        </p>
+        <h2 id="company-values-title">
+          {{ copy.values.title }}
+        </h2>
+      </div>
+      <ol class="company-value-list">
+        <li
+          v-for="(value, index) in copy.values.items"
+          :key="value.title"
+          data-company-reveal
+        >
+          <span class="company-value-number">0{{ index + 1 }}</span>
+          <div><h3>{{ value.title }}</h3><p>{{ value.description }}</p></div>
+        </li>
+      </ol>
+    </section>
+
+    <section
+      class="company-cta"
+      aria-labelledby="company-cta-title"
+    >
+      <div
+        class="company-shell company-cta__inner"
+        data-company-reveal
+      >
+        <div>
+          <p class="company-eyebrow">
+            {{ copy.cta.eyebrow }}
+          </p>
+          <h2 id="company-cta-title">
+            {{ copy.cta.title }}
+          </h2>
+          <p>{{ copy.cta.description }}</p>
+        </div>
+        <router-link
+          class="company-cta__link hover_button"
+          :to="localized('ai')"
+        >
+          <span>{{ copy.cta.action }}</span><TopRight aria-hidden="true" />
+        </router-link>
+      </div>
+    </section>
+
+    <dialog
+      ref="certificateDialog"
+      class="company-certificate-dialog"
+      :aria-label="copy.quality.open"
+      @click="closeOnBackdrop"
+      @close="certificateButton?.focus()"
+    >
+      <button
+        type="button"
+        class="company-dialog-close"
+        :aria-label="copy.quality.close"
+        autofocus
+        @click="certificateDialog.close()"
+      >
+        <Close aria-hidden="true" />
+      </button>
+      <img
+        :src="companyMedia.certificate"
+        :alt="copy.quality.alt"
+        width="1280"
+        height="914"
+      >
+    </dialog>
+  </div>
 </template>
 
 <script setup>
-const stats = [{ value:'10+',label:'年行业经验' },{ value:'200+',label:'企业客户' },{ value:'98%',label:'客户满意度' },{ value:'24/7',label:'技术支持' }]
-const beliefs = [
-  { title:'先理解，再创造',text:'先看清业务目标、用户与约束，再定义正确的产品问题。' },
-  { title:'设计与技术并行',text:'体验和工程从一开始就共同参与，让创意真正能够落地。' },
-  { title:'过程保持透明',text:'明确范围、节奏和决策依据，让合作始终建立在信任之上。' },
-  { title:'为长期负责',text:'不止关注上线时刻，也为产品后续运营与迭代留下空间。' }
-]
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { Bottom, Close, TopRight, ZoomIn } from '@element-plus/icons-vue'
+import { localizeRoute } from '@/config/routeManifest'
+import { companyContent, companyMedia } from '@/content/company'
+import { customerLogos, CUSTOMER_ASSET_BASE } from '@/content/home'
+import { useAboutMotion } from './useAboutMotion'
+
+const route = useRoute()
+const root = ref(null)
+const certificateDialog = ref(null)
+const certificateButton = ref(null)
+const locale = computed(() => route.name === 'AboutEn' ? 'en' : 'zh-CN')
+const copy = computed(() => companyContent[locale.value])
+const logos = customerLogos()
+const { motionStyle } = useAboutMotion(root)
+const localized = routeKey => localizeRoute({ routeKey, locale: locale.value })
+
+function explore () {
+  const target = root.value.querySelector('#company-intro')
+  target.scrollIntoView({ behavior: 'instant', block: 'start' })
+  target.setAttribute('tabindex', '-1')
+  target.focus({ preventScroll: true })
+}
+
+function closeOnBackdrop (event) {
+  if (event.target !== certificateDialog.value) return
+  const rect = certificateDialog.value.getBoundingClientRect()
+  if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) {
+    certificateDialog.value.close()
+  }
+}
 </script>
 
 <style scoped>
-.about-page{--o:#f06a21;color:#111;background:#fff}.shell{width:min(calc(100% - 80px),1240px);margin:auto}.about-hero{height:min(800px,90vh);min-height:650px;position:relative;display:flex;align-items:flex-end;color:#fff;overflow:hidden}.about-hero video,.shade{position:absolute;inset:0;width:100%;height:100%}.about-hero video{object-fit:cover}.shade{background:linear-gradient(90deg,rgba(0,0,0,.78),rgba(0,0,0,.12))}.hero-copy{position:relative;padding-bottom:85px}.hero-copy>span,.section-head span,.quality-copy>span,.contact>div>span{color:var(--o);font-size:10px;font-weight:800;letter-spacing:.2em}.hero-copy h1{margin:25px 0 22px;font-size:clamp(62px,7vw,102px);line-height:.94;letter-spacing:-.06em}.hero-copy p{color:#ccc}.manifesto{padding:145px 0;display:grid;grid-template-columns:.65fr 2.35fr;gap:8vw}.label{color:#777;font-size:10px;letter-spacing:.18em}.manifesto h2{margin:0;font-size:clamp(43px,5vw,70px);line-height:1.13;letter-spacing:-.055em}.manifesto p{max-width:650px;margin:45px 0 0 auto;color:#666;font-size:16px;line-height:2}.stats{background:#141414;color:#fff}.stats-grid{display:grid;grid-template-columns:repeat(4,1fr)}.stats-grid>div{height:280px;padding:42px 30px;border-right:1px solid #444;display:flex;flex-direction:column;justify-content:space-between}.stats-grid>div:last-child{border:0}.stats strong{font-size:clamp(48px,5vw,72px);letter-spacing:-.05em}.stats span{color:#999;font-size:12px}.beliefs{padding:135px 0}.section-head{margin-bottom:65px}.section-head h2{margin:20px 0;font-size:clamp(48px,6vw,80px);letter-spacing:-.055em}.belief-grid{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid #aaa}.belief-grid article{min-height:280px;padding:30px;border-bottom:1px solid #bbb}.belief-grid article:nth-child(odd){border-right:1px solid #bbb}.belief-grid b{color:var(--o);font-size:11px}.belief-grid h3{margin:70px 0 15px;font-size:26px}.belief-grid p{max-width:470px;color:#777;line-height:1.8}.quality{padding:130px 0;background:#f1f1ee}.quality-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:80px;align-items:center}.quality-image{height:650px}.quality-image img{width:100%;height:100%;object-fit:cover;filter:saturate(.7)}.quality-copy h2{margin:30px 0;font-size:clamp(42px,4.5vw,65px);line-height:1.12;letter-spacing:-.05em}.quality-copy p{color:#666;line-height:1.9}.quality-copy>div{margin-top:65px;padding-top:25px;border-top:1px solid #aaa;display:flex;align-items:end;gap:20px}.quality-copy b{font-size:42px}.quality-copy small{padding-bottom:7px;color:#777}.contact{padding:120px 0;background:var(--o)}.contact>div>span{color:#111}.contact h2{margin:25px 0 60px;font-size:clamp(52px,7vw,92px);line-height:1;letter-spacing:-.06em}.contact-row{display:flex;justify-content:space-between;align-items:end;border-top:1px solid rgba(0,0,0,.45);padding-top:28px}.contact-row a{color:#111;font-weight:800;font-size:18px}.contact-row p{margin:0;line-height:1.8;text-align:right}@media(max-width:800px){.shell{width:calc(100% - 40px)}.about-hero{min-height:560px;height:78vh}.hero-copy{padding-bottom:58px}.hero-copy h1{font-size:56px}.manifesto{padding:85px 0;grid-template-columns:1fr;gap:35px}.manifesto h2{font-size:39px}.manifesto p{margin-top:35px}.stats-grid{grid-template-columns:repeat(2,1fr)}.stats-grid>div{height:190px;border-bottom:1px solid #444}.beliefs{padding:85px 0}.belief-grid{grid-template-columns:1fr}.belief-grid article,.belief-grid article:nth-child(odd){min-height:230px;border-right:0}.belief-grid h3{margin-top:48px}.quality{padding:85px 0}.quality-grid{grid-template-columns:1fr;gap:45px}.quality-image{height:auto;aspect-ratio:4/3}.quality-copy h2{font-size:40px}.contact{padding:85px 0}.contact h2{font-size:48px}.contact-row{display:block}.contact-row p{margin-top:28px;text-align:left}}
-@media(max-width:800px){.shade{background:rgba(0,0,0,.5)}}
-.quality-grid{grid-template-columns:1fr!important}.quality-copy{max-width:780px;margin-left:auto}.quality-image{display:none}.contact{background:#171717}.contact>div>span{color:#999}.contact h2,.contact-row a,.contact-row p{color:#fff}.contact-row{border-top-color:#555}
+.company-page { background: var(--color-bg); color: var(--color-ink); letter-spacing: 0; }
+.company-shell { width: min(90%, 1440px); margin-inline: auto; }
+.company-page :where(h1, h2, h3, p, dl, dd, figure) { margin: 0; }
+.company-page h1, .company-page h2, .company-page h3 { font-weight: 500; letter-spacing: 0; }
+.company-page a { color: inherit; text-decoration: none; }
+.company-page button { font: inherit; cursor: pointer; }
+.company-page svg { width: 24px; height: 24px; flex: 0 0 auto; }
+.company-page :is(a, button):focus-visible { outline: 3px solid var(--color-accent); outline-offset: 6px; }
+.company-hero { position: relative; isolation: isolate; height: min(760px, 80svh); min-height: 460px; overflow: hidden; background: #171717; color: #fff; }
+.company-hero__photo { position: absolute; width: 100%; height: 100%; object-fit: cover; object-position: center 48%; }
+.company-hero__top { position: absolute; inset: 0 0 auto; height: 110px; background: rgb(0 0 0 / 66%); }
+.company-hero__copy { position: absolute; inset: auto 0 0; background: rgb(0 0 0 / 66%); padding: 34px 0 38px; }
+.company-hero__inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
+.company-eyebrow { font-size: 12px; line-height: 1.5; font-weight: 500; }
+.company-hero h1 { margin-top: 8px; font-size: 64px; line-height: 1.15; }
+.company-hero__lead { margin-top: 16px; font-size: 18px; line-height: 1.7; }
+.company-explore { display: flex; min-height: 48px; gap: 32px; align-items: center; border-bottom: 1px solid rgb(255 255 255 / 60%); font-size: 13px; white-space: nowrap; }
+.company-explore svg { transition: transform var(--company-duration) var(--company-ease); }
+.company-explore:hover svg { transform: translateY(5px); }
+.company-section { padding-block: 120px; }
+.company-overview { display: grid; grid-template-columns: 1fr 1.3fr; gap: 10%; padding-top: 80px; scroll-margin-top: 110px; }
+.company-section-heading h2 { margin-top: 24px; font-size: 44px; line-height: 1.4; white-space: pre-line; text-wrap: balance; }
+.company-note { margin-top: 24px; color: var(--color-ink-soft); font-size: 14px; line-height: 1.8; }
+.company-prose { color: var(--color-ink-body); font-size: 16px; line-height: 2; }
+.company-prose p + p { margin-top: 22px; }
+.company-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 32px; padding-top: 52px; }
+.company-facts > div { display: flex; flex-direction: column-reverse; gap: 12px; border-bottom: 1px solid var(--color-line); padding-bottom: 22px; }
+.company-facts dt { font-size: 14px; color: var(--color-ink-soft); }
+.company-facts dd { font-size: 56px; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.company-capabilities { background: var(--color-surface); }
+.company-wide-heading { max-width: 900px; margin-bottom: 64px; }
+.company-service-list { border-top: 1px solid var(--color-line); }
+.company-service { display: grid; grid-template-columns: 55px 1fr 1.3fr 32px; gap: 32px; align-items: center; padding: 38px 12px; border-bottom: 1px solid var(--color-line); transition: background-color var(--company-duration) var(--company-ease), color var(--company-duration) var(--company-ease); }
+.company-service__number { color: var(--color-ink-soft); font-size: 13px; }
+.company-service h3 { font-size: 28px; line-height: 1.35; }
+.company-service p { color: var(--color-ink-body); font-size: 15px; line-height: 1.8; }
+.company-service__arrow { transition: transform var(--company-duration) var(--company-ease); }
+.company-service:hover, .company-service:focus-visible { background: var(--color-bg); }
+.company-service:hover .company-service__arrow { transform: rotate(45deg); color: var(--color-accent); }
+.company-quality { display: grid; grid-template-columns: 1fr 1.15fr; gap: 9%; align-items: center; }
+.company-quality .company-prose { margin-top: 26px; }
+.company-credential { margin-top: 36px; font-size: 44px !important; line-height: 1.15; }
+.company-credential span { color: var(--color-accent); }
+.company-quality .company-note { margin-top: 8px; }
+.company-certificate button { position: relative; display: block; width: 100%; padding: 0; border: 0; background: #fff; }
+.company-certificate img { display: block; width: 100%; height: auto; }
+.company-certificate__zoom { position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; display: grid; place-items: center; background: #fff; color: #111; border: 1px solid #aaa; border-radius: 50%; }
+.company-certificate figcaption { margin-top: 16px; font-size: 12px; line-height: 1.7; color: var(--color-ink-soft); }
+.company-customers { background: var(--color-surface-soft); }
+.company-logo-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); padding: 0; margin: 0; list-style: none; background: #fff; }
+.company-logo-grid li { display: grid; place-items: center; height: 112px; padding: 24px 16px; border: 1px solid #ededed; }
+.company-logo-grid img { display: block; width: auto; max-width: 100%; object-fit: contain; }
+.company-values { display: grid; grid-template-columns: 1fr 1.3fr; gap: 10%; }
+.company-value-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--color-line); }
+.company-value-list li { display: grid; grid-template-columns: 36px 1fr; gap: 20px; padding-block: 32px; border-bottom: 1px solid var(--color-line); }
+.company-value-number { padding-top: 6px; font-size: 12px; color: var(--color-accent); }
+.company-value-list h3 { font-size: 25px; line-height: 1.5; }
+.company-value-list p { margin-top: 16px; color: var(--color-ink-body); font-size: 15px; line-height: 1.9; }
+.company-cta { background: var(--color-accent); color: var(--color-on-accent); padding-block: 84px; }
+.company-cta__inner { display: flex; justify-content: space-between; align-items: center; gap: 64px; }
+.company-cta h2 { margin-top: 22px; font-size: 42px; line-height: 1.4; white-space: pre-line; }
+.company-cta p:last-child { margin-top: 20px; font-size: 15px; line-height: 1.8; }
+.company-cta__link { display: flex; align-items: center; gap: 32px; flex-shrink: 0; min-height: 60px; padding: 10px 4px; border-bottom: 1px solid currentColor; }
+.company-cta .company-cta__link:focus-visible { outline-color: currentColor; }
+.company-certificate-dialog { margin: auto; padding: 56px 20px 20px; width: min(1040px, calc(100% - 32px)); max-height: calc(100svh - 32px); overscroll-behavior: contain; background: var(--color-surface); color: var(--color-ink); border: 1px solid var(--color-line); }
+.company-certificate-dialog::backdrop { background: rgb(0 0 0 / 80%); }
+.company-certificate-dialog > img { display: block; width: 100%; height: auto; max-height: calc(100svh - 120px); object-fit: contain; }
+.company-dialog-close { position: absolute; right: 8px; top: 6px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; color: inherit; }
+@media (min-width: 1600px) {
+  .company-hero h1 { font-size: 76px; }
+  .company-section-heading h2 { font-size: 50px; }
+}
+@media (max-width: 1024px) {
+  .company-hero { min-height: 460px; height: 76svh; max-height: 760px; }
+  .company-hero h1 { font-size: 48px; }
+  .company-hero__top { height: 100px; }
+  .company-section { padding-block: 80px; }
+  .company-overview, .company-values { grid-template-columns: 1fr 1.2fr; gap: 6%; }
+  .company-section-heading h2 { font-size: 34px; }
+  .company-facts dd { font-size: 44px; }
+  .company-service { grid-template-columns: 32px 1fr 1.2fr 24px; gap: 22px; }
+  .company-service h3 { font-size: 24px; }
+  .company-quality { gap: 5%; }
+  .company-logo-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .company-cta h2 { font-size: 34px; }
+}
+@media (max-width: 600px) {
+  .company-hero { height: auto; min-height: 0; max-height: none; padding-top: 86px; }
+  .company-hero__photo { position: relative; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
+  .company-hero__top { height: 86px; background: #171717; }
+  .company-hero__copy { position: relative; padding: 26px 0 28px; background: #171717; }
+  .company-hero__inner { display: block; }
+  .company-hero h1 { font-size: 36px; }
+  .company-hero__lead { font-size: 14px; margin-top: 12px; }
+  .company-explore { justify-content: space-between; margin-top: 22px; width: 100%; }
+  .company-section { padding-block: 64px; }
+  .company-overview, .company-quality, .company-values { grid-template-columns: 1fr; gap: 36px; }
+  .company-section-heading h2 { font-size: 30px; margin-top: 18px; }
+  .company-prose { font-size: 15px; line-height: 1.9; }
+  .company-facts { padding-top: 36px; gap: 28px 20px; }
+  .company-facts dd { font-size: 42px !important; }
+  .company-wide-heading { margin-bottom: 36px; }
+  .company-service { grid-template-columns: 26px 1fr 24px; gap: 12px; padding: 24px 0; }
+  .company-service h3 { font-size: 23px; }
+  .company-service p { grid-column: 2; grid-row: 2; font-size: 14px; }
+  .company-service__arrow { grid-column: 3; grid-row: 1; }
+  .company-logo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .company-logo-grid li { height: 86px; padding: 18px 12px; }
+  .company-logo-grid img { max-height: 28px; }
+  .company-value-list h3 { font-size: 23px; }
+  .company-value-list li { grid-template-columns: 26px 1fr; gap: 12px; }
+  .company-cta { padding-block: 56px; }
+  .company-cta__inner { display: block; }
+  .company-cta h2 { font-size: 30px; }
+  .company-cta__link { justify-content: space-between; margin-top: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .company-explore svg, .company-service, .company-service__arrow { transition: none; }
+}
 </style>
