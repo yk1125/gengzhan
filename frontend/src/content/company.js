@@ -1,7 +1,8 @@
 // Facts: PRD section 1. Local asset provenance: handoffs/B.md, T05.
 export const companyMedia = {
   office: '/assets/home/statement-bg.jpg',
-  certificate: '/services-showcase.jpg'
+  certificate: '/services-showcase.jpg',
+  enterpriseCertificate: '/zhengshu.jpg'
 }
 
 export const companyContent = {
@@ -44,6 +45,7 @@ export const companyContent = {
       description: 'CMMI 3 级认证，是公司研发过程管理能力的体现。我们重视需求、项目管理与工程质量控制，让交付过程有章可循，让后续维护有据可依。',
       label: '软件开发能力成熟度三级',
       alt: '耘栈科技 CMMI for Development Maturity Level 3 认证证书',
+      enterpriseAlt: '耘栈科技软件企业证书',
       caption: 'CMMI for Development · Maturity Level 3',
       open: '查看 CMMI 3 认证证书大图',
       close: '关闭证书大图'
@@ -109,6 +111,7 @@ export const companyContent = {
       description: 'Our CMMI Level 3 appraisal reflects our development process management capability. We bring structure to requirements, project management and engineering quality, supporting both delivery and ongoing maintenance.',
       label: 'Development Maturity Level 3',
       alt: 'Yunzhan Technology CMMI for Development Maturity Level 3 appraisal certificate',
+      enterpriseAlt: 'Yunzhan Technology software enterprise certificate',
       caption: 'CMMI for Development · Maturity Level 3',
       open: 'View the CMMI Level 3 certificate',
       close: 'Close certificate'

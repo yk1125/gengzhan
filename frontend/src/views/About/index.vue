@@ -125,6 +125,24 @@
       </div>
     </section>
 
+    <section ref="qualityStage" class="company-stage" aria-labelledby="company-stage-title">
+      <div class="company-stage__sticky">
+        <div class="company-shell company-stage__inner">
+          <div class="company-stage__copy">
+            <p class="company-eyebrow">{{ copy.quality.eyebrow }}</p>
+            <h2 id="company-stage-title">{{ copy.quality.title }}</h2>
+            <p>{{ copy.quality.description }}</p>
+            <strong>CMMI <span>3</span></strong>
+          </div>
+          <div class="company-stage__media" aria-hidden="true">
+            <figure class="company-stage__certificate company-stage__certificate--cmmi"><img :src="companyMedia.certificate" :alt="copy.quality.alt" width="1280" height="914"></figure>
+            <figure class="company-stage__certificate company-stage__certificate--enterprise"><img :src="companyMedia.enterpriseCertificate" :alt="copy.quality.enterpriseAlt" width="2048" height="1536"></figure>
+            <span class="company-stage__marker">03 / ENGINEERING QUALITY</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section
       class="company-shell company-section company-quality"
       aria-labelledby="company-quality-title"
@@ -194,8 +212,9 @@
           :aria-label="copy.customers.label"
         >
           <li
-            v-for="logo in logos"
+            v-for="(logo, index) in logos"
             :key="logo.key"
+            :class="`company-logo-grid__item company-logo-grid__item--${index % 3}`"
           >
             <img
               :src="`${CUSTOMER_ASSET_BASE}/${logo.file}`"
@@ -223,6 +242,7 @@
           {{ copy.values.title }}
         </h2>
       </div>
+      <div class="company-values__rail" aria-hidden="true"><span /></div>
       <ol class="company-value-list">
         <li
           v-for="(value, index) in copy.values.items"
@@ -298,12 +318,14 @@ import { useAboutMotion } from './useAboutMotion'
 
 const route = useRoute()
 const root = ref(null)
+const qualityStage = ref(null)
+const customersStage = ref(null)
 const certificateDialog = ref(null)
 const certificateButton = ref(null)
 const locale = computed(() => route.name === 'AboutEn' ? 'en' : 'zh-CN')
 const copy = computed(() => companyContent[locale.value])
 const logos = customerLogos()
-const { motionStyle } = useAboutMotion(root)
+const { motionStyle } = useAboutMotion(root, { qualityStage, customersStage })
 const localized = routeKey => localizeRoute({ routeKey, locale: locale.value })
 
 function explore () {
@@ -363,6 +385,19 @@ function closeOnBackdrop (event) {
 .company-service:hover, .company-service:focus-visible { background: var(--color-bg); }
 .company-service:hover .company-service__arrow { transform: rotate(45deg); color: var(--color-accent); }
 .company-quality { display: grid; grid-template-columns: 1fr 1.15fr; gap: 9%; align-items: center; }
+.company-stage { position: relative; height: 260vh; background: var(--color-surface-soft); }
+.company-stage__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.company-stage__inner { display: grid; grid-template-columns: .8fr 1.2fr; gap: 8%; align-items: center; height: 100%; }
+.company-stage__copy h2 { margin-top: 20px; font-size: clamp(42px, 5vw, 76px); line-height: 1.12; white-space: pre-line; }
+.company-stage__copy > p:not(.company-eyebrow) { max-width: 430px; margin-top: 26px; color: var(--color-ink-body); line-height: 1.9; }
+.company-stage__copy strong { display: block; margin-top: 52px; font-size: 64px; font-weight: 500; }
+.company-stage__copy strong span { color: var(--color-accent); }
+.company-stage__media { position: relative; height: min(72vh, 760px); perspective: 1200px; }
+.company-stage__certificate { position: absolute; inset: 8% 0 auto auto; width: 78%; margin: 0; overflow: hidden; background: #fff; box-shadow: 0 30px 80px rgb(0 0 0 / 18%); transform-origin: 70% 50%; }
+.company-stage__certificate img { display: block; width: 100%; height: auto; }
+.company-stage__certificate--cmmi { z-index: 2; transform: translate3d(calc(var(--quality-progress) * -22%), calc(var(--quality-progress) * -12%), 0) rotate(calc(var(--quality-progress) * -5deg)) scale(calc(1.02 - var(--quality-progress) * .27)); }
+.company-stage__certificate--enterprise { z-index: 1; transform: translate3d(calc(28% - var(--quality-progress) * 10%), calc(18% - var(--quality-progress) * 30%), 0) rotate(calc(7deg - var(--quality-progress) * 3deg)) scale(calc(.7 + var(--quality-progress) * .34)); opacity: calc(.25 + var(--quality-progress) * .75); }
+.company-stage__marker { position: absolute; right: 0; bottom: 3%; color: var(--color-ink-soft); font-size: 11px; letter-spacing: .12em; }
 .company-quality .company-prose { margin-top: 26px; }
 .company-credential { margin-top: 36px; font-size: 44px !important; line-height: 1.15; }
 .company-credential span { color: var(--color-accent); }
@@ -375,6 +410,10 @@ function closeOnBackdrop (event) {
 .company-logo-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); padding: 0; margin: 0; list-style: none; background: #fff; }
 .company-logo-grid li { display: grid; place-items: center; height: 112px; padding: 24px 16px; border: 1px solid #ededed; }
 .company-logo-grid img { display: block; width: auto; max-width: 100%; object-fit: contain; }
+.company-logo-grid { overflow: hidden; }
+.company-logo-grid__item { transform: translateX(calc((var(--customer-progress) - .5) * 70px * (var(--logo-direction, 1)))); transition: transform .15s linear; }
+.company-logo-grid__item--1 { --logo-direction: -1; }
+.company-logo-grid__item--2 { --logo-direction: .65; }
 .company-values { display: grid; grid-template-columns: 1fr 1.3fr; gap: 10%; }
 .company-value-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--color-line); }
 .company-value-list li { display: grid; grid-template-columns: 36px 1fr; gap: 20px; padding-block: 32px; border-bottom: 1px solid var(--color-line); }
@@ -408,6 +447,11 @@ function closeOnBackdrop (event) {
   .company-quality { gap: 5%; }
   .company-logo-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .company-cta h2 { font-size: 34px; }
+  .company-stage { height: 180vh; }
+  .company-stage__inner { grid-template-columns: 1fr; gap: 20px; padding-block: 72px; }
+  .company-stage__copy h2 { font-size: 40px; }
+  .company-stage__copy strong { margin-top: 28px; font-size: 48px; }
+  .company-stage__media { height: 52vh; }
 }
 @media (max-width: 600px) {
   .company-hero { height: auto; min-height: 0; max-height: none; padding-top: 86px; }
@@ -438,6 +482,13 @@ function closeOnBackdrop (event) {
   .company-cta__inner { display: block; }
   .company-cta h2 { font-size: 30px; }
   .company-cta__link { justify-content: space-between; margin-top: 30px; }
+  .company-stage { height: auto; }
+  .company-stage__sticky { position: relative; height: auto; min-height: 820px; }
+  .company-stage__inner { display: block; padding-block: 64px; }
+  .company-stage__media { height: 370px; margin-top: 38px; }
+  .company-stage__certificate { width: 88%; }
+  .company-stage__certificate--cmmi { transform: translate3d(-12%, -8%, 0) rotate(-4deg) scale(.9); }
+  .company-stage__certificate--enterprise { transform: translate3d(8%, 18%, 0) rotate(5deg) scale(.75); opacity: .75; }
 }
 @media (prefers-reduced-motion: reduce) {
   .company-explore svg, .company-service, .company-service__arrow { transition: none; }

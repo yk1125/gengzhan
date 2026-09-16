@@ -1167,3 +1167,12 @@ $ npx.cmd eslint _base_index.vue _base_home.js --ext .vue,.js                   
 
 - 本提交只覆盖 About；Contact、Privacy、Legal 仍待后续 T05 提交。
 - 下一步：读取 A 的 `submitInquiry` 最终导出和 DATA 校验模型，实现 Contact 双语/主题/失败保留/复制退路，再补 Privacy/Legal。
+
+## About 交互重做（用户确认方案后）
+
+- 用户确认六幕滚动叙事：品牌影像、公司介绍数字、双证书固定视口、客户墙横移、合作理念进度线、蓝色 CTA。
+- 本轮已落地第三幕固定视口时间轴：`--quality-progress` 驱动 CMMI 证书与软件企业证书的连续位移、旋转、缩放、透明度；桌面完整，手机静态降级。
+- 首屏继续使用本地品牌墙实拍 `assets/home/statement-bg.jpg`；`services-showcase.jpg` 与用户新增 `frontend/public/zhengshu.jpg` 均进入第三幕并按真实证书类型标注。
+- 客户墙三组 Logo 随滚动以不同方向/速度横移；手机保持网格，避免横向溢出。
+- 新截图：`handoffs/B/about/timeline-start.png`、`timeline-mid.png`、`timeline-mobile.png`。
+- 实测：1440 时间轴五个进度点的两个证书 transform/opacity 均连续变化；390 英文页面无中文、无坏图、无横向溢出；build、motion gate 通过。
