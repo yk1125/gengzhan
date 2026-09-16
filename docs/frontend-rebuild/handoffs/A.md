@@ -1,4 +1,10 @@
-# Session A · T02-S 服务页样板集成与样板验收矩阵（2026-09-15）
+# Session A · 当前交接状态（2026-09-17）
+
+样板已获用户验收通过，依据本对话“目前我验收没什么问题了”。统一代码基准 `pilotCommit = 9586ba2`，包含路由补齐及之前已验收的主题、语言和导航修复。T03/T04/T05 可启动但尚未派发；A 继续 T06 公共收尾及 T07/T08。中英文联系页仍待 B/T05 实现，严格路由检查因此退出 1；本轮不声明全站完成。
+
+下方为历次工作记录，历史“待确认/未提交”按当时状态保留，当前状态以本节和 PLAN 为准。下一步从统一代码基准开展下游任务；无需再次索要样板批准。
+
+# Session A · T02-S 服务页样板集成与样板验收矩阵（2026-09-15 历史记录）
 
 状态：完成（样板待用户确认；下游 B·T05 / D·T04 / C·T03 未启动）
 基准commit：`1a9aa2a`（合并提交；合并前 main = `b6a2c72`）；`pilotCommit` 候选 = `1a9aa2a`
@@ -484,6 +490,17 @@ INTEGRATION.md:58  - **D2（2026-09-14）**：`/services/:slug` 形状确认为�
 ## 附录 · 上一任务记录
 
 ### Session A / Task T00-T01
+## 2026-09-17 · T01 路由对照表补齐
+
+- 起点：main `0acd1f8`；代码与规格提交 `9586ba2`，作为已批准样板的统一代码基准。
+- 完成：routeManifest 由 3 项补齐为 18 项，localizeRoute 返回 `{name, params, query, hash}`，使用现有 Vue Router 名称；首页字符串链接通过 router.resolve 获取。
+- 文件：frontend/src/config/routeManifest.js、frontend/src/views/Home/index.vue、frontend/scripts/check-routes.mjs、specs/FRONTEND.md、PLAN.md 及 A/INTEGRATION 交接记录。
+- 验证：build PASS；check:routes PASS 34 / FAIL 0 / PENDING 2；18 项登记检查通过。脚本用真实 Vue Router 内存路由验证双语链接、详情特殊字符编码往返、ID=0、缺失 ID、404 多段路径、查询参数/锚点、非法 key/locale/hash。
+- 严格检查：FAIL 0 / PENDING 2，退出码 1，仅因 Contact/ContactEn 尚未注册（B/T05）；不将其标为全绿。
+- 只读 eslint：修改的三个代码文件 0 errors / 127 warnings，warning 均在首页模板；git diff --check 通过。
+- 接口/素材：无新增需求；未改变视觉，无新增截图或真机验证。
+- 下一步：B/T05 实现中英文联系页后由 A 注册 Contact/ContactEn，并更新脚本待办；本次不代表 T01 的其他事项全部完成。
+
 状态：完成（基础待样板验收）
 基准commit：b484790
 本任务commit：
