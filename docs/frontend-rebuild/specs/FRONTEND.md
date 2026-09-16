@@ -43,7 +43,7 @@ frontend/tests/
 
 ## 3. 路由契约
 
-语言与业务路由分离：每个页面有稳定 `routeKey`；中文名称 `${routeKey}.zh-CN`，英文 `${routeKey}.en`，由统一 routeManifest 生成。定义 `localizeRoute({routeKey, params={}, query={}, hash='', locale})`，返回 Vue Router location 对象 `{name,params,query,hash}`，不让页面拼接 `/en` 字符串。locale必填且为zh-CN/en；hash为空或以#开头。
+语言与业务路由分离：每个页面有稳定 `routeKey`，统一 routeManifest 登记中英文路径和已注册路由名称。2026-09-17 兼容现有实现：保留 `Home/HomeEn` 等名称，通过每项 `names: [中文路由名, 英文路由名]` 映射，不批量重命名 router。定义 `localizeRoute({routeKey, params={}, query={}, hash='', locale})`，返回 Vue Router location 对象 `{name,params,query,hash}`，不让页面拼接 `/en` 字符串。locale必填且为zh-CN/en；hash为空或以#开头。详情传 `params.id`，404 传 `params.pathMatch` 数组，编码交给 Vue Router；需要字符串路径时用 `router.resolve(localizeRoute(...)).path`。联系页的 `Contact/ContactEn` 为待注册名称（B/T05），登记不代表页面已实现。
 
 | routeKey | 中文 | 英文 | 页面 |
 | --- | --- | --- | --- |

@@ -3,9 +3,9 @@
  * 路由契约门禁（check:routes）
  *
  * 做三件事：
- * 1. 静态解析 src/router/index.js 的 routes（不启动 Vite、不依赖 node_modules）；
+ * 1. 静态解析 src/router/index.js 的 routes（不启动 Vite）；
  * 2. 读取 src/config/routeManifest.js；
- * 3. 把 docs/frontend-rebuild/specs/FRONTEND.md §3 路由契约表每一行（中文/英文）逐条 match。
+ * 3. 把 docs/frontend-rebuild/specs/FRONTEND.md §3 路由契约表每一行（中文/英文）逐条 match，并用 Vue Router 内存路由验证链接解析。
  *
  * 输出每行 PASS / FAIL / PENDING；任一 FAIL（或在 --strict 下任一 PENDING）退出码为 1。
  * PENDING 是「已记录、尚未实现」的路由（含负责人与任务号），既不算通过也不静默放过。
@@ -14,6 +14,8 @@ import { readFileSync, writeFileSync, rmSync } from 'node:fs'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
+import assert from 'node:assert/strict'
+import { createRouter, createMemoryHistory } from 'vue-router'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const frontendDir = resolve(here, '..')
@@ -133,7 +135,8 @@ function matchRoute (routes, path) {
 function main () {
   return loadRoutes().then(async (routes) => {
     const specRows = parseSpecRows(readFileSync(specFile, 'utf8'))
-    const manifest = (await import(pathToFileURL(manifestFile).href)).routeManifest ?? {}
+    const { routeManifest: manifest, localizeRoute } = await import(pathToFileURL(manifestFile).href)
+    const resolver = createRouter({ history: createMemoryHistory(), routes })
     const pending = new Map(PENDING.map((entry) => [entry.routeKey, entry]))
     const routerSource = readFileSync(routerFile, 'utf8')
 
@@ -201,11 +204,52 @@ function main () {
       if (pending.has(key)) { manifestPending.push(key); continue }
       for (const [locale, path] of [['zh', entry.zh], ['en', entry.en]]) {
         if (!path) { manifestProblems.push(`${key}.${locale} 未定义路径`); continue }
-        const hit = matchRoute(routes, path)
-        if (!hit || hit.catchAll) manifestProblems.push(`${key}.${locale} ${path} 未命中独立路由`)
+        const hit = routes.find((route) => route.path === path)
+        if (!hit || hit.name !== entry.names?.[locale === 'en' ? 1 : 0]) {
+          manifestProblems.push(`${key}.${locale} ${path} 路径或路由名称不匹配`)
+          continue
+        }
+        const specRow = specRows.find((row) => row.routeKey === key)
+        const expected = specRow && parseCell(specRow[locale])
+        if (!expected || (expected.kind === 'path' && expected.path !== path) ||
+          (expected.kind === 'catchall-any' && (!hit.catchAll || path.startsWith('/en'))) ||
+          (expected.kind === 'catchall-prefix' && (!hit.catchAll || !path.startsWith(`${expected.prefix}/`)))) {
+          manifestProblems.push(`${key}.${locale} 与 SPEC 路由契约不匹配`)
+        }
+        try {
+          const params = key.endsWith('.detail') ? { id: 'sample / 中文?#' } : key === 'notFound' ? { pathMatch: ['missing', '中文'] } : {}
+          const query = { page: '2', category: 'AI & Web' }
+          const location = localizeRoute({ routeKey: key, locale: locale === 'en' ? 'en' : 'zh-CN', params, query, hash: '#section' })
+          const resolved = resolver.resolve(location)
+          const roundTrip = resolver.resolve(resolved.fullPath)
+          assert.equal(resolved.name, hit.name)
+          assert.equal(roundTrip.name, hit.name)
+          assert.deepEqual(roundTrip.params, params)
+          assert.deepEqual(roundTrip.query, query)
+          assert.equal(roundTrip.hash, '#section')
+        } catch (error) {
+          manifestProblems.push(`${key}.${locale} localizeRoute 解析失败：${error.message}`)
+        }
       }
     }
     const missingInManifest = specRows.map((row) => row.routeKey).filter((key) => !(key in manifest))
+    try {
+      for (const routeKey of ['case.detail', 'news.detail']) {
+        for (const locale of ['zh-CN', 'en']) {
+          assert.throws(() => resolver.resolve(localizeRoute({ routeKey, locale })), /Missing required param/)
+          assert.ok(resolver.resolve(localizeRoute({ routeKey, locale, params: { id: 0 } })).path.endsWith('/0'))
+        }
+      }
+      for (const routeKey of ['unknown', 'toString', '__proto__']) {
+        assert.throws(() => localizeRoute({ routeKey, locale: 'en' }), /Unknown route or locale/)
+      }
+      for (const locale of [undefined, 'fr']) {
+        assert.throws(() => localizeRoute({ routeKey: 'home', locale }), /Unknown route or locale/)
+      }
+      assert.throws(() => localizeRoute({ routeKey: 'home', locale: 'en', hash: 'section' }), /Hash/)
+    } catch (error) {
+      manifestProblems.push(`localizeRoute 边界检查失败：${error.message}`)
+    }
 
     lines.push('')
     const slashGuardOk = routerSource.includes("endsWith('/')") && routerSource.includes('/\\/+$/')
@@ -214,7 +258,7 @@ function main () {
     lines.push(`routeManifest：${Object.keys(manifest).length} 条记录，${manifestProblems.length === 0 ? 'PASS' : 'FAIL'}`)
     for (const problem of manifestProblems) lines.push(`[FAIL] routeManifest ${problem}`)
     if (missingInManifest.length) {
-      lines.push(`[WARN] routeManifest 尚未覆盖 §3 的 ${missingInManifest.length} 个 routeKey：${missingInManifest.join(', ')}（T01 未完成，不属于本次修复范围）`)
+      lines.push(`[WARN] routeManifest 尚未覆盖 §3 的 ${missingInManifest.length} 个 routeKey：${missingInManifest.join(', ')}`)
     }
     for (const entry of PENDING) lines.push(`[PENDING] ${entry.routeKey} — ${entry.reason}（${entry.owner}）`)
     for (const key of manifestPending) lines.push(`[PENDING] routeManifest ${key} 指向尚未实现的路由（同上）`)
@@ -229,6 +273,7 @@ function main () {
     console.log(lines.join('\n'))
     console.log('')
     console.log(`结果：PASS ${pass} / FAIL ${fail + slashFail + manifestFail + warnFail} / PENDING ${skipped}${strict ? '（--strict）' : ''}`)
+    if (strict && pendingFail) console.log('严格模式退出码为 1：仍有 PENDING 路由，不能视为全部通过。')
 
     return totalFail === 0 ? 0 : 1
   })

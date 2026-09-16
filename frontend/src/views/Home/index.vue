@@ -233,7 +233,7 @@
  * `docs/frontend-rebuild/handoffs/B.md` 的契约变更申请。
  */
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { localizeRoute } from '@/config/routeManifest'
 import {
   CUSTOMER_ASSET_BASE,
@@ -252,6 +252,7 @@ import { useHomeScroll } from './useHomeScroll'
 import { useCustomerWall, useInsightsSwiper } from './useHomeSwipers'
 
 const route = useRoute()
+const router = useRouter()
 const rootRef = ref(null)
 /** 首屏 <video> 模板引用（M-07 需要程序化播放，SPEC 明确不用 autoplay 属性）。 */
 const bannerVideoRef = ref(null)
@@ -267,7 +268,7 @@ useCustomerWall(rootRef, isDesktop, reducedMotion)
 useInsightsSwiper(rootRef, isDesktop)
 
 /* ---------------------------------------------------------------- 路由目标 */
-const aiConsultationPath = computed(() => localizeRoute({ routeKey: 'ai', locale: locale.value }).path)
+const aiConsultationPath = computed(() => router.resolve(localizeRoute({ routeKey: 'ai', locale: locale.value })).path)
 const aboutPath = computed(() => (isEn.value ? '/en/about' : '/about'))
 const casesPath = computed(() => (isEn.value ? '/en/cases' : '/cases'))
 const newsPath = computed(() => (isEn.value ? '/en/news' : '/news'))
