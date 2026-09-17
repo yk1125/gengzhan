@@ -1138,6 +1138,15 @@ $ npx.cmd eslint _base_index.vue _base_home.js --ext .vue,.js                   
 2. 继续 §9.17 C1：M-03 页头入场、M-31 footer 圆形按钮 hover 发光。M-32 `.fixed_side` 与滚动惯性耦合，等 A 的 lenis。
 3. A 的 `lenis` 合入后：复跑 `bx-r6b2.js` 确认页内逐帧口径未被全局滚动改变；复跑 `bx-hdr.js` / `bx-combo.js` 确认 M-04/M-05 的 wheel 判定仍成立。
 # Session B / Task T05
+
+## About 参考站交互修订（2026-09-18）
+
+- 首屏改为参考站 `about1` 的文档流裁切视差：图片初始负偏移，按页面滚动距离以 0.9 倍像素平移；移除旧黑色 sticky hero 残留规则，移动端保持可读的静态裁切。
+- 合作理念改为参考站 `about_fix` 的四屏固定视口卡片堆叠：每张左图右文卡片从视口底部进入，完成后按 20px 间距压叠；桌面滚动驱动，手机改为连续卡片布局。
+- 数字计数改为 `IntersectionObserver` 进入触发、离开上方重置，2.4 秒递增，回滚重新进入会再次播放。
+- CTA 颜色调整为深青绿色；保留本地办公室图及 `services-showcase.jpg`、`zhengshu.jpg`。
+
+验证：`frontend/npm.cmd run build` 通过；About 定向 ESLint 0 errors（40 warnings，均为既有模板格式规则）。本地 `http://127.0.0.1:3012/about` 桌面首屏截图已检查，标题可读、首屏图片无空白断层。
 状态：进行中（About 完成，Contact/Privacy/Legal 待本轮后续）
 基准commit：`895e0f6`（已快进到用户指定起点）
 

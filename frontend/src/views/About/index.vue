@@ -5,47 +5,44 @@
     :style="motionStyle"
   >
     <section
+      ref="heroStage"
       class="company-hero"
       aria-labelledby="company-title"
     >
-      <img
-        class="company-hero__photo"
-        :src="companyMedia.office"
-        :alt="copy.photoAlt"
-        width="2048"
-        height="1536"
-        fetchpriority="high"
-      >
-      <div
-        class="company-hero__top"
-        aria-hidden="true"
-      />
-      <div class="company-hero__copy">
-        <div class="company-shell company-hero__inner">
-          <div data-company-reveal>
-            <p class="company-eyebrow">
-              {{ copy.since }}
-            </p>
-            <h1 id="company-title">
-              {{ copy.name }}
-            </h1>
-            <p class="company-hero__lead">
-              {{ copy.tagline }}
-            </p>
-          </div>
-          <a
-            class="company-explore"
-            href="#company-intro"
-            @click.prevent="explore"
-          >
-            <span>{{ copy.explore }}</span><Bottom aria-hidden="true" />
-          </a>
+      <div class="company-shell company-hero__wrap">
+        <div class="company-hero__title">
+          <p class="company-eyebrow">{{ copy.since }}</p>
+          <h1 id="company-title">{{ copy.name }}</h1>
+          <p class="company-hero__lead">{{ copy.tagline }}</p>
         </div>
+      </div>
+      <div class="company-hero__parallax">
+        <img
+          class="company-hero__photo"
+          :src="companyMedia.office"
+          :alt="copy.photoAlt"
+          width="2048"
+          height="1536"
+          fetchpriority="high"
+        >
+      </div>
+      <div class="company-shell company-hero__bottom">
+        <div class="company-hero__statement" data-company-reveal>
+          <p>{{ copy.intro.title }}</p>
+        </div>
+        <a
+          class="company-explore"
+          href="#company-intro"
+          @click.prevent="explore"
+        >
+          <span>{{ copy.explore }}</span><Bottom aria-hidden="true" />
+        </a>
       </div>
     </section>
 
     <section
       id="company-intro"
+      ref="overviewStage"
       class="company-shell company-section company-overview"
       aria-labelledby="company-intro-title"
     >
@@ -81,7 +78,7 @@
             :key="fact.label"
             data-company-reveal
           >
-            <dt>{{ fact.label }}</dt><dd>{{ fact.value }}</dd>
+            <dt>{{ fact.label }}</dt><dd>{{ displayFacts[fact.label] || fact.value }}</dd>
           </div>
         </dl>
       </div>
@@ -144,54 +141,7 @@
     </section>
 
     <section
-      class="company-shell company-section company-quality"
-      aria-labelledby="company-quality-title"
-    >
-      <div
-        class="company-section-heading"
-        data-company-reveal
-      >
-        <p class="company-eyebrow">
-          {{ copy.quality.eyebrow }}
-        </p>
-        <h2 id="company-quality-title">
-          {{ copy.quality.title }}
-        </h2>
-        <p class="company-prose">
-          {{ copy.quality.description }}
-        </p>
-        <p class="company-credential">
-          CMMI <span>3</span>
-        </p>
-        <p class="company-note">
-          {{ copy.quality.label }}
-        </p>
-      </div>
-      <figure
-        class="company-certificate"
-        data-company-reveal
-      >
-        <button
-          ref="certificateButton"
-          type="button"
-          :aria-label="copy.quality.open"
-          aria-haspopup="dialog"
-          @click="certificateDialog.showModal()"
-        >
-          <img
-            :src="companyMedia.certificate"
-            :alt="copy.quality.alt"
-            width="1280"
-            height="914"
-            loading="lazy"
-          >
-          <span class="company-certificate__zoom"><ZoomIn aria-hidden="true" /></span>
-        </button>
-        <figcaption>{{ copy.quality.caption }}</figcaption>
-      </figure>
-    </section>
-
-    <section
+      ref="customersStage"
       class="company-customers company-section"
       aria-labelledby="company-customers-title"
     >
@@ -207,52 +157,47 @@
             {{ copy.customers.title }}
           </h2>
         </div>
-        <ul
-          class="company-logo-grid"
-          :aria-label="copy.customers.label"
-        >
-          <li
-            v-for="(logo, index) in logos"
-            :key="logo.key"
-            :class="`company-logo-grid__item company-logo-grid__item--${index % 3}`"
-          >
-            <img
-              :src="`${CUSTOMER_ASSET_BASE}/${logo.file}`"
-              alt=""
-              :style="{ height: `${logo.height}px` }"
-              loading="lazy"
-            >
-          </li>
-        </ul>
+        <div class="company-logo-rows" :aria-label="copy.customers.label">
+          <div v-for="(row, rowIndex) in logoRows" :key="rowIndex" class="company-logo-track" :class="`company-logo-track--${rowIndex % 2 ? 'reverse' : 'forward'}`">
+            <div class="company-logo-grid">
+              <span v-for="(logo, logoIndex) in [...row, ...row]" :key="`${rowIndex}-${logo.key}-${logoIndex}`" class="company-logo-grid__item">
+                <img :src="`${CUSTOMER_ASSET_BASE}/${logo.file}`" alt="" :style="{ height: `${logo.height}px` }" loading="lazy">
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
     <section
-      class="company-shell company-section company-values"
+      ref="valuesStage"
+      class="company-values"
       aria-labelledby="company-values-title"
     >
-      <div
-        class="company-section-heading"
-        data-company-reveal
-      >
-        <p class="company-eyebrow">
-          {{ copy.values.eyebrow }}
-        </p>
-        <h2 id="company-values-title">
-          {{ copy.values.title }}
-        </h2>
+      <div class="company-values__sticky">
+        <div class="company-shell company-values__inner">
+          <div
+            class="company-section-heading"
+            data-company-reveal
+          >
+            <p class="company-eyebrow">
+              {{ copy.values.eyebrow }}
+            </p>
+            <h2 id="company-values-title">
+              {{ copy.values.title }}
+            </h2>
+          </div>
+          <div class="company-values__visual">
+            <div v-for="(value, index) in copy.values.items" :key="value.title" class="company-values__card" :style="{ '--value-index': index }" data-value-card>
+              <div class="company-values__card-media"><img :src="companyMedia.office" :alt="`${value.title} visual`"></div>
+              <div class="company-values__card-copy">
+                <span class="company-value-number">0{{ index + 1 }}</span>
+                <div><h3>{{ value.title }}</h3><p>{{ value.description }}</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="company-values__rail" aria-hidden="true"><span /></div>
-      <ol class="company-value-list">
-        <li
-          v-for="(value, index) in copy.values.items"
-          :key="value.title"
-          data-company-reveal
-        >
-          <span class="company-value-number">0{{ index + 1 }}</span>
-          <div><h3>{{ value.title }}</h3><p>{{ value.description }}</p></div>
-        </li>
-      </ol>
     </section>
 
     <section
@@ -310,7 +255,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { Bottom, Close, TopRight, ZoomIn } from '@element-plus/icons-vue'
+import { Bottom, Close, TopRight } from '@element-plus/icons-vue'
 import { localizeRoute } from '@/config/routeManifest'
 import { companyContent, companyMedia } from '@/content/company'
 import { customerLogos, CUSTOMER_ASSET_BASE } from '@/content/home'
@@ -318,14 +263,20 @@ import { useAboutMotion } from './useAboutMotion'
 
 const route = useRoute()
 const root = ref(null)
+const heroStage = ref(null)
+const overviewStage = ref(null)
 const qualityStage = ref(null)
 const customersStage = ref(null)
+const valuesStage = ref(null)
 const certificateDialog = ref(null)
 const certificateButton = ref(null)
 const locale = computed(() => route.name === 'AboutEn' ? 'en' : 'zh-CN')
 const copy = computed(() => companyContent[locale.value])
 const logos = customerLogos()
-const { motionStyle } = useAboutMotion(root, { qualityStage, customersStage })
+const logoRows = computed(() => [logos.slice(0, 8), logos.slice(8, 16), logos.slice(16)])
+const displayFacts = ref({})
+const facts = computed(() => copy.value.facts)
+const { motionStyle } = useAboutMotion(root, { heroStage, overviewStage, qualityStage, customersStage, valuesStage, displayFacts, facts })
 const localized = routeKey => localizeRoute({ routeKey, locale: locale.value })
 
 function explore () {
@@ -353,15 +304,19 @@ function closeOnBackdrop (event) {
 .company-page button { font: inherit; cursor: pointer; }
 .company-page svg { width: 24px; height: 24px; flex: 0 0 auto; }
 .company-page :is(a, button):focus-visible { outline: 3px solid var(--color-accent); outline-offset: 6px; }
-.company-hero { position: relative; isolation: isolate; height: min(760px, 80svh); min-height: 460px; overflow: hidden; background: #171717; color: #fff; }
-.company-hero__photo { position: absolute; width: 100%; height: 100%; object-fit: cover; object-position: center 48%; }
-.company-hero__top { position: absolute; inset: 0 0 auto; height: 110px; background: rgb(0 0 0 / 66%); }
-.company-hero__copy { position: absolute; inset: auto 0 0; background: rgb(0 0 0 / 66%); padding: 34px 0 38px; }
-.company-hero__inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
+.company-hero { position: relative; background: var(--color-bg); color: var(--color-ink); padding: 180px 0 116px; overflow: hidden; }
+.company-hero__wrap { position: relative; z-index: 1; }
+.company-hero__title { max-width: 900px; }
+.company-hero__title h1 { margin-top: 20px; font-size: clamp(54px, 8vw, 120px); line-height: .98; }
+.company-hero__lead { margin-top: 24px; max-width: 560px; font-size: 20px; line-height: 1.7; }
+.company-hero__parallax { height: min(37.2vw, 536px); min-height: 360px; margin-top: 74px; overflow: hidden; }
+.company-hero__photo { position: relative; top: -64%; display: block; width: 100%; height: 280%; object-fit: cover; object-position: center 38%; transform: translate3d(0, var(--hero-parallax), 0); will-change: transform; }
+.company-hero__bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; margin-top: 58px; }
+.company-hero__statement { max-width: 560px; font-size: clamp(24px, 3vw, 42px); line-height: 1.35; }
 .company-eyebrow { font-size: 12px; line-height: 1.5; font-weight: 500; }
 .company-hero h1 { margin-top: 8px; font-size: 64px; line-height: 1.15; }
 .company-hero__lead { margin-top: 16px; font-size: 18px; line-height: 1.7; }
-.company-explore { display: flex; min-height: 48px; gap: 32px; align-items: center; border-bottom: 1px solid rgb(255 255 255 / 60%); font-size: 13px; white-space: nowrap; }
+.company-explore { display: flex; min-height: 48px; gap: 32px; align-items: center; border-bottom: 1px solid var(--color-line); font-size: 13px; white-space: nowrap; }
 .company-explore svg { transition: transform var(--company-duration) var(--company-ease); }
 .company-explore:hover svg { transform: translateY(5px); }
 .company-section { padding-block: 120px; }
@@ -384,6 +339,9 @@ function closeOnBackdrop (event) {
 .company-service__arrow { transition: transform var(--company-duration) var(--company-ease); }
 .company-service:hover, .company-service:focus-visible { background: var(--color-bg); }
 .company-service:hover .company-service__arrow { transform: rotate(45deg); color: var(--color-accent); }
+.company-service:nth-child(2) { transition-delay: 40ms; }
+.company-service:nth-child(3) { transition-delay: 80ms; }
+.company-service:nth-child(4) { transition-delay: 120ms; }
 .company-quality { display: grid; grid-template-columns: 1fr 1.15fr; gap: 9%; align-items: center; }
 .company-stage { position: relative; height: 260vh; background: var(--color-surface-soft); }
 .company-stage__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; }
@@ -407,20 +365,30 @@ function closeOnBackdrop (event) {
 .company-certificate__zoom { position: absolute; right: 12px; bottom: 12px; width: 44px; height: 44px; display: grid; place-items: center; background: #fff; color: #111; border: 1px solid #aaa; border-radius: 50%; }
 .company-certificate figcaption { margin-top: 16px; font-size: 12px; line-height: 1.7; color: var(--color-ink-soft); }
 .company-customers { background: var(--color-surface-soft); }
-.company-logo-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); padding: 0; margin: 0; list-style: none; background: #fff; }
-.company-logo-grid li { display: grid; place-items: center; height: 112px; padding: 24px 16px; border: 1px solid #ededed; }
+.company-logo-rows { overflow: hidden; background: #fff; }
+.company-logo-track { overflow: hidden; }
+.company-logo-grid { display: flex; width: max-content; padding: 0; margin: 0; list-style: none; background: #fff; transform: translateX(calc((.5 - var(--customer-progress)) * 18vw)); }
+.company-logo-track--reverse .company-logo-grid { transform: translateX(calc((var(--customer-progress) - .5) * 18vw)); }
+.company-logo-grid__item { display: grid; place-items: center; width: 12.5vw; min-width: 150px; height: 112px; padding: 24px 16px; border: 1px solid #ededed; }
 .company-logo-grid img { display: block; width: auto; max-width: 100%; object-fit: contain; }
-.company-logo-grid { overflow: hidden; }
-.company-logo-grid__item { transform: translateX(calc((var(--customer-progress) - .5) * 70px * (var(--logo-direction, 1)))); transition: transform .15s linear; }
-.company-logo-grid__item--1 { --logo-direction: -1; }
-.company-logo-grid__item--2 { --logo-direction: .65; }
-.company-values { display: grid; grid-template-columns: 1fr 1.3fr; gap: 10%; }
+.company-values { position: relative; height: 400vh; background: var(--color-bg); }
+.company-values__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.company-values__inner { position: relative; height: 100%; }
+.company-values__inner > .company-section-heading { position: absolute; z-index: 6; top: 9vh; left: 5%; max-width: 520px; }
+.company-values__visual { position: absolute; inset: 0; }
+.company-values__card { position: absolute; z-index: calc(2 + var(--value-index)); top: 31vh; left: 5%; width: 90%; height: min(50vh, 420px); display: grid; grid-template-columns: minmax(280px, .95fr) 1.05fr; gap: 0; align-items: stretch; background: var(--color-surface); box-shadow: 0 24px 60px rgb(0 0 0 / 16%); transform: translateY(100vh); will-change: transform; }
+.company-values__card:first-child { transform: translateY(0); }
+.company-values__card-media { height: 100%; overflow: hidden; }
+.company-values__card-media img { width: 100%; height: 100%; object-fit: cover; }
+.company-values__card-copy { display: grid; grid-template-columns: 52px 1fr; gap: 26px; align-content: center; padding: 42px 8% 36px 10%; border: 1px solid var(--color-line); border-left: 0; }
+.company-values__card-copy h3 { font-size: clamp(28px, 3vw, 52px); }
+.company-values__card-copy p { margin-top: 22px; color: var(--color-ink-body); line-height: 1.9; }
 .company-value-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--color-line); }
 .company-value-list li { display: grid; grid-template-columns: 36px 1fr; gap: 20px; padding-block: 32px; border-bottom: 1px solid var(--color-line); }
 .company-value-number { padding-top: 6px; font-size: 12px; color: var(--color-accent); }
 .company-value-list h3 { font-size: 25px; line-height: 1.5; }
 .company-value-list p { margin-top: 16px; color: var(--color-ink-body); font-size: 15px; line-height: 1.9; }
-.company-cta { background: var(--color-accent); color: var(--color-on-accent); padding-block: 84px; }
+.company-cta { background: #254a45; color: #fff; padding-block: 84px; }
 .company-cta__inner { display: flex; justify-content: space-between; align-items: center; gap: 64px; }
 .company-cta h2 { margin-top: 22px; font-size: 42px; line-height: 1.4; white-space: pre-line; }
 .company-cta p:last-child { margin-top: 20px; font-size: 15px; line-height: 1.8; }
@@ -435,11 +403,11 @@ function closeOnBackdrop (event) {
   .company-section-heading h2 { font-size: 50px; }
 }
 @media (max-width: 1024px) {
-  .company-hero { min-height: 460px; height: 76svh; max-height: 760px; }
+  .company-hero { min-height: 0; height: auto; max-height: none; padding-top: 132px; }
   .company-hero h1 { font-size: 48px; }
   .company-hero__top { height: 100px; }
   .company-section { padding-block: 80px; }
-  .company-overview, .company-values { grid-template-columns: 1fr 1.2fr; gap: 6%; }
+  .company-overview { grid-template-columns: 1fr 1.2fr; gap: 6%; }
   .company-section-heading h2 { font-size: 34px; }
   .company-facts dd { font-size: 44px; }
   .company-service { grid-template-columns: 32px 1fr 1.2fr 24px; gap: 22px; }
@@ -454,16 +422,15 @@ function closeOnBackdrop (event) {
   .company-stage__media { height: 52vh; }
 }
 @media (max-width: 600px) {
-  .company-hero { height: auto; min-height: 0; max-height: none; padding-top: 86px; }
-  .company-hero__photo { position: relative; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
-  .company-hero__top { height: 86px; background: #171717; }
-  .company-hero__copy { position: relative; padding: 26px 0 28px; background: #171717; }
-  .company-hero__inner { display: block; }
+  .company-hero { padding: 104px 0 64px; }
+  .company-hero__parallax { height: 310px; min-height: 0; margin-top: 40px; }
+  .company-hero__photo { top: -19%; height: 150%; transform: none; }
+  .company-hero__bottom { display: block; margin-top: 36px; }
   .company-hero h1 { font-size: 36px; }
   .company-hero__lead { font-size: 14px; margin-top: 12px; }
   .company-explore { justify-content: space-between; margin-top: 22px; width: 100%; }
   .company-section { padding-block: 64px; }
-  .company-overview, .company-quality, .company-values { grid-template-columns: 1fr; gap: 36px; }
+  .company-overview, .company-quality { grid-template-columns: 1fr; gap: 36px; }
   .company-section-heading h2 { font-size: 30px; margin-top: 18px; }
   .company-prose { font-size: 15px; line-height: 1.9; }
   .company-facts { padding-top: 36px; gap: 28px 20px; }
@@ -473,8 +440,7 @@ function closeOnBackdrop (event) {
   .company-service h3 { font-size: 23px; }
   .company-service p { grid-column: 2; grid-row: 2; font-size: 14px; }
   .company-service__arrow { grid-column: 3; grid-row: 1; }
-  .company-logo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .company-logo-grid li { height: 86px; padding: 18px 12px; }
+  .company-logo-grid__item { width: 33vw; min-width: 112px; height: 86px; padding: 18px 12px; }
   .company-logo-grid img { max-height: 28px; }
   .company-value-list h3 { font-size: 23px; }
   .company-value-list li { grid-template-columns: 26px 1fr; gap: 12px; }
@@ -489,6 +455,16 @@ function closeOnBackdrop (event) {
   .company-stage__certificate { width: 88%; }
   .company-stage__certificate--cmmi { transform: translate3d(-12%, -8%, 0) rotate(-4deg) scale(.9); }
   .company-stage__certificate--enterprise { transform: translate3d(8%, 18%, 0) rotate(5deg) scale(.75); opacity: .75; }
+  .company-hero__fold { display: none; }
+  .company-hero__photo { transform: none; }
+  .company-values { height: auto; padding: 64px 0; }
+  .company-values__sticky { position: static; height: auto; overflow: visible; }
+  .company-values__inner { height: auto; }
+  .company-values__inner > .company-section-heading { position: static; max-width: none; margin-bottom: 36px; }
+  .company-values__visual { position: static; display: grid; gap: 18px; }
+  .company-values__card { position: static; width: auto; height: auto; min-height: 0; grid-template-columns: 1fr; }
+  .company-values__card-media { height: 210px; }
+  .company-values__card-copy { grid-template-columns: 28px 1fr; gap: 12px; padding: 24px 20px; border-left: 1px solid var(--color-line); }
 }
 @media (prefers-reduced-motion: reduce) {
   .company-explore svg, .company-service, .company-service__arrow { transition: none; }
