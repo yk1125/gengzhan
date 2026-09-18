@@ -1,178 +1,81 @@
 <template>
-  <section class="ai-consultation-page">
+  <main class="ai-consultation-page" :class="{ 'is-en': isEn }">
+    <div class="ai-consultation-grid" aria-hidden="true"></div>
     <div class="consultation-shell">
-      <header class="consultation-header">
-        <div class="consultation-title">
-          <span class="consultation-mark"><el-icon><Connection /></el-icon></span>
-          <div>
-            <strong>耘栈 AI 咨询</strong>
-            <span>需求梳理与解决方案建议</span>
-          </div>
+      <section class="consultation-intro" aria-labelledby="consultation-heading">
+        <div class="intro-topline"><span class="intro-kicker">{{ copy.kicker }}</span><span class="intro-index">AI / 01</span></div>
+        <div class="intro-main">
+          <div class="ai-signal" aria-hidden="true"><span class="ai-signal-core"><el-icon><Connection /></el-icon></span><span class="ai-signal-line ai-signal-line--one"></span><span class="ai-signal-line ai-signal-line--two"></span><span class="ai-signal-line ai-signal-line--three"></span></div>
+          <p class="intro-eyebrow">{{ copy.eyebrow }}</p>
+          <h1 id="consultation-heading">{{ copy.title }}<br><em>{{ copy.titleAccent }}</em></h1>
+          <p class="intro-lead">{{ copy.lead }}</p>
         </div>
-        <router-link to="/" class="consultation-close" aria-label="返回首页" title="返回首页"><el-icon><Close /></el-icon></router-link>
-      </header>
+        <div class="intro-bottom"><div class="intro-status"><span class="status-dot"></span><span>{{ copy.status }}</span></div><p>{{ copy.note }}</p></div>
+        <div class="intro-steps" aria-label="咨询流程"><div v-for="(step, index) in copy.steps" :key="step.title" class="intro-step"><span>0{{ index + 1 }}</span><div><strong>{{ step.title }}</strong><small>{{ step.text }}</small></div></div></div>
+      </section>
 
-      <main ref="messagePanel" class="consultation-messages" aria-live="polite">
-        <div v-for="item in messages" :key="item.id" class="chat-row" :class="item.role">
-          <span v-if="item.role === 'assistant'" class="chat-avatar"><el-icon><Connection /></el-icon></span>
-          <div class="chat-bubble">
-            <span v-if="item.role === 'assistant'" class="chat-name">耘栈 AI 咨询</span>
-            <p>{{ item.content }}</p>
-            <button v-if="item.fallback" type="button" class="fallback-contact" @click="copyWechat">
-              复制微信号 YunZhanKk
-            </button>
+      <section class="consultation-workspace" aria-label="AI 咨询对话">
+        <header class="consultation-header">
+          <div class="consultation-title"><span class="consultation-mark"><el-icon><Connection /></el-icon></span><div><strong>{{ copy.assistantName }}</strong><span>{{ copy.assistantSub }}</span></div></div>
+          <div class="consultation-header-meta"><span class="live-indicator"><i></i>{{ copy.live }}</span><router-link :to="homeRoute" class="consultation-close" :aria-label="copy.close" :title="copy.close"><el-icon><Close /></el-icon></router-link></div>
+        </header>
+        <main ref="messagePanel" class="consultation-messages" aria-live="polite">
+          <div class="message-date"><span>{{ copy.session }}</span></div>
+          <div v-for="(item, index) in messages" :key="item.id" class="chat-row" :class="[item.role, { 'message-new': index === messages.length - 1 }]">
+            <span v-if="item.role === 'assistant'" class="chat-avatar"><el-icon><Connection /></el-icon></span>
+            <div class="chat-bubble"><div v-if="item.role === 'assistant'" class="chat-meta"><span class="chat-name">{{ copy.assistantName }}</span><span class="chat-time">{{ item.time || copy.justNow }}</span></div><p>{{ item.content }}</p><button v-if="item.fallback" type="button" class="fallback-contact" @click="copyWechat"><el-icon><CopyDocument /></el-icon>{{ copy.copyWechat }} YunZhanKk</button></div>
           </div>
-        </div>
-        <div v-if="isSending" class="chat-row assistant">
-          <span class="chat-avatar"><el-icon><Connection /></el-icon></span>
-          <div class="chat-bubble typing-bubble"><i></i><i></i><i></i></div>
-        </div>
-        <div v-if="messages.length === 1 && !isSending" class="suggestion-list">
-          <button v-for="item in suggestions" :key="item" type="button" @click="sendMessage(item)">{{ item }}</button>
-        </div>
-      </main>
-
-      <form class="consultation-composer" @submit.prevent="sendMessage(draft)">
-        <textarea
-          v-model="draft"
-          aria-label="咨询内容"
-          :disabled="isSending"
-          placeholder="描述您想了解的产品、服务或业务场景"
-          rows="1"
-          @keydown.enter.exact.prevent="sendMessage(draft)"
-        ></textarea>
-        <button type="submit" :disabled="!draft.trim() || isSending" aria-label="发送咨询"><el-icon><Promotion /></el-icon></button>
-        <p>AI 仅提供方案建议；报价与合作细节请添加微信 <button type="button" @click="copyWechat">YunZhanKk</button>。</p>
-      </form>
+          <div v-if="isSending" class="chat-row assistant message-new"><span class="chat-avatar"><el-icon><Connection /></el-icon></span><div class="chat-bubble typing-bubble" :aria-label="copy.thinking"><span>{{ copy.thinking }}</span><i></i><i></i><i></i></div></div>
+          <div v-if="messages.length === 1 && !isSending" class="suggestion-wrap"><span class="suggestion-label">{{ copy.suggestionLabel }}</span><div class="suggestion-list"><button v-for="item in suggestions" :key="item" type="button" @click="sendMessage(item)">{{ item }}</button></div></div>
+        </main>
+        <form class="consultation-composer" @submit.prevent="sendMessage(draft)">
+          <div class="composer-field"><textarea ref="composerInput" v-model="draft" :aria-label="copy.inputLabel" :disabled="isSending" :placeholder="copy.placeholder" rows="1" maxlength="800" @input="resizeComposer" @keydown.enter.exact.prevent="sendMessage(draft)"></textarea><span class="composer-count">{{ draft.length }} / 800</span><button type="submit" :disabled="!draft.trim() || isSending" :aria-label="copy.send" :title="copy.send"><el-icon><Promotion /></el-icon></button></div>
+          <div class="composer-footnote"><span><el-icon><Lock /></el-icon>{{ copy.privacy }}</span><span>{{ copy.handoff }} <button type="button" @click="copyWechat">YunZhanKk</button></span></div>
+        </form>
+      </section>
     </div>
-  </section>
+  </main>
 </template>
 
 <script setup>
-import { nextTick, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Close, Connection, Promotion } from '@element-plus/icons-vue'
+import { Close, Connection, CopyDocument, Lock, Promotion } from '@element-plus/icons-vue'
 import { chatWithAssistant } from '@/api'
 
 const route = useRoute()
+const isEn = computed(() => route.path === '/en/ai-consultation' || route.path.startsWith('/en/'))
+const homeRoute = computed(() => (isEn.value ? '/en' : '/'))
 const draft = ref('')
 const isSending = ref(false)
 const messagePanel = ref(null)
-const suggestions = ['我想做一套企业管理系统，应该从哪里开始？', 'AI 客服适合哪些业务场景？', '小程序和 App 应该如何选择？']
-const messages = ref([
-  {
-    id: 1,
-    role: 'assistant',
-    content: '您好，我是耘栈 AI 咨询助手。请告诉我您希望解决的业务问题、服务对象或已有的产品设想，我会先帮您梳理方向。'
-  }
-])
-
-const scrollToLatest = async () => {
-  await nextTick()
-  if (messagePanel.value) {
-    messagePanel.value.scrollTop = messagePanel.value.scrollHeight
-  }
+const composerInput = ref(null)
+const content = {
+  zh: { kicker: 'YUNZHAN / INTELLIGENCE STUDIO', eyebrow: '从问题开始，找到下一步', title: '把想法变成', titleAccent: '清晰的行动。', lead: '先说说你正在面对的业务问题。耘栈 AI 会帮你拆解目标、梳理优先级，再给出一条可落地的产品路径。', status: 'AI 咨询在线', note: '复杂的问题，值得被认真理解。', assistantName: '耘栈 AI 咨询', assistantSub: '业务梳理 · 产品建议 · 技术路径', live: 'LIVE', close: '返回首页', session: '今天的咨询', justNow: '刚刚', thinking: '正在梳理', suggestionLabel: '从一个方向开始', copyWechat: '复制微信号', inputLabel: '咨询内容', placeholder: '描述你的产品想法、业务场景或遇到的难题…', send: '发送咨询', privacy: '内容仅用于本次咨询', handoff: '需要人工顾问？添加微信', steps: [{ title: '描述', text: '说出你的问题' }, { title: '梳理', text: '找到关键目标' }, { title: '行动', text: '获得下一步建议' }], suggestions: ['企业管理系统如何开始？', 'AI 客服适合我的业务吗？', '小程序和 App 怎么选？'], greeting: '你好，我是耘栈 AI 咨询助手。告诉我你想解决的业务问题、服务对象，或一个还不够清晰的产品设想，我们从这里开始。' },
+  en: { kicker: 'YUNZHAN / INTELLIGENCE STUDIO', eyebrow: 'Start with the question', title: 'Turn ideas into', titleAccent: 'clear next steps.', lead: 'Tell us what your business is trying to solve. Yunzhan AI will frame the goal, clarify priorities, and suggest a practical product path.', status: 'AI consultation online', note: 'Complex questions deserve to be understood.', assistantName: 'Yunzhan AI', assistantSub: 'Discovery · Product thinking · Tech direction', live: 'LIVE', close: 'Back to home', session: 'Today’s consultation', justNow: 'Just now', thinking: 'Thinking', suggestionLabel: 'Start with a direction', copyWechat: 'Copy WeChat ID', inputLabel: 'Consultation message', placeholder: 'Describe your product idea, business context, or challenge…', send: 'Send consultation', privacy: 'Your message stays within this consultation', handoff: 'Prefer a human consultant? Add', steps: [{ title: 'Describe', text: 'Share the question' }, { title: 'Frame', text: 'Find the key goal' }, { title: 'Act', text: 'Get the next move' }], suggestions: ['How should we start an enterprise system?', 'Would AI support fit our business?', 'Should we build a mini program or app?'], greeting: 'Hello, I’m Yunzhan AI. Tell me the business problem, audience, or product idea you are shaping, and we’ll make the next step clearer.' }
 }
-
-const copyWechat = async () => {
-  try {
-    await navigator.clipboard.writeText('YunZhanKk')
-    ElMessage.success('微信号已复制：YunZhanKk')
-  } catch (error) {
-    ElMessage.error('复制失败，请手动添加 YunZhanKk')
-  }
-}
-
-const sendMessage = async (content) => {
-  const question = String(content || '').trim()
+const copy = computed(() => (isEn.value ? content.en : content.zh))
+const suggestions = computed(() => copy.value.suggestions)
+const messages = ref([])
+const formatTime = () => new Intl.DateTimeFormat(isEn.value ? 'en-US' : 'zh-CN', { hour: '2-digit', minute: '2-digit' }).format(new Date())
+const scrollToLatest = async () => { await nextTick(); if (messagePanel.value) messagePanel.value.scrollTo({ top: messagePanel.value.scrollHeight, behavior: 'smooth' }) }
+const resizeComposer = () => { const input = composerInput.value; if (!input) return; input.style.height = 'auto'; input.style.height = `${Math.min(input.scrollHeight, 160)}px` }
+const copyWechat = async () => { try { await navigator.clipboard.writeText('YunZhanKk'); ElMessage.success(isEn.value ? 'WeChat ID copied: YunZhanKk' : '微信号已复制：YunZhanKk') } catch (error) { ElMessage.error(isEn.value ? 'Copy failed. Please add YunZhanKk manually.' : '复制失败，请手动添加 YunZhanKk') } }
+const sendMessage = async (contentValue) => {
+  const question = String(contentValue || '').trim()
   if (!question || isSending.value) return
-
-  const history = messages.value
-    .filter(item => item.role === 'user' || item.role === 'assistant')
-    .slice(-12)
-    .map(item => ({ role: item.role, content: item.content }))
-
-  messages.value.push({ id: Date.now(), role: 'user', content: question })
-  draft.value = ''
-  isSending.value = true
-  await scrollToLatest()
-
-  try {
-    const response = await chatWithAssistant({ message: question, history })
-    messages.value.push({
-      id: Date.now() + 1,
-      role: 'assistant',
-      content: response.data.message,
-      fallback: response.data.fallback === true
-    })
-  } catch (error) {
-    messages.value.push({
-      id: Date.now() + 1,
-      role: 'assistant',
-      content: 'AI 服务暂时无法响应，您可添加微信 YunZhanKk，人工顾问为您梳理需求。',
-      fallback: true
-    })
-  } finally {
-    isSending.value = false
-    await scrollToLatest()
-  }
+  const history = messages.value.slice(-12).map(item => ({ role: item.role, content: item.content }))
+  messages.value.push({ id: `${Date.now()}-user`, role: 'user', content: question, time: formatTime() }); draft.value = ''; resizeComposer(); isSending.value = true; await scrollToLatest()
+  try { const response = await chatWithAssistant({ message: question, history }); messages.value.push({ id: `${Date.now()}-assistant`, role: 'assistant', content: response.data.message, time: formatTime(), fallback: response.data.fallback === true }) } catch (error) { messages.value.push({ id: `${Date.now()}-fallback`, role: 'assistant', content: isEn.value ? 'The AI service is taking a short pause. Add WeChat YunZhanKk and a human consultant will help frame your needs.' : 'AI 服务暂时无法响应，您可添加微信 YunZhanKk，人工顾问为您梳理需求。', time: formatTime(), fallback: true }) } finally { isSending.value = false; await scrollToLatest() }
 }
-
-onMounted(() => {
-  const initialQuestion = typeof route.query.q === 'string' ? route.query.q.trim() : ''
-  if (initialQuestion) sendMessage(initialQuestion)
-})
+onMounted(() => { messages.value = [{ id: 'welcome', role: 'assistant', content: copy.value.greeting, time: formatTime() }]; const initialQuestion = typeof route.query.q === 'string' ? route.query.q.trim() : ''; if (initialQuestion) sendMessage(initialQuestion) })
 </script>
 
 <style scoped>
-.ai-consultation-page { min-height: calc(100svh - 78px); padding: 48px 24px; background: #eef3f9; }
-.consultation-shell { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; width: min(100%, 1120px); height: min(760px, calc(100svh - 174px)); min-height: 570px; margin: 0 auto; overflow: hidden; background: #f7f9fc; border: 1px solid #dce4ef; box-shadow: 0 18px 42px rgba(25, 53, 98, .12); }
-.consultation-header { display: flex; align-items: center; justify-content: space-between; min-height: 78px; padding: 0 28px; background: #fff; border-bottom: 1px solid #e0e6ee; }
-.consultation-title { display: flex; align-items: center; gap: 13px; color: #172b46; }
-.consultation-mark, .chat-avatar { display: grid; place-items: center; flex: 0 0 auto; color: #fff; background: #1c4aa0; }
-.consultation-mark { width: 36px; height: 36px; font-size: 19px; }
-.consultation-title strong { display: block; font-size: 18px; letter-spacing: 0; }
-.consultation-title span:not(.consultation-mark) { display: block; margin-top: 4px; color: #77889a; font-size: 12px; }
-.consultation-close { display: grid; place-items: center; width: 36px; height: 36px; color: #526579; border: 1px solid #dae3ef; text-decoration: none; }
-.consultation-close:hover { color: #fff; background: #173d86; border-color: #173d86; }
-.consultation-messages { min-height: 0; padding: 32px; overflow-y: auto; }
-.chat-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 22px; }
-.chat-row.user { justify-content: flex-end; }
-.chat-avatar { width: 32px; height: 32px; margin-top: 2px; font-size: 16px; }
-.chat-bubble { max-width: min(80%, 760px); padding: 17px 19px; color: #304255; background: #fff; border: 1px solid #e0e7f0; box-shadow: 0 4px 13px rgba(31, 57, 94, .05); }
-.chat-row.user .chat-bubble { color: #fff; background: #173d86; border-color: #173d86; }
-.chat-name { display: block; margin-bottom: 9px; color: #1f55bf; font-size: 12px; font-weight: 800; }
-.chat-bubble p { margin: 0; white-space: pre-wrap; font-size: 15px; line-height: 1.85; }
-.fallback-contact { min-height: 38px; margin-top: 14px; padding: 0 14px; color: #fff; background: #173d86; border: 1px solid #173d86; border-radius: 4px; cursor: pointer; font: inherit; font-size: 12px; font-weight: 800; }
-.fallback-contact:hover { background: #102c67; border-color: #102c67; }
-.typing-bubble { display: flex; align-items: center; gap: 5px; min-width: 78px; }
-.typing-bubble i { width: 6px; height: 6px; background: #6580ac; border-radius: 50%; animation: typing 1.1s ease-in-out infinite; }
-.typing-bubble i:nth-child(2) { animation-delay: .15s; }
-.typing-bubble i:nth-child(3) { animation-delay: .3s; }
-.suggestion-list { display: flex; flex-wrap: wrap; gap: 9px; margin: -4px 0 0 44px; }
-.suggestion-list button { min-height: 34px; padding: 0 12px; color: #385276; background: #fff; border: 1px solid #dce5f0; cursor: pointer; font: inherit; font-size: 12px; }
-.suggestion-list button:hover { color: #173d86; border-color: #7394ca; background: #f3f7ff; }
-.consultation-composer { padding: 18px 24px 15px; background: #fff; border-top: 1px solid #e0e6ee; }
-.consultation-composer textarea { display: block; width: 100%; min-height: 66px; max-height: 150px; padding: 18px 58px 18px 18px; resize: vertical; color: #243648; background: #f6f8fb; border: 1px solid #dae4f1; border-radius: 0; font: inherit; font-size: 15px; line-height: 1.5; outline: none; }
-.consultation-composer textarea:focus { background: #fff; border-color: #1f55bf; box-shadow: 0 0 0 3px rgba(31, 85, 191, .10); }
-.consultation-composer { position: relative; }
-.consultation-composer > button { position: absolute; top: 34px; right: 42px; display: grid; place-items: center; width: 36px; height: 36px; color: #fff; background: #173d86; border: 0; border-radius: 50%; cursor: pointer; }
-.consultation-composer > button:disabled { color: #9aa9b9; background: #e7ecf3; cursor: not-allowed; }
-.consultation-composer p { margin: 10px 0 0; color: #8190a0; font-size: 11px; }
-.consultation-composer p button { padding: 0; color: #1f55bf; background: transparent; border: 0; cursor: pointer; font: inherit; font-weight: 700; }
-@keyframes typing { 0%, 100% { transform: translateY(0); opacity: .45; } 50% { transform: translateY(-4px); opacity: 1; } }
-@media (max-width: 768px) {
-  .ai-consultation-page { min-height: calc(100svh - 66px); padding: 0; }
-  .consultation-shell { width: 100%; height: calc(100svh - 66px); min-height: 0; border: 0; box-shadow: none; }
-  .consultation-header { min-height: 66px; padding: 0 16px; }
-  .consultation-title strong { font-size: 16px; }
-  .consultation-title span:not(.consultation-mark) { display: none; }
-  .consultation-messages { padding: 20px 16px; }
-  .chat-bubble { max-width: 86%; padding: 14px 15px; }
-  .chat-bubble p { font-size: 14px; line-height: 1.75; }
-  .suggestion-list { margin-left: 0; }
-  .consultation-composer { padding: 14px 16px 12px; }
-  .consultation-composer > button { top: 29px; right: 30px; }
-}
+.ai-consultation-page{position:relative;min-height:calc(100svh - 76px);padding:122px 40px 88px;overflow:hidden;color:var(--color-ink);background:var(--color-bg);isolation:isolate}.ai-consultation-grid{position:absolute;inset:76px 0 0;z-index:-1;pointer-events:none;opacity:.48;background-image:linear-gradient(var(--color-line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--color-line-soft) 1px,transparent 1px);background-size:84px 84px;mask-image:linear-gradient(90deg,rgba(0,0,0,.8),transparent 74%)}.consultation-shell{display:grid;grid-template-columns:minmax(300px,.72fr) minmax(560px,1.28fr);gap:clamp(48px,7vw,128px);width:min(100%,1320px);min-height:700px;margin:0 auto}.consultation-intro{display:flex;flex-direction:column;min-height:700px;animation:intro-enter .8s cubic-bezier(.2,.7,.2,1) both}.intro-topline,.intro-bottom{display:flex;align-items:center;justify-content:space-between;color:var(--color-ink-soft);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase}.intro-kicker{color:var(--yz-orange)}.intro-main{position:relative;margin:auto 0;padding:56px 0 72px}.intro-eyebrow{margin:0 0 22px;color:var(--yz-orange);font-size:12px;font-weight:700;letter-spacing:.14em}.intro-main h1{max-width:590px;margin:0;color:var(--color-ink);font-size:clamp(48px,6vw,88px);font-weight:600;letter-spacing:-.07em;line-height:.98}.intro-main h1 em{color:var(--yz-orange);font-style:normal}.intro-lead{max-width:470px;margin:34px 0 0;color:var(--color-ink-body);font-size:16px;line-height:1.85}.ai-signal{position:absolute;top:-48px;right:-12px;width:116px;height:116px;opacity:.94}.ai-signal-core{position:absolute;inset:37px;display:grid;place-items:center;color:var(--color-on-accent);background:var(--color-accent);border-radius:50%;box-shadow:0 0 0 10px color-mix(in srgb,var(--color-accent) 12%,transparent);animation:signal-pulse 3s ease-in-out infinite}.ai-signal-core .el-icon{font-size:22px}.ai-signal-line{position:absolute;inset:14px;border:1px solid color-mix(in srgb,var(--color-accent) 40%,transparent);border-radius:50%;animation:signal-spin 10s linear infinite}.ai-signal-line--two{inset:3px 25px 25px 3px;border-color:color-mix(in srgb,var(--yz-orange) 55%,transparent);animation-direction:reverse;animation-duration:7s}.ai-signal-line--three{inset:25px 3px 3px 25px;border-style:dashed;opacity:.6;animation-duration:12s}.intro-bottom{align-items:flex-end;border-top:1px solid var(--color-line);padding-top:17px}.intro-bottom p{max-width:180px;margin:0;color:var(--color-ink-soft);font-size:12px;letter-spacing:0;line-height:1.5;text-align:right;text-transform:none}.intro-status{display:flex;align-items:center;gap:8px;color:var(--color-ink-body);letter-spacing:.04em;text-transform:none}.status-dot,.live-indicator i{display:inline-block;width:7px;height:7px;background:#43b978;border-radius:50%;box-shadow:0 0 0 4px rgba(67,185,120,.14)}.intro-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px}.intro-step{display:flex;gap:10px;padding-top:12px;border-top:1px solid var(--color-line)}.intro-step>span{color:var(--yz-orange);font-size:10px;font-weight:700}.intro-step strong,.intro-step small{display:block}.intro-step strong{color:var(--color-ink);font-size:12px;font-weight:700}.intro-step small{margin-top:5px;color:var(--color-ink-soft);font-size:10px;line-height:1.35}.consultation-workspace{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:700px;overflow:hidden;background:color-mix(in srgb,var(--color-surface) 91%,transparent);border:1px solid var(--color-line);box-shadow:18px 18px 0 color-mix(in srgb,var(--color-accent) 8%,transparent);animation:workspace-enter .9s .12s cubic-bezier(.2,.7,.2,1) both}.consultation-header{display:flex;align-items:center;justify-content:space-between;min-height:84px;padding:0 26px;border-bottom:1px solid var(--color-line-soft)}.consultation-title{display:flex;align-items:center;gap:13px}.consultation-mark,.chat-avatar{display:grid;place-items:center;flex:0 0 auto;color:var(--color-on-accent);background:var(--color-accent)}.consultation-mark{width:38px;height:38px;border-radius:50%;font-size:18px}.consultation-title strong,.consultation-title span{display:block}.consultation-title strong{color:var(--color-ink);font-size:14px}.consultation-title span{margin-top:5px;color:var(--color-ink-soft);font-size:10px;letter-spacing:.04em}.consultation-header-meta{display:flex;align-items:center;gap:22px}.live-indicator{display:inline-flex;align-items:center;gap:8px;color:var(--color-ink-soft);font-size:10px;font-weight:700;letter-spacing:.11em}.live-indicator i{width:5px;height:5px;box-shadow:none}.consultation-close{display:grid;place-items:center;width:34px;height:34px;color:var(--color-ink);border:1px solid var(--color-line);transition:color .25s ease,background-color .25s ease,transform .25s ease}.consultation-close:hover{color:var(--color-on-accent);background:var(--color-ink);transform:rotate(90deg)}.consultation-messages{min-height:0;padding:28px clamp(20px,3vw,42px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--color-line) transparent}.message-date{display:flex;align-items:center;gap:12px;margin:0 0 27px;color:var(--color-ink-soft);font-size:10px;letter-spacing:.1em;text-transform:uppercase}.message-date::after{content:'';display:block;flex:1;height:1px;background:var(--color-line-soft)}.chat-row{display:flex;align-items:flex-start;gap:11px;margin-bottom:22px}.chat-row.user{justify-content:flex-end}.chat-avatar{width:28px;height:28px;margin-top:3px;border-radius:50%;font-size:13px}.chat-bubble{max-width:min(82%,620px);padding:14px 17px;color:var(--color-ink-body);background:var(--color-surface);border:1px solid var(--color-line-soft)}.chat-row.user .chat-bubble{color:#fff;background:var(--color-ink);border-color:var(--color-ink)}.chat-meta{display:flex;align-items:baseline;justify-content:space-between;gap:20px;margin-bottom:8px}.chat-name{color:var(--color-accent);font-size:10px;font-weight:800;letter-spacing:.04em}.chat-time{color:var(--color-ink-soft);font-size:9px}.chat-bubble p{margin:0;white-space:pre-wrap;font-size:14px;line-height:1.75}.chat-row.user .chat-time{color:rgba(255,255,255,.54)}.fallback-contact{display:inline-flex;align-items:center;gap:7px;min-height:34px;margin-top:13px;padding:0 11px;color:var(--color-on-accent);background:var(--color-accent);border:0;cursor:pointer;font:inherit;font-size:11px;font-weight:700;transition:background-color .2s ease,transform .2s ease}.fallback-contact:hover{background:var(--yz-orange);transform:translateY(-2px)}.typing-bubble{display:flex;align-items:center;gap:5px;min-width:128px;color:var(--color-ink-soft)}.typing-bubble>span{margin-right:4px;font-size:10px}.typing-bubble i{width:5px;height:5px;background:var(--color-accent);border-radius:50%;animation:typing 1.1s ease-in-out infinite}.typing-bubble i:nth-of-type(2){animation-delay:.15s}.typing-bubble i:nth-of-type(3){animation-delay:.3s}.suggestion-wrap{margin:4px 0 0 39px}.suggestion-label{display:block;margin-bottom:10px;color:var(--color-ink-soft);font-size:10px;letter-spacing:.07em}.suggestion-list{display:flex;flex-wrap:wrap;gap:8px}.suggestion-list button{min-height:35px;padding:0 12px;color:var(--color-ink-body);background:transparent;border:1px solid var(--color-line);cursor:pointer;font:inherit;font-size:11px;text-align:left;transition:color .22s ease,border-color .22s ease,background-color .22s ease,transform .22s ease}.suggestion-list button:hover{color:var(--color-accent);background:color-mix(in srgb,var(--color-accent) 7%,transparent);border-color:var(--color-accent);transform:translateY(-2px)}.consultation-composer{padding:18px 24px 15px;border-top:1px solid var(--color-line-soft)}.composer-field{position:relative}.consultation-composer textarea{display:block;width:100%;min-height:66px;max-height:160px;padding:16px 56px 29px 16px;resize:none;color:var(--color-ink);background:color-mix(in srgb,var(--color-bg) 52%,transparent);border:1px solid var(--color-line);outline:none;font:inherit;font-size:14px;line-height:1.55;transition:background-color .25s ease,border-color .25s ease,box-shadow .25s ease}.consultation-composer textarea:focus{background:var(--color-surface);border-color:var(--color-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--color-accent) 12%,transparent)}.composer-count{position:absolute;bottom:10px;left:16px;color:var(--color-ink-soft);font-size:9px;pointer-events:none}.composer-field>button{position:absolute;right:13px;bottom:13px;display:grid;place-items:center;width:36px;height:36px;color:var(--color-on-accent);background:var(--color-accent);border:0;border-radius:50%;cursor:pointer;transition:background-color .22s ease,transform .22s ease,opacity .22s ease}.composer-field>button:hover:not(:disabled){background:var(--yz-orange);transform:translateY(-2px) rotate(-8deg)}.composer-field>button:disabled{opacity:.35;cursor:not-allowed}.composer-footnote{display:flex;justify-content:space-between;gap:12px;margin-top:10px;color:var(--color-ink-soft);font-size:10px}.composer-footnote span{display:inline-flex;align-items:center;gap:5px}.composer-footnote button{padding:0;color:var(--color-accent);background:none;border:0;cursor:pointer;font:inherit;font-weight:700}.message-new{animation:message-enter .45s cubic-bezier(.2,.7,.2,1) both}@keyframes intro-enter{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}@keyframes workspace-enter{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}@keyframes message-enter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@keyframes signal-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}@keyframes signal-spin{to{transform:rotate(360deg)}}@keyframes typing{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-4px);opacity:1}}
+@media (max-width:1080px){.ai-consultation-page{padding-right:24px;padding-left:24px}.consultation-shell{gap:42px;grid-template-columns:minmax(260px,.68fr) minmax(500px,1.32fr)}.intro-main h1{font-size:clamp(44px,6vw,68px)}}
+@media (max-width:820px){.ai-consultation-page{min-height:0;padding:98px 16px 54px}.ai-consultation-grid{inset:64px 0 0;background-size:60px 60px}.consultation-shell{display:block;min-height:0}.consultation-intro{min-height:0;padding-bottom:48px}.intro-main{margin:0;padding:54px 0 42px}.intro-main h1{font-size:clamp(48px,12vw,72px)}.intro-lead{max-width:500px;font-size:14px}.ai-signal{top:18px;right:2px;transform:scale(.76);transform-origin:top right}.intro-steps{margin-top:27px}.consultation-workspace{min-height:min(720px,calc(100svh - 180px));box-shadow:9px 9px 0 color-mix(in srgb,var(--color-accent) 8%,transparent)}}
+@media (max-width:540px){.ai-consultation-page{padding:82px 0 34px}.consultation-intro{padding:0 16px 40px}.intro-topline{font-size:9px}.intro-main{padding:48px 0 36px}.intro-main h1{font-size:clamp(44px,14vw,62px)}.intro-lead{margin-top:24px;font-size:13px;line-height:1.75}.ai-signal{top:8px;right:-4px;transform:scale(.56)}.intro-bottom p{display:none}.intro-steps{gap:8px}.intro-step{gap:6px}.intro-step strong{font-size:11px}.intro-step small{font-size:9px}.consultation-workspace{min-height:calc(100svh - 116px);border-right:0;border-left:0;box-shadow:none}.consultation-header{min-height:72px;padding:0 16px}.consultation-title span{display:none}.consultation-header-meta{gap:13px}.consultation-messages{padding:22px 16px}.chat-bubble{max-width:88%;padding:12px 13px}.chat-bubble p{font-size:13px}.suggestion-wrap{margin-left:0}.suggestion-list{display:grid}.suggestion-list button{width:100%}.consultation-composer{padding:14px 16px 12px}.composer-footnote{display:block;line-height:1.7}.composer-footnote span+span{margin-top:4px}}
+@media (prefers-reduced-motion:reduce){.consultation-intro,.consultation-workspace,.message-new,.ai-signal-core,.ai-signal-line,.typing-bubble i{animation:none}.consultation-close,.suggestion-list button,.composer-field>button,.fallback-contact{transition:none}}
 </style>

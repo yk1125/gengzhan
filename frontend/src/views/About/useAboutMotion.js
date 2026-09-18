@@ -106,13 +106,16 @@ export function useAboutMotion (root, stages = {}) {
     const steps = Math.max(1, cards.length - 1)
     cards.forEach((card, index) => {
       if (index === 0) {
-        card.style.transform = 'translateY(0)'
+        card.style.transform = 'translate3d(0, 0, 0)'
         return
       }
       const start = (index - 1) / steps
       const local = Math.max(0, Math.min(1, (progress - start) * steps))
-      const offset = progress <= start ? '100vh' : local < 1 ? `${100 - local * 100}vh` : `${index * 20}px`
-      card.style.transform = `translateY(${offset})`
+      const settledOffset = index * 20
+      const eased = 1 - Math.pow(1 - local, 3)
+      const travel = Math.max(0, window.innerHeight - settledOffset)
+      const offset = settledOffset + (1 - eased) * travel
+      card.style.transform = `translate3d(0, ${offset}px, 0)`
     })
   }
 

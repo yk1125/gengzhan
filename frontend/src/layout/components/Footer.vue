@@ -78,7 +78,7 @@ import { ElMessage } from 'element-plus'
 const route = useRoute()
 /** 首页（中英两个路由）走参考站的米色 footer；其余页面沿用深色收尾
     （调色板见 style.css 的 --footer-*）。英文站首页是独立路由 /en，必须一起命中。 */
-const isHome = computed(() => route.path === '/' || route.path === '/en')
+const isHome = computed(() => ['/', '/en', '/contact', '/en/contact'].includes(route.path))
 const isEn = computed(() => route.path === '/en' || route.path.startsWith('/en/'))
 const href = (path) => (isEn.value ? `/en${path}` : path)
 const wechatType = computed(() => (isEn.value ? 'WeChat' : '微信号'))

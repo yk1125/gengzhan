@@ -182,7 +182,8 @@ const menuList = computed(() => {
         { name: 'Web Development', path: '/en/web-development' },
         { name: 'Cases', path: '/en/cases' },
         { name: 'News', path: '/en/news' },
-        { name: 'About', path: '/en/about' }
+        { name: 'About', path: '/en/about' },
+        { name: 'Contact', path: '/en/contact' }
       ]
     : [
         { name: '首页', path: '/' },
@@ -192,7 +193,8 @@ const menuList = computed(() => {
         { name: 'WEB网站开发', path: '/web-development' },
         { name: '公司案例', path: '/cases' },
         { name: '行业资讯', path: '/news' },
-        { name: '关于我们', path: '/about' }
+        { name: '关于我们', path: '/about' },
+        { name: '联系我们', path: '/contact' }
       ]
 })
 
