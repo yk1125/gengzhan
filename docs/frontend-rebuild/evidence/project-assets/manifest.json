@@ -7,6 +7,19 @@
   "登记人": "Session B",
   "registry": [
     {
+      "用途": "首页首屏背景视频（桌面与移动共用）",
+      "本地路径": "frontend/public/assets/home/hero-20260919.mp4",
+      "字节数": 6209588,
+      "SHA256": "A741493A0CDA2B2F7355AA0E4B393F3200F254916C9792E0040836D78F952F9A",
+      "尺寸": "未通过 ffprobe 读取（源文件为 MP4）",
+      "来源": "用户提供，实际发现路径 D:\\桌面\\WeChat_20260919053505.mp4；用户给出的 D:\\桌面\\WeChat\\_20260919053505.mp4 在当前环境不存在。字节级复制，未转码。",
+      "权利归属": "用户提供 / 北京耘栈科技有限公司使用",
+      "运行时处理": "静音、按现有首页 ended 事件重播；<=1024px 与桌面共用该本地文件。",
+      "登记时间": "2026-09-19",
+      "登记人": "Codex",
+      "备注": "替换首页原有 yunzhan-hero.mp4 与 mobile 版本引用；原文件保留。"
+    },
+    {
       "用途": "首页 index4 品牌宣言区块背景图（frontend/src/content/home.js 的 HOME_STATEMENT_BG）",
       "本地路径": "frontend/public/assets/home/statement-bg.jpg",
       "字节数": 467986,

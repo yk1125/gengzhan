@@ -64,8 +64,8 @@ export function customerSlots (perSlot) {
 
 /** 首屏视频：项目自有素材，PC 与移动按断点分别选择（不双份加载）。 */
 export const HOME_BANNER_MEDIA = {
-  desktop: '/yunzhan-hero.mp4',
-  mobile: '/yunzhan-hero-mobile-v3.mp4'
+  desktop: '/assets/home/hero-20260919.mp4',
+  mobile: '/assets/home/hero-20260919.mp4'
 }
 
 /**

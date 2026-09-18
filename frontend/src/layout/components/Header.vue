@@ -12,17 +12,28 @@
 
       <span class="mobile-slogan">{{ mobileSlogan }}</span>
 
-      <!-- 桌面端导航 -->
-      <nav class="nav-menu desktop-nav">
-        <router-link
-          v-for="item in menuList"
-          :key="item.path"
-          :to="item.path"
-          class="nav-item"
-          :class="{ active: $route.path === item.path || ($route.path.startsWith(item.path) && item.path !== '/') }"
-        >
-          {{ item.name }}
-        </router-link>
+      <!-- 桌面端导航：主项与参考站一致，解决方案/耘栈服务使用展开面板。 -->
+      <nav class="nav-menu desktop-nav" @mouseleave="closeDesktopMenu">
+        <div v-for="item in navItems" :key="item.key" class="nav-item-wrap" @mouseenter="openDesktopMenu(item.key)">
+          <router-link v-if="item.path" :to="item.path" class="nav-item" :class="{ active: isNavActive(item) }">
+            {{ item.label }}
+          </router-link>
+          <button v-else class="nav-item nav-item-trigger" type="button" :aria-expanded="desktopMenuOpen === item.key" @click="toggleDesktopMenu(item.key)">
+            {{ item.label }}<span class="nav-chevron" aria-hidden="true">⌄</span>
+          </button>
+          <div v-if="item.key === 'solutions'" v-show="desktopMenuOpen === item.key" class="nav-mega nav-mega-solutions">
+            <div v-for="group in solutionGroups" :key="group.key" class="nav-mega-group">
+              <h3>{{ isEn ? group.en : group.zh }}</h3>
+              <a v-for="link in group.links" :key="link.href" :href="link.href" target="_blank" rel="noopener noreferrer">{{ isEn ? link.en : link.zh }} <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+          <div v-else-if="item.key === 'services'" v-show="desktopMenuOpen === item.key" class="nav-mega nav-mega-services">
+            <router-link v-for="service in serviceItems" :key="service.key" :to="isEn ? service.enPath : service.path">
+              <span class="nav-service-index">{{ String(serviceItems.indexOf(service) + 1).padStart(2, '0') }}</span>
+              <span>{{ isEn ? service.en : service.zh }}</span><span aria-hidden="true">↗</span>
+            </router-link>
+          </div>
+        </div>
       </nav>
 
       <!-- 桌面端操作：语言靠导航右端、主题只留小圆形图标、微信收成紧凑胶囊。 -->
@@ -76,16 +87,19 @@
     <transition name="mobile-menu">
       <div v-if="mobileMenuOpen" class="mobile-menu-overlay" @click="closeMobileMenu">
         <nav class="mobile-nav" @click.stop>
-          <router-link
-            v-for="item in menuList"
-            :key="item.path"
-            :to="item.path"
-            class="mobile-nav-item"
-            :class="{ active: $route.path === item.path || ($route.path.startsWith(item.path) && item.path !== '/') }"
-            @click="closeMobileMenu"
-          >
-            {{ item.name }}
-          </router-link>
+          <template v-for="item in navItems" :key="item.key">
+            <router-link v-if="item.path" :to="item.path" class="mobile-nav-item" :class="{ active: isNavActive(item) }" @click="closeMobileMenu">{{ item.label }}</router-link>
+            <button v-else class="mobile-nav-item mobile-nav-trigger" type="button" :aria-expanded="mobileExpanded === item.key" @click="toggleMobileMenuSection(item.key)">{{ item.label }}<span aria-hidden="true">{{ mobileExpanded === item.key ? '−' : '+' }}</span></button>
+            <div v-if="item.key === 'solutions' && mobileExpanded === item.key" class="mobile-nav-submenu">
+              <div v-for="group in solutionGroups" :key="group.key" class="mobile-nav-group">
+                <strong>{{ isEn ? group.en : group.zh }}</strong>
+                <a v-for="link in group.links" :key="link.href" :href="link.href" target="_blank" rel="noopener noreferrer" @click="closeMobileMenu">{{ isEn ? link.en : link.zh }} ↗</a>
+              </div>
+            </div>
+            <div v-if="item.key === 'services' && mobileExpanded === item.key" class="mobile-nav-submenu">
+              <router-link v-for="service in serviceItems" :key="service.key" :to="isEn ? service.enPath : service.path" @click="closeMobileMenu">{{ isEn ? service.en : service.zh }} ↗</router-link>
+            </div>
+          </template>
 
           <button
             class="mobile-theme-toggle mobile-lang-toggle"
@@ -124,6 +138,7 @@ import { ChatDotRound, Moon, Sunny } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 import { useThemeStore } from '@/stores/theme'
+import { SERVICE_NAV_ITEMS, SOLUTION_GROUPS } from '@/content/navigation'
 
 const route = useRoute()
 const router = useRouter()
@@ -167,34 +182,28 @@ const isOn = ref(false)
 /** SPEC M-05：`.hide` —— 滚轮向下收起、向上恢复（全站生效）。 */
 const isHidden = ref(false)
 const mobileMenuOpen = ref(false)
+const desktopMenuOpen = ref('')
+const mobileExpanded = ref('')
 const mobileMenuLabel = computed(() => {
   if (isEn.value) return mobileMenuOpen.value ? 'Close navigation menu' : 'Open navigation menu'
   return mobileMenuOpen.value ? '关闭导航菜单' : '打开导航菜单'
 })
 
-const menuList = computed(() => {
-  return isEn.value
-    ? [
-        { name: 'Home', path: '/en' },
-        { name: 'AI Development', path: '/en/ai-development' },
-        { name: 'Mini Program', path: '/en/miniprogram-development' },
-        { name: 'App Development', path: '/en/app-development' },
-        { name: 'Web Development', path: '/en/web-development' },
-        { name: 'Cases', path: '/en/cases' },
-        { name: 'News', path: '/en/news' },
-        { name: 'About', path: '/en/about' }
-      ]
-    : [
-        { name: '首页', path: '/' },
-        { name: 'AI开发', path: '/ai-development' },
-        { name: '小程序开发', path: '/miniprogram-development' },
-        { name: 'App开发', path: '/app-development' },
-        { name: 'WEB网站开发', path: '/web-development' },
-        { name: '公司案例', path: '/cases' },
-        { name: '行业资讯', path: '/news' },
-        { name: '关于我们', path: '/about' }
-      ]
-})
+const solutionGroups = SOLUTION_GROUPS
+const serviceItems = SERVICE_NAV_ITEMS
+const navItems = computed(() => [
+  { key: 'cases', label: isEn.value ? 'Cases' : '公司案例', path: isEn.value ? '/en/cases' : '/cases' },
+  { key: 'solutions', label: isEn.value ? 'Solutions' : '解决方案' },
+  { key: 'services', label: isEn.value ? 'Yunzhan Services' : '耘栈服务' },
+  { key: 'about', label: isEn.value ? 'About Us' : '关于我们', path: isEn.value ? '/en/about' : '/about' },
+  { key: 'news', label: isEn.value ? 'Industry News' : '行业资讯', path: isEn.value ? '/en/news' : '/news' },
+  { key: 'contact', label: isEn.value ? 'Contact Us' : '联系我们', path: isEn.value ? '/en/contact' : '/contact' }
+])
+const isNavActive = (item) => item.path && (route.path === item.path || route.path.startsWith(`${item.path}/`))
+const openDesktopMenu = (key) => { if (key === 'solutions' || key === 'services') desktopMenuOpen.value = key }
+const closeDesktopMenu = () => { desktopMenuOpen.value = '' }
+const toggleDesktopMenu = (key) => { desktopMenuOpen.value = desktopMenuOpen.value === key ? '' : key }
+const toggleMobileMenuSection = (key) => { mobileExpanded.value = mobileExpanded.value === key ? '' : key }
 
 const headerHeight = () => {
   const el = headerRef.value
@@ -224,6 +233,7 @@ const toggleMobileMenu = () => {
 
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false
+  mobileExpanded.value = ''
   document.body.style.overflow = ''
 }
 
@@ -263,6 +273,8 @@ onUnmounted(() => {
   window.removeEventListener('wheel', handleWheel)
   // 清理body样式
   document.body.style.overflow = ''
+  desktopMenuOpen.value = ''
+  mobileExpanded.value = ''
 })
 </script>
 
@@ -367,6 +379,20 @@ onUnmounted(() => {
   color: #f06a21;
 }
 
+.mobile-nav-trigger {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.mobile-nav-trigger span { color: #f06a21; font-size: 22px; font-weight: 400; }
+.mobile-nav-submenu { padding: 10px 8px 16px; border-bottom: 1px solid #333; }
+.mobile-nav-submenu a { display: block; padding: 8px 0 8px 18px; color: #c8c8c8; font-size: 14px; line-height: 1.45; text-decoration: none; }
+.mobile-nav-group { padding: 7px 0; }
+.mobile-nav-group strong { display: block; padding: 8px 0 2px 18px; color: #f06a21; font-size: 11px; letter-spacing: .04em; }
+
 .mobile-contact {
   display: flex;
   align-items: center;
@@ -411,6 +437,38 @@ onUnmounted(() => {
   opacity: 1;
   background: rgba(127, 127, 127, 0.12);
 }
+
+/* Reference-style desktop dropdowns: the trigger stays in the six-item bar while
+   the panel opens below the header as a quiet, full-width information surface. */
+.nav-item-wrap { position: relative; display: flex; align-items: center; height: 100%; }
+.nav-item-trigger { appearance: none; cursor: pointer; font: inherit; }
+.nav-chevron { margin-left: 7px; color: currentColor; font-size: 14px; line-height: 1; transition: transform .25s ease; }
+.nav-item-wrap:hover .nav-chevron,
+.nav-item-trigger[aria-expanded='true'] .nav-chevron { transform: rotate(180deg); }
+.nav-mega {
+  position: fixed;
+  top: 76px;
+  left: 0;
+  right: 0;
+  z-index: 2999;
+  padding: 30px max(5vw, 32px) 36px;
+  color: #111;
+  background: rgba(242, 241, 228, .98);
+  border-top: 1px solid rgba(17, 17, 17, .14);
+  box-shadow: 0 20px 36px rgba(0, 0, 0, .12);
+  backdrop-filter: blur(18px);
+}
+.nav-mega-solutions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 44px; max-height: min(66vh, 540px); overflow-y: auto; }
+.nav-mega-group { min-width: 0; padding: 0 0 16px; border-bottom: 1px solid rgba(17, 17, 17, .14); }
+.nav-mega-group h3 { margin: 0 0 13px; font-size: 13px; font-weight: 700; line-height: 1.5; }
+.nav-mega-group a { display: inline-flex; align-items: center; gap: 5px; margin: 0 17px 8px 0; color: #5e5c54; font-size: 12px; line-height: 1.4; text-decoration: none; transition: color .2s ease; }
+.nav-mega-group a span { color: #f06a21; font-size: 12px; }
+.nav-mega-group a:hover { color: #184dc4; }
+.nav-mega-services { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 26px; padding-top: 10px; padding-bottom: 24px; }
+.nav-mega-services a { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 10px; min-height: 58px; color: #111; border-bottom: 1px solid rgba(17, 17, 17, .16); text-decoration: none; transition: color .2s ease, padding-left .2s ease; }
+.nav-mega-services a:hover { padding-left: 8px; color: #184dc4; }
+.nav-mega-services a > span:last-child { color: #f06a21; }
+.nav-service-index { color: #999; font-size: 11px; letter-spacing: .08em; }
 
 /* 主题两态按钮：桌面只在 .desktop-actions 里放 icon-only 小圆钮，手机菜单仍走整行条目。 */
 .theme-toggle,
@@ -501,6 +559,7 @@ onUnmounted(() => {
     display: block;
     top: 64px;
   }
+  .nav-mega { display: none !important; }
   .mobile-menu-btn {
     display: flex;
     position: absolute;
@@ -546,19 +605,17 @@ onUnmounted(() => {
    ========================================================================== */
 @media (min-width: 1025px) {
   .header .logo,
-  .header .nav-item,
+  .header .nav-item-wrap,
   .header .desktop-actions {
     animation: headerFadeInDown 1s ease both;
   }
   .header .logo { animation-delay: 0ms; }
-  .header .nav-item:nth-child(1) { animation-delay: 200ms; }
-  .header .nav-item:nth-child(2) { animation-delay: 400ms; }
-  .header .nav-item:nth-child(3) { animation-delay: 600ms; }
-  .header .nav-item:nth-child(4) { animation-delay: 800ms; }
-  .header .nav-item:nth-child(5) { animation-delay: 1000ms; }
-  .header .nav-item:nth-child(6) { animation-delay: 1200ms; }
-  .header .nav-item:nth-child(7) { animation-delay: 1400ms; }
-  .header .nav-item:nth-child(8) { animation-delay: 1600ms; }
+  .header .nav-item-wrap:nth-child(1) { animation-delay: 200ms; }
+  .header .nav-item-wrap:nth-child(2) { animation-delay: 400ms; }
+  .header .nav-item-wrap:nth-child(3) { animation-delay: 600ms; }
+  .header .nav-item-wrap:nth-child(4) { animation-delay: 800ms; }
+  .header .nav-item-wrap:nth-child(5) { animation-delay: 1000ms; }
+  .header .nav-item-wrap:nth-child(6) { animation-delay: 1200ms; }
   .header .desktop-actions { animation-delay: 1300ms; }
 }
 
