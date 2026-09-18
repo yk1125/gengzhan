@@ -82,7 +82,7 @@ const newsDatabase = {
     date: '2025-03-15',
     author: 'AI研究员',
     views: '2.3k',
-    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200',
+    image: '/assets/services/ai-media.jpg',
     tags: ['AI', '软件开发', '趋势'],
     source: '',
     content: `
@@ -104,7 +104,7 @@ const newsDatabase = {
     date: '2025-03-12',
     author: '小程序专家',
     views: '1.8k',
-    image: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1200',
+    image: '/assets/services/mini-media.jpg',
     tags: ['小程序', '云开发', '微信', '后端'],
     content: `
       <h2>什么是小程序云开发</h2>
@@ -145,7 +145,7 @@ const newsDatabase = {
     date: '2025-03-10',
     author: 'React团队',
     views: '3.1k',
-    image: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200',
+    image: '/assets/services/web-media.jpg',
     tags: ['React', 'Web开发', '前端框架', 'JavaScript'],
     content: `
       <h2>React 19核心特性</h2>
@@ -199,7 +199,7 @@ async function BlogPost({ id }) {
     date: '2025-03-08',
     author: '移动开发者',
     views: '2.7k',
-    image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200',
+    image: '/assets/services/app-media.jpg',
     tags: ['Flutter', '跨平台', '移动开发', 'Dart'],
     content: `
       <h2>为什么选择Flutter</h2>
@@ -250,7 +250,7 @@ final batteryLevel = await platform.invokeMethod('getBatteryLevel');</code></pre
     date: '2025-03-05',
     author: 'AI工程师',
     views: '4.2k',
-    image: 'https://images.unsplash.com/photo-1676299081847-c0326f1f8c7c?w=1200',
+    image: '/assets/cases/c61e07c88f465c23dfbdb6ccf8411064.webp',
     tags: ['AI', 'GPT', 'LLM', 'API'],
     content: `
       <h2>什么是大语言模型</h2>
@@ -310,7 +310,7 @@ const completion = await openai.chat.completions.create({
     date: '2025-03-03',
     author: 'Web架构师',
     views: '2.9k',
-    image: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=1200',
+    image: '/assets/services/custom-media.jpg',
     tags: ['Next.js', 'React', 'SSR', 'Web开发'],
     content: `
       <h2>App Router简介</h2>
