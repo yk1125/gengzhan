@@ -16,7 +16,7 @@
 
       <section class="consultation-workspace" aria-label="AI 咨询对话">
         <header class="consultation-header">
-          <div class="consultation-title"><span class="consultation-mark"><el-icon><Connection /></el-icon></span><div><strong>{{ copy.assistantName }}</strong><span>{{ copy.assistantSub }}</span></div></div>
+          <div class="consultation-title"><div><strong>{{ copy.assistantName }}</strong><span>{{ copy.assistantSub }}</span></div></div>
           <div class="consultation-header-meta"><span class="live-indicator"><i></i>{{ copy.live }}</span><router-link :to="homeRoute" class="consultation-close" :aria-label="copy.close" :title="copy.close"><el-icon><Close /></el-icon></router-link></div>
         </header>
         <main ref="messagePanel" class="consultation-messages" aria-live="polite">
