@@ -1137,3 +1137,51 @@ $ npx.cmd eslint _base_index.vue _base_home.js --ext .vue,.js                   
 1. ~~等用户对 9.23 A1/A2 的裁决~~ → **已闭环**（用户选 ②，见 9.21.7）。
 2. 继续 §9.17 C1：M-03 页头入场、M-31 footer 圆形按钮 hover 发光。M-32 `.fixed_side` 与滚动惯性耦合，等 A 的 lenis。
 3. A 的 `lenis` 合入后：复跑 `bx-r6b2.js` 确认页内逐帧口径未被全局滚动改变；复跑 `bx-hdr.js` / `bx-combo.js` 确认 M-04/M-05 的 wheel 判定仍成立。
+# Session B / Task T05
+
+## About 参考站交互修订（2026-09-18）
+
+- 首屏改为参考站 `about1` 的文档流裁切视差：图片初始负偏移，按页面滚动距离以 0.9 倍像素平移；移除旧黑色 sticky hero 残留规则，移动端保持可读的静态裁切。
+- 合作理念改为参考站 `about_fix` 的四屏固定视口卡片堆叠：每张左图右文卡片从视口底部进入，完成后按 20px 间距压叠；桌面滚动驱动，手机改为连续卡片布局。
+- 数字计数改为 `IntersectionObserver` 进入触发、离开上方重置，2.4 秒递增，回滚重新进入会再次播放。
+- CTA 颜色调整为深青绿色；保留本地办公室图及 `services-showcase.jpg`、`zhengshu.jpg`。
+
+验证：`frontend/npm.cmd run build` 通过；About 定向 ESLint 0 errors（40 warnings，均为既有模板格式规则）。本地 `http://127.0.0.1:3012/about` 桌面首屏截图已检查，标题可读、首屏图片无空白断层。
+状态：进行中（About 完成，Contact/Privacy/Legal 待本轮后续）
+基准commit：`895e0f6`（已快进到用户指定起点）
+
+## 本轮完成
+
+- 重做 `frontend/src/views/About/index.vue`：沿用已验收公共 Header/Footer、主题、语言与咨询入口，新增品牌实拍首屏、公司介绍、四项服务、CMMI 3、24 个固定换序客户 Logo、合作理念和 CTA。
+- 新增 `frontend/src/content/company.js`：中文/英文对应内容，使用 PRD 已确认事实（2015、200+、98%、24/7、CMMI 3、微信/邮箱/地区不在本页重复造入口）。
+- 新增 `frontend/src/views/About/useAboutMotion.js`：消费 A 的 motion token，IntersectionObserver 显影、prefers-reduced-motion 降级、桌面磁吸 CTA；卸载清理 observer、动画和磁吸。
+- 证书使用仓库现有本地 `frontend/public/services-showcase.jpg`，证书可放大查看，Esc/关闭恢复触发按钮焦点。
+
+## 验证
+
+- `frontend/npm.cmd run build`：通过（Vite，存在既有大 chunk / browserslist / module type 警告）。
+- About 文件只读 ESLint：无 error；格式 warning 为既有规则。
+- `npm.cmd run check:routes`：PASS 34 / FAIL 0 / PENDING 2（仅 Contact 路由未注册，按约定交 A）。
+- `npm.cmd run check:motion`：PASS 2 / FAIL 0 / BASELINE-STALE 0。
+- Playwright @ `http://127.0.0.1:4175/about`、`/en/about`：1440 / 390，中文/英文、亮/暗主题；页面无横向溢出，单 main；证书 dialog 打开、Esc 关闭、焦点恢复；`pageerror` 0。四种手机组合均为 24 logos、无坏图、无横向溢出；英文正文中文字符 0。
+- 截图与检查数据：`docs/frontend-rebuild/handoffs/B/about/`（1440/390 × zh/en × light/dark，全页和首屏，`desktop-checks.json` 由浏览器探针生成）。
+
+## 共享契约申请 / 外部缺口
+
+- 无共享代码改动，无路由注册改动。请 A 继续消费现有 `Contact/ContactEn` 路由契约。
+- Contact 表单仍待 B 后续实现；必须消费 A 的 `submitInquiry`，未接通只能 demo/unavailable，不显示真实成功。
+- About 的办公室照片复用用户提供的本地 `assets/home/statement-bg.jpg`；CMMI 证书复用现有本地 `services-showcase.jpg`，外部素材未热链。
+
+## 未完成事项与下次第一步
+
+- 本提交只覆盖 About；Contact、Privacy、Legal 仍待后续 T05 提交。
+- 下一步：读取 A 的 `submitInquiry` 最终导出和 DATA 校验模型，实现 Contact 双语/主题/失败保留/复制退路，再补 Privacy/Legal。
+
+## About 交互重做（用户确认方案后）
+
+- 用户确认六幕滚动叙事：品牌影像、公司介绍数字、双证书固定视口、客户墙横移、合作理念进度线、蓝色 CTA。
+- 本轮已落地第三幕固定视口时间轴：`--quality-progress` 驱动 CMMI 证书与软件企业证书的连续位移、旋转、缩放、透明度；桌面完整，手机静态降级。
+- 首屏继续使用本地品牌墙实拍 `assets/home/statement-bg.jpg`；`services-showcase.jpg` 与用户新增 `frontend/public/zhengshu.jpg` 均进入第三幕并按真实证书类型标注。
+- 客户墙三组 Logo 随滚动以不同方向/速度横移；手机保持网格，避免横向溢出。
+- 新截图：`handoffs/B/about/timeline-start.png`、`timeline-mid.png`、`timeline-mobile.png`。
+- 实测：1440 时间轴五个进度点的两个证书 transform/opacity 均连续变化；390 英文页面无中文、无坏图、无横向溢出；build、motion gate 通过。
