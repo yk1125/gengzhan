@@ -87,7 +87,8 @@ const routes = [
         ['/en/cases/:id','CaseDetailEn','Case detail','light',() => import('@/views/Cases/detail.vue')],
         ['/en/news','NewsEn','News','dark',() => import('@/views/News/index.vue')],
         ['/en/news/:id','NewsDetailEn','News detail','light',() => import('@/views/News/detail.vue')],
-        ['/en/about','AboutEn','About','light',() => import('@/views/About/index.vue')],
+        ['/en/about','AboutEn','About','dark',() => import('@/views/About/index.vue')],
+        ['/en/contact','ContactEn','Contact','dark',() => import('@/views/Contact/index.vue')],
         ['/en/privacy-policy','PrivacyPolicyEn','Privacy policy','dark',() => import('@/views/PrivacyPolicy.vue')],
         ['/en/legal-statement','LegalStatementEn','Legal statement','dark',() => import('@/views/LegalStatement.vue')]
       ].map(([path,name,title,headerInk,component]) => ({ path, name, component, meta: { title, headerInk } })),
@@ -107,7 +108,13 @@ const routes = [
         path: '/about',
         name: 'About',
         component: () => import('@/views/About/index.vue'),
-        meta: { title: '关于我们', headerInk: 'light' }
+        meta: { title: '关于我们', headerInk: 'dark' }
+      },
+      {
+        path: '/contact',
+        name: 'Contact',
+        component: () => import('@/views/Contact/index.vue'),
+        meta: { title: '联系我们', headerInk: 'dark', headerTransparent: true }
       },
       {
         path: '/privacy-policy',

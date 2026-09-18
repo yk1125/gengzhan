@@ -379,6 +379,11 @@ html[data-theme='dark'] body {
   color: #f2f1e4;
 }
 
+/* About customer logos are monochrome dark SVGs; lift them for the dark surface. */
+html[data-theme='dark'] .company-logo-grid img {
+  filter: brightness(0) invert(1);
+}
+
 /* 主题切换短过渡：stores/theme.js 会在真正换色时临时给 html 挂上 .theme-transition，
    约 420ms 后摘掉。只过渡颜色相关属性，不碰 transform / opacity / filter，
    因此不会污染 hover 动效，也不会被 check:motion 判成 transition: all。 */
@@ -653,12 +658,9 @@ html:not([data-theme='dark']) .corporate-footer.footer-home {
 }
 
 /* Detail, policy and AI consultation surfaces. */
-:is(.case-detail,.news-detail,.policy-page,.ai-consultation-page) { color: var(--yz-black) !important; background: var(--yz-offwhite) !important; }
+:is(.case-detail,.news-detail,.policy-page) { color: var(--yz-black) !important; background: var(--yz-offwhite) !important; }
 :is(.case-detail,.news-detail) .detail-content,.policy-document { background: #fff !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
 .news-detail .article-header h1,.case-detail .detail-title,.policy-document h1 { color: var(--yz-black) !important; letter-spacing: -.04em !important; }
-.ai-consultation-page .consultation-shell { border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
-.ai-consultation-page .consultation-header { background: #111 !important; }
-.ai-consultation-page .consultation-mark,.ai-consultation-page .consultation-composer button { background: var(--yz-orange) !important; }
 
 @media (max-width: 992px) {
 }

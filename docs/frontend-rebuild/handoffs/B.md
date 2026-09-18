@@ -1185,3 +1185,45 @@ $ npx.cmd eslint _base_index.vue _base_home.js --ext .vue,.js                   
 - 客户墙三组 Logo 随滚动以不同方向/速度横移；手机保持网格，避免横向溢出。
 - 新截图：`handoffs/B/about/timeline-start.png`、`timeline-mid.png`、`timeline-mobile.png`。
 - 实测：1440 时间轴五个进度点的两个证书 transform/opacity 均连续变化；390 英文页面无中文、无坏图、无横向溢出；build、motion gate 通过。
+
+## About 主题与导航修订（2026-09-19）
+
+- `frontend/src/views/About/index.vue`：CTA 改用全站 `--color-accent` / `--color-on-accent` 主题蓝；证书、客户墙及卡片表面改用主题 token；新增背景/文字/边框/阴影的 350ms 主题过渡，减少亮暗切换跳变。
+- `frontend/src/router/index.js`：About / AboutEn 首屏字色元数据改为 `headerInk: 'dark'`，亮色模式导航使用深色字，与首页的首屏可读性规则一致；暗色模式仍由 Header 统一切为白字。
+- 验证：`npm.cmd run build` PASS；`npm.cmd run check:routes` PASS 34 / FAIL 0 / PENDING 2（Contact 存量）；`npm.cmd run check:motion` PASS 2 / FAIL 0；About/Router 只读 ESLint 0 errors / 40 warnings（既有模板格式告警）；`/about` dev 请求 HTTP 200；Edge headless 首屏截图已检查。
+- 共享影响：About 的路由元数据有 2 行变更，集成时保留；未新增 API、素材或页面状态。
+
+## About 夜间客户 Logo 可读性修订（2026-09-19）
+
+- `frontend/src/views/About/index.vue`：客户 Logo 图片增加显式滤镜过渡；`frontend/src/style.css` 在暗色主题下对 `.company-logo-grid img` 使用 `brightness(0) invert(1)` 转为白色，避免 Logo 墙在深色背景上变黑不可读。亮色主题保持原始 Logo 颜色。
+- 验证：`npm.cmd run build` PASS；`npm.cmd run check:motion` PASS 2 / FAIL 0 / BASELINE-STALE 0；About 只读 ESLint 0 errors / 40 warnings（既有模板格式告警）。Playwright + Edge 实测 `/about` 正常渲染、无 pageerror：暗色 `filter = brightness(0) invert(1)`，亮色 `filter = none`，共 48 个渲染实例（24 Logo 重复一轮用于横移）。排查期间重启 Vite，消除旧 HMR 白屏状态。
+
+## About Banner / 合作理念动效微调（2026-09-19）
+
+- `frontend/src/views/About/index.vue`：Banner 图片视口高度与文档流高度保持不变，新增主题背景色遮罩（桌面 48-72px、手机 40px）覆盖图片顶部，让首屏黑色区域向下多覆盖一段；遮罩不接收指针事件。
+- `frontend/src/views/About/useAboutMotion.js`：合作理念卡片由 `0vh -> index * 20px` 的连续数值插值驱动，使用 ease-out 三次曲线与 `translate3d`，消除原先到达终点时从 `0vh` 突跳到 20/40/60px 的卡顿。
+- 验证：`npm.cmd run build` PASS；`npm.cmd run check:motion` PASS 2 / FAIL 0；About 定向 ESLint 0 errors / 40 warnings（既有模板格式告警）；`git diff --check` PASS；Edge 1440x900 与 390x844 首屏截图确认黑色覆盖边界、图片及文字无重叠；1440 桌面卡片进度探针显示终点连续收敛到 20/40/60px。
+
+## Contact Banner / 滚动显隐优化（2026-09-19）
+
+- `frontend/src/views/Contact/index.vue`：Contact 顶部 Banner 对齐 About 的图片视口节奏，使用同等比例的裁切、初始主题色遮罩和基于 Banner 自身位置的 0.9 倍滚动视差；手机端保留 310px 静态裁切，避免小屏图片跳动。
+- Contact 主要区块、Banner、表单与 `.contact-closing` 增加 IntersectionObserver 驱动的滚动渐显/渐隐，桌面和移动端均启用，`prefers-reduced-motion` 自动取消位移与过渡。
+- `.contact-closing` 去除黑色硬背景，改为主题背景 + 顶部分隔线；桌面采用标题/圆形入口双列，手机改为上下堆叠，适配窄屏。
+- 验证：`npm.cmd run build` PASS；`npm.cmd run check:motion` PASS 2 / FAIL 0；Contact 定向 ESLint 0 errors（87 条既有格式 warnings）；`git diff --check` PASS；Edge 1440x900 与 390x844 截图确认 Banner、移动端换行及无溢出。
+
+## Contact 页面实现（2026-09-19）
+
+- 新增 `frontend/src/views/Contact/index.vue`：中文 `/contact` 与英文 `/en/contact` 共用双语内容；按参考站 Contact 结构实现深色首屏、双列表单、横幅视差、顶部/底部蓝色合作须知轮盘、遮罩弹层、Esc/焦点关闭、reduced-motion 降级及响应式布局。
+- 联系页使用仓库已有 `assets/home/statement-bg.jpg`，没有运行时热链参考站素材；页脚通过 Footer 的首页样式判定复用当前首页 Footer。
+- 表单字段符合 DATA 模型，服务枚举、联系方式、隐私同意均有校验；在真实接收契约未验证前生产显示 `unavailable` 并保留输入，提供复制摘要/微信/邮箱退路；显式 `mock-preview` + `VITE_MOCK_RESOURCES=contact` 才显示 demo。代码标记 `BACKEND-TODO(B03)`。
+- 共享入口：`Header.vue` 桌面/移动导航加入联系我们；`router/index.js` 注册 Contact/ContactEn；`scripts/check-routes.mjs` 移除已完成 Contact PENDING；`Footer.vue` 让 Contact 走首页页脚样式。
+- 验证：`npm.cmd run check:routes:strict` PASS 36 / FAIL 0 / PENDING 0；`npm.cmd run build` PASS；Contact 定向 ESLint 0 errors（仅既有格式 warnings）；`git diff --check` PASS；本地浏览器核对中文桌面首屏、轮盘弹层开关、空表单四项校验、unavailable 保留表单内容及 `/contact` 导航入口。尚未用真实 API 提交，符合 B03 限制。
+- 共享影响：Header/Footer/router/check-routes 均有 B 的增量改动，A 集成时保留；当前工作树另有 About/style.css 等既有用户改动，不属于本次 Contact 实现。
+
+## AI 咨询工作台视觉与交互优化（2026-09-19）
+
+- `frontend/src/views/AiConsultation/index.vue`：将旧蓝白聊天框重做为与官网一致的米白/黑色/橙色/主题蓝咨询工作台。桌面为“咨询价值介绍 + 对话工作区”双列，手机改为单列；新增 AI 状态、三步流程、网格背景、信号环入场、消息入场、typing 状态、快捷问题 hover、发送按钮微动效及 reduced-motion 降级。
+- 同文件补齐 `/en/ai-consultation` 双语内容，返回首页路由随语言切换；保留 `/api/ai/chat` 非流式接口、历史上下文、失败后人工微信退路和 `q` 查询参数自动提问。
+- 输入区增加 800 字计数、自动增高（最高 160px）、隐私提示与复制微信入口；全局 `style.css` 移除旧 AI 页强制蓝白外壳覆盖，页面颜色改消费共享主题 token，自动跟随 19:00—07:00 暗色机制。
+
+验证：`frontend/npm.cmd run build` PASS；AI 页面定向 ESLint 0 errors（98 条既有 Vue 模板格式 warnings）；`git diff --check` PASS；本地浏览器 `http://127.0.0.1:4173/ai-consultation` 与 `/en/ai-consultation` 实测首屏、英文文案、暗色主题、无横向溢出；中文输入框实测计数 `24 / 800`、高度自动变为 `74px`。真实 AI/API 收件仍按 DATA 约定待后端联调。

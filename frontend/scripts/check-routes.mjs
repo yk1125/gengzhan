@@ -27,13 +27,7 @@ const specFile = resolve(repoRoot, 'docs/frontend-rebuild/specs/FRONTEND.md')
 const strict = process.argv.includes('--strict')
 
 /** 已记录但尚未实现的 routeKey；必须有负责人和任务号，不允许留空。 */
-const PENDING = [
-  {
-    routeKey: 'contact',
-    owner: 'B / T05',
-    reason: 'Contact/index.vue 尚未创建，中文 /contact 与英文 /en/contact 均未注册'
-  }
-]
+const PENDING = []
 
 const escapeRe = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
