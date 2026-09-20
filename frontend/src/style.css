@@ -665,6 +665,9 @@ html:not([data-theme='dark']) .corporate-footer.footer-home {
 @media (max-width: 992px) {
 }
 
+/* Copy feedback is teleported to body and must remain above the fixed site header. */
+.el-message.app-copy-message { z-index: 10050 !important; }
+
 @media (max-width: 768px) {
   :is(.ai-development,.app-development,.iot-development,.miniprogram-development,.web-development,.digital-creativity,.custom-development,.about,.cases,.news) .page-header {
     min-height: 390px !important;
@@ -2161,6 +2164,10 @@ body :is(.ai-development,.app-development,.web-development) .cta-section .el-but
 .header.header-ink-light :is(.theme-toggle, .lang-toggle) { color: #fff; }
 .header.header-ink-dark :is(.theme-toggle, .lang-toggle) { color: #111; }
 .header.header-transparent.on :is(.theme-toggle, .lang-toggle) { color: #000; }
+.header:not(.header-transparent) .mobile-actions,
+.header.header-ink-light .mobile-actions { color: #fff; }
+.header.header-transparent.header-ink-dark .mobile-actions { color: #111; }
+.header.header-transparent.on .mobile-actions { color: #111; }
 
 /* 透明顶皮肤：**全站默认**（2026-09-15 用户裁定：「透明不止给首页，要全局使用，即全局的
    导航栏都跟首页一样」）。要实底的页面用 `route.meta.headerTransparent === false` 显式关掉。
@@ -2276,7 +2283,7 @@ body :is(.ai-development,.app-development,.web-development) .cta-section .el-but
   border-radius: 999px;
   min-height: 38px;
 }
-.header-transparent.header-ink-dark .mobile-menu-btn span { background: #111; }
+.header-transparent.header-ink-dark .mobile-menu-lines span { background: #111; }
 
 /* M-04 透明顶反色：米底上的文字/图标转黑（参考站 `.header.on` 的 `color: #000` + logo
    `filter: invert(1)`；本项目字标是文字，没有 <img>，所以只反色不过滤）。 */
@@ -2287,7 +2294,7 @@ body :is(.ai-development,.app-development,.web-development) .cta-section .el-but
 .header-transparent.on .nav-item.active { color: #000; }
 .header-transparent.on .desktop-wechat-copy { color: #000; background: transparent; border-color: rgba(0, 0, 0, .4); }
 .header-transparent.on .desktop-wechat-copy:hover { color: #fff; background: #111; }
-.header-transparent.on .mobile-menu-btn span { background: #000; }
+.header-transparent.on .mobile-menu-lines span { background: #000; }
 
 /* 暗色主题：透明顶滚过首屏后不应再回米底黑字，而应回到深色实底 + 白字，
    与页面暗色背景保持一致。选择器带 html[data-theme='dark']，特异度高于上面的
@@ -2303,11 +2310,13 @@ html[data-theme='dark'] .header.header-transparent.on :is(.brand-simple, .nav-it
 html[data-theme='dark'] .header.header-transparent.on .brand-en { color: rgba(255, 255, 255, .58); }
 html[data-theme='dark'] .header.header-transparent.on .nav-item { color: rgba(255, 255, 255, .88); }
 html[data-theme='dark'] .header.header-transparent.on :is(.theme-toggle, .lang-toggle) { color: #fff; }
+html[data-theme='dark'] .header.header-transparent.on .mobile-actions { color: #fff; }
+html[data-theme='dark'] .header.header-transparent.header-ink-dark .mobile-actions { color: #111; }
 html[data-theme='dark'] .header.header-transparent.on .desktop-wechat-copy {
   color: #fff;
   border-color: rgba(255, 255, 255, .45);
 }
-html[data-theme='dark'] .header.header-transparent.on .mobile-menu-btn span { background: #fff; }
+html[data-theme='dark'] .header.header-transparent.on .mobile-menu-lines span { background: #fff; }
 
 /* 桌面容器：三列栅格（字标 / 导航 / 操作）。宽度由上面的
    `.container, .header-container, .footer-container` 统一给出。

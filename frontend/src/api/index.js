@@ -42,10 +42,11 @@ export const getNews = (params, config = {}) => {
   })
 }
 
-export const getNewsDetail = (id) => {
+export const getNewsDetail = (id, config = {}) => {
   return request({
     url: `/news/${id}`,
-    method: 'get'
+    method: 'get',
+    ...config
   })
 }
 

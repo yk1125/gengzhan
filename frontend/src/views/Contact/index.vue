@@ -13,11 +13,13 @@
         </div>
       </div>
 
-      <div class="hero-image" aria-hidden="true" data-contact-reveal>
+      <div ref="heroImageViewport" class="hero-image" aria-hidden="true" data-contact-reveal>
         <img
+          ref="heroImage"
           src="/assets/home/statement-bg.jpg"
           alt=""
-          :style="{ transform: `translate3d(0, ${parallaxY}px, 0) scale(1.08)` }"
+          :style="{ transform: `translate3d(0, ${parallaxY}px, 0)` }"
+          @load="handleScroll"
         />
       </div>
     </section>
@@ -111,7 +113,7 @@
           <p>{{ copy.closingKicker }}</p>
           <h2>{{ copy.closingTitle }}</h2>
         </div>
-        <CooperationWheel :label="copy.cooperation" @open="openNotice" />
+        <CooperationWheel :label="copy.startConversation" @open="openAiConsultation" />
       </div>
     </section>
 
@@ -139,12 +141,15 @@
 
 <script setup>
 import { computed, defineComponent, h, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { copyToClipboard } from '@/utils/clipboard'
 
 const route = useRoute()
+const router = useRouter()
 const isEn = computed(() => route.path === '/en/contact')
 const privacyPath = computed(() => (isEn.value ? '/en/privacy-policy' : '/privacy-policy'))
+const aiConsultationPath = computed(() => (isEn.value ? '/en/ai-consultation' : '/ai-consultation'))
 const noticeTitleId = 'cooperation-notice-title'
 
 const CooperationWheel = defineComponent({
@@ -172,6 +177,7 @@ const copy = computed(() => (isEn.value ? {
   heroLine2: 'starts with a clear conversation.',
   heroBody: 'Tell us what you are building, where the friction is, and what outcome matters. We will respond with an honest assessment and a practical next step.',
   cooperation: 'Cooperation notes',
+  startConversation: 'Start a conversation',
   kicker: 'CONTACT / YUNZHAN',
   sectionTitle: 'Let us build something useful.',
   sectionBody: 'Yunzhan Technology provides AI application, mini program, app and web product development for enterprises. Start with an idea, a brief, or a concrete problem.',
@@ -207,6 +213,7 @@ const copy = computed(() => (isEn.value ? {
   heroLine2: '从一次坦诚沟通开始。',
   heroBody: '告诉我们你想做什么、正在遇到什么问题，以及真正重要的目标。我们会给出诚实判断，并一起找到可落地的下一步。',
   cooperation: '合作须知',
+  startConversation: '开始沟通',
   kicker: 'CONTACT / YUNZHAN',
   sectionTitle: '一起做些真正有用的事。',
   sectionBody: '耘栈科技面向企业提供 AI 应用、小程序、App 与网站产品研发。无论是一份完整需求，还是一个尚待梳理的想法，都可以从这里开始。',
@@ -246,6 +253,8 @@ const submitState = ref('')
 const noticeOpen = ref(false)
 const noticeCloseRef = ref(null)
 const heroStage = ref(null)
+const heroImageViewport = ref(null)
+const heroImage = ref(null)
 const parallaxY = ref(0)
 let revealObserver
 let previousBodyOverflow = ''
@@ -286,12 +295,14 @@ const submitForm = async () => {
 
 const copyText = async (value, label) => {
   try {
-    await navigator.clipboard.writeText(value)
-    ElMessage.success(copy.value.copied(label))
+    await copyToClipboard(value)
+    ElMessage({ type: 'success', message: copy.value.copied(label), customClass: 'app-copy-message' })
   } catch (error) {
-    ElMessage.info(copy.value.copyFailed)
+    ElMessage({ type: 'info', message: copy.value.copyFailed, customClass: 'app-copy-message' })
   }
 }
+
+const openAiConsultation = () => router.push(aiConsultationPath.value)
 
 const copySummary = () => {
   const labels = copy.value.summaryLabels
@@ -329,8 +340,11 @@ const handleScroll = () => {
     return
   }
   const heroRect = heroStage.value?.getBoundingClientRect()
-  const travel = heroRect ? Math.max(0, Math.min(window.innerHeight * 1.15, -heroRect.top)) : 0
-  parallaxY.value = travel * 0.9
+  const imageTravel = Math.max(0, (heroImage.value?.offsetHeight || 0) - (heroImageViewport.value?.clientHeight || 0))
+  // Keep the company name in the first PC viewport while preserving the upward reveal on scroll.
+  const initialImageOffset = imageTravel * 0.2
+  const scrollTravel = initialImageOffset + (heroRect ? Math.max(0, -heroRect.top * 0.9) : 0)
+  parallaxY.value = Math.min(imageTravel, scrollTravel)
 }
 
 onMounted(() => {
@@ -339,6 +353,7 @@ onMounted(() => {
   }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' })
   document.querySelectorAll('.contact-page [data-contact-reveal]').forEach((element) => revealObserver.observe(element))
   window.addEventListener('scroll', handleScroll, { passive: true })
+  window.addEventListener('resize', handleScroll, { passive: true })
   window.addEventListener('keydown', handleKeydown)
   handleScroll()
 })
@@ -346,6 +361,7 @@ onMounted(() => {
 onUnmounted(() => {
   revealObserver?.disconnect()
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('resize', handleScroll)
   window.removeEventListener('keydown', handleKeydown)
   if (noticeOpen.value) document.body.style.overflow = previousBodyOverflow
 })
@@ -383,8 +399,7 @@ onUnmounted(() => {
 .hero-side .cooperation-wheel { margin: 35px 0 0 165px; }
 
 .hero-image { position: relative; height: min(37.2vw, 536px); min-height: 360px; margin-top: 74px; overflow: hidden; background: #d3d1c7; }
-.hero-image::before { content: ''; position: absolute; z-index: 1; inset: 0 0 auto; height: clamp(48px, 5vw, 72px); background: var(--contact-bg); pointer-events: none; }
-.hero-image img { position: relative; top: -64%; display: block; width: 100%; height: 280%; object-fit: cover; object-position: center 38%; transition: transform .08s linear; will-change: transform; }
+.hero-image img { position: absolute; left: 0; bottom: 0; display: block; width: 100%; height: auto; max-width: none; transition: transform .08s linear; will-change: transform; }
 
 :deep(.cooperation-wheel) {
   position: relative;
@@ -414,7 +429,7 @@ onUnmounted(() => {
 :deep(.wheel-label) { width: 70px; font-size: 15px; font-weight: 700; line-height: 1.3; text-align: center; }
 :deep(.wheel-arrow) { position: absolute; right: 31px; bottom: 25px; font-size: 13px; }
 
-.contact-main { display: flex; justify-content: space-between; gap: 90px; padding: 120px 0 300px; }
+.contact-main { display: flex; justify-content: space-between; gap: 90px; padding: 120px 0 300px; scroll-margin-top: 84px; }
 .contact-details { width: min(560px, 45%); }
 .section-kicker, .closing-inner > div > p, .notice-kicker { margin: 0 0 30px; color: #184dc4; font-size: 12px; font-weight: 700; letter-spacing: .18em; }
 .contact-details h2 { max-width: 520px; margin: 0; font-size: clamp(38px, 4vw, 58px); font-weight: 500; line-height: 1.25; letter-spacing: 0; }
@@ -524,9 +539,8 @@ html[data-theme='dark'] .privacy-option input:checked + span { box-shadow: inset
   .hero-side :deep(.wheel-ring i:nth-child(6)) { transform: rotate(225deg); }
   .hero-side :deep(.wheel-ring i:nth-child(7)) { transform: rotate(270deg); }
   .hero-side :deep(.wheel-ring i:nth-child(8)) { transform: rotate(315deg); }
-  .hero-image { height: 310px; min-height: 0; margin-top: 40px; }
-  .hero-image::before { height: 40px; }
-  .hero-image img { top: -19%; height: 150%; transform: none !important; }
+  .hero-image { height: auto; min-height: 0; aspect-ratio: 4 / 3; margin-top: 40px; }
+  .hero-image img { position: static; width: 100%; height: 100%; object-fit: cover; object-position: center; transform: none !important; }
   .contact-main { gap: 68px; padding: 76px 0 150px; }
   .contact-details h2 { font-size: 36px; }
   .section-intro { margin-top: 30px; font-size: 14px; }

@@ -10,6 +10,7 @@ export function useAboutMotion (root, stages = {}) {
   const desktop = window.matchMedia('(min-width: 1025px) and (pointer: fine)')
   let observer
   let factsObserver
+  let valuesObserver
   let frame = 0
   let countFrame = 0
   let counted = false
@@ -26,11 +27,15 @@ export function useAboutMotion (root, stages = {}) {
   function sync () {
     observer?.disconnect()
     factsObserver?.disconnect()
+    valuesObserver?.disconnect()
     if (scrollBound) window.removeEventListener('scroll', schedule)
     scrollBound = false
     animations.forEach(animation => animation.cancel())
     animations.clear()
     magnetic.detach()
+    const valueCards = [...(root.value?.querySelectorAll('[data-mobile-value-card]') || [])]
+    root.value?.classList.remove('company-values--mobile-motion')
+    valueCards.forEach(card => card.classList.remove('is-mobile-visible'))
     if (reduced.matches) return
     if (desktop.matches) magnetic.attach()
     if (!('IntersectionObserver' in window)) return
@@ -53,6 +58,18 @@ export function useAboutMotion (root, stages = {}) {
       })
     }, { threshold: 0.12 })
     root.value.querySelectorAll('[data-company-reveal]').forEach(el => observer.observe(el))
+    if (!desktop.matches) {
+      updateValueCards(0)
+      root.value.classList.add('company-values--mobile-motion')
+      valuesObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return
+          entry.target.classList.add('is-mobile-visible')
+          valuesObserver.unobserve(entry.target)
+        })
+      }, { threshold: 0.16, rootMargin: '0px 0px -8% 0px' })
+      valueCards.forEach(card => valuesObserver.observe(card))
+    }
     if (stages.overviewStage?.value) {
       factsObserver = new IntersectionObserver(entries => {
         entries.forEach(entry => {
@@ -150,6 +167,7 @@ export function useAboutMotion (root, stages = {}) {
   onBeforeUnmount(() => {
     observer?.disconnect()
     factsObserver?.disconnect()
+    valuesObserver?.disconnect()
     animations.forEach(animation => animation.cancel())
     reduced.removeEventListener('change', sync)
     desktop.removeEventListener('change', sync)

@@ -188,7 +188,7 @@
             </h2>
           </div>
           <div class="company-values__visual">
-            <div v-for="(value, index) in copy.values.items" :key="value.title" class="company-values__card" :style="{ '--value-index': index }" data-value-card>
+            <div v-for="(value, index) in copy.values.items" :key="value.title" class="company-values__card" :style="{ '--value-index': index }" data-value-card data-mobile-value-card>
               <div class="company-values__card-media"><img :src="companyMedia.office" :alt="`${value.title} visual`"></div>
               <div class="company-values__card-copy">
                 <span class="company-value-number">0{{ index + 1 }}</span>
@@ -441,6 +441,38 @@ function closeOnBackdrop (event) {
   .company-stage__copy h2 { font-size: 40px; }
   .company-stage__copy strong { margin-top: 28px; font-size: 48px; }
   .company-stage__media { height: 52vh; }
+  .company-values { height: auto; padding: 80px 0; }
+  .company-values__sticky { position: static; height: auto; overflow: visible; }
+  .company-values__inner { height: auto; }
+  .company-values__inner > .company-section-heading { position: static; max-width: 620px; margin-bottom: 44px; }
+  .company-values__visual { position: static; display: grid; gap: 24px; }
+  .company-values__card {
+    position: static;
+    width: auto;
+    height: auto;
+    min-height: 340px;
+    transform: none;
+    will-change: auto;
+  }
+  .company-values__card-media { min-height: 300px; }
+  .company-values__card-copy { min-height: 300px; }
+  .company-values--mobile-motion .company-values__card {
+    opacity: 0;
+    transform: translate3d(0, 34px, 0);
+    transition:
+      opacity .7s var(--company-ease),
+      transform .7s var(--company-ease),
+      background-color var(--company-theme-duration) ease,
+      color var(--company-theme-duration) ease,
+      border-color var(--company-theme-duration) ease,
+      box-shadow var(--company-theme-duration) ease;
+  }
+  .company-values--mobile-motion .company-values__card.is-mobile-visible { opacity: 1; transform: translate3d(0, 0, 0); }
+  .company-values--mobile-motion .company-values__card-media img {
+    transform: scale(1.035);
+    transition: transform 1s var(--company-ease);
+  }
+  .company-values--mobile-motion .company-values__card.is-mobile-visible .company-values__card-media img { transform: scale(1); }
 }
 @media (max-width: 600px) {
   .company-hero { padding: 104px 0 64px; }
@@ -479,16 +511,16 @@ function closeOnBackdrop (event) {
   .company-stage__certificate--enterprise { transform: translate3d(8%, 18%, 0) rotate(5deg) scale(.75); opacity: .75; }
   .company-hero__fold { display: none; }
   .company-hero__photo { transform: none; }
-  .company-values { height: auto; padding: 64px 0; }
-  .company-values__sticky { position: static; height: auto; overflow: visible; }
-  .company-values__inner { height: auto; }
-  .company-values__inner > .company-section-heading { position: static; max-width: none; margin-bottom: 36px; }
-  .company-values__visual { position: static; display: grid; gap: 18px; }
-  .company-values__card { position: static; width: auto; height: auto; min-height: 0; grid-template-columns: 1fr; }
+  .company-values { padding: 64px 0; }
+  .company-values__inner > .company-section-heading { max-width: none; margin-bottom: 36px; }
+  .company-values__visual { gap: 18px; }
+  .company-values__card { min-height: 0; grid-template-columns: 1fr; }
   .company-values__card-media { height: 210px; }
-  .company-values__card-copy { grid-template-columns: 28px 1fr; gap: 12px; padding: 24px 20px; border-left: 1px solid var(--color-line); }
+  .company-values__card-copy { min-height: 0; grid-template-columns: 28px 1fr; gap: 12px; padding: 24px 20px; border-left: 1px solid var(--color-line); }
 }
 @media (prefers-reduced-motion: reduce) {
   .company-explore svg, .company-service, .company-service__arrow { transition: none; }
+  .company-values--mobile-motion .company-values__card,
+  .company-values--mobile-motion .company-values__card-media img { opacity: 1; transform: none; transition: none; }
 }
 </style>

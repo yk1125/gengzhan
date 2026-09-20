@@ -38,9 +38,165 @@
       </div>
     </section>
 
+    <div class="service-mobile-sections">
+      <section class="mobile-service-section mobile-service-section--primary">
+        <div class="service-shell">
+          <header
+            class="mobile-section-intro"
+            data-mobile-reveal
+          >
+            <div class="mobile-section-title">
+              <span>01</span>
+              <strong>{{ mobilePrimary.label }}</strong>
+              <el-icon><TopRight /></el-icon>
+            </div>
+            <h2>{{ mobilePrimary.title }}</h2>
+            <p>{{ mobilePrimary.intro }}</p>
+          </header>
+
+          <div class="mobile-primary-items">
+            <article
+              v-for="(item, index) in mobilePrimary.items"
+              :key="item.title"
+              data-mobile-reveal
+              :style="mobileRevealStyle(index)"
+            >
+              <el-icon class="mobile-item-icon">
+                <component :is="primaryIcon(index)" />
+              </el-icon>
+              <div>
+                <h3>{{ item.title }}</h3>
+                <p v-if="item.text">
+                  {{ item.text }}
+                </p>
+              </div>
+            </article>
+          </div>
+
+          <div
+            class="mobile-image-gallery"
+            :class="{ 'mobile-image-gallery--single': mobilePrimary.images.length === 1 }"
+          >
+            <figure
+              v-for="(image, index) in mobilePrimary.images"
+              :key="image"
+              data-mobile-reveal
+              :style="mobileRevealStyle(index)"
+            >
+              <img
+                :src="image"
+                :alt="mobilePrimary.images.length === 1 ? page.mediaAlt : mobilePrimary.items[index]?.title || page.mediaAlt"
+                loading="lazy"
+                decoding="async"
+              >
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="mobile-service-section mobile-service-section--capabilities">
+        <div class="service-shell">
+          <header
+            class="mobile-section-intro"
+            data-mobile-reveal
+          >
+            <div class="mobile-section-title">
+              <span>02</span>
+              <strong>WHAT WE DELIVER</strong>
+              <el-icon><TopRight /></el-icon>
+            </div>
+            <h2>{{ page.capabilityTitle }}</h2>
+          </header>
+
+          <div class="mobile-capability-list">
+            <article
+              v-for="(item, index) in page.capabilities"
+              :key="item.title"
+              data-mobile-reveal
+            >
+              <div class="mobile-capability-heading">
+                <el-icon class="mobile-item-icon">
+                  <component :is="capabilityIcon(index)" />
+                </el-icon>
+                <div>
+                  <span>0{{ index + 1 }}</span>
+                  <h3>{{ item.title }}</h3>
+                </div>
+              </div>
+              <p>{{ item.text }}</p>
+              <ul v-if="item.tags">
+                <li
+                  v-for="tag in item.tags"
+                  :key="tag"
+                >
+                  <el-icon><Check /></el-icon>
+                  <span>{{ tag }}</span>
+                </li>
+              </ul>
+              <figure data-mobile-reveal>
+                <img
+                  :src="page.capabilityImages[index]"
+                  :alt="item.title"
+                  loading="lazy"
+                  decoding="async"
+                >
+              </figure>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="mobile-service-section mobile-service-section--approach">
+        <div class="service-shell">
+          <header
+            class="mobile-section-intro"
+            data-mobile-reveal
+          >
+            <div class="mobile-section-title">
+              <span>03</span>
+              <strong>HOW WE WORK</strong>
+              <el-icon><TopRight /></el-icon>
+            </div>
+            <h2>{{ page.statement }}</h2>
+            <p>{{ page.description }}</p>
+          </header>
+
+          <ol class="mobile-process-list">
+            <li
+              v-for="(step, index) in page.process"
+              :key="step[0]"
+              data-mobile-reveal
+              :style="mobileRevealStyle(index)"
+            >
+              <el-icon class="mobile-item-icon">
+                <component :is="processIcon(index)" />
+              </el-icon>
+              <div>
+                <span>0{{ index + 1 }}</span>
+                <h3>{{ step[0] }}</h3>
+                <p>{{ step[1] }}</p>
+              </div>
+            </li>
+          </ol>
+
+          <figure
+            class="mobile-approach-image"
+            data-mobile-reveal
+          >
+            <img
+              :src="page.mediaImage"
+              :alt="page.mediaAlt"
+              loading="lazy"
+              decoding="async"
+            >
+          </figure>
+        </div>
+      </section>
+    </div>
+
     <section
       v-if="page.kind === 'ai'"
-      class="ai-architecture service-section"
+      class="ai-architecture service-section service-desktop-story"
     >
       <div
         class="service-shell ai-architecture__head"
@@ -122,7 +278,7 @@
     </section>
     <section
       v-else-if="page.kind === 'mini'"
-      class="mini-journey service-section"
+      class="mini-journey service-section service-desktop-story"
     >
       <div
         class="service-shell mini-journey__grid"
@@ -166,7 +322,7 @@
     </section>
     <section
       v-else-if="page.kind === 'app'"
-      class="app-product service-section"
+      class="app-product service-section service-desktop-story"
     >
       <div
         class="service-shell"
@@ -205,7 +361,7 @@
     </section>
     <section
       v-else-if="page.kind === 'web'"
-      class="web-brand service-section"
+      class="web-brand service-section service-desktop-story"
     >
       <div
         class="service-shell web-brand__grid"
@@ -243,7 +399,7 @@
     </section>
     <section
       v-else-if="page.kind === 'iot'"
-      class="iot-network service-section"
+      class="iot-network service-section service-desktop-story"
     >
       <div
         class="service-shell"
@@ -284,7 +440,7 @@
     </section>
     <section
       v-else-if="page.kind === 'custom'"
-      class="custom-system service-section"
+      class="custom-system service-section service-desktop-story"
     >
       <div
         class="service-shell custom-system__head"
@@ -322,7 +478,7 @@
     </section>
     <section
       v-else
-      class="creative-space service-section"
+      class="creative-space service-section service-desktop-story"
     >
       <div
         class="service-shell creative-space__top"
@@ -359,7 +515,7 @@
       </div>
     </section>
 
-    <section class="service-capabilities service-section">
+    <section class="service-capabilities service-section service-desktop-story">
       <div
         ref="parallaxHeadEl"
         class="service-shell service-capabilities__head"
@@ -403,7 +559,7 @@
         </article>
       </div>
     </section>
-    <section class="service-approach">
+    <section class="service-approach service-desktop-story">
       <div class="service-shell service-approach__grid">
         <div
           class="headline"
@@ -477,6 +633,43 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { serviceLandingEnByPath, serviceSectionZh, serviceSectionEn } from '../content/service-landing-i18n'
+import {
+  Bell,
+  Brush,
+  ChatDotRound,
+  Check,
+  CircleCheck,
+  Collection,
+  Connection,
+  Cpu,
+  DataAnalysis,
+  Document,
+  EditPen,
+  Finished,
+  Grid,
+  Guide,
+  Histogram,
+  Iphone,
+  Link,
+  MagicStick,
+  Monitor,
+  OfficeBuilding,
+  Opportunity,
+  Picture,
+  Platform,
+  Promotion,
+  Refresh,
+  Search,
+  Setting,
+  ShoppingCart,
+  Tickets,
+  Tools,
+  TopRight,
+  Upload,
+  User,
+  View,
+  Warning,
+} from '@element-plus/icons-vue'
 const route = useRoute()
 const router = useRouter()
 /**
@@ -915,6 +1108,117 @@ const section = computed(() => {
   const source = locale.value === 'en' ? serviceSectionEn : serviceSectionZh
   return source[page.value.kind] || {}
 })
+
+const primaryContent = {
+  ai: {
+    label: 'FROM DATA TO ACTION',
+    title: '把企业已有资料，变成随时可用的智能助手。',
+    enTitle: 'Turn your company knowledge into a reliable AI assistant.',
+    intro: '不必从零开始。制度、产品资料、历史案例和业务流程，经过整理后就能成为 AI 的可靠依据。',
+    enIntro: 'Policies, product knowledge and workflows become a dependable source for everyday AI work.',
+    items: [
+      ['整理企业资料', '制度、文档、产品手册、历史工单'],
+      ['建立专属知识库', '统一归档、持续更新、准确检索'],
+      ['接入 AI 助手', '问答、写作、分析与任务协同'],
+      ['服务真实岗位', '客服、销售、运营和内部员工'],
+    ],
+    enItems: [
+      ['Organize company knowledge', 'Policies, manuals, product docs and past tickets'],
+      ['Build a trusted knowledge base', 'One source of truth, kept current and searchable'],
+      ['Connect an AI assistant', 'Answer, write, analyze and coordinate work'],
+      ['Support real roles', 'Customer service, sales, operations and teams'],
+    ],
+    imageKey: 'flowImages',
+  },
+  mini: {
+    label: 'USER JOURNEY',
+    title: '把服务放进用户最顺手的入口。',
+  },
+  app: {
+    label: 'MOBILE PRODUCT',
+    title: '让每一次触达，都有完整的产品体验。',
+  },
+  web: {
+    label: 'DIGITAL PRESENCE',
+    title: '让品牌第一眼，就值得被相信。',
+    intro: '从内容逻辑到视觉系统，再到稳定、易维护的技术实现，品牌网站应是一项长期资产。',
+  },
+  iot: {
+    label: 'CONNECTED SYSTEM',
+    title: '设备有了语言，现场才真正可见。',
+  },
+  custom: {
+    label: 'BUILT FOR YOUR BUSINESS',
+    title: '不迁就软件，让软件适配组织。',
+    imageKey: 'stepImages',
+  },
+  creative: {
+    label: 'CREATIVE TECHNOLOGY',
+    title: '让内容、空间和技术成为一次完整体验。',
+    enTitle: 'Make content, space and technology one complete experience.',
+    enIntro: 'We shape interactive stories, digital spaces and visual systems people can take part in.',
+    items: [
+      ['品牌活动体验', '让品牌故事不止被看见，也能被参与。'],
+      ['数字展陈现场', '把空间、屏幕与内容组织成一个现场。'],
+      ['移动互动传播', '为一次活动或传播，创造可分享的互动入口。'],
+    ],
+    enItems: [
+      ['Branded event experiences', 'Turn a brand story into something people can join.'],
+      ['Digital exhibition spaces', 'Bring space, screens and content together on site.'],
+      ['Mobile interactive campaigns', 'Create shareable touchpoints for every campaign.'],
+    ],
+    imageKey: 'panelImages',
+  },
+}
+
+const primaryIconSets = {
+  ai: [Document, Collection, ChatDotRound, OfficeBuilding],
+  mini: [Iphone, Tickets, ShoppingCart, User],
+  app: [Iphone, Bell, Connection],
+  web: [Picture, Grid],
+  iot: [Cpu, Link, Histogram, Warning],
+  custom: [Search, Guide, Tools, Refresh],
+  creative: [MagicStick, Picture, Promotion],
+}
+
+const capabilityIconSets = {
+  ai: [ChatDotRound, Collection, User, View],
+  mini: [Platform, ShoppingCart, OfficeBuilding, Connection],
+  app: [Iphone, Connection, Brush, Upload],
+  web: [Picture, ShoppingCart, Setting, Link],
+  iot: [Cpu, Platform, Monitor, DataAnalysis],
+  custom: [Setting, OfficeBuilding, Histogram, Opportunity],
+  creative: [MagicStick, Picture, View, DataAnalysis],
+}
+
+const processIconSet = [Search, EditPen, Tools, Connection, CircleCheck, Refresh]
+
+const mobilePrimary = computed(() => {
+  const config = primaryContent[page.value.kind]
+  const items = (locale.value === 'en' ? config.enItems : config.items) || page.value.modules.map((title, index) => ({
+    title,
+    text: page.value.moduleNotes?.[index] || '',
+  }))
+  const normalizedItems = items.map((item) =>
+    Array.isArray(item) ? { title: item[0], text: item[1] } : item,
+  )
+  const images = config.imageKey
+    ? (page.value.kind === 'ai' ? [page.value[config.imageKey][0]] : page.value[config.imageKey])
+    : [page.value.mediaImage]
+  return {
+    ...config,
+    title: locale.value === 'en' ? (config.enTitle || page.value.title) : (config.title || page.value.title),
+    intro: locale.value === 'en' ? (config.enIntro || page.value.subtitle) : (config.intro || page.value.subtitle),
+    items: normalizedItems,
+    images,
+  }
+})
+
+const primaryIcon = (index) => primaryIconSets[page.value.kind]?.[index] || Finished
+const capabilityIcon = (index) => capabilityIconSets[page.value.kind]?.[index] || Finished
+const processIcon = (index) => processIconSet[index] || Finished
+const mobileRevealStyle = (index) => ({ '--mobile-reveal-delay': `${Math.min(index, 3) * 70}ms` })
+
 const rootEl = ref(null)
 const parallaxHeadEl = ref(null)
 const statementEl = ref(null)
@@ -938,6 +1242,7 @@ const titleCharStyle = (index, char) => ({
 let frame = 0
 const timers = { title: 0 }
 let aosPending = []
+let mobileRevealTargets = []
 /** `once` 语义下已显影的节点。换页要整体重来，WeakSet 不能 clear，所以这里是可变引用。 */
 let aosDone = new WeakSet()
 
@@ -948,7 +1253,14 @@ const scheduleFrame = () => {
 
 const collectAosTargets = () => {
   if (!rootEl.value) return
-  aosPending = [...rootEl.value.querySelectorAll('[data-aos]')].filter((el) => !aosDone.has(el))
+  aosPending = [...rootEl.value.querySelectorAll('[data-aos]')].filter(
+    (el) => !aosDone.has(el) && !(isMobile.value && el.closest('.service-desktop-story')),
+  )
+}
+
+const collectMobileRevealTargets = () => {
+  if (!rootEl.value) return
+  mobileRevealTargets = [...rootEl.value.querySelectorAll('[data-mobile-reveal]')]
 }
 
 /**
@@ -962,8 +1274,12 @@ const collectAosTargets = () => {
 const resetReveal = () => {
   if (!rootEl.value) return
   rootEl.value.querySelectorAll('[data-aos]').forEach((el) => el.classList.remove('aos-animate'))
+  rootEl.value
+    .querySelectorAll('[data-mobile-reveal]')
+    .forEach((el) => el.classList.remove('is-visible'))
   aosDone = new WeakSet()
   aosPending = []
+  mobileRevealTargets = []
 }
 
 /** SPEC M-24/M-25：offset = rect.top - clientHeight + all_num，offset < 0 加 .aos-animate，once。 */
@@ -982,8 +1298,19 @@ const runAos = (clientHeight) => {
   aosPending = remaining
 }
 
+const runMobileReveal = (clientHeight) => {
+  if (!isMobile.value) return
+  const revealTop = clientHeight * 0.88
+  const revealBottom = clientHeight * 0.12
+  mobileRevealTargets.forEach((el) => {
+    const rect = el.getBoundingClientRect()
+    el.classList.toggle('is-visible', rect.top < revealTop && rect.bottom > revealBottom)
+  })
+}
+
 /** SPEC M-12：双列视差，系数 −0.02 / +0.1，逐帧直写，锚点 = 顶端 − clientHeight/3。 */
 const runColumnParallax = (scrollTop, clientHeight) => {
+  if (isMobile.value) return
   const group = parallaxHeadEl.value
   if (!group || group.children.length < 2) return
   const anchor = group.getBoundingClientRect().top + scrollTop - clientHeight / 3
@@ -1023,6 +1350,7 @@ const runScrollDriven = () => {
   const clientHeight = document.documentElement.clientHeight
   const scrollTop = window.scrollY || document.documentElement.scrollTop || 0
   runAos(clientHeight)
+  runMobileReveal(clientHeight)
   runColumnParallax(scrollTop, clientHeight)
   runPublicText(scrollTop, clientHeight)
 }
@@ -1034,6 +1362,9 @@ const revealEverything = () => {
     el.classList.add('aos-animate')
     aosDone.add(el)
   })
+  rootEl.value
+    .querySelectorAll('[data-mobile-reveal]')
+    .forEach((el) => el.classList.add('is-visible'))
   aosPending = []
   statementEl.value?.querySelectorAll('.line').forEach((el) => {
     el.style.clipPath = ''
@@ -1073,6 +1404,7 @@ const onViewportChange = () => {
   prefersReducedMotion.value = reducedQuery.matches
   if (prefersReducedMotion.value) revealEverything()
   collectAosTargets()
+  collectMobileRevealTargets()
   scheduleFrame()
 }
 
@@ -1084,6 +1416,7 @@ onMounted(() => {
   document.addEventListener('visibilitychange', scheduleFrame)
 
   collectAosTargets()
+  collectMobileRevealTargets()
   if (prefersReducedMotion.value) revealEverything()
   scheduleFrame()
   playTitleEntrance()
@@ -1106,6 +1439,7 @@ watch(
     await nextTick()
     resetReveal()
     collectAosTargets()
+    collectMobileRevealTargets()
     if (prefersReducedMotion.value) revealEverything()
     playTitleEntrance()
     scheduleFrame()
@@ -1136,6 +1470,9 @@ watch(
   color: var(--svc-ink);
   background: var(--svc-bg);
   overflow: hidden;
+}
+.service-mobile-sections {
+  display: none;
 }
 .service-shell {
   width: min(calc(100% - 96px), 1320px);
@@ -1983,6 +2320,256 @@ watch(
 }
 /* SPEC 断点速查 ≤1024px：不擦除整段文案，改用静态段落（`.sj_text`）展示 */
 @media (max-width: 1024px) {
+  .service-mobile-sections {
+    display: block;
+  }
+  .service-desktop-story {
+    display: none !important;
+  }
+  .mobile-service-section {
+    padding: 72px 0 76px;
+    border-top: 1px solid var(--svc-line-soft);
+  }
+  .mobile-service-section:first-child {
+    border-top: 0;
+  }
+  .mobile-service-section--capabilities {
+    background: var(--svc-surface-soft);
+  }
+  .mobile-section-intro {
+    max-width: 680px;
+  }
+  .mobile-section-title {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) 34px;
+    gap: 12px;
+    align-items: center;
+    min-height: 38px;
+  }
+  .mobile-section-title span {
+    color: var(--svc-ink-soft);
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .mobile-section-title strong {
+    min-width: 0;
+    color: var(--svc-ink);
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+  .mobile-section-title .el-icon {
+    justify-self: end;
+    color: var(--svc-accent);
+    font-size: 32px;
+  }
+  .mobile-section-intro h2 {
+    max-width: 650px;
+    margin: 30px 0 16px;
+    color: var(--svc-ink);
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.48;
+  }
+  .mobile-section-intro > p {
+    max-width: 620px;
+    margin: 0;
+    color: var(--svc-ink-soft);
+    font-size: 14px;
+    line-height: 2;
+  }
+  .mobile-primary-items {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 38px;
+    border-top: 1px solid var(--svc-line-soft);
+  }
+  .mobile-primary-items article {
+    min-width: 0;
+    padding: 24px 12px 24px 0;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 11px;
+    align-items: start;
+    border-bottom: 1px solid var(--svc-line-soft);
+  }
+  .mobile-primary-items article:nth-child(even) {
+    padding-right: 0;
+    padding-left: 12px;
+    border-left: 1px solid var(--svc-line-soft);
+  }
+  .mobile-item-icon {
+    width: 34px;
+    height: 34px;
+    color: var(--svc-accent);
+    font-size: 30px;
+  }
+  .mobile-primary-items h3,
+  .mobile-capability-list h3,
+  .mobile-process-list h3 {
+    margin: 2px 0 0;
+    color: var(--svc-ink);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 1.45;
+  }
+  .mobile-primary-items p {
+    margin: 7px 0 0;
+    color: var(--svc-ink-soft);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .mobile-image-gallery {
+    display: grid;
+    grid-auto-columns: 88%;
+    grid-auto-flow: column;
+    gap: 12px;
+    margin: 34px calc((100vw - 100%) / -2) 0;
+    padding: 0 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .mobile-image-gallery::-webkit-scrollbar {
+    display: none;
+  }
+  .mobile-image-gallery--single {
+    display: block;
+    margin-right: 0;
+    margin-left: 0;
+    padding: 0;
+    overflow: visible;
+  }
+  .mobile-image-gallery figure,
+  .mobile-capability-list figure,
+  .mobile-approach-image {
+    margin: 0;
+    overflow: hidden;
+    background: var(--svc-surface);
+    scroll-snap-align: center;
+  }
+  .mobile-image-gallery img,
+  .mobile-capability-list figure img,
+  .mobile-approach-image img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transform: scale(1.025);
+    transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .mobile-image-gallery--single img,
+  .mobile-approach-image img {
+    aspect-ratio: 16 / 10;
+  }
+  [data-mobile-reveal].is-visible img {
+    transform: scale(1);
+  }
+  .mobile-capability-list {
+    margin-top: 46px;
+    border-top: 1px solid var(--svc-line);
+  }
+  .mobile-capability-list > article {
+    padding: 32px 0 38px;
+    border-bottom: 1px solid var(--svc-line);
+  }
+  .mobile-capability-heading {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+  .mobile-capability-heading .mobile-item-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 34px;
+  }
+  .mobile-capability-heading span,
+  .mobile-process-list li > div > span {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--svc-accent);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+  .mobile-capability-list h3 {
+    font-size: 20px;
+  }
+  .mobile-capability-list > article > p {
+    margin: 18px 0 0;
+    color: var(--svc-ink-soft);
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .mobile-capability-list ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px 16px;
+    margin: 24px 0 28px;
+    padding: 0;
+    list-style: none;
+  }
+  .mobile-capability-list li {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 8px;
+    align-items: center;
+    color: var(--svc-ink-body);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .mobile-capability-list li .el-icon {
+    color: var(--svc-accent);
+    font-size: 17px;
+  }
+  .mobile-process-list {
+    margin: 42px 0 0;
+    padding: 0;
+    border-top: 1px solid var(--svc-line-soft);
+    list-style: none;
+  }
+  .mobile-process-list li {
+    padding: 24px 0;
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+    border-bottom: 1px solid var(--svc-line-soft);
+  }
+  .mobile-process-list h3 {
+    font-size: 18px;
+  }
+  .mobile-process-list p {
+    margin: 8px 0 0;
+    color: var(--svc-ink-soft);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .mobile-approach-image {
+    margin-top: 34px;
+  }
+  [data-mobile-reveal] {
+    opacity: 0;
+    filter: blur(2px);
+    transform: translate3d(0, 28px, 0);
+    transition:
+      opacity 0.72s cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 0.82s cubic-bezier(0.2, 0.7, 0.2, 1),
+      filter 0.72s ease;
+    will-change: opacity, transform;
+  }
+  [data-mobile-reveal].is-visible {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0);
+    transition-delay: var(--mobile-reveal-delay, 0ms);
+  }
   .service-shell {
     width: min(calc(100% - 48px), 1320px);
   }
@@ -2017,6 +2604,7 @@ watch(
   .service-hero__media img {
     aspect-ratio: auto;
     height: 250px;
+    min-height: 250px;
   }
   .service-capabilities__head {
     flex-direction: column;
@@ -2078,6 +2666,13 @@ watch(
   }
   .headline__line {
     transform: scaleX(1) !important;
+    transition: none !important;
+  }
+  [data-mobile-reveal],
+  [data-mobile-reveal] img {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
     transition: none !important;
   }
 }

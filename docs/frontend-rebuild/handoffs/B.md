@@ -1227,3 +1227,48 @@ $ npx.cmd eslint _base_index.vue _base_home.js --ext .vue,.js                   
 - 输入区增加 800 字计数、自动增高（最高 160px）、隐私提示与复制微信入口；全局 `style.css` 移除旧 AI 页强制蓝白外壳覆盖，页面颜色改消费共享主题 token，自动跟随 19:00—07:00 暗色机制。
 
 验证：`frontend/npm.cmd run build` PASS；AI 页面定向 ESLint 0 errors（98 条既有 Vue 模板格式 warnings）；`git diff --check` PASS；本地浏览器 `http://127.0.0.1:4173/ai-consultation` 与 `/en/ai-consultation` 实测首屏、英文文案、暗色主题、无横向溢出；中文输入框实测计数 `24 / 800`、高度自动变为 `74px`。真实 AI/API 收件仍按 DATA 约定待后端联调。
+
+## 首页移动端样式收口（2026-09-20）
+
+- `frontend/src/views/Home/index.vue`：手机首屏改为 `100svh`，移动视频使用 `preload=auto` 并在首帧可播前显示轻量加载动画；媒体失败时主动解除遮罩。桌面保持原 `preload=metadata`，加载层在桌面始终 `display:none`。
+- `frontend/src/layout/components/Header.vue`、`frontend/src/style.css`：`<=992px` 页头保留左侧品牌名，右侧改为语言、主题、菜单三个图标按钮；移除手机页头微信/标语占位，菜单内原有微信与语言/主题入口继续保留。桌面导航与桌面操作区不变。
+- `frontend/src/views/Home/motion.js`、`frontend/src/views/Home/index.vue`：Insights 手机轮播改为 `slidesPerView:auto`，卡片宽度 `73vw`，统一拉伸卡片高度；图片固定 `16:9` 并 `object-fit:cover`，消除溢出和高低不齐。
+
+验证：
+
+- `npm.cmd run build` PASS；仅有既有的大 chunk、Browserslist 与 package type warnings。
+- `npx.cmd eslint src/layout/components/Header.vue src/views/Home/index.vue src/views/Home/motion.js`：0 errors / 209 warnings，均为项目既有 Vue 模板格式规则。
+- 生产预览 `http://127.0.0.1:4176/`，390x844：banner 与 video 均高 844px；视频 `paused=false`、`readyState=4` 且时间递增；可播后 loader 消失；右上 3 个按钮；页面无横向溢出。菜单展开锁定 body 滚动，遮罩覆盖 header 下方；语言切到 `/en`，主题 light/dark 往返均生效。
+- 390x844 Insights：前四张卡片高度均为 399.5625px，图片均为 342x192.375px；控制台 error 0。
+- 1440x900：banner 高 900px，桌面导航 `display:flex`，移动操作区 `display:none`；视频未就绪的早期状态中 loader 已是 `display:none`，桌面未引入加载遮罩。
+
+接口/素材缺口：无新增接口、无新增外部素材、无参考站运行时热链。未执行 Safari/微信真机验证；本轮只完成 Chromium 生产预览验证。下次第一步：用户按 390px 手机预览确认视觉节奏，若通过即可提交本批四个实现文件与本交接记录。
+
+## Contact 移动图片与复制兼容修订（2026-09-20）
+
+- `frontend/src/views/Contact/index.vue`：底部圆形入口由“合作须知”改为“开始沟通”（英文 `Start a conversation`），点击后平滑回到联系信息/表单区；顶部“合作须知”及弹层保持不变。手机 Banner 取消 `150%` 放大、`top:-19%` 上移和 40px 遮罩，按原图 4:3 完整显示。
+- `frontend/src/utils/clipboard.js`：新增统一复制能力；安全上下文优先使用 Clipboard API，HTTP 部署、权限策略或内嵌浏览器拒绝时回退到临时只读 textarea + `execCommand('copy')`，并保证节点与焦点清理。
+- `frontend/src/layout/components/Header.vue` 与 Contact 复制入口消费该工具；复制消息使用专用 `app-copy-message`。`frontend/src/style.css` 将该消息层级设为 10050，高于 Header 的 3000。
+
+验证：`npm.cmd run build` PASS；`npm.cmd run check:routes:strict` PASS 36 / FAIL 0 / PENDING 0；定向 ESLint 0 errors / 169 既有模板格式 warnings；`git diff --check` PASS。生产预览 390x844 实测图片完整显示公司标志及中英文名称，无偏移裁切；底部按钮文案正确，点击后 `.contact-main` 顶部落在视口 y=57（避开固定 Header）。非安全 HTTP 地址 `http://192.168.3.17:4178/contact` 实测导航微信按钮显示复制成功；消息 `z-index=10050`、Header `z-index=3000`。浏览器自动化使用隔离的虚拟剪贴板，不能反读页面 legacy 剪贴板内容；真机微信内置浏览器仍标未验证。
+
+接口/素材缺口：无新增接口、无新增素材、无参考站热链。下次第一步：部署后用实际公网域名在微信内置浏览器和 Safari 各点一次导航微信与 Contact 微信号，确认宿主未完全禁用 `execCommand('copy')`；若宿主也禁用，页面会保留明确的手动复制提示。
+
+## Contact PC 图片视差与 AI 咨询入口修订（2026-09-20）
+
+- `frontend/src/views/Contact/index.vue`：PC Banner 图片去除 `height:280% / top:-64% / scale(1.08)` 的非比例裁切，改为原比例图片贴住裁切视口底边；滚动位移按 `min(图片高度 - 视口高度, 页面滚动距离 × 0.9)` 计算，初始明确显示原图最底部，向下滚动时逐渐回看原图上方，达到上限后停止。窗口 resize 和图片 load 都会重新计算；`<=600px` 继续保持已验收的 4:3 静态完整图。
+- 底部“开始沟通”不再滚回 Contact 表单，改由 Vue Router 跳转 AI 咨询页：中文 `/ai-consultation`，英文 `/en/ai-consultation`。顶部“合作须知”行为不变。
+
+验证：`npm.cmd run build` PASS；`npm.cmd run check:routes:strict` PASS 36 / FAIL 0 / PENDING 0；Contact 定向 ESLint 0 errors / 88 条既有模板格式 warnings；`git diff --check` PASS。生产预览 `1440x900` 实测：初始图片底边与裁切视口底边差值 `0px`，图片高 `1073px`、视口高 `536px`、可滚动余量 `537px`；页面 `scrollY=200` 时图片 `translateY=180px`；`scrollY=600` 时钳制为 `translateY=537px`，图片顶边与裁切视口顶边差值 `0px`，实现从原图底部连续回看到顶部。中文底部按钮实测进入 `/ai-consultation`。英文入口经代码与严格路由门禁确认解析为 `/en/ai-consultation`；`<=600px` 仍由媒体查询强制静态 4:3 图片及 `transform:none`，未受 PC 位移计算影响。本轮没有新增英文或移动端浏览器实测记录。
+
+## Contact PC 图片初始位置微调（2026-09-21）
+
+- `frontend/src/views/Contact/index.vue`：PC 图片初始位移改为可滚动余量的 20%，让原图中的中文/英文公司名称在首屏完整可见；滚动时仍沿原有方向继续回看图片更上方，移动端 `<=600px` 仍保持静态 4:3 完整图。
+- 该比例随图片高度和视口变化自适应，不改变图片素材、移动端裁切或 AI 咨询跳转。
+
+## About 合作理念移动端修复（2026-09-21）
+
+- `frontend/src/views/About/index.vue`：将合作理念的非桌面布局断点由 `600px` 对齐为项目统一的 `1024px`。`<=1024px` 解除桌面 `400vh + sticky + absolute` 舞台，四张卡片恢复为连续文档流，消除 601–1024px 的空白、重叠与下方 CTA 背景提前露出；`>=1025px` 的桌面叠卡布局不变。
+- `frontend/src/views/About/useAboutMotion.js`：新增仅非桌面启用的一次性卡片进入视口显现；卡片淡入并上移 34px，图片从 1.035 倍平滑回正。`prefers-reduced-motion` 直接显示，observer 在断点变化及卸载时清理。
+- 验证：`npm.cmd run build` PASS；About 定向 ESLint 0 errors / 41 条既有模板格式 warnings；`npm.cmd run check:motion` PASS 2 / FAIL 0；`git diff --check` PASS。浏览器实测 390 / 768 / 1024：卡片均为 `position: static` 且连续排列，768 / 1024 合作理念区高度约 1773px；1440 仍为 `sticky + absolute`、区块高 3600px。移动滚动显现完成、控制台 error 0。
+- 接口/素材缺口：无新增接口、无新增素材、无外链；未执行 Safari / 微信真机验证。下次第一步：在实际移动设备复核 601–1024px 横竖屏切换后的卡片节奏。

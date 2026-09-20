@@ -100,6 +100,8 @@ flowchart TD
 
 ### T06 · AI 与公共收尾 — A
 
+2026-09-21 接口子项：恢复原项目 `GET /api/news` 列表调用并接入既有 `GET /api/news/:id` 详情包装；生产失败显示失败/缺失态，资讯 fixtures 仅在显式 `mock-preview` 使用。案例与 AI 已接调用保持不变；Contact、首页精选和案例 fallback 的后台缺口以 `BACKEND-TODO` 标记。服务/About/Banner/Config 判定为首版固定本地内容，未后台化。
+
 - 非流式AI兼容、双语UI与人工退路；去掉新版不必要旧组件挂载与全局风格残留。
 - 完成NotFound.vue中英视觉、返回/咨询入口，验证中文/英文未知路由与详情缺失状态。
 - 对D/B遇到的真实API形状补统一adapter，不改变已冻结消费模型；必要变更先更新契约通知所有任务。

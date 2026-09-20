@@ -693,3 +693,11 @@ check:routes PASS 34 / FAIL 0 / PENDING 2，缺少 15 项警告消除；check:ro
 - **语言**：`Header.vue` 的 `switchLocale` 优先用 `document.startViewTransition`，否则回退 `router.push` 的普通路由淡入；`:view-transition-old/new(root)` 时长 0.3s。
 
 验证：build PASS（主 CSS gzip 68.54 kB）；check:motion PASS；touched eslint 0 errors / 42 warnings；Playwright 实测主题类按时挂/摘、语言切换正常。
+
+### 2026-09-21 · T06 资讯接口与 mock 边界收口
+
+- 恢复原项目 `GET /api/news?page=1&size=100` 列表调用；兼容 `data.records`、`data.list` 与数组返回。
+- `News/detail.vue` 接入已有 `GET /api/news/:id` 包装，未知 ID 不再回退第一篇；API 富文本进入页面前移除危险标签、事件属性和非业务协议。
+- 资讯列表/详情本地数据只在 `mode=mock-preview`、`VITE_ENABLE_MOCK=true` 且 `VITE_MOCK_RESOURCES` 含 `news` 时使用。生产失败显示重试/缺失态。
+- 案例和 AI 已有 API 调用未改；Contact、首页精选与案例演示 fallback 保留 `BACKEND-TODO(Bxx)`。服务/About/Banner/Config 保持固定本地内容，不后台化。
+- 新增无密钥 `.env.example`。验证：`npm.cmd run build` PASS；`npm.cmd run check:routes` PASS；修改范围只读 ESLint `0 errors`（既有格式 warnings）；`git diff --check` PASS。真实后端响应与 B01/B02/B04 仍待联调验证。

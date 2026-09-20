@@ -12,6 +12,43 @@
 
       <span class="mobile-slogan">{{ mobileSlogan }}</span>
 
+      <div class="mobile-actions" aria-label="Quick actions">
+        <button
+          class="mobile-action-btn mobile-locale-toggle"
+          type="button"
+          :title="localeSwitchTitle"
+          :aria-label="localeSwitchTitle"
+          @click="switchLocale"
+        >
+          <el-icon :size="19"><Switch /></el-icon>
+        </button>
+        <button
+          class="mobile-action-btn mobile-theme-toggle-icon"
+          type="button"
+          :title="themeToggleLabel"
+          :aria-label="themeToggleLabel"
+          :aria-pressed="themeStore.theme === 'dark'"
+          @click="themeStore.toggle()"
+        >
+          <el-icon :size="19"><Sunny v-if="themeStore.theme === 'light'" /><Moon v-else /></el-icon>
+        </button>
+        <button
+          class="mobile-action-btn mobile-menu-btn"
+          type="button"
+          :aria-label="mobileMenuLabel"
+          :aria-expanded="mobileMenuOpen"
+          @click="toggleMobileMenu"
+          :class="{ active: mobileMenuOpen }"
+        >
+          <el-icon v-if="mobileMenuOpen" :size="25"><Close /></el-icon>
+          <span v-else class="mobile-menu-lines" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
+        </button>
+      </div>
+
       <!-- 桌面端导航：主项与参考站一致，解决方案/耘栈服务使用展开面板。 -->
       <nav class="nav-menu desktop-nav" @mouseleave="closeDesktopMenu">
         <div v-for="item in navItems" :key="item.key" class="nav-item-wrap" @mouseenter="openDesktopMenu(item.key)">
@@ -63,24 +100,6 @@
         </button>
       </div>
 
-      <button class="wechat-copy mobile-wechat-copy" type="button" @click="copyToClipboard('YunZhanKk', wechatType)" :title="wechatCopyTitle">
-        <el-icon :size="17"><ChatDotRound /></el-icon>
-        <span>{{ wechatLabel }}</span>
-      </button>
-
-      <!-- 移动端汉堡菜单按钮 -->
-      <button
-        class="mobile-menu-btn"
-        type="button"
-        :aria-label="mobileMenuLabel"
-        :aria-expanded="mobileMenuOpen"
-        @click="toggleMobileMenu"
-        :class="{ 'active': mobileMenuOpen }"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
     </div>
 
     <!-- 移动端菜单 -->
@@ -134,11 +153,12 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ChatDotRound, Moon, Sunny } from '@element-plus/icons-vue'
+import { ChatDotRound, Close, Moon, Sunny, Switch } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 import { useThemeStore } from '@/stores/theme'
 import { SERVICE_NAV_ITEMS, SOLUTION_GROUPS } from '@/content/navigation'
+import { copyToClipboard as writeClipboard } from '@/utils/clipboard'
 
 const route = useRoute()
 const router = useRouter()
@@ -152,7 +172,6 @@ const themeToggleLabel = computed(() => {
   return themeStore.theme === 'dark' ? '切换到亮色' : '切换到暗色'
 })
 const mobileSlogan = computed(() => (isEn.value ? 'Software R&D Services' : '软件研发服务'))
-const wechatLabel = computed(() => (isEn.value ? 'WeChat: YunZhanKk' : '微信：YunZhanKk'))
 /** 桌面按钮只放短文案，完整 ID 放在 title/点击后的 toast 里，给英文 8 项导航腾空间。 */
 const desktopWechatLabel = computed(() => (isEn.value ? 'WeChat' : '微信'))
 const mobileWechatLabel = computed(() => (isEn.value ? 'WeChat: YunZhanKk' : 'WX: YunZhanKk'))
@@ -255,10 +274,18 @@ const switchLocale = () => {
 
 const copyToClipboard = async (text, type) => {
   try {
-    await navigator.clipboard.writeText(text)
-    ElMessage.success(isEn.value ? `${type} copied: ${text}` : `${type}已复制：${text}`)
+    await writeClipboard(text)
+    ElMessage({
+      type: 'success',
+      message: isEn.value ? `${type} copied: ${text}` : `${type}已复制：${text}`,
+      customClass: 'app-copy-message'
+    })
   } catch (err) {
-    ElMessage.error(isEn.value ? 'Copy failed. Please copy manually.' : '复制失败，请手动复制')
+    ElMessage({
+      type: 'error',
+      message: isEn.value ? 'Copy failed. Please copy manually.' : '复制失败，请手动复制',
+      customClass: 'app-copy-message'
+    })
   }
 }
 
@@ -288,38 +315,47 @@ onUnmounted(() => {
 /* 移动端汉堡菜单按钮 */
 .mobile-menu-btn {
   display: none;
+  width: 36px;
+  height: 36px;
+  color: inherit;
+}
+
+.mobile-menu-lines {
+  display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  width: 30px;
-  height: 24px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 1001;
-  position: relative;
+  justify-content: center;
+  width: 23px;
+  gap: 5px;
 }
 
-.mobile-menu-btn span {
+.mobile-menu-lines span {
+  display: block;
   width: 100%;
-  height: 3px;
-  background: #00d4ff;
-  border-radius: 3px;
-  box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
-  transition: transform 0.3s ease, opacity 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform .25s ease, opacity .25s ease;
 }
 
-.mobile-menu-btn.active span:nth-child(1) {
-  transform: rotate(45deg) translate(8px, 8px);
+.mobile-actions { display: none; }
+
+.mobile-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+  transition: opacity .25s ease, transform .25s ease;
 }
 
-.mobile-menu-btn.active span:nth-child(2) {
-  opacity: 0;
-}
-
-.mobile-menu-btn.active span:nth-child(3) {
-  transform: rotate(-45deg) translate(7px, -7px);
-}
+.mobile-action-btn:hover { opacity: .72; transform: translateY(-1px); }
+.mobile-action-btn:focus-visible { outline: 1px solid currentColor; outline-offset: 3px; }
+.mobile-action-btn :deep(.el-icon) { color: currentColor; }
 
 /* 移动端菜单遮罩层：默认不显示，≤992px 由 style.css 的页头段打开 */
 .mobile-menu-overlay {
@@ -562,19 +598,18 @@ onUnmounted(() => {
   .nav-mega { display: none !important; }
   .mobile-menu-btn {
     display: flex;
-    position: absolute;
-    top: 20px;
-    right: 0;
-    width: 28px;
-    height: 22px;
   }
-  .mobile-menu-btn span {
-    height: 1px;
-    background: #fff;
-    box-shadow: none;
+  .mobile-actions {
+    display: flex;
+    align-items: center;
+    justify-self: end;
+    margin-left: auto;
+    gap: 4px;
+    color: inherit;
   }
-  .mobile-slogan {
-    display: block;
+  .mobile-slogan,
+  .mobile-wechat-copy {
+    display: none;
   }
 }
 

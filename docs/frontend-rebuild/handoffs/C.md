@@ -984,3 +984,14 @@ tags 渲染正常（首个标签 "Vue 3"）；18/18 显影；无横向溢出
 
 结论：**第 5 轮代码改动到此冻结，无需因以上裁决再改 `ServiceLanding.vue`。**
 下一步只剩"等 A"的四项共享层事项（29.1 全局换页过渡时长、29.2 透明页头、29.3 footer 米色、29.4 ≤768 图高）。
+
+## 34. 移动端 01 / 02 / 03 集成（2026-09-21）
+
+已将 `ced7a59` 的移动端服务页改动手工移植到当前 `main`：保留主仓已有英文/i18n、主题 token 与 `check:motion` 约束，仅纳入 ≤1024px 的 01/02/03 重排、语义图标、图片画廊、滚动显隐和 hero 图片 `min-height: 250px` 修复。C 提交中回退的硬编码桌面文案、英文 class、`transition-property: all` 与 80px hero 留白未纳入。
+
+验证截图已复制至 `evidence/service-pages/mobile-refresh/`：
+
+- `mini-01-mobile.png`，SHA256 `416DDF0B8C81AAAE38536561B357C28CB6CFB228AF26E5C400547733C4E9CE13`
+- `mini-02-mobile.png`，SHA256 `F266DDD40AC82C9282316CEDA726AC3E68F8FDDEC414CDEEB7876BA50707E092`
+
+下一步：在主仓 `frontend/` 运行 build、check:motion、check:routes 和 ServiceLanding 只读 eslint；再用 390 / 430 / 768 / 1024 视口抽查移动端英文与中文服务页。

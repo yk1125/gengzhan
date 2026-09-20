@@ -33,7 +33,7 @@
           </div>
         </div>
 
-        <div class="main-image">
+        <div v-if="newsData.image" class="main-image">
           <img :src="newsData.image" :alt="newsData.title">
         </div>
 
@@ -48,20 +48,22 @@
       </div>
 
       <div class="detail-empty" v-else>
-        <p>暂无资讯</p>
+        <p>{{ isEn ? 'This article is unavailable.' : '该资讯不存在或暂时无法加载。' }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { ArrowLeft, Calendar, User, View } from '@element-plus/icons-vue'
 import ParticleBackground from '@/components/ParticleBackground.vue'
+import { getNewsDetail } from '@/api'
 
 const route = useRoute()
-const loading = ref(false)
+const isEn = computed(() => route.path.startsWith('/en/'))
+const loading = ref(true)
 const newsData = ref({
   title: '',
   category: '',
@@ -74,6 +76,7 @@ const newsData = ref({
   source: ''
 })
 
+// BACKEND-TODO(B01/B04): preview-only fixtures; production details must come from GET /api/news/:id.
 const newsDatabase = {
   1: {
     id: 1,
@@ -374,13 +377,46 @@ export async function createPost(formData) {
   }
 }
 
-onMounted(() => {
-  const id = parseInt(route.params.id)
-  if (newsDatabase[id]) {
-    newsData.value = newsDatabase[id]
-  } else {
-    // 如果没有找到对应ID，显示默认内容
-    newsData.value = newsDatabase[1]
+const isNewsMockPreview = () => import.meta.env.MODE === 'mock-preview' && import.meta.env.VITE_ENABLE_MOCK === 'true' && String(import.meta.env.VITE_MOCK_RESOURCES || '').split(',').map((item) => item.trim()).includes('news')
+const sanitizeRichText = (html) => {
+  const documentNode = new DOMParser().parseFromString(String(html || ''), 'text/html')
+  documentNode.querySelectorAll('script,style,iframe,object,embed,form,link,meta').forEach((node) => node.remove())
+  documentNode.body.querySelectorAll('*').forEach((node) => {
+    Array.from(node.attributes).forEach((attribute) => {
+      const name = attribute.name.toLowerCase()
+      const value = attribute.value.trim()
+      if (name.startsWith('on') || name === 'style') node.removeAttribute(attribute.name)
+      if ((name === 'href' || name === 'src') && !/^(https?:|\/|#)/i.test(value)) node.removeAttribute(attribute.name)
+    })
+    if (node.tagName === 'A' && node.hasAttribute('href')) {
+      node.setAttribute('target', '_blank')
+      node.setAttribute('rel', 'noopener noreferrer')
+    }
+  })
+  return documentNode.body.innerHTML
+}
+const normalizeNewsDetail = (item) => ({
+  ...newsData.value,
+  ...item,
+  category: item.categoryLabel || item.category || '',
+  date: item.publishedAt || item.publishTime || item.date || '',
+  image: item.cover?.src || item.coverImage || item.image || '',
+  content: sanitizeRichText(item.bodyHtml || item.content || ''),
+  tags: Array.isArray(item.tags) ? item.tags : []
+})
+
+onMounted(async () => {
+  const id = String(route.params.id || '')
+  try {
+    const response = await getNewsDetail(id, { silent: true })
+    if (!response.data) throw new Error('news detail is empty')
+    newsData.value = normalizeNewsDetail(response.data)
+  } catch (error) {
+    // BACKEND-TODO(B01/B04): verify detail IDs, rich-text fields and translation coverage.
+    // Unknown IDs remain in the empty state; another article is never substituted.
+    if (isNewsMockPreview() && newsDatabase[id]) newsData.value = newsDatabase[id]
+  } finally {
+    loading.value = false
   }
 })
 </script>

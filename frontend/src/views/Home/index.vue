@@ -11,13 +11,41 @@
           ref="bannerVideoRef"
           class="back"
           :src="bannerSrc"
-          muted
+          :poster="HOME_BANNER_MEDIA.poster"
+          :muted="bannerMuted"
           playsinline
-          preload="metadata"
+          :preload="isDesktop ? 'metadata' : 'auto'"
+          @loadeddata="onBannerReady"
+          @canplay="onBannerReady"
+          @error="onBannerError"
           @ended="onBannerEnded"
         />
       </div>
       <div class="banner-scrim" aria-hidden="true" />
+      <div v-if="!bannerReady && !bannerError" class="banner-loader" role="status" aria-label="Loading video">
+        <span class="banner-loader-ring" aria-hidden="true" />
+      </div>
+      <button
+        v-if="bannerError"
+        class="banner-retry"
+        type="button"
+        aria-label="重新加载首页视频"
+        title="重新加载视频"
+        @click="retryBannerVideo"
+      >
+        ↻
+      </button>
+      <button
+        class="banner-sound-toggle"
+        type="button"
+        :class="{ 'is-muted': bannerMuted }"
+        :aria-label="soundToggleLabel"
+        :aria-pressed="!bannerMuted"
+        :title="soundToggleLabel"
+        @click="toggleBannerSound"
+      >
+        <el-icon :size="19"><Mute v-if="bannerMuted" /><Headset v-else /></el-icon>
+      </button>
 
       <div class="banner-wrap">
         <h1 class="each_animate" :class="{ on: titleOn }" :aria-label="heroPlainText">
@@ -234,6 +262,7 @@
  */
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { Headset, Mute } from '@element-plus/icons-vue'
 import { localizeRoute } from '@/config/routeManifest'
 import {
   CUSTOMER_ASSET_BASE,
@@ -246,6 +275,7 @@ import {
   customerSlots,
   homeContent
 } from '@/content/home'
+// BACKEND-TODO(B01): these cards are approved preview fixtures until a confirmed featured-content API exists.
 import { demoCases, demoNews } from '@/mocks/content'
 import { banner as bannerMotion, statement as statementMotion } from './motion'
 import { useHomeScroll } from './useHomeScroll'
@@ -287,8 +317,16 @@ function readTheme () {
 
 /* --------------------------------------- M-07 / M-08 / M-10 首屏 banner */
 const bannerSrc = ref(HOME_BANNER_MEDIA.desktop)
+const bannerReady = ref(false)
+const bannerError = ref(false)
+const bannerMuted = ref(true)
 const titleOn = ref(false)
 let titleTimer = 0
+
+const soundToggleLabel = computed(() => {
+  if (isEn.value) return bannerMuted.value ? 'Turn video sound on' : 'Turn video sound off'
+  return bannerMuted.value ? '打开视频声音' : '关闭视频声音'
+})
 
 function pickBannerSrc () {
   bannerSrc.value = window.innerWidth <= 1024 ? HOME_BANNER_MEDIA.mobile : HOME_BANNER_MEDIA.desktop
@@ -301,11 +339,40 @@ function pickBannerSrc () {
  * 视频元素自身的 `loop` 保持 false、`autoplay` 属性保持缺省，与 SPEC M-07 实测属性一致。
  * 参考站在 `prefers-reduced-motion` 下没有对应分支；本页沿用「不自动播放」的降级（AC07b）。
  */
-function playBannerVideo () {
+async function playBannerVideo () {
   const video = bannerVideoRef.value
   if (!video || reducedMotion.value) return
-  const played = video.play()
-  if (played && typeof played.catch === 'function') played.catch(() => {})
+  video.muted = bannerMuted.value
+  try {
+    await video.play()
+  } catch {
+    // Mobile browsers usually block audible autoplay. Keep the video moving and expose the sound button.
+    if (window.innerWidth <= 1024 && !video.muted) {
+      bannerMuted.value = true
+      video.muted = true
+      try {
+        await video.play()
+      } catch {
+        // The media error state is already represented by the visible sound control.
+      }
+    }
+  }
+}
+
+async function toggleBannerSound () {
+  const video = bannerVideoRef.value
+  if (!video) return
+  const nextMuted = !bannerMuted.value
+  bannerMuted.value = nextMuted
+  video.muted = nextMuted
+  if (!nextMuted) {
+    try {
+      await video.play()
+    } catch {
+      bannerMuted.value = true
+      video.muted = true
+    }
+  }
 }
 
 function onBannerEnded () {
@@ -315,8 +382,32 @@ function onBannerEnded () {
   playBannerVideo()
 }
 
+function onBannerReady () {
+  bannerReady.value = true
+  bannerError.value = false
+}
+
+function onBannerError () {
+  // Keep the poster and page content visible, and offer an explicit retry.
+  bannerReady.value = true
+  bannerError.value = true
+}
+
+function retryBannerVideo () {
+  const video = bannerVideoRef.value
+  if (!video) return
+  bannerError.value = false
+  bannerReady.value = false
+  video.load()
+  playBannerVideo()
+}
+
 /* 断点切换会换掉 video 的 src，换源后重新起播。`flush: 'post'` 保证读到的是新元素。 */
-watch(bannerSrc, () => playBannerVideo(), { flush: 'post' })
+watch(bannerSrc, () => {
+  bannerReady.value = false
+  bannerError.value = false
+  playBannerVideo()
+}, { flush: 'post' })
 
 /**
  * M-10：标题拆成单字。延迟 `index * 0.08 + 0.3` 秒、时长 1s、起始 `translateX(10px)`；
@@ -484,12 +575,14 @@ const insightCards = computed(() => {
 
 /* ------------------------------------------------------------------ 生命周期 */
 function onResize () {
+  bannerMuted.value = window.innerWidth > 1024
   pickBannerSrc()
 }
 
 onMounted(() => {
   if (!rootRef.value) rootRef.value = document.querySelector('.home')
   pickBannerSrc()
+  bannerMuted.value = window.innerWidth > 1024
   playBannerVideo()
   readTheme()
   // A 的主题按钮写的是 <html data-theme>；本页只跟随，不自己建状态。
@@ -594,6 +687,75 @@ html[data-theme='dark'] .home {
   background:
     linear-gradient(90deg, rgba(8, 10, 14, 0.82) 0%, rgba(8, 10, 14, 0.6) 38%, rgba(8, 10, 14, 0.12) 72%, rgba(8, 10, 14, 0.3) 100%),
     linear-gradient(180deg, rgba(8, 10, 14, 0.55) 0%, rgba(8, 10, 14, 0) 24%);
+}
+
+.banner-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: inline-flex;
+  place-items: center;
+  pointer-events: none;
+  background: rgba(17, 17, 17, .08);
+  transition: opacity .45s ease;
+}
+
+.banner-loader-ring {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, .3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: home-loader-spin .8s linear infinite;
+}
+
+.banner-retry {
+  position: absolute;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(22px, env(safe-area-inset-bottom));
+  z-index: 4;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, .58);
+  border-radius: 50%;
+  background: rgba(17, 17, 17, .62);
+  color: #fff;
+  font-size: 25px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.banner-sound-toggle {
+  position: absolute;
+  right: max(20px, env(safe-area-inset-right));
+  bottom: max(22px, env(safe-area-inset-bottom));
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: #111;
+  background: rgba(255, 255, 255, .9);
+  border: 1px solid rgba(255, 255, 255, .58);
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: color .2s ease, background-color .2s ease, transform .2s ease;
+}
+
+.banner-sound-toggle.is-muted {
+  color: #fff;
+  background: rgba(17, 17, 17, .56);
+}
+
+.banner-sound-toggle:active { transform: scale(.94); }
+.banner-sound-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+@keyframes home-loader-spin {
+  to { transform: rotate(360deg); }
 }
 
 .banner-wrap {
@@ -875,7 +1037,9 @@ html[data-theme='dark'] .index4 .fix::after { background: rgba(0, 0, 0, 0.5); }
    参考站 `.index4` 手机用 `.sj_bg` 专用图（素材未抓取），本项目沿用同一张 `.bg` 静态铺底。
    ========================================================================== */
 @media (max-width: 1024px) {
-  .banner { height: 72vh; min-height: 420px; }
+  .banner { height: 100svh; min-height: 100svh; }
+  .banner-loader { display: grid; }
+  .banner-sound-toggle { display: inline-flex; }
   /* 全局 styles/responsive.css:184 在 ≤768px 写了 `img, video, iframe { height: auto !important }`，
      会把首屏视频退回内在比例高度：390 宽实测只有 195px 高，banner 其余部分露出 #111 底。
      这里只对本页自己的两个 video 收回该声明（特异性高于全局选择器）；已请 A 收窄全局规则。 */
@@ -927,7 +1091,22 @@ html[data-theme='dark'] .index4 .fix::after { background: rgba(0, 0, 0, 0.5); }
   .index4 .statement-sub { font-size: 14px; }
 
   .insights-title { margin-bottom: 24px; }
-  .insights-swiper .card { padding: 20px; }
+  .insights-swiper .swiper-wrapper { align-items: stretch; }
+  .insights-swiper .swiper-slide {
+    display: flex;
+    width: 73vw;
+    height: auto;
+  }
+  .insights-swiper .card {
+    width: 100%;
+    min-height: 100%;
+    padding: 20px;
+  }
+  .insights-swiper .card-img {
+    aspect-ratio: 16 / 9;
+    margin: -20px -20px 0;
+  }
+  .insights-swiper .card-img img { width: 100%; height: 100%; object-fit: cover; }
   .cta { margin-top: 56px; padding: 44px 24px; }
   .cta-actions .pill { width: 100%; justify-content: center; }
 }

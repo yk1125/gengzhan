@@ -109,7 +109,7 @@ export const statement = {
 }
 
 /** SPEC M-34：index5 手机横向 Swiper。 */
-export const insights = { speedMs: 1000, spaceBetweenPx: 20, slidesPerView: 2, loop: true }
+export const insights = { speedMs: 1000, spaceBetweenPx: 20, slidesPerView: 'auto', loop: true }
 
 export const homeMotion = { banner, wall, reveal, line, columns, publicText, serviceSwitch, statement, insights }
 

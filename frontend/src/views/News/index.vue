@@ -17,7 +17,7 @@
           <p class="news-eyebrow">01 / FEATURED</p>
           <h2 id="feature-title">把模型能力放进真实业务，而不是停在演示里。</h2>
           <p>可验收的场景、清晰的数据边界和可持续的工程，决定 AI 能否真正落地。</p>
-          <button type="button" class="news-feature__link" @click="openItem(newsItems[0])">阅读文章 <ArrowRight aria-hidden="true" /></button>
+          <button type="button" class="news-feature__link" :disabled="!newsItems.length" @click="openItem(newsItems[0])">阅读文章 <ArrowRight aria-hidden="true" /></button>
         </div>
         <div class="news-feature__media" data-news-reveal><img src="/assets/services/ai-media.jpg" alt="AI 应用开发演示图片" loading="lazy"></div>
       </div>
@@ -29,14 +29,20 @@
         <h2 id="list-title">耘栈动态<br><em>&amp; 日常</em></h2>
         <p class="news-note">从设计、工程到业务实践，分享那些值得被反复讨论的细节。</p>
       </div>
-      <div class="news-grid public_hover">
+      <p v-if="loading" class="news-state">资讯加载中...</p>
+      <div v-else-if="loadFailed" class="news-state">
+        <p>资讯暂时无法加载，请稍后重试。</p>
+        <button type="button" @click="loadNews">重新加载</button>
+      </div>
+      <p v-else-if="!newsItems.length" class="news-state">暂无资讯</p>
+      <div v-else class="news-grid public_hover">
         <article v-for="(item, index) in visibleNewsItems" :key="item.id" class="news-card item" data-cursor-cut data-news-reveal @click="openItem(item)">
           <div class="news-card__image img"><img :src="item.image" :alt="item.title" loading="lazy"></div>
           <div class="news-card__copy"><div class="news-card__label">{{ item.category }}</div><h3>{{ item.title }}</h3><p>{{ item.excerpt }}</p><div class="news-card__end"><time :datetime="item.date">{{ item.date }}</time><span>查看详情 <b>↗</b></span></div></div>
           <span class="news-card__index">{{ String((currentPage - 1) * pageSize + index + 1).padStart(2, '0') }}</span>
         </article>
       </div>
-      <nav class="news-pagination" aria-label="资讯分页">
+      <nav v-if="newsItems.length > pageSize" class="news-pagination" aria-label="资讯分页">
         <button type="button" aria-label="上一页" :disabled="currentPage === 1" @click="goPage(currentPage - 1)">←</button>
         <button v-for="page in pageCount" :key="page" type="button" :class="{ active: page === currentPage }" :aria-current="page === currentPage ? 'page' : undefined" @click="goPage(page)">{{ page }}</button>
         <button type="button" aria-label="下一页" :disabled="currentPage === pageCount" @click="goPage(currentPage + 1)">→</button>
@@ -61,22 +67,26 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { ArrowRight, TopRight } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { getNews } from '@/api'
 
 const router = useRouter()
+const route = useRoute()
 const root = ref(null)
 const heroStage = ref(null)
 const featureStage = ref(null)
 const listStage = ref(null)
 const reducedMotion = ref(false)
 const currentPage = ref(1)
+const loading = ref(false)
+const loadFailed = ref(false)
 const pageSize = 6
 const motionStyle = computed(() => ({ '--news-hero-progress': `${heroProgress.value}px` }))
 const heroProgress = ref(0)
 let observer
 let raf = 0
 
-const newsItems = [
+const mockNewsItems = [
   { id: 1, category: 'AI 技术', title: 'AI 赋能软件开发：趋势与实践', excerpt: '把模型能力放进真实业务流程，让智能工具真正服务于产品与工程。', date: '2025-03-15', image: '/assets/services/ai-media.jpg' },
   { id: 2, category: '小程序', title: '小程序云开发：新一代开发模式', excerpt: '从云函数到数据管理，梳理轻量应用快速落地的工程方法。', date: '2025-03-12', image: '/assets/services/mini-media.jpg' },
   { id: 3, category: 'Web 开发', title: 'React 19 新特性详解与实践', excerpt: '围绕现代前端架构，理解组件、数据流与体验性能的新变化。', date: '2025-03-10', image: '/assets/services/web-media.jpg' },
@@ -109,10 +119,41 @@ const newsItems = [
   { id: 30, category: 'Web 开发', title: '网站上线后的持续观察', excerpt: '真实访问带来的反馈，是下一轮优化最值得信任的依据。', date: '2024-10-14', image: '/assets/services/web-media.jpg' }
 ]
 
-const pageCount = computed(() => Math.ceil(newsItems.length / pageSize))
-const visibleNewsItems = computed(() => newsItems.slice((currentPage.value - 1) * pageSize, currentPage.value * pageSize))
+const newsItems = ref([])
+const pageCount = computed(() => Math.max(1, Math.ceil(newsItems.value.length / pageSize)))
+const visibleNewsItems = computed(() => newsItems.value.slice((currentPage.value - 1) * pageSize, currentPage.value * pageSize))
+const isNewsMockPreview = () => import.meta.env.MODE === 'mock-preview' && import.meta.env.VITE_ENABLE_MOCK === 'true' && String(import.meta.env.VITE_MOCK_RESOURCES || '').split(',').map((item) => item.trim()).includes('news')
 
-function openItem (item) { router.push({ name: 'NewsDetail', params: { id: ((item.id - 1) % 6) + 1 } }) }
+function normalizeNewsItem (item, index) {
+  return {
+    id: item.id ?? `api-${index + 1}`,
+    category: item.categoryLabel || item.category || '资讯',
+    title: item.title || `资讯 ${index + 1}`,
+    excerpt: item.summary || item.excerpt || '',
+    date: item.publishedAt || item.publishTime || item.date || '',
+    image: item.cover?.src || item.coverImage || item.image || '/assets/services/custom-media.jpg'
+  }
+}
+
+async function loadNews () {
+  loading.value = true
+  loadFailed.value = false
+  try {
+    const response = await getNews({ page: 1, size: 100 }, { silent: true })
+    const records = response.data?.records || response.data?.list || (Array.isArray(response.data) ? response.data : [])
+    newsItems.value = records.map(normalizeNewsItem)
+  } catch (error) {
+    // BACKEND-TODO(B01/B02): verify the production content list and pagination/category semantics.
+    // Fixtures are intentionally available only in the explicit mock-preview mode.
+    const useMock = isNewsMockPreview()
+    newsItems.value = useMock ? mockNewsItems : []
+    loadFailed.value = !useMock
+  } finally {
+    loading.value = false
+  }
+}
+
+function openItem (item) { if (item?.id != null) router.push({ name: route.path.startsWith('/en/') ? 'NewsDetailEn' : 'NewsDetail', params: { id: item.id } }) }
 function goPage (page) {
   if (page < 1 || page > pageCount.value || page === currentPage.value) return
   currentPage.value = page
@@ -132,6 +173,7 @@ function updateMotion () {
 }
 
 onMounted(() => {
+  loadNews()
   reducedMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   if (!reducedMotion.value && 'IntersectionObserver' in window) {
     observer = new IntersectionObserver(entries => entries.forEach(({ target, isIntersecting }) => { target.classList.toggle('is-visible', isIntersecting) }), { threshold: .12, rootMargin: '-8% 0px -8% 0px' })
@@ -156,6 +198,8 @@ onBeforeUnmount(() => { observer?.disconnect(); window.removeEventListener('scro
 }
 .news-cta__link span { white-space: nowrap; }
 .news-cta__link svg { width: 24px; height: 24px; flex: 0 0 auto; }
+.news-state { min-height: 180px; padding: 56px 0; color: var(--color-ink-soft); text-align: center; }
+.news-state button { margin-top: 18px; padding: 10px 18px; border: 1px solid var(--color-line); background: transparent; color: var(--color-ink); }
 @media (max-width: 600px) {
   .news-hero { padding-bottom: 0; }
 }
