@@ -1272,3 +1272,13 @@ $ npx.cmd eslint _base_index.vue _base_home.js --ext .vue,.js                   
 - `frontend/src/views/About/useAboutMotion.js`：新增仅非桌面启用的一次性卡片进入视口显现；卡片淡入并上移 34px，图片从 1.035 倍平滑回正。`prefers-reduced-motion` 直接显示，observer 在断点变化及卸载时清理。
 - 验证：`npm.cmd run build` PASS；About 定向 ESLint 0 errors / 41 条既有模板格式 warnings；`npm.cmd run check:motion` PASS 2 / FAIL 0；`git diff --check` PASS。浏览器实测 390 / 768 / 1024：卡片均为 `position: static` 且连续排列，768 / 1024 合作理念区高度约 1773px；1440 仍为 `sticky + absolute`、区块高 3600px。移动滚动显现完成、控制台 error 0。
 - 接口/素材缺口：无新增接口、无新增素材、无外链；未执行 Safari / 微信真机验证。下次第一步：在实际移动设备复核 601–1024px 横竖屏切换后的卡片节奏。
+
+## 首页视频 / 案例 Banner / 客户墙收口（2026-09-22）
+
+- `frontend/src/views/Home/index.vue`：首屏挂载、换源、resize 和重试均主动调用 `video.play()`；首次以有声状态尝试，浏览器拒绝后自动静音并继续播放。媒体错误与播放策略失败分离，桌面/移动均显示可重试状态；声音按钮统一使用同一个基础喇叭图形，仅静音态附加斜线，aria-label/title/aria-pressed 保持双语同步。
+- `frontend/src/views/Cases/index.vue`：Banner 改为复用 `HOME_BANNER_MEDIA` 首页视频和 poster，保留 autoplay、loop、playsinline、metadata preload，并加入静音 fallback 与重试按钮；不再引用 `/assets/banner/banner.mp4`。
+- 首页客户墙继续消费 Session A `listCustomers`：API 成功使用 API Logo，请求失败回落本地固定 24 张换序 Logo，槽位尺寸不变。
+
+验证：`npm.cmd run build` PASS；定向 ESLint 0 errors（既有 Vue 格式 warnings）；`git diff --check` PASS。浏览器自动化本轮因 CUA 浏览器认证不可用未执行，Safari/微信真机仍未验证。
+
+接口/素材缺口：无新增素材或接口；沿用用户提供的约 5MB `assets/home/hero-20260919.mp4`。

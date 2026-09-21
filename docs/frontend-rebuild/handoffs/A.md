@@ -690,3 +690,35 @@ BACKEND-TODO / 缺译 / 素材缺口：B/T05 待翻译 About/Contact/Privacy/Leg
 - `npm.cmd run check:motion` → PASS 2 / FAIL 0 / BASELINE-STALE 0。
 - 只读 eslint（touched files）→ 0 errors / 42 warnings。
 - Playwright 实测：点主题按钮后 `html.theme-transition` 立即出现、800ms 后移除；语言按钮 `/en/ai-development` → `/ai-development`，`lang=zh-CN`、标题同步切换。
+
+---
+
+# Session A · 公共能力与数据契约收口（2026-09-22）
+
+状态：代码完成，待集成提交；保留用户已有 `frontend/public/assets/home/hero-20260919.mp4` 改动。
+
+实际文件：
+
+- `frontend/src/utils/clipboard.js`：统一 HTTPS、普通 HTTP、微信 WebView 和 legacy textarea/`execCommand` 复制路径；Footer、AI 咨询、案例小程序口令均复用。
+- `frontend/src/config/contentMode.js`、`frontend/.env.example`：显式 `VITE_CONTENT_MODE=api|mock`；`mock-preview + VITE_ENABLE_MOCK=true` 兼容预览，生产误开 mock 构建直接失败。
+- `frontend/src/repositories/content.js`：统一 `listCases/getCase/listNews/getNews/listCustomers`，页面不再解析 `response.data.records`；返回稳定前端模型和 `source`/capabilities。
+- `frontend/src/api/index.js`：详情请求支持 signal/config；新增客户 Logo gateway（字段仍待后端确认）。
+- `frontend/src/views/Cases/*`、`frontend/src/views/News/*`：改用 repository；API 失败不静默塞 mock，mock 页面显示演示状态。
+- `frontend/src/views/Home/index.vue`、`frontend/src/views/About/index.vue`、`frontend/src/content/home.js`：客户 Logo 通过 adapter；API 成功使用 API，失败保留本地 24 个 Logo，并维持固定换序及 3/6 分槽。
+
+验证：
+
+- `npm.cmd run build` → PASS（`✓ built in 19.17s`；既有 chunk >500 kB / browserslist 警告）。
+- `$env:VITE_ENABLE_MOCK='true'; npm.cmd run build -- --mode mock-preview` → PASS（`MOCK_BUILD_EXIT=0`）。
+- 只读 ESLint（本次 touched 文件）→ 4 errors / 637 warnings；4 errors 均为 `Cases/detail.vue` 存量未使用变量/正则转义，新增文件与本次修改未新增 error。未运行带 `--fix` 的 `npm run lint`。
+- `node --check`（clipboard/repository/contentMode）→ PASS；空字符串复制边界 → PASS。
+- `git diff --check` → PASS；`rg` 确认页面层无 `response.data.records`，原生 clipboard 仅保留在公共工具。
+
+BACKEND-TODO：
+
+- **B01 客户 Logo**：需确认 `GET /api/customers` 是否存在，以及 `id/key/name/src|url/file/height/alt` 字段、24 条完整性、固定顺序和缓存语义；当前 API 失败明确回退 `source:'local-fallback'`。
+- **B02 案例**：需确认列表 `records/list/array`、`total/hasNext`、`type/category` 过滤、详情 `coverImage/images/bodyHtml/projectLink` 字段及分页 capability；adapter 不推断全量。
+- **B03 资讯**：需确认列表分页/分类/total、详情 ID 及 `content/bodyHtml/publishedAt/cover` 字段；未知 ID 统一 not-found，不回退第一篇。
+- **B04 接入联调**：真实 API、翻译字段和内容清单未验证；生产只需切换 `VITE_CONTENT_MODE=api`，页面契约不变。
+
+下一步：A 在集成分支复核 repository 与现有后端响应样例，补最小 adapter 契约测试；联调前不要把 local fallback 或 mock 标记写成生产数据。

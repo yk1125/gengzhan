@@ -161,7 +161,7 @@
           <div v-for="(row, rowIndex) in logoRows" :key="rowIndex" class="company-logo-track" :class="`company-logo-track--${rowIndex % 2 ? 'reverse' : 'forward'}`">
             <div class="company-logo-grid">
               <span v-for="(logo, logoIndex) in [...row, ...row]" :key="`${rowIndex}-${logo.key}-${logoIndex}`" class="company-logo-grid__item">
-                <img :src="`${CUSTOMER_ASSET_BASE}/${logo.file}`" alt="" :style="{ height: `${logo.height}px` }" loading="lazy">
+                <img :src="logo.src || `${CUSTOMER_ASSET_BASE}/${logo.file}`" alt="" :style="{ height: `${logo.height}px` }" loading="lazy">
               </span>
             </div>
           </div>
@@ -259,6 +259,7 @@ import { Bottom, Close, TopRight } from '@element-plus/icons-vue'
 import { localizeRoute } from '@/config/routeManifest'
 import { companyContent, companyMedia } from '@/content/company'
 import { customerLogos, CUSTOMER_ASSET_BASE } from '@/content/home'
+import { listCustomers } from '@/repositories/content'
 import { useAboutMotion } from './useAboutMotion'
 
 const route = useRoute()
@@ -272,12 +273,14 @@ const certificateDialog = ref(null)
 const certificateButton = ref(null)
 const locale = computed(() => route.name === 'AboutEn' ? 'en' : 'zh-CN')
 const copy = computed(() => companyContent[locale.value])
-const logos = customerLogos()
-const logoRows = computed(() => [logos.slice(0, 8), logos.slice(8, 16), logos.slice(16)])
+const logos = ref(customerLogos())
+const logoRows = computed(() => [logos.value.slice(0, 8), logos.value.slice(8, 16), logos.value.slice(16)])
 const displayFacts = ref({})
 const facts = computed(() => copy.value.facts)
 const { motionStyle } = useAboutMotion(root, { heroStage, overviewStage, qualityStage, customersStage, valuesStage, displayFacts, facts })
 const localized = routeKey => localizeRoute({ routeKey, locale: locale.value })
+
+listCustomers().then(result => { logos.value = result.items }).catch(() => {})
 
 function explore () {
   const target = root.value.querySelector('#company-intro')

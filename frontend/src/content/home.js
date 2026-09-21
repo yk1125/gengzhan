@@ -53,8 +53,7 @@ export function customerLogos () {
  * 把 24 张 Logo 切成槽位；每槽是一列独立的纵向轮播（SPEC M-11）。
  * @param {number} perSlot 每槽张数（PC 3 / 移动 6）
  */
-export function customerSlots (perSlot) {
-  const logos = customerLogos()
+export function customerSlots (perSlot, logos = customerLogos()) {
   const slots = []
   for (let i = 0; i < logos.length; i += perSlot) {
     slots.push(logos.slice(i, i + perSlot))

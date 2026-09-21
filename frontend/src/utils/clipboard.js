@@ -25,9 +25,10 @@ const legacyCopy = (text) => {
 }
 
 export const copyToClipboard = async (value) => {
-  const text = String(value)
+  const text = String(value ?? '')
+  if (!text) throw new Error('Clipboard value is empty')
 
-  if (window.isSecureContext && navigator.clipboard?.writeText) {
+  if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && navigator.clipboard?.writeText && (window.isSecureContext || window.location?.protocol === 'http:')) {
     try {
       await navigator.clipboard.writeText(text)
       return
@@ -36,5 +37,7 @@ export const copyToClipboard = async (value) => {
     }
   }
 
+  if (typeof document === 'undefined') throw new Error('Clipboard is unavailable')
   legacyCopy(text)
+  return true
 }

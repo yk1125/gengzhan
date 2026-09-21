@@ -4,8 +4,8 @@
       <div class="news-shell news-hero__wrap">
         <div class="news-hero__title" data-news-reveal>
           <p class="news-eyebrow">YUNZHAN INSIGHTS</p>
-          <h1 id="news-title">行业资讯</h1>
-          <p class="news-hero__lead">专注软件研发，让技术服务于真实业务。</p>
+          <h1 id="news-title">{{ isEn ? 'Insights' : '行业资讯' }}</h1>
+          <p class="news-hero__lead">{{ isEn ? 'Software craft in service of real business.' : '专注软件研发，让技术服务于真实业务。' }}</p>
         </div>
       </div>
       <div class="news-hero__parallax"><img class="news-hero__photo" src="/assets/home/statement-bg.jpg" alt="北京耘栈科技有限公司办公室品牌墙实拍" width="2048" height="1536"></div>
@@ -15,9 +15,9 @@
       <div class="news-shell news-feature__inner">
         <div class="news-feature__copy" data-news-reveal>
           <p class="news-eyebrow">01 / FEATURED</p>
-          <h2 id="feature-title">把模型能力放进真实业务，而不是停在演示里。</h2>
-          <p>可验收的场景、清晰的数据边界和可持续的工程，决定 AI 能否真正落地。</p>
-          <button type="button" class="news-feature__link" :disabled="!newsItems.length" @click="openItem(newsItems[0])">阅读文章 <ArrowRight aria-hidden="true" /></button>
+          <h2 id="feature-title">{{ isEn ? 'Put model capability into real business, not just a demo.' : '把模型能力放进真实业务，而不是停在演示里。' }}</h2>
+          <p>{{ isEn ? 'Verifiable scenarios, clear data boundaries and sustainable engineering make AI useful.' : '可验收的场景、清晰的数据边界和可持续的工程，决定 AI 能否真正落地。' }}</p>
+          <button type="button" class="news-feature__link" :disabled="!newsItems.length" @click="openItem(newsItems[0])">{{ isEn ? 'Read article' : '阅读文章' }} <ArrowRight aria-hidden="true" /></button>
         </div>
         <div class="news-feature__media" data-news-reveal><img src="/assets/services/ai-media.jpg" alt="AI 应用开发演示图片" loading="lazy"></div>
       </div>
@@ -26,19 +26,20 @@
     <section ref="listStage" class="news-shell news-list-section" aria-labelledby="list-title">
       <div class="news-section-heading news-wide-heading" data-news-reveal>
         <p class="news-eyebrow">02 / ALL UPDATES</p>
-        <h2 id="list-title">耘栈动态<br><em>&amp; 日常</em></h2>
-        <p class="news-note">从设计、工程到业务实践，分享那些值得被反复讨论的细节。</p>
+        <h2 id="list-title">{{ isEn ? 'YUNZHAN updates' : '耘栈动态' }}<br><em>&amp; {{ isEn ? 'practice' : '日常' }}</em></h2>
+        <p class="news-note">{{ isEn ? 'Notes from design, engineering and business practice.' : '从设计、工程到业务实践，分享那些值得被反复讨论的细节。' }}</p>
       </div>
-      <p v-if="loading" class="news-state">资讯加载中...</p>
+      <p v-if="source === 'mock'" class="news-demo-state">{{ isEn ? 'Demo data: preview only, production APIs are not connected.' : '演示模式：以下资讯仅用于预览，未连接生产接口。' }}</p>
+      <p v-if="loading" class="news-state">{{ isEn ? 'Loading insights…' : '资讯加载中...' }}</p>
       <div v-else-if="loadFailed" class="news-state">
-        <p>资讯暂时无法加载，请稍后重试。</p>
-        <button type="button" @click="loadNews">重新加载</button>
+        <p>{{ isEn ? 'Insights could not be loaded. Please try again.' : '资讯暂时无法加载，请稍后重试。' }}</p>
+        <button type="button" @click="loadNews">{{ isEn ? 'Retry' : '重新加载' }}</button>
       </div>
-      <p v-else-if="!newsItems.length" class="news-state">暂无资讯</p>
+      <p v-else-if="!newsItems.length" class="news-state">{{ isEn ? 'No insights yet.' : '暂无资讯' }}</p>
       <div v-else class="news-grid public_hover">
-        <article v-for="(item, index) in visibleNewsItems" :key="item.id" class="news-card item" data-cursor-cut data-news-reveal @click="openItem(item)">
+        <article v-for="(item, index) in visibleNewsItems" :key="item.id" class="news-card item" :class="{ 'is-visible': !loading }" data-cursor-cut data-news-reveal @click="openItem(item)">
           <div class="news-card__image img"><img :src="item.image" :alt="item.title" loading="lazy"></div>
-          <div class="news-card__copy"><div class="news-card__label">{{ item.category }}</div><h3>{{ item.title }}</h3><p>{{ item.excerpt }}</p><div class="news-card__end"><time :datetime="item.date">{{ item.date }}</time><span>查看详情 <b>↗</b></span></div></div>
+          <div class="news-card__copy"><div class="news-card__label">{{ item.category }}</div><h3>{{ item.title }}</h3><p>{{ item.excerpt }}</p><div class="news-card__end"><time :datetime="item.date">{{ item.date }}</time><span>{{ isEn ? 'Read' : '查看详情' }} <b>↗</b></span></div></div>
           <span class="news-card__index">{{ String((currentPage - 1) * pageSize + index + 1).padStart(2, '0') }}</span>
         </article>
       </div>
@@ -52,12 +53,12 @@
     <section class="news-cta" aria-labelledby="news-cta-title">
       <div class="news-shell news-cta__inner" data-news-reveal>
         <div>
-          <p class="news-eyebrow">与耘栈合作</p>
-          <h2 id="news-cta-title">下一步，<br>聊聊你的业务。</h2>
-          <p>从一个问题、一项需求，或一个正在酝酿的想法开始。</p>
+          <p class="news-eyebrow">{{ isEn ? 'Work with YUNZHAN' : '与耘栈合作' }}</p>
+          <h2 id="news-cta-title">{{ isEn ? 'Next step,' : '下一步，' }}<br>{{ isEn ? 'let’s talk business.' : '聊聊你的业务。' }}</h2>
+          <p>{{ isEn ? 'Start with a question, a need or an idea taking shape.' : '从一个问题、一项需求，或一个正在酝酿的想法开始。' }}</p>
         </div>
         <router-link class="news-cta__link hover_button" to="/ai-consultation">
-          <span>开始沟通</span><TopRight aria-hidden="true" />
+          <span>{{ isEn ? 'Start a conversation' : '开始沟通' }}</span><TopRight aria-hidden="true" />
         </router-link>
       </div>
     </section>
@@ -68,10 +69,11 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { ArrowRight, TopRight } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getNews } from '@/api'
+import { listNews } from '@/repositories/content'
 
 const router = useRouter()
 const route = useRoute()
+const isEn = computed(() => route.path.startsWith('/en/'))
 const root = ref(null)
 const heroStage = ref(null)
 const featureStage = ref(null)
@@ -119,17 +121,19 @@ const mockNewsItems = [
   { id: 30, category: 'Web 开发', title: '网站上线后的持续观察', excerpt: '真实访问带来的反馈，是下一轮优化最值得信任的依据。', date: '2024-10-14', image: '/assets/services/web-media.jpg' }
 ]
 
+// Legacy fixture kept as migration reference; repository mock data is the runtime source.
+void mockNewsItems
+
 const newsItems = ref([])
+const source = ref('api')
 const pageCount = computed(() => Math.max(1, Math.ceil(newsItems.value.length / pageSize)))
 const visibleNewsItems = computed(() => newsItems.value.slice((currentPage.value - 1) * pageSize, currentPage.value * pageSize))
-const isNewsMockPreview = () => import.meta.env.MODE === 'mock-preview' && import.meta.env.VITE_ENABLE_MOCK === 'true' && String(import.meta.env.VITE_MOCK_RESOURCES || '').split(',').map((item) => item.trim()).includes('news')
-
 function normalizeNewsItem (item, index) {
   return {
     id: item.id ?? `api-${index + 1}`,
-    category: item.categoryLabel || item.category || '资讯',
-    title: item.title || `资讯 ${index + 1}`,
-    excerpt: item.summary || item.excerpt || '',
+    category: isEn.value ? (item.categoryLabelEn || item.categoryLabel || item.category || 'Insight') : (item.categoryLabel || item.category || '资讯'),
+    title: isEn.value ? (item.titleEn || item.title || `Insight ${index + 1}`) : (item.title || `资讯 ${index + 1}`),
+    excerpt: isEn.value ? (item.summaryEn || item.summary || item.excerpt || '') : (item.summary || item.excerpt || ''),
     date: item.publishedAt || item.publishTime || item.date || '',
     image: item.cover?.src || item.coverImage || item.image || '/assets/services/custom-media.jpg'
   }
@@ -139,15 +143,18 @@ async function loadNews () {
   loading.value = true
   loadFailed.value = false
   try {
-    const response = await getNews({ page: 1, size: 100 }, { silent: true })
-    const records = response.data?.records || response.data?.list || (Array.isArray(response.data) ? response.data : [])
-    newsItems.value = records.map(normalizeNewsItem)
+    const result = await listNews({ page: 1, pageSize: 100 })
+    source.value = result.source
+    newsItems.value = result.items.map(normalizeNewsItem)
+    await nextTick()
+    const cards = root.value?.querySelectorAll('.news-card[data-news-reveal]')
+    if (reducedMotion.value || !observer) cards?.forEach(card => card.classList.add('is-visible'))
+    else cards?.forEach(card => observer.observe(card))
   } catch (error) {
     // BACKEND-TODO(B01/B02): verify the production content list and pagination/category semantics.
     // Fixtures are intentionally available only in the explicit mock-preview mode.
-    const useMock = isNewsMockPreview()
-    newsItems.value = useMock ? mockNewsItems : []
-    loadFailed.value = !useMock
+    newsItems.value = []
+    loadFailed.value = true
   } finally {
     loading.value = false
   }
@@ -196,10 +203,19 @@ onBeforeUnmount(() => { observer?.disconnect(); window.removeEventListener('scro
   transform: none !important;
   filter: none !important;
 }
+.news-page .news-card,
+.news-page .news-card:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
 .news-cta__link span { white-space: nowrap; }
 .news-cta__link svg { width: 24px; height: 24px; flex: 0 0 auto; }
 .news-state { min-height: 180px; padding: 56px 0; color: var(--color-ink-soft); text-align: center; }
 .news-state button { margin-top: 18px; padding: 10px 18px; border: 1px solid var(--color-line); background: transparent; color: var(--color-ink); }
+.news-list-section { background: transparent; }
+.news-page { background: var(--color-bg) !important; }
+.news-page .news-list-section { background: transparent !important; }
 @media (max-width: 600px) {
   .news-hero { padding-bottom: 0; }
 }

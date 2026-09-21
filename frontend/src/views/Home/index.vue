@@ -25,8 +25,11 @@
       <div v-if="!bannerReady && !bannerError" class="banner-loader" role="status" aria-label="Loading video">
         <span class="banner-loader-ring" aria-hidden="true" />
       </div>
+      <div v-if="bannerPlaybackBlocked" class="banner-playback-state" role="status">
+        <span>{{ playbackStateLabel }}</span>
+      </div>
       <button
-        v-if="bannerError"
+        v-if="bannerError || bannerPlaybackBlocked"
         class="banner-retry"
         type="button"
         aria-label="重新加载首页视频"
@@ -44,7 +47,12 @@
         :title="soundToggleLabel"
         @click="toggleBannerSound"
       >
-        <el-icon :size="19"><Mute v-if="bannerMuted" /><Headset v-else /></el-icon>
+        <svg class="speaker-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 9v6h4l5 4V5L7 9H3Z" />
+          <path d="M16 9.5a4 4 0 0 1 0 5" />
+          <path d="M18.5 7a7.5 7.5 0 0 1 0 10" />
+          <path v-if="bannerMuted" class="speaker-slash" d="m4 4 16 16" />
+        </svg>
       </button>
 
       <div class="banner-wrap">
@@ -260,9 +268,8 @@
  * 本页不修改全局样式、router 与公共组件（属 A）；主题切换按钮、页头入场、自定义光标等公共能力见
  * `docs/frontend-rebuild/handoffs/B.md` 的契约变更申请。
  */
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Headset, Mute } from '@element-plus/icons-vue'
 import { localizeRoute } from '@/config/routeManifest'
 import {
   CUSTOMER_ASSET_BASE,
@@ -280,6 +287,7 @@ import { demoCases, demoNews } from '@/mocks/content'
 import { banner as bannerMotion, statement as statementMotion } from './motion'
 import { useHomeScroll } from './useHomeScroll'
 import { useCustomerWall, useInsightsSwiper } from './useHomeSwipers'
+import { listCustomers } from '@/repositories/content'
 
 const route = useRoute()
 const router = useRouter()
@@ -319,7 +327,8 @@ function readTheme () {
 const bannerSrc = ref(HOME_BANNER_MEDIA.desktop)
 const bannerReady = ref(false)
 const bannerError = ref(false)
-const bannerMuted = ref(true)
+const bannerMuted = ref(false)
+const bannerPlaybackBlocked = ref(false)
 const titleOn = ref(false)
 let titleTimer = 0
 
@@ -327,6 +336,7 @@ const soundToggleLabel = computed(() => {
   if (isEn.value) return bannerMuted.value ? 'Turn video sound on' : 'Turn video sound off'
   return bannerMuted.value ? '打开视频声音' : '关闭视频声音'
 })
+const playbackStateLabel = computed(() => isEn.value ? 'Video playback is unavailable. Retry to continue.' : '视频自动播放失败，请重试。')
 
 function pickBannerSrc () {
   bannerSrc.value = window.innerWidth <= 1024 ? HOME_BANNER_MEDIA.mobile : HOME_BANNER_MEDIA.desktop
@@ -343,18 +353,21 @@ async function playBannerVideo () {
   const video = bannerVideoRef.value
   if (!video || reducedMotion.value) return
   video.muted = bannerMuted.value
+  bannerPlaybackBlocked.value = false
   try {
     await video.play()
   } catch {
-    // Mobile browsers usually block audible autoplay. Keep the video moving and expose the sound button.
-    if (window.innerWidth <= 1024 && !video.muted) {
+    // A browser may reject only audible autoplay. Retry muted and keep the video moving.
+    if (!video.muted) {
       bannerMuted.value = true
       video.muted = true
       try {
         await video.play()
       } catch {
-        // The media error state is already represented by the visible sound control.
+        bannerPlaybackBlocked.value = true
       }
+    } else {
+      bannerPlaybackBlocked.value = true
     }
   }
 }
@@ -371,6 +384,7 @@ async function toggleBannerSound () {
     } catch {
       bannerMuted.value = true
       video.muted = true
+      bannerPlaybackBlocked.value = false
     }
   }
 }
@@ -385,28 +399,37 @@ function onBannerEnded () {
 function onBannerReady () {
   bannerReady.value = true
   bannerError.value = false
+  playBannerVideo()
 }
 
 function onBannerError () {
   // Keep the poster and page content visible, and offer an explicit retry.
   bannerReady.value = true
   bannerError.value = true
+  bannerPlaybackBlocked.value = false
 }
 
 function retryBannerVideo () {
   const video = bannerVideoRef.value
   if (!video) return
   bannerError.value = false
+  bannerPlaybackBlocked.value = false
   bannerReady.value = false
   video.load()
-  playBannerVideo()
+  nextTick(playBannerVideo)
 }
 
 /* 断点切换会换掉 video 的 src，换源后重新起播。`flush: 'post'` 保证读到的是新元素。 */
 watch(bannerSrc, () => {
   bannerReady.value = false
   bannerError.value = false
-  playBannerVideo()
+  bannerPlaybackBlocked.value = false
+  nextTick(() => {
+    const video = bannerVideoRef.value
+    if (!video) return
+    video.load()
+    playBannerVideo()
+  })
 }, { flush: 'post' })
 
 /**
@@ -458,10 +481,11 @@ const heroChars = computed(() => c.value.hero.lines.map((line, lineIndex) => {
 const heroPlainText = computed(() => c.value.hero.lines.join('，'))
 
 /* --------------------------------------------------------------- M-11 客户墙 */
-const customerSlotsDesktop = computed(() => customerSlots(CUSTOMER_SLOT_SIZE_PC))
-const customerSlotsMobile = computed(() => customerSlots(CUSTOMER_SLOT_SIZE_MOBILE))
+const customerLogosState = ref([])
+const customerSlotsDesktop = computed(() => customerSlots(CUSTOMER_SLOT_SIZE_PC, customerLogosState.value.length ? customerLogosState.value : undefined))
+const customerSlotsMobile = computed(() => customerSlots(CUSTOMER_SLOT_SIZE_MOBILE, customerLogosState.value.length ? customerLogosState.value : undefined))
 function customerSrc (logo) {
-  return `${CUSTOMER_ASSET_BASE}/${logo.file}`
+  return logo.src || `${CUSTOMER_ASSET_BASE}/${logo.file}`
 }
 
 /* ------------------------------------------- index2 内容（M-12 双列 / M-24 入场） */
@@ -575,14 +599,14 @@ const insightCards = computed(() => {
 
 /* ------------------------------------------------------------------ 生命周期 */
 function onResize () {
-  bannerMuted.value = window.innerWidth > 1024
   pickBannerSrc()
+  nextTick(playBannerVideo)
 }
 
 onMounted(() => {
+  listCustomers().then(result => { customerLogosState.value = result.items }).catch(() => {})
   if (!rootRef.value) rootRef.value = document.querySelector('.home')
   pickBannerSrc()
-  bannerMuted.value = window.innerWidth > 1024
   playBannerVideo()
   readTheme()
   // A 的主题按钮写的是 <html data-theme>；本页只跟随，不自己建状态。
@@ -711,7 +735,7 @@ html[data-theme='dark'] .home {
 
 .banner-retry {
   position: absolute;
-  right: max(20px, env(safe-area-inset-right));
+  right: max(74px, calc(env(safe-area-inset-right) + 74px));
   bottom: max(22px, env(safe-area-inset-bottom));
   z-index: 4;
   width: 44px;
@@ -723,6 +747,20 @@ html[data-theme='dark'] .home {
   font-size: 25px;
   line-height: 1;
   cursor: pointer;
+}
+
+.banner-playback-state {
+  position: absolute;
+  right: max(128px, calc(env(safe-area-inset-right) + 128px));
+  bottom: max(28px, calc(env(safe-area-inset-bottom) + 28px));
+  z-index: 4;
+  max-width: min(270px, calc(100% - 204px));
+  padding: 9px 12px;
+  color: #fff;
+  background: rgba(17, 17, 17, .72);
+  border: 1px solid rgba(255, 255, 255, .3);
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .banner-sound-toggle {
@@ -749,6 +787,25 @@ html[data-theme='dark'] .home {
 .banner-sound-toggle.is-muted {
   color: #fff;
   background: rgba(17, 17, 17, .56);
+}
+
+.speaker-icon {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.speaker-icon path:first-child {
+  fill: currentColor;
+  stroke: none;
+}
+
+.speaker-slash {
+  stroke-width: 2.2;
 }
 
 .banner-sound-toggle:active { transform: scale(.94); }

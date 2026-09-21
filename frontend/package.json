@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "dev:mock": "vite --mode mock-preview",
     "build": "vite build",
+    "build:mock": "vite build --mode mock-preview",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "check:routes": "node scripts/check-routes.mjs",

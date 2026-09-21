@@ -43,6 +43,7 @@ import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Close, Connection, CopyDocument, Lock, Promotion } from '@element-plus/icons-vue'
 import { chatWithAssistant } from '@/api'
+import { copyToClipboard } from '@/utils/clipboard'
 
 const route = useRoute()
 const isEn = computed(() => route.path === '/en/ai-consultation' || route.path.startsWith('/en/'))
@@ -61,7 +62,7 @@ const messages = ref([])
 const formatTime = () => new Intl.DateTimeFormat(isEn.value ? 'en-US' : 'zh-CN', { hour: '2-digit', minute: '2-digit' }).format(new Date())
 const scrollToLatest = async () => { await nextTick(); if (messagePanel.value) messagePanel.value.scrollTo({ top: messagePanel.value.scrollHeight, behavior: 'smooth' }) }
 const resizeComposer = () => { const input = composerInput.value; if (!input) return; input.style.height = 'auto'; input.style.height = `${Math.min(input.scrollHeight, 160)}px` }
-const copyWechat = async () => { try { await navigator.clipboard.writeText('YunZhanKk'); ElMessage.success(isEn.value ? 'WeChat ID copied: YunZhanKk' : '微信号已复制：YunZhanKk') } catch (error) { ElMessage.error(isEn.value ? 'Copy failed. Please add YunZhanKk manually.' : '复制失败，请手动添加 YunZhanKk') } }
+const copyWechat = async () => { try { await copyToClipboard('YunZhanKk'); ElMessage.success(isEn.value ? 'WeChat ID copied: YunZhanKk' : '微信号已复制：YunZhanKk') } catch (error) { ElMessage.error(isEn.value ? 'Copy failed. Please add YunZhanKk manually.' : '复制失败，请手动添加 YunZhanKk') } }
 const sendMessage = async (contentValue) => {
   const question = String(contentValue || '').trim()
   if (!question || isSending.value) return

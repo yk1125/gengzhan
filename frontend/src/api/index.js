@@ -26,10 +26,11 @@ export const getCases = (params, config = {}) => {
   })
 }
 
-export const getCaseDetail = (id) => {
+export const getCaseDetail = (id, config = {}) => {
   return request({
     url: `/cases/${id}`,
-    method: 'get'
+    method: 'get',
+    ...config
   })
 }
 
@@ -45,6 +46,15 @@ export const getNews = (params, config = {}) => {
 export const getNewsDetail = (id, config = {}) => {
   return request({
     url: `/news/${id}`,
+    method: 'get',
+    ...config
+  })
+}
+
+// BACKEND-TODO(B01): endpoint and response fields must be confirmed with the production API.
+export const getCustomers = (config = {}) => {
+  return request({
+    url: '/customers',
     method: 'get',
     ...config
   })

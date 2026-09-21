@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed_cursor" :class="{ cut: isCut }" aria-hidden="true">
+  <div class="fixed_cursor" :class="{ cut: isCut, hidden: isDetailRoute }" aria-hidden="true">
     <div ref="cursorRef" class="cursor">
       <div ref="wholeRef" class="whole" />
       <div class="content_pro">
@@ -59,6 +59,7 @@ const cursorRef = ref(null)
 const wholeRef = ref(null)
 const isCut = ref(false)
 const label = ref('探索更多')
+const isDetailRoute = ref(false)
 
 // M-30：磁吸（`.hover_button`）也挂在这个全局层上，页面只需加类名。
 const { attach: attachMagnetic } = useMagnetic(() => document)
@@ -187,6 +188,7 @@ function syncViewport () {
 
 onMounted(() => {
   label.value = route.path.startsWith('/en') ? 'Explore' : '探索更多'
+  isDetailRoute.value = /^\/(en\/)?(cases|news)\/[^/]+$/.test(route.path)
   desktop = isDesktop()
   if (!desktop) return
   start()
@@ -198,6 +200,10 @@ onMounted(() => {
 // 路由切换后重新绑定磁吸元素，并跟随语言切换光标文案。
 watch(() => route.fullPath, () => {
   label.value = route.path.startsWith('/en') ? 'Explore' : '探索更多'
+  isDetailRoute.value = /^\/(en\/)?(cases|news)\/[^/]+$/.test(route.path)
+  isCut.value = false
+  wholeRef.value?.classList.remove('on')
+  wholeRef.value?.querySelectorAll('.bor').forEach(node => node.remove())
   if (desktop) attachMagnetic()
 })
 
@@ -221,6 +227,7 @@ onBeforeUnmount(() => {
 
 /* M-29 简化：蓝盘不能被 exclusion 反相，`.cut` 时切回 normal。 */
 .fixed_cursor.cut { mix-blend-mode: normal; }
+.fixed_cursor.hidden { opacity: 0 !important; visibility: hidden; }
 
 /* M-27：位移由 gsap 写在 `.cursor` 上（等同参考站 quickSetter 的落点）。 */
 .cursor {

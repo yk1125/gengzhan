@@ -50,3 +50,34 @@
 - CTA 改为跟随主题底色的无蓝色整块背景；圆盘保留蓝色按钮本体，主文案为白色，并增加沿 SVG 圆形路径持续旋转的白色环形文字，hover 时加速旋转。
 - 验证：`npm.cmd run build` PASS；`git diff --check` PASS；本地 `/cases` DOM 确认 CTA orbit 存在、`case-cta` 不再使用蓝色背景、案例页无 `data-cursor-cut` 图片触发器。
 - 用户补充后修正：案例卡片恢复 `data-cursor-cut`，保留图片 hover 时全局蓝色圆盘；仅覆盖旧全局卡片 hover 的边框、阴影、背景和位移高亮。最新 `check:motion` PASS 2 / FAIL 0，build PASS。
+## Session D · 案例与资讯列表/详情（2026-09-22）
+
+状态：代码完成，待集成验收；未提交，保留工作树中其他 session 的已有改动。
+
+### 实际修改
+
+- `frontend/src/repositories/content.js`：案例 mock 扩展为 3 条稳定 ID（`demo-1`—`demo-3`），资讯 mock 扩展为 6 条稳定 ID（`1`—`6`），每条资讯包含中英文标题、摘要、分类、日期、封面、正文和来源说明；详情 mock 与 API 统一走 normalize 模型，案例图集字段兼容 `gallery/images`。
+- `frontend/src/views/Cases/index.vue`：案例 mock 可点击进入详情，演示状态中英文显示，列表/精选继续消费 `listCases()`。
+- `frontend/src/views/Cases/detail.vue`：重写为 repository-only 详情，未知 ID 明确缺失态；保留图集、项目链接，加入安全正文清洗、阅读进度、封面缩放/入场和 reduced-motion 支持。
+- `frontend/src/views/News/index.vue`：列表 mock/API 统一消费 `listNews()`，演示状态、错误重试和主要文案覆盖中英文。
+- `frontend/src/views/News/detail.vue`：移除旧的本地 1—6 数据库，统一 `getNews()`；正文安全清洗、来源链接、阅读进度、返回列表和 API 错误重试/未知 ID 缺失态均已实现。
+
+### 验证
+
+- `npm.cmd run build`：PASS（Vite 生产构建通过；仅既有 chunk/browserslist 警告）。
+- `$env:VITE_ENABLE_MOCK='true'; npm.cmd run build -- --mode mock-preview`：PASS。
+- `npm.cmd run check:routes`：PASS 36 / FAIL 0 / PENDING 0，覆盖中英文案例/资讯列表和详情路由。
+- 只读 ESLint（相关 5 个文件）：0 errors；仅格式与 `v-html` 安全提示 warnings。
+- `git diff --check`：PASS。
+- 本环境的 CUA 浏览器不可用（apikey auth method 不支持），未执行截图/真实浏览器视觉矩阵；构建和路由检查已完成。
+
+### 接口缺口与下一步
+
+- B02/B03 仍需后端确认列表 envelope、详情字段、分页能力和翻译字段；生产切换 `VITE_CONTENT_MODE=api` 后页面无需重写。
+- mock 预览建议用 `VITE_ENABLE_MOCK=true npm run dev -- --mode mock-preview` 访问 `/cases`、`/cases/demo-1`、`/news`、`/news/1` 及对应英文路由，并检查未知 ID、主题、移动端和 reduced-motion。
+
+### Mock 启动收口（2026-09-22 续）
+
+- 新增 `frontend/.env.mock-preview`，并在 `package.json` 增加 `npm run dev:mock`；现在直接运行 `npm.cmd run dev:mock -- --host 127.0.0.1 --port 4174` 即可加载案例/资讯 mock，不需要手动设置 PowerShell 环境变量。
+- 默认 `npm run dev` 仍是 `api` 模式，这是为了避免生产/普通开发环境静默伪装成演示数据。
+- `npm.cmd run build -- --mode mock-preview` 已在无额外环境变量下通过；带 `Accept: text/html` 请求 `/cases` 返回 200，SPA 深链接可由浏览器加载。

@@ -74,6 +74,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { ChatDotRound, Location, Message } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import { copyToClipboard as copyText } from '@/utils/clipboard'
 
 const route = useRoute()
 /** 首页（中英两个路由）走参考站的米色 footer；其余页面沿用深色收尾
@@ -154,7 +155,7 @@ const t = computed(() => (isEn.value
 
 const copyToClipboard = async (text, type) => {
   try {
-    await navigator.clipboard.writeText(text)
+    await copyText(text)
     ElMessage.success(isEn.value ? `${type} copied: ${text}` : `${type}已复制：${text}`)
   } catch (error) {
     ElMessage.error(isEn.value ? `Copy failed. Please add manually: ${text}` : `复制失败，请手动添加：${text}`)

@@ -15,8 +15,24 @@
 
     <section class="case-motion case-shell" aria-label="案例动态视觉" data-case-reveal style="--case-delay: 220ms">
       <div class="case-motion__frame">
-        <video class="case-motion__video" src="/assets/banner/banner.mp4" poster="/assets/banner/video.webp" autoplay muted loop playsinline preload="metadata" aria-label="数字化项目视觉演示"></video>
+        <video
+          ref="caseVideoRef"
+          class="case-motion__video"
+          :src="HOME_BANNER_MEDIA.desktop"
+          :poster="HOME_BANNER_MEDIA.poster"
+          :muted="caseVideoMuted"
+          autoplay
+          loop
+          playsinline
+          preload="metadata"
+          aria-label="数字化项目视觉演示"
+          @canplay="playCaseVideo"
+          @error="caseVideoError = true"
+        ></video>
         <div class="case-motion__scrim"></div>
+        <button v-if="caseVideoError || casePlaybackBlocked" class="case-motion__retry" type="button" @click="retryCaseVideo">
+          {{ isEn ? 'Retry video' : '重试视频' }}
+        </button>
         <div class="case-motion__caption"><span>YUNZHAN / DIGITAL PRODUCT STUDIO</span><strong>{{ isEn ? 'From an idea to something people can use.' : '从一个想法，到真正被使用的产品。' }}</strong></div>
         <span class="case-motion__index">01 / 01</span>
       </div>
@@ -27,6 +43,7 @@
         <div><p class="case-kicker">01 / ARCHIVE</p><h2 id="case-work-title">{{ isEn ? 'Selected projects' : '项目与作品' }}</h2></div>
         <p class="case-work__description">{{ isEn ? 'Websites, applications and intelligent tools shaped around real teams.' : '品牌官网、移动产品与智能工具，围绕真实团队和业务现场展开。' }}</p>
       </div>
+      <p v-if="source === 'mock'" class="case-demo-state">{{ isEn ? 'Demo data: preview only, production APIs are not connected.' : '演示模式：以下案例仅用于预览，未连接生产接口。' }}</p>
 
       <nav class="case-filters" aria-label="案例分类" data-case-reveal style="--case-delay: 80ms">
         <button v-for="category in categories" :key="category.id" type="button" :class="{ active: activeCategory === category.id }" @click="selectCategory(category.id)">
@@ -34,13 +51,13 @@
         </button>
       </nav>
 
-      <article v-if="featuredCase" class="case-featured" data-case-reveal style="--case-delay: 140ms" @click="openCase(featuredCase)">
+      <article v-if="featuredCase" class="case-featured is-visible" data-case-reveal style="--case-delay: 140ms" @click="openCase(featuredCase)">
         <div class="case-featured__media"><img :src="featuredCase.image" :alt="localized(featuredCase.title)" loading="eager" width="1400" height="760"><div class="case-featured__overlay"></div><span class="case-featured__index">{{ String(featuredCase.index).padStart(2, '0') }}</span><span class="case-featured__prompt">{{ isEn ? 'EXPLORE PROJECT' : '探索项目' }} <TopRight aria-hidden="true" /></span></div>
         <div class="case-featured__copy"><div class="case-card__meta"><span>{{ localized(featuredCase.category) }}</span><time :datetime="featuredCase.date">{{ featuredCase.date }}</time></div><h3>{{ localized(featuredCase.title) }}</h3><p>{{ localized(featuredCase.description) }}</p><div class="case-tags"><span v-for="tag in featuredCase.tags" :key="tag">{{ tag }}</span></div></div>
       </article>
 
       <div class="case-grid" :class="{ loading: loading }">
-        <article v-for="(item, index) in visibleCases" :key="item.id" class="case-card" :class="{ 'is-demo': String(item.id).startsWith('demo-') }" data-case-reveal data-cursor-cut :style="{ '--case-delay': `${(index % 3) * 90}ms` }" @click="openCase(item)">
+        <article v-for="(item, index) in visibleCases" :key="item.id" class="case-card is-visible" data-case-reveal data-cursor-cut :style="{ '--case-delay': `${(index % 3) * 90}ms` }" @click="openCase(item)">
           <div class="case-card__media"><img :src="item.image" :alt="localized(item.title)" loading="lazy" width="720" height="520"><div class="case-card__shade"></div><span class="case-card__index">{{ String(item.index).padStart(2, '0') }}</span><span class="case-card__arrow" aria-hidden="true"><TopRight /></span></div>
           <div class="case-card__copy"><div class="case-card__meta"><span>{{ localized(item.category) }}</span><time :datetime="item.date">{{ item.date }}</time></div><h3>{{ localized(item.title) }}</h3><p>{{ localized(item.description) }}</p><div class="case-tags"><span v-for="tag in item.tags" :key="tag">{{ tag }}</span></div></div>
         </article>
@@ -57,9 +74,10 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { TopRight } from '@element-plus/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getCases } from '@/api'
+import { listCases } from '@/repositories/content'
+import { HOME_BANNER_MEDIA } from '@/content/home'
 
-const router = useRouter(); const route = useRoute(); const root = ref(null); const activeCategory = ref('all'); const loading = ref(false); const reducedMotion = ref(false); const heroProgress = ref(0); const observer = ref(null); let raf = 0
+const router = useRouter(); const route = useRoute(); const root = ref(null); const caseVideoRef = ref(null); const activeCategory = ref('all'); const loading = ref(false); const reducedMotion = ref(false); const heroProgress = ref(0); const observer = ref(null); const caseVideoMuted = ref(false); const caseVideoError = ref(false); const casePlaybackBlocked = ref(false); let raf = 0
 const isEn = computed(() => route.path === '/en/cases' || route.path.startsWith('/en/cases/')); const motionStyle = computed(() => ({ '--case-hero-progress': `${heroProgress.value}px` }))
 const categories = [{ id: 'all', zh: '全部项目', en: 'ALL WORK' }, { id: 'web', zh: '网站建设', en: 'WEB' }, { id: 'app', zh: 'App 开发', en: 'APP' }, { id: 'mini', zh: '小程序', en: 'MINI PROGRAM' }, { id: 'ai', zh: 'AI 应用', en: 'AI' }]
 const imageSet = ['/assets/cases/83db3640125b7463feef8d0221cc5f27.webp', '/assets/services/ai-media.jpg', '/assets/cases/c61e07c88f465c23dfbdb6ccf8411064.webp', '/assets/services/mini-media.jpg', '/assets/services/app-media.jpg', '/assets/services/web-media.jpg', '/assets/services/custom-media.jpg', '/assets/services/creative-media.jpg', '/assets/services/iot-media.jpg']
@@ -75,17 +93,18 @@ const copySet = [
   [{ zh: '设备管理移动应用', en: 'Connected Device Management' }, { zh: '为现场团队提供更及时、更直观的设备信息。', en: 'Timely, legible device information for teams in the field.' }, 'app', ['APP', 'IOT']]
 ]
 const mockCases = copySet.map(([title, description, type, tags], index) => ({ id: `demo-${index + 1}`, index: index + 1, category: { zh: type === 'web' ? '网站建设' : type === 'app' ? 'App 开发' : type === 'mini' ? '小程序' : 'AI 应用', en: type === 'web' ? 'WEB DESIGN' : type === 'app' ? 'APP PRODUCT' : type === 'mini' ? 'MINI PROGRAM' : 'AI PRODUCT' }, type, title, description, date: String(2026 - Math.floor(index / 3)), tags, image: imageSet[index] }))
-const cases = ref([...mockCases]); const filteredCases = computed(() => activeCategory.value === 'all' ? cases.value : cases.value.filter(item => item.type === activeCategory.value)); const featuredCase = computed(() => filteredCases.value[0] || null); const visibleCases = computed(() => filteredCases.value.slice(1))
+const cases = ref([...mockCases]); const source = ref('api'); const filteredCases = computed(() => activeCategory.value === 'all' ? cases.value : cases.value.filter(item => item.type === activeCategory.value)); const featuredCase = computed(() => filteredCases.value[0] || null); const visibleCases = computed(() => filteredCases.value.slice(1))
 function localized (value) { return typeof value === 'object' ? (value[isEn.value ? 'en' : 'zh'] || Object.values(value)[0]) : (value || '') }
 function categoryCount (id) { return id === 'all' ? cases.value.length : cases.value.filter(item => item.type === id).length }
 function selectCategory (id) { activeCategory.value = id; nextTick(() => root.value?.querySelectorAll('[data-case-reveal]')?.forEach(item => observer.value ? observer.value.observe(item) : item.classList.add('is-visible'))) }
-function openCase (item) { if (!String(item.id).startsWith('demo-')) router.push({ name: isEn.value ? 'CaseDetailEn' : 'CaseDetail', params: { id: item.id } }) }
+function openCase (item) { if (item?.id) router.push({ name: isEn.value ? 'CaseDetailEn' : 'CaseDetail', params: { id: item.id } }) }
 function scheduleMotion () { if (!raf) raf = window.requestAnimationFrame(updateMotion) }
 function updateMotion () { raf = 0; const rect = root.value?.querySelector('.case-motion')?.getBoundingClientRect(); if (!rect || reducedMotion.value) return; heroProgress.value = Math.max(-38, Math.min(90, -rect.top * 0.12)) }
-function normalizeApiCase (item, index) { const fallback = mockCases[index % mockCases.length]; return { ...fallback, ...item, index: index + 1, id: item.id || `api-${index}`, image: item.coverImage || item.image || fallback.image, title: { zh: item.title || fallback.title.zh, en: item.titleEn || item.title || fallback.title.en }, description: { zh: item.description || fallback.description.zh, en: item.descriptionEn || item.description || fallback.description.en } } }
-async function loadCases () { loading.value = true; try { const response = await getCases({ page: 1, size: 30 }, { silent: true }); const records = response.data?.records || response.data?.list || (Array.isArray(response.data) ? response.data : []); if (records.length) cases.value = records.map(normalizeApiCase) } catch (error) { /* BACKEND-TODO(B01/B02): keep this fixture fallback only for explicit preview mode once repository wiring lands. */ console.info('案例接口不可用，保留本地演示数据', error) } finally { loading.value = false } }
-onMounted(() => { reducedMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches; if (!reducedMotion.value && 'IntersectionObserver' in window) { observer.value = new IntersectionObserver(entries => entries.forEach(({ target, isIntersecting }) => target.classList.toggle('is-visible', isIntersecting)), { threshold: 0.12 }); root.value?.querySelectorAll('[data-case-reveal]').forEach(item => observer.value.observe(item)); window.addEventListener('scroll', scheduleMotion, { passive: true }); scheduleMotion() } else root.value?.querySelectorAll('[data-case-reveal]').forEach(item => item.classList.add('is-visible')); loadCases() })
-onBeforeUnmount(() => { observer.value?.disconnect(); window.removeEventListener('scroll', scheduleMotion); if (raf) window.cancelAnimationFrame(raf) })
+async function playCaseVideo () { const video = caseVideoRef.value; if (!video || reducedMotion.value) return; casePlaybackBlocked.value = false; video.muted = caseVideoMuted.value; try { await video.play() } catch { caseVideoMuted.value = true; video.muted = true; try { await video.play() } catch { casePlaybackBlocked.value = true } } }
+function retryCaseVideo () { const video = caseVideoRef.value; if (!video) return; caseVideoError.value = false; casePlaybackBlocked.value = false; video.load(); nextTick(playCaseVideo) }
+async function loadCases () { loading.value = true; try { const result = await listCases({ page: 1, pageSize: 30 }); source.value = result.source; cases.value = result.items.map((item, index) => ({ ...mockCases[index % mockCases.length], index: index + 1, id: item.id, type: item.categoryId, category: { zh: item.categoryLabel, en: item.categoryLabelEn || item.categoryLabel }, title: { zh: item.title, en: item.titleEn || item.title }, description: { zh: item.summary, en: item.summaryEn || item.summary }, date: item.publishedAt || '', image: item.cover?.src || mockCases[index % mockCases.length].image, tags: item.technologies || [] })); await nextTick(); root.value?.querySelectorAll('[data-case-reveal]').forEach(item => observer.value ? observer.value.observe(item) : item.classList.add('is-visible')) } catch (error) { cases.value = []; source.value = 'api' } finally { loading.value = false } }
+onMounted(() => { reducedMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches; if (!reducedMotion.value && 'IntersectionObserver' in window) { observer.value = new IntersectionObserver(entries => entries.forEach(({ target, isIntersecting }) => target.classList.toggle('is-visible', isIntersecting)), { threshold: 0.12 }); root.value?.querySelectorAll('[data-case-reveal]').forEach(item => observer.value.observe(item)); window.addEventListener('scroll', scheduleMotion, { passive: true }); scheduleMotion(); playCaseVideo() } else root.value?.querySelectorAll('[data-case-reveal]').forEach(item => item.classList.add('is-visible')); loadCases() })
+onBeforeUnmount(() => { observer.value?.disconnect(); window.removeEventListener('scroll', scheduleMotion); caseVideoRef.value?.pause(); if (raf) window.cancelAnimationFrame(raf) })
 </script>
 
 <style scoped>
@@ -93,5 +112,5 @@ onBeforeUnmount(() => { observer.value?.disconnect(); window.removeEventListener
 .case-page .case-card{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}.case-page .case-card:hover{background:transparent!important;border-color:transparent!important;box-shadow:none!important;filter:none!important;transform:none!important}
 @media(max-width:1024px){.case-hero{grid-template-columns:1fr;gap:34px;padding-top:140px}.case-hero__intro{max-width:620px}.case-motion{padding-bottom:88px}.case-motion__frame{height:56vw;min-height:330px}.case-work__head{align-items:start;flex-direction:column;gap:23px}.case-featured{grid-template-columns:1fr;gap:27px;padding-block:58px 86px}.case-featured__copy{padding-inline:2px}.case-grid{gap:54px 3%}.case-card__copy h3{font-size:20px}}
 @media(max-width:680px){.case-shell{width:calc(100% - 40px)}.case-hero{padding:112px 0 58px;gap:27px}.case-hero__heading h1{font-size:clamp(45px,13vw,65px);line-height:.98}.case-hero__intro{font-size:14px;line-height:1.8}.case-motion{padding-bottom:70px}.case-motion__frame{height:86vw;min-height:320px}.case-motion__video{height:100%;transform:scale(1.02)}.case-motion__caption strong{font-size:27px}.case-motion__caption span{font-size:9px}.case-work{padding-bottom:90px}.case-work__head{margin-bottom:35px}.case-work__head h2{font-size:42px}.case-work__description{font-size:14px}.case-filters{gap:22px;margin-inline:-20px;padding-inline:20px}.case-filters button{padding-block:18px}.case-featured{padding-block:45px 66px}.case-featured__media{aspect-ratio:1.18}.case-featured__copy h3{margin-top:27px;font-size:33px}.case-featured__copy>p{font-size:14px}.case-grid{display:block}.case-card{padding-top:37px;margin-bottom:56px}.case-card__media{aspect-ratio:1.3}.case-card__copy{padding-top:16px}.case-card__copy h3{font-size:23px}.case-card__copy>p{min-height:auto}.case-card__arrow{opacity:1;transform:none}.case-cta{padding:76px 0 88px}.case-cta__inner{min-height:400px}.case-cta h2{font-size:46px}.case-cta__copy{font-size:14px}.case-cta__circle{width:134px;height:134px;margin-top:55px}.case-page [data-case-reveal]{transition-duration:.65s}}
-@media(prefers-reduced-motion:reduce){.case-page *,.case-page *:before,.case-page *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}.case-page [data-case-reveal]{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.case-page *,.case-page *:before,.case-page *:after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}.case-page [data-case-reveal]{opacity:1;transform:none}}.case-motion__retry{position:absolute;right:22px;bottom:22px;z-index:2;padding:10px 14px;border:1px solid rgba(255,255,255,.65);border-radius:3px;background:rgba(17,17,17,.7);color:#fff;font:inherit;font-size:12px;cursor:pointer}
 </style>
