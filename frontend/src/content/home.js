@@ -63,8 +63,10 @@ export function customerSlots (perSlot, logos = customerLogos()) {
 
 /** 首屏视频：项目自有素材，PC 与移动按断点分别选择（不双份加载）。 */
 export const HOME_BANNER_MEDIA = {
-  desktop: '/assets/home/hero-20260919.mp4',
-  mobile: '/assets/home/hero-20260919.mp4',
+  // Same user-provided hero content, transcoded from HEVC to H.264/AAC for
+  // broader embedded-browser support. Both breakpoints intentionally share it.
+  desktop: '/assets/home/hero-20260919-h264.mp4',
+  mobile: '/assets/home/hero-20260919-h264.mp4',
   poster: '/assets/home/hero-20260919-poster.webp'
 }
 

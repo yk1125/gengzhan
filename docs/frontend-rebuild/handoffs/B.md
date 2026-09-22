@@ -1282,3 +1282,11 @@ $ npx.cmd eslint _base_index.vue _base_home.js --ext .vue,.js                   
 验证：`npm.cmd run build` PASS；定向 ESLint 0 errors（既有 Vue 格式 warnings）；`git diff --check` PASS。浏览器自动化本轮因 CUA 浏览器认证不可用未执行，Safari/微信真机仍未验证。
 
 接口/素材缺口：无新增素材或接口；沿用用户提供的约 5MB `assets/home/hero-20260919.mp4`。
+
+## 首页视频微信兼容修订（2026-09-22）
+
+- `frontend/public/assets/home/hero-20260919-h264.mp4`：由用户提供的 `hero-20260919.mp4` 原样转码内容生成，未再拿仓库旧视频替代。输出为 1280x720、53.50 秒、30fps、H.264 Main 3.1 / yuv420p + AAC LC，启用 MP4 faststart 与 2 秒关键帧间隔；SHA256 已登记到项目素材 manifest。
+- `frontend/src/content/home.js`：桌面与移动首屏统一引用上述兼容文件。原 HEVC/AAC 文件继续保留为母版。
+- `frontend/src/views/Home/index.vue`：首播使用静音自动播放，并在 `WeixinJSBridgeReady`、首次触摸及页面重新可见时重试；声音只能在用户手势后开启。保留 poster、失败提示和手动重试，不能声称绕过所有微信/WebView 策略。
+- 验证：FFmpeg 确认输出时长 53.50 秒，包含 H.264 Main 3.1 视频轨与 AAC LC 音轨；与原 HEVC 画面逐帧比较的平均 PSNR 为 44.68 dB。`npm.cmd run build` PASS；`npm.cmd run build:mock` PASS；`git diff --check` PASS。最终 `dist` 为 mock-preview 构建。
+- 验证边界：仍需真实 iPhone 微信和 Android 微信分别验证自动播放、声音按钮、锁屏返回及弱网重试。

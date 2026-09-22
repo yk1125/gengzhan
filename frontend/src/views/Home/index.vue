@@ -13,7 +13,12 @@
           :src="bannerSrc"
           :poster="HOME_BANNER_MEDIA.poster"
           :muted="bannerMuted"
+          autoplay
           playsinline
+          webkit-playsinline
+          x5-playsinline
+          x5-video-player-type="h5"
+          x5-video-player-fullscreen="false"
           :preload="isDesktop ? 'metadata' : 'auto'"
           @loadeddata="onBannerReady"
           @canplay="onBannerReady"
@@ -327,7 +332,7 @@ function readTheme () {
 const bannerSrc = ref(HOME_BANNER_MEDIA.desktop)
 const bannerReady = ref(false)
 const bannerError = ref(false)
-const bannerMuted = ref(false)
+const bannerMuted = ref(true)
 const bannerPlaybackBlocked = ref(false)
 const titleOn = ref(false)
 let titleTimer = 0
@@ -370,6 +375,15 @@ async function playBannerVideo () {
       bannerPlaybackBlocked.value = true
     }
   }
+}
+
+function retryOnUserGesture () {
+  if (!bannerVideoRef.value || reducedMotion.value) return
+  playBannerVideo()
+}
+
+function onWeChatBridgeReady () {
+  retryOnUserGesture()
 }
 
 async function toggleBannerSound () {
@@ -608,6 +622,9 @@ onMounted(() => {
   if (!rootRef.value) rootRef.value = document.querySelector('.home')
   pickBannerSrc()
   playBannerVideo()
+  document.addEventListener('WeixinJSBridgeReady', onWeChatBridgeReady, false)
+  document.addEventListener('touchstart', retryOnUserGesture, { passive: true })
+  document.addEventListener('visibilitychange', retryOnUserGesture)
   readTheme()
   // A 的主题按钮写的是 <html data-theme>；本页只跟随，不自己建状态。
   themeObserver = new MutationObserver(readTheme)
@@ -619,6 +636,9 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', onResize)
+  document.removeEventListener('WeixinJSBridgeReady', onWeChatBridgeReady)
+  document.removeEventListener('touchstart', retryOnUserGesture)
+  document.removeEventListener('visibilitychange', retryOnUserGesture)
   if (bannerVideoRef.value) bannerVideoRef.value.pause()
   if (titleTimer) window.clearTimeout(titleTimer)
   titleTimer = 0
