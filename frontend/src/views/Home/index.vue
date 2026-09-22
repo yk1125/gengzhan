@@ -30,19 +30,6 @@
       <div v-if="!bannerReady && !bannerError" class="banner-loader" role="status" aria-label="Loading video">
         <span class="banner-loader-ring" aria-hidden="true" />
       </div>
-      <div v-if="bannerPlaybackBlocked" class="banner-playback-state" role="status">
-        <span>{{ playbackStateLabel }}</span>
-      </div>
-      <button
-        v-if="bannerError || bannerPlaybackBlocked"
-        class="banner-retry"
-        type="button"
-        aria-label="重新加载首页视频"
-        title="重新加载视频"
-        @click="retryBannerVideo"
-      >
-        ↻
-      </button>
       <button
         class="banner-sound-toggle"
         type="button"
@@ -333,16 +320,15 @@ const bannerSrc = ref(HOME_BANNER_MEDIA.desktop)
 const bannerReady = ref(false)
 const bannerError = ref(false)
 const bannerMuted = ref(true)
-const bannerPlaybackBlocked = ref(false)
 const titleOn = ref(false)
 let titleTimer = 0
+let bannerRetryTimer = 0
+let bannerRetryUsed = false
 
 const soundToggleLabel = computed(() => {
   if (isEn.value) return bannerMuted.value ? 'Turn video sound on' : 'Turn video sound off'
   return bannerMuted.value ? '打开视频声音' : '关闭视频声音'
 })
-const playbackStateLabel = computed(() => isEn.value ? 'Video playback is unavailable. Retry to continue.' : '视频自动播放失败，请重试。')
-
 function pickBannerSrc () {
   bannerSrc.value = window.innerWidth <= 1024 ? HOME_BANNER_MEDIA.mobile : HOME_BANNER_MEDIA.desktop
 }
@@ -358,7 +344,6 @@ async function playBannerVideo () {
   const video = bannerVideoRef.value
   if (!video || reducedMotion.value) return
   video.muted = bannerMuted.value
-  bannerPlaybackBlocked.value = false
   try {
     await video.play()
   } catch {
@@ -369,10 +354,15 @@ async function playBannerVideo () {
       try {
         await video.play()
       } catch {
-        bannerPlaybackBlocked.value = true
+        // Autoplay is an enhancement; leave poster/decoded first frame visible.
       }
-    } else {
-      bannerPlaybackBlocked.value = true
+    }
+    if (!bannerRetryUsed) {
+      bannerRetryUsed = true
+      bannerRetryTimer = window.setTimeout(() => {
+        bannerRetryTimer = 0
+        playBannerVideo()
+      }, 800)
     }
   }
 }
@@ -398,7 +388,6 @@ async function toggleBannerSound () {
     } catch {
       bannerMuted.value = true
       video.muted = true
-      bannerPlaybackBlocked.value = false
     }
   }
 }
@@ -417,27 +406,20 @@ function onBannerReady () {
 }
 
 function onBannerError () {
-  // Keep the poster and page content visible, and offer an explicit retry.
+  // Keep the poster/decoded first frame and page content visible without an error prompt.
+  if (bannerRetryTimer) window.clearTimeout(bannerRetryTimer)
+  bannerRetryTimer = 0
   bannerReady.value = true
   bannerError.value = true
-  bannerPlaybackBlocked.value = false
-}
-
-function retryBannerVideo () {
-  const video = bannerVideoRef.value
-  if (!video) return
-  bannerError.value = false
-  bannerPlaybackBlocked.value = false
-  bannerReady.value = false
-  video.load()
-  nextTick(playBannerVideo)
 }
 
 /* 断点切换会换掉 video 的 src，换源后重新起播。`flush: 'post'` 保证读到的是新元素。 */
 watch(bannerSrc, () => {
+  if (bannerRetryTimer) window.clearTimeout(bannerRetryTimer)
+  bannerRetryTimer = 0
+  bannerRetryUsed = false
   bannerReady.value = false
   bannerError.value = false
-  bannerPlaybackBlocked.value = false
   nextTick(() => {
     const video = bannerVideoRef.value
     if (!video) return
@@ -640,6 +622,8 @@ onBeforeUnmount(() => {
   document.removeEventListener('touchstart', retryOnUserGesture)
   document.removeEventListener('visibilitychange', retryOnUserGesture)
   if (bannerVideoRef.value) bannerVideoRef.value.pause()
+  if (bannerRetryTimer) window.clearTimeout(bannerRetryTimer)
+  bannerRetryTimer = 0
   if (titleTimer) window.clearTimeout(titleTimer)
   titleTimer = 0
   if (themeObserver) {
@@ -751,36 +735,6 @@ html[data-theme='dark'] .home {
   border-top-color: #fff;
   border-radius: 50%;
   animation: home-loader-spin .8s linear infinite;
-}
-
-.banner-retry {
-  position: absolute;
-  right: max(74px, calc(env(safe-area-inset-right) + 74px));
-  bottom: max(22px, env(safe-area-inset-bottom));
-  z-index: 4;
-  width: 44px;
-  height: 44px;
-  border: 1px solid rgba(255, 255, 255, .58);
-  border-radius: 50%;
-  background: rgba(17, 17, 17, .62);
-  color: #fff;
-  font-size: 25px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.banner-playback-state {
-  position: absolute;
-  right: max(128px, calc(env(safe-area-inset-right) + 128px));
-  bottom: max(28px, calc(env(safe-area-inset-bottom) + 28px));
-  z-index: 4;
-  max-width: min(270px, calc(100% - 204px));
-  padding: 9px 12px;
-  color: #fff;
-  background: rgba(17, 17, 17, .72);
-  border: 1px solid rgba(255, 255, 255, .3);
-  font-size: 12px;
-  line-height: 1.4;
 }
 
 .banner-sound-toggle {

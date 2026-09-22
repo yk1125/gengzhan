@@ -1290,3 +1290,10 @@ $ npx.cmd eslint _base_index.vue _base_home.js --ext .vue,.js                   
 - `frontend/src/views/Home/index.vue`：首播使用静音自动播放，并在 `WeixinJSBridgeReady`、首次触摸及页面重新可见时重试；声音只能在用户手势后开启。保留 poster、失败提示和手动重试，不能声称绕过所有微信/WebView 策略。
 - 验证：FFmpeg 确认输出时长 53.50 秒，包含 H.264 Main 3.1 视频轨与 AAC LC 音轨；与原 HEVC 画面逐帧比较的平均 PSNR 为 44.68 dB。`npm.cmd run build` PASS；`npm.cmd run build:mock` PASS；`git diff --check` PASS。最终 `dist` 为 mock-preview 构建。
 - 验证边界：仍需真实 iPhone 微信和 Android 微信分别验证自动播放、声音按钮、锁屏返回及弱网重试。
+
+## 首屏视频自动播放降级（2026-09-22）
+
+- `frontend/src/views/Home/index.vue`：自动播放失败时不再渲染“视频自动播放失败，请重试”提示和重试按钮；保留 poster/已解码首帧及首屏内容，后台继续响应微信桥接、页面重新可见和首次触摸事件进行静默重试。
+- 本轮不增加点击播放入口，符合用户要求“只尝试自动播放”；因此微信策略拒绝时页面保持静态首帧，不能承诺所有环境自动播放成功。
+- 验证：源码无残留错误提示/重试控件；`npm.cmd run build` PASS；`npm.cmd run build:mock` PASS；`git diff --check` PASS。尚未部署本轮变更。
+- 后续微调：每次媒体换源/重新加载后，首次 `play()` 被拒绝时仅安排一次 800ms 后的静音重试；重试失败不再递归定时，避免耗电、流量和多个播放 Promise 竞争。
